@@ -4,6 +4,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.dimas4ek.enities.Guild;
+import org.dimas4ek.enities.GuildChannel;
+import org.dimas4ek.event.interaction.Interaction;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONObject;
 
@@ -12,13 +15,18 @@ import java.io.IOException;
 public class SlashCommandInteractionEvent {
     private final String interactionId;
     private final String interactionToken;
-    
-    public SlashCommandInteractionEvent(String interactionId, String interactionToken) {
-        
+    private final Interaction interaction;
+    public SlashCommandInteractionEvent(String interactionId, String interactionToken, Interaction interaction) {
         this.interactionId = interactionId;
         this.interactionToken = interactionToken;
+        this.interaction = interaction;
     }
     
+    /**
+     * Sends a reply to an interaction with the provided response text.
+     *
+     * @param responseText the text to be sent as the reply
+     */
     public void reply(String responseText) {
         JSONObject jsonObject = new JSONObject();
         
@@ -42,6 +50,14 @@ public class SlashCommandInteractionEvent {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public Guild getGuild() {
+        return interaction.getGuild();
+    }
+    
+    public GuildChannel getChannel() {
+        return interaction.getChannel();
     }
 }
 

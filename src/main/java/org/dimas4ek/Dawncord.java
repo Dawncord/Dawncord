@@ -6,6 +6,7 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.dimas4ek.commands.SlashCommand;
 import org.dimas4ek.event.listeners.EventListener;
 import org.dimas4ek.test.CommandTest;
@@ -55,10 +56,12 @@ public class Dawncord {
             .build();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                if (response.body() != null) {
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    Constants.APPLICATION_ID =jsonObject.getString("id");
-                    Constants.CLIENT_KEY = jsonObject.getString("verify_key");
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        JSONObject jsonObject = new JSONObject(body.string());
+                        Constants.APPLICATION_ID =jsonObject.getString("id");
+                        Constants.CLIENT_KEY = jsonObject.getString("verify_key");
+                    }
                 }
             }
         } catch (IOException e) {
