@@ -1,6 +1,6 @@
 package org.dimas4ek.event.interaction;
 
-import org.dimas4ek.enities.User;
+import org.dimas4ek.enities.user.User;
 import org.json.JSONObject;
 
 public class UserInteraction implements User {

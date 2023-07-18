@@ -1,4 +1,4 @@
-package org.dimas4ek.enities;
+package org.dimas4ek.enities.user;
 
 public interface User {
     String getId();

@@ -1,4 +1,6 @@
-package org.dimas4ek.enities;
+package org.dimas4ek.enities.guild;
+
+import org.dimas4ek.enities.user.User;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
 package org.dimas4ek.event.interaction;
 
 import org.dimas4ek.api.ApiClient;
-import org.dimas4ek.enities.GuildMember;
-import org.dimas4ek.enities.GuildRole;
-import org.dimas4ek.enities.User;
+import org.dimas4ek.enities.guild.GuildMember;
+import org.dimas4ek.enities.guild.GuildRole;
+import org.dimas4ek.enities.user.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

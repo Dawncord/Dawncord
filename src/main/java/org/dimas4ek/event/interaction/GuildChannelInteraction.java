@@ -1,6 +1,6 @@
 package org.dimas4ek.event.interaction;
 
-import org.dimas4ek.enities.GuildChannel;
+import org.dimas4ek.enities.guild.GuildChannel;
 import org.json.JSONObject;
 
 public class GuildChannelInteraction implements GuildChannel {

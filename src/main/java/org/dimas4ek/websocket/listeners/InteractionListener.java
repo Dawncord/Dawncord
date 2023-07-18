@@ -44,6 +44,7 @@ public class InteractionListener extends WebSocketAdapter {
                 
                 String name = d.getJSONObject("data").getString("name");
                 
+                
                 SlashCommandInteractionEvent slashCommandInteractionEvent =
                     new SlashCommandInteractionEvent(interactionId, interactionToken, guildInteraction);
                 
