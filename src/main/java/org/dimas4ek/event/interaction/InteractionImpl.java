@@ -3,6 +3,8 @@ package org.dimas4ek.event.interaction;
 import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
+import org.dimas4ek.event.entities.GuildChannelImpl;
+import org.dimas4ek.event.entities.GuildImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

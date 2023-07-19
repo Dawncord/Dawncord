@@ -1,4 +1,4 @@
-package org.dimas4ek.event.interaction;
+package org.dimas4ek.event.entities;
 
 import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.enities.guild.Guild;

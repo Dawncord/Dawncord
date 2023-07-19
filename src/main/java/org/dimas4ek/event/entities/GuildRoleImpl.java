@@ -1,4 +1,4 @@
-package org.dimas4ek.event.interaction;
+package org.dimas4ek.event.entities;
 
 import org.dimas4ek.enities.PermissionType;
 import org.dimas4ek.enities.guild.GuildRole;

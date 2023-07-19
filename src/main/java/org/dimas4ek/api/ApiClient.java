@@ -9,6 +9,27 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class ApiClient {
+    public static void sendResponse(JSONObject jsonObject, String interactionId, String interactionToken, OkHttpClient client) {
+        RequestBody requestBody = RequestBody.create(
+            jsonObject.toString(),
+            Constants.MEDIA_TYPE_JSON
+        );
+        
+        Request request = new Request.Builder()
+            .url(Constants.API_URL + "/interactions/" + interactionId + "/" + interactionToken + "/callback")
+            .post(requestBody)
+            .build();
+        
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                System.out.println("Response executed successfully");
+            } else {
+                System.out.println("API request failed with status code: " + response.code());
+            }
+        } catch (IOException e) {
+            System.out.println("Encountered IOException: " + e.getMessage());
+        }
+    }
     public static JSONObject postApiRequest(String url, JSONObject jsonPayload) {
         RequestBody body = RequestBody.create(jsonPayload.toString(), Constants.MEDIA_TYPE_JSON);
         
