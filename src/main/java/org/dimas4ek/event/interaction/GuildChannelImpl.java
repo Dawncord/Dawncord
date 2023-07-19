@@ -1,12 +1,13 @@
 package org.dimas4ek.event.interaction;
 
+import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.enities.guild.GuildChannel;
 import org.json.JSONObject;
 
-public class GuildChannelInteraction implements GuildChannel {
+public class GuildChannelImpl implements GuildChannel {
     private final JSONObject channel;
     
-    public GuildChannelInteraction(JSONObject channel) {
+    public GuildChannelImpl(JSONObject channel) {
         this.channel = channel;
     }
     
@@ -31,5 +32,12 @@ public class GuildChannelInteraction implements GuildChannel {
                  ? "TEXT"
                  : "VOICE"
                : null;
+    }
+    
+    @Override
+    public void sendMessage(String message) {
+        JSONObject messagePayload = new JSONObject();
+        messagePayload.put("content", message);
+        ApiClient.postApiRequest("/channels/" + getId() + "/messages", messagePayload);
     }
 }

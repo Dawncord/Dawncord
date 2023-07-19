@@ -8,10 +8,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildRoleInteraction implements GuildRole {
+public class GuildRoleImpl implements GuildRole {
     private final JSONObject role;
     
-    public GuildRoleInteraction(JSONObject role) {
+    public GuildRoleImpl(JSONObject role) {
         this.role = role;
     }
     

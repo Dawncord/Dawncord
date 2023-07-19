@@ -8,22 +8,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildMemberInteraction implements GuildMember {
+public class GuildMemberImpl implements GuildMember {
     private final JSONObject member;
     private final String guildId;
     
-    public GuildMemberInteraction(JSONObject member, String guildId) {
+    public GuildMemberImpl(JSONObject member, String guildId) {
         this.member = member;
         this.guildId = guildId;
     }
     
     @Override
     public User getUser() {
-        return new UserInteraction(member.getJSONObject("user"));
+        return new UserImpl(member.getJSONObject("user"));
     }
     
     @Override
@@ -43,13 +42,13 @@ public class GuildMemberInteraction implements GuildMember {
                 for (int j = 0; j < memberRoleData.length(); j++) {
                     String memberRole = memberRoleData.getString(j);
                     if (memberRole.equals(serverRole.getString("id"))) {
-                        roleList.add(new GuildRoleInteraction(serverRole));
+                        roleList.add(new GuildRoleImpl(serverRole));
                     }
                 }
             }
             
             return roleList;
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }

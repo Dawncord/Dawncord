@@ -44,9 +44,10 @@ public class SlashCommandInteractionEvent {
         
         RequestBody requestBody = RequestBody.create(
             jsonObject
-                .put("type", 4)
+                .put("type", InteractionType.CHANNEL_MESSAGE_WITH_SOURCE.getValue())
                 .put("data", new JSONObject()
-                    .put("content", responseText))
+                    .put("content", responseText)
+                    .put("flags", 1 << 6))
                 .toString(),
             Constants.MEDIA_TYPE_JSON
         );
@@ -91,7 +92,7 @@ public class SlashCommandInteractionEvent {
                                     .put("inline", field.isInline()));
         }
         embedJsonObject.put("fields", fieldsJsonArray);
-
+        
         embedJsonObject.put("author", new JSONObject()
             .put("name", responseEmbed.getAuthor()));
         embedJsonObject.put("footer", new JSONObject()
@@ -123,6 +124,32 @@ public class SlashCommandInteractionEvent {
         }
     }
     
+    public void deferReply() {
+        JSONObject jsonObject = new JSONObject();
+        
+        RequestBody requestBody = RequestBody.create(
+            jsonObject
+                .put("type", InteractionType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE.getValue())
+                .toString(),
+            Constants.MEDIA_TYPE_JSON
+        );
+        
+        Request request = new Request.Builder()
+            .url(Constants.API_URL + "/interactions/" + interactionId + "/" + interactionToken + "/callback")
+            .post(requestBody)
+            .build();
+        
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                System.out.println("Response executed successfully");
+            } else {
+                System.out.println("API request failed with status code: " + response.code());
+            }
+        } catch (IOException e) {
+            System.out.println("Encountered IOException: " + e.getMessage());
+        }
+    }
+    
     public Guild getGuild() {
         return interaction.getGuild();
     }
@@ -130,7 +157,5 @@ public class SlashCommandInteractionEvent {
     public GuildChannel getChannel() {
         return interaction.getChannel();
     }
-    
-    
 }
 

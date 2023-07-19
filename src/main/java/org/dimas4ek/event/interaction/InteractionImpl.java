@@ -7,21 +7,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.function.Function;
 
-public class InteractionObjects implements Interaction {
+public class InteractionImpl implements Interaction {
     private final String guildId;
     private final String channelId;
     
-    public InteractionObjects(String guildId, String channelId) {
+    public InteractionImpl(String guildId, String channelId) {
         this.guildId = guildId;
         this.channelId = channelId;
     }
     
     @Override
     public Guild getGuild() {
-        return executeAndMap("/guilds/" + guildId, GuildInteraction::new);
+        return executeAndMap("/guilds/" + guildId, GuildImpl::new);
     }
     
     @Override
@@ -32,14 +31,14 @@ public class InteractionObjects implements Interaction {
             return null;
         }
         
-        return new GuildChannelInteraction(channel);
+        return new GuildChannelImpl(channel);
     }
     
     private <T> T executeAndMap(String url, Function<JSONObject, T> mapper) {
         try {
             JSONObject apiResponseObject = ApiClient.getApiResponseObject(url);
             return mapper.apply(apiResponseObject);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
@@ -57,7 +56,7 @@ public class InteractionObjects implements Interaction {
                     return channel;
                 }
             }
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         

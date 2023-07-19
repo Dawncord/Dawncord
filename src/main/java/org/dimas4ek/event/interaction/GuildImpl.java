@@ -9,14 +9,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildInteraction implements Guild {
+public class GuildImpl implements Guild {
     private final JSONObject guild;
     
-    public GuildInteraction(JSONObject guild) {
+    public GuildImpl(JSONObject guild) {
         this.guild = guild;
     }
     
@@ -48,31 +47,27 @@ public class GuildInteraction implements Guild {
             
             for (int i = 0; i < channelData.length(); i++) {
                 JSONObject channel = channelData.getJSONObject(i);
-                channelList.add(new GuildChannelInteraction(channel));
+                channelList.add(new GuildChannelImpl(channel));
             }
             
             return channelList;
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
     
     @Override
     public List<GuildMember> getMembers() {
-        try {
-            JSONArray memberData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/members");
-            
-            List<GuildMember> memberList = new ArrayList<>();
-            
-            for (int i = 0; i < memberData.length(); i++) {
-                JSONObject member = memberData.getJSONObject(i);
-                memberList.add(new GuildMemberInteraction(member, getId()));
-            }
-            
-            return memberList;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        JSONArray memberData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/members");
+        
+        List<GuildMember> memberList = new ArrayList<>();
+        
+        for (int i = 0; i < memberData.length(); i++) {
+            JSONObject member = memberData.getJSONObject(i);
+            memberList.add(new GuildMemberImpl(member, getId()));
         }
+        
+        return memberList;
         
     }
     
@@ -84,11 +79,11 @@ public class GuildInteraction implements Guild {
             
             for (int i = 0; i < serverRoleData.length(); i++) {
                 JSONObject serverRole = serverRoleData.getJSONObject(i);
-                roleList.add(new GuildRoleInteraction(serverRole));
+                roleList.add(new GuildRoleImpl(serverRole));
             }
             
             return roleList;
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
@@ -102,12 +97,12 @@ public class GuildInteraction implements Guild {
             for (int i = 0; i < serverRoleData.length(); i++) {
                 JSONObject serverRole = serverRoleData.getJSONObject(i);
                 if (serverRole.getString("name").equals(roleName)) {
-                    roleList.add(new GuildRoleInteraction(serverRole));
+                    roleList.add(new GuildRoleImpl(serverRole));
                 }
             }
             
             return roleList;
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
@@ -120,12 +115,12 @@ public class GuildInteraction implements Guild {
             for (int i = 0; i < serverRoleData.length(); i++) {
                 JSONObject serverRole = serverRoleData.getJSONObject(i);
                 if (serverRole.getString("id").equals(id)) {
-                    return new GuildRoleInteraction(serverRole);
+                    return new GuildRoleImpl(serverRole);
                 }
             }
             
             return null;
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }

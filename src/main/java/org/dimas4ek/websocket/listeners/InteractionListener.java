@@ -7,7 +7,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.commands.SlashCommand;
 import org.dimas4ek.event.SlashCommandInteractionEvent;
 import org.dimas4ek.event.interaction.Interaction;
-import org.dimas4ek.event.interaction.InteractionObjects;
+import org.dimas4ek.event.interaction.InteractionImpl;
 import org.dimas4ek.event.listeners.EventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +15,6 @@ import org.json.JSONObject;
 public class InteractionListener extends WebSocketAdapter {
     @Override
     public void onTextMessage(WebSocket websocket, String message) throws Exception {
-        System.out.println(new JSONObject(message).toString(4));
         
         // Parse the message as a JSON object
         JSONObject json;
@@ -40,10 +39,9 @@ public class InteractionListener extends WebSocketAdapter {
             
             if (type.equals("INTERACTION_CREATE")) {
                 
-                Interaction guildInteraction = new InteractionObjects(guildId, channelId);
+                Interaction guildInteraction = new InteractionImpl(guildId, channelId);
                 
                 String name = d.getJSONObject("data").getString("name");
-                
                 
                 SlashCommandInteractionEvent slashCommandInteractionEvent =
                     new SlashCommandInteractionEvent(interactionId, interactionToken, guildInteraction);
