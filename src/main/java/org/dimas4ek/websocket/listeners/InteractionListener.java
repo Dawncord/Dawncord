@@ -36,21 +36,17 @@ public class InteractionListener extends WebSocketAdapter {
             
             String guildId = d.getString("guild_id");
             String channelId = d.getString("channel_id");
+            String commandName = d.getJSONObject("data").getString("name");
             
             if (type.equals("INTERACTION_CREATE")) {
                 
-                Interaction guildInteraction = new InteractionImpl(guildId, channelId);
-                
-                String name = d.getJSONObject("data").getString("name");
+                Interaction guildInteraction = new InteractionImpl(commandName, guildId, channelId);
                 
                 SlashCommandInteractionEventImpl slashCommandInteractionEvent =
                     new SlashCommandInteractionEventImpl(interactionId, interactionToken, guildInteraction);
                 
                 for (SlashCommand listener : EventListener.getEventListeners()) {
-                    if (listener.name().equalsIgnoreCase(name)) {
-                        listener.onEvent((slashCommandInteractionEvent));
-                        break;
-                    }
+                    listener.onEvent((slashCommandInteractionEvent));
                 }
             }
         }

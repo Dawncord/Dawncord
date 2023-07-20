@@ -1,6 +1,7 @@
 package org.dimas4ek.api;
 
 import okhttp3.*;
+import org.dimas4ek.api.exceptions.InteractionAlreadyAcknowledgedException;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,12 +26,18 @@ public class ApiClient {
                 System.out.println("Response executed successfully");
             } else {
                 System.out.println("API request failed with status code: " + response.code());
+                try (ResponseBody body = response.body()) {
+                    if (new JSONObject(body.string()).getInt("code") == 40060) {;
+                        throw new InteractionAlreadyAcknowledgedException("Interaction has already been acknowledged");
+                    }
+                }
             }
         } catch (IOException e) {
             System.out.println("Encountered IOException: " + e.getMessage());
         }
     }
-    public static JSONObject postApiRequest(String url, JSONObject jsonPayload) {
+    
+    public static void postApiRequest(String url, JSONObject jsonPayload) {
         RequestBody body = RequestBody.create(jsonPayload.toString(), Constants.MEDIA_TYPE_JSON);
         
         Request request = new Request.Builder()
@@ -43,7 +50,8 @@ public class ApiClient {
             if (response.isSuccessful()) {
                 try (ResponseBody responseBody = response.body()) {
                     if (responseBody != null) {
-                        return new JSONObject(responseBody.string());
+                        new JSONObject(responseBody.string());
+                        return;
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);

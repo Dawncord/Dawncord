@@ -10,7 +10,6 @@ public class InteractionCallbackImpl implements InteractionCallback {
     private final String interactionId;
     private final String interactionToken;
     
-    
     public InteractionCallbackImpl(JSONObject jsonObject, String interactionId, String interactionToken) {
         this.jsonObject = jsonObject;
         this.interactionId = interactionId;

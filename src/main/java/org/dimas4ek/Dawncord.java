@@ -25,12 +25,12 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.createDefault("NzU0Mzk0NTI2OTYwODQ0ODgx.G0vMrq.uYGFWhkP1dJyUJd6s1POVCa_tiOOtFcWPDe2dI")
+        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.G0vMrq.uYGFWhkP1dJyUJd6s1POVCa_tiOOtFcWPDe2dI")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
     }
     
-    public Dawncord createDefault(String BOT_TOKEN) {
+    public Dawncord create(String BOT_TOKEN) {
         WebSocketFactory factory = new WebSocketFactory();
         try {
             webSocket = factory.createSocket(Constants.GATEWAY);

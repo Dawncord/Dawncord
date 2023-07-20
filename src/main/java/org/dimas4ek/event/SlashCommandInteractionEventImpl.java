@@ -30,6 +30,11 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
         this.interaction = interaction;
     }
     
+    @Override
+    public String getCommandName() {
+        return interaction.getCommandName();
+    }
+    
     /**
      * Sends a reply to an interaction with the provided response text.
      *

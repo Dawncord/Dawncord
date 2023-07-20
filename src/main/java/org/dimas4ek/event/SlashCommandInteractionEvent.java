@@ -6,6 +6,8 @@ import org.dimas4ek.enities.guild.GuildChannel;
 import org.dimas4ek.event.interaction.response.InteractionCallback;
 
 public interface SlashCommandInteractionEvent {
+    String getCommandName();
+    
     InteractionCallback reply(String message);
     void replyWithEmbed(Embed embed);
     void deferReply();

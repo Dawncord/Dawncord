@@ -7,8 +7,6 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import org.dimas4ek.commands.SlashCommand;
-import org.dimas4ek.event.listeners.EventListener;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,9 +29,9 @@ public class MainListener extends WebSocketAdapter {
             return;
         }
         
-        for (SlashCommand command : EventListener.getEventListeners()) {
+        /*for (SlashCommand command : EventListener.getEventListeners()) {
             RegisterSlashCommands.register(command.name(), command.description());
-        }
+        }*/
         
         int op = json.getInt("op");
         if (op == 10) {

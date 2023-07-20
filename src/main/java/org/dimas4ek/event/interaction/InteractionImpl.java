@@ -12,12 +12,19 @@ import org.json.JSONObject;
 import java.util.function.Function;
 
 public class InteractionImpl implements Interaction {
+    private final String commandName;
     private final String guildId;
     private final String channelId;
     
-    public InteractionImpl(String guildId, String channelId) {
+    public InteractionImpl(String commandName, String guildId, String channelId) {
+        this.commandName = commandName;
         this.guildId = guildId;
         this.channelId = channelId;
+    }
+    
+    @Override
+    public String getCommandName() {
+        return commandName;
     }
     
     @Override
