@@ -1,16 +1,11 @@
 package org.dimas4ek.test;
 
-import org.dimas4ek.commands.SlashCommand;
-import org.dimas4ek.event.SlashCommandInteractionEvent;
+import org.dimas4ek.event.Event;
+import org.dimas4ek.event.slashcommand.interaction.SlashCommandInteractionEvent;
 
-public class PingCommand extends SlashCommand {
+public class PingCommand extends Event {
     @Override
     public void onEvent(SlashCommandInteractionEvent event) {
-        try {
-            event.reply("ping").execute();
-        } catch (Exception e) {
-            System.err.println("An error occurred while trying to reply: " + e.getMessage());
-            e.printStackTrace();
-        }
+    
     }
 }

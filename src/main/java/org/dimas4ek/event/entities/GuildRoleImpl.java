@@ -1,7 +1,7 @@
 package org.dimas4ek.event.entities;
 
-import org.dimas4ek.enities.PermissionType;
 import org.dimas4ek.enities.guild.GuildRole;
+import org.dimas4ek.enities.types.PermissionType;
 import org.json.JSONObject;
 
 import java.awt.*;

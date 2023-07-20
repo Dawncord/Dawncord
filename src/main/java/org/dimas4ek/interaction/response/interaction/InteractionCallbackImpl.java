@@ -1,4 +1,4 @@
-package org.dimas4ek.event.interaction.response;
+package org.dimas4ek.interaction.response.interaction;
 
 import okhttp3.OkHttpClient;
 import org.dimas4ek.api.ApiClient;

@@ -7,17 +7,27 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dimas4ek.commands.Option;
 import org.dimas4ek.commands.SlashCommand;
+import org.dimas4ek.enities.types.OptionType;
+import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
+import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.option.creation.OptionData;
+import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEvent;
+import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponse;
+import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponseImpl;
 import org.dimas4ek.test.CommandTest;
 import org.dimas4ek.test.PingCommand;
 import org.dimas4ek.test.PingCommand2;
 import org.dimas4ek.utils.Constants;
 import org.dimas4ek.websocket.listeners.InteractionListener;
 import org.dimas4ek.websocket.listeners.MainListener;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Dawncord {
     private WebSocket webSocket;
@@ -28,6 +38,50 @@ public class Dawncord {
         dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.G0vMrq.uYGFWhkP1dJyUJd6s1POVCa_tiOOtFcWPDe2dI")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
+        
+        dawncord.createGlobalSlashCommands(
+            SlashCommand.create(
+                "test2",
+                "test2",
+                Option.addOptions(List.of(
+                    new OptionData(OptionType.STRING, "name3", "desc1", false),
+                    new OptionData(OptionType.STRING, "name4", "desc2", true)
+                ))
+            )
+        ).execute();
+    }
+    
+    public SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", event.getName());
+        jsonObject.put("description", event.getDescription());
+        
+        if (event.getOptions() != null) {
+            if (event.getOptions().size() == 1) {
+                jsonObject.put("options", new JSONArray()
+                    .put(new JSONObject()
+                             .put("type", event.getOptions().get(0).getType().getValue())
+                             .put("name", event.getOptions().get(0).getName())
+                             .put("description", event.getOptions().get(0).getDescription())
+                             .put("required", event.getOptions().get(0).isRequired())
+                    )
+                );
+            } else {
+                JSONArray jsonArray = new JSONArray();
+                for (OptionCreationEvent option : event.getOptions()) {
+                    jsonArray.
+                        put(new JSONObject()
+                                .put("type", option.getType().getValue())
+                                .put("name", option.getName())
+                                .put("description", option.getDescription())
+                                .put("required", option.isRequired())
+                        );
+                }
+                jsonObject.put("options", jsonArray);
+            }
+        }
+        
+        return new SlashCommandCreationResponseImpl(jsonObject);
     }
     
     public Dawncord create(String BOT_TOKEN) {
@@ -59,7 +113,7 @@ public class Dawncord {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
                         JSONObject jsonObject = new JSONObject(body.string());
-                        Constants.APPLICATION_ID =jsonObject.getString("id");
+                        Constants.APPLICATION_ID = jsonObject.getString("id");
                         Constants.CLIENT_KEY = jsonObject.getString("verify_key");
                     }
                 }
@@ -69,8 +123,8 @@ public class Dawncord {
         }
     }
     
-    public Dawncord addSlashCommands(SlashCommand... slashCommands) {
-        for (SlashCommand command : slashCommands) {
+    public Dawncord addSlashCommands(Event... slashCommands) {
+        for (Event command : slashCommands) {
             EventListener.addEventListener(command);
         }
         return this;
@@ -84,7 +138,7 @@ public class Dawncord {
         }
         
         JSONObject identify = new JSONObject()
-            .put("op", 2) // Identify opcode
+            .put("op", 2)
             .put("d", new JSONObject()
                 .put("token", Constants.BOT_TOKEN)
                 .put("intents", 513)

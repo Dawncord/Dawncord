@@ -1,13 +1,13 @@
 package org.dimas4ek.test;
 
-import org.dimas4ek.commands.SlashCommand;
-import org.dimas4ek.event.SlashCommandInteractionEvent;
+import org.dimas4ek.event.Event;
+import org.dimas4ek.event.slashcommand.interaction.SlashCommandInteractionEvent;
 
-public class CommandTest extends SlashCommand {
+public class CommandTest extends Event {
     @Override
     public void onEvent(SlashCommandInteractionEvent event) {
-        if (event.getCommandName().equals("test")) {
-        
+        if (event.getCommandName().equals("test2")) {
+            event.reply("test2").execute();
         }
     }
 }

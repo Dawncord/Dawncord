@@ -1,17 +1,17 @@
-package org.dimas4ek.event;
+package org.dimas4ek.event.slashcommand.interaction;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.dimas4ek.enities.InteractionType;
 import org.dimas4ek.enities.embed.Embed;
 import org.dimas4ek.enities.embed.Field;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
-import org.dimas4ek.event.interaction.Interaction;
-import org.dimas4ek.event.interaction.response.InteractionCallback;
-import org.dimas4ek.event.interaction.response.InteractionCallbackImpl;
+import org.dimas4ek.enities.types.InteractionType;
+import org.dimas4ek.interaction.Interaction;
+import org.dimas4ek.interaction.response.interaction.InteractionCallback;
+import org.dimas4ek.interaction.response.interaction.InteractionCallbackImpl;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package org.dimas4ek.enities;
+package org.dimas4ek.enities.types;
 
 public enum PermissionType {
     CREATE_INSTANT_INVITE(0x1L),
@@ -47,7 +47,7 @@ public enum PermissionType {
     USE_EXTERNAL_SOUNDS(0x200000000000L),
     SEND_VOICE_MESSAGES(0x400000000000L);
     
-    long value;
+    private final long value;
     
     PermissionType(long value) {
         this.value = value;

@@ -1,4 +1,4 @@
-package org.dimas4ek.enities;
+package org.dimas4ek.enities.types;
 
 public enum InteractionType {
     PONG(1),
@@ -9,7 +9,7 @@ public enum InteractionType {
     APPLICATION_COMMAND_AUTOCOMPLETE_RESULT(8),
     MODAL(9);
     
-    final int value;
+    private final int value;
     InteractionType(int value) {
         this.value = value;
     }

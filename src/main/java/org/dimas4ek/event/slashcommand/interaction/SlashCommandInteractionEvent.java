@@ -1,9 +1,9 @@
-package org.dimas4ek.event;
+package org.dimas4ek.event.slashcommand.interaction;
 
 import org.dimas4ek.enities.embed.Embed;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
-import org.dimas4ek.event.interaction.response.InteractionCallback;
+import org.dimas4ek.interaction.response.interaction.InteractionCallback;
 
 public interface SlashCommandInteractionEvent {
     String getCommandName();

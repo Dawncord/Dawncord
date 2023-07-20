@@ -1,18 +1,18 @@
 package org.dimas4ek.event.listeners;
 
-import org.dimas4ek.commands.SlashCommand;
+import org.dimas4ek.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class EventListener {
-    private static final List<SlashCommand> eventListeners = new ArrayList<>();
+    private static final List<Event> eventListeners = new ArrayList<>();
     
-    public static void addEventListener(SlashCommand eventListener) {
+    public static void addEventListener(Event eventListener) {
         eventListeners.add(eventListener);
     }
     
-    public static List<SlashCommand> getEventListeners() {
+    public static List<Event> getEventListeners() {
         return eventListeners;
     }
 }

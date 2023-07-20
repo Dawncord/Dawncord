@@ -2,6 +2,7 @@ package org.dimas4ek.api;
 
 import okhttp3.*;
 import org.dimas4ek.api.exceptions.InteractionAlreadyAcknowledgedException;
+import org.dimas4ek.api.exceptions.InvalidOptionOrderException;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,11 +28,13 @@ public class ApiClient {
             } else {
                 System.out.println("API request failed with status code: " + response.code());
                 try (ResponseBody body = response.body()) {
-                    if (new JSONObject(body.string()).getInt("code") == 40060) {;
+                    if (new JSONObject(body.string()).getInt("code") == 40060) {
                         throw new InteractionAlreadyAcknowledgedException("Interaction has already been acknowledged");
                     }
                 }
             }
+        } catch (InteractionAlreadyAcknowledgedException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Encountered IOException: " + e.getMessage());
         }
@@ -48,18 +51,19 @@ public class ApiClient {
         
         try (Response response = new OkHttpClient().newCall(request).execute()) {
             if (response.isSuccessful()) {
+                System.out.println("Response executed successfully");
+            } else {
+                System.out.println("API request failed with status code: " + response.code());
                 try (ResponseBody responseBody = response.body()) {
-                    if (responseBody != null) {
-                        new JSONObject(responseBody.string());
-                        return;
+                    if (new JSONObject(responseBody.string()).getInt("code") == 50035) {
+                        throw new InvalidOptionOrderException("Required options must be placed before non-required options");
                     }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
                 }
             }
-            throw new IOException("Unexpected response code: " + response.code());
+        } catch (InvalidOptionOrderException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Encountered IOException: " + e.getMessage());
         }
     }
     public static JSONObject getApiResponseObject(String url)  {

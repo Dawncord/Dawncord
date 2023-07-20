@@ -1,4 +1,4 @@
-package org.dimas4ek.event.interaction.response;
+package org.dimas4ek.interaction.response.interaction;
 
 public interface InteractionResponse {
     void execute();

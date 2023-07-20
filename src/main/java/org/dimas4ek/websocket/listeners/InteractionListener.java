@@ -4,11 +4,11 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.dimas4ek.commands.SlashCommand;
-import org.dimas4ek.event.SlashCommandInteractionEventImpl;
-import org.dimas4ek.event.interaction.Interaction;
-import org.dimas4ek.event.interaction.InteractionImpl;
+import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
+import org.dimas4ek.event.slashcommand.interaction.SlashCommandInteractionEventImpl;
+import org.dimas4ek.interaction.Interaction;
+import org.dimas4ek.interaction.InteractionImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +45,7 @@ public class InteractionListener extends WebSocketAdapter {
                 SlashCommandInteractionEventImpl slashCommandInteractionEvent =
                     new SlashCommandInteractionEventImpl(interactionId, interactionToken, guildInteraction);
                 
-                for (SlashCommand listener : EventListener.getEventListeners()) {
+                for (Event listener : EventListener.getEventListeners()) {
                     listener.onEvent((slashCommandInteractionEvent));
                 }
             }

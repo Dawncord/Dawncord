@@ -1,13 +1,19 @@
 package org.dimas4ek.commands;
 
-import org.dimas4ek.event.SlashCommandInteractionEvent;
+import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEvent;
+import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEventImpl;
 
-import java.io.IOException;
-
-public abstract class SlashCommand {
-    /*public abstract String name();
+public class SlashCommand {
+    public static SlashCommandCreationEvent create(String name, String description) {
+        return new SlashCommandCreationEventImpl(name, description);
+    }
     
-    public abstract String description();*/
+    public static SlashCommandCreationEvent create(String name, String description, OptionCreationEvent option) {
+        return new SlashCommandCreationEventImpl(name, description, option);
+    }
     
-    public abstract void onEvent(SlashCommandInteractionEvent event) throws IOException;
+    public static SlashCommandCreationEvent create(String name, String description, OptionCreationEvent... options) {
+        return new SlashCommandCreationEventImpl(name, description, options);
+    }
 }
