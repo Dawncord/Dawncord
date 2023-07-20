@@ -26,7 +26,7 @@ public class InteractionCallbackImpl implements InteractionCallback {
     }
     
     @Override
-    public void send() {
+    public void execute() {
         ApiClient.sendResponse(jsonObject, interactionId, interactionToken, CLIENT);
     }
 }

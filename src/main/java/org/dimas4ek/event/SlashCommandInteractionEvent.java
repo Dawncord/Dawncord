@@ -9,8 +9,7 @@ public interface SlashCommandInteractionEvent {
     InteractionCallback reply(String message);
     void replyWithEmbed(Embed embed);
     void deferReply();
-    public Guild getGuild();
-    
-    public GuildChannel getChannel();
+    Guild getGuild();
+    GuildChannel getChannel();
 }
 

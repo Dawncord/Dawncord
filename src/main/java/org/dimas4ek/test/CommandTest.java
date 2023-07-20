@@ -15,6 +15,6 @@ public class CommandTest extends SlashCommand {
     
     @Override
     public void onEvent(SlashCommandInteractionEvent event) {
-        event.reply("test").setEphemeral(true).send();
+        
     }
 }

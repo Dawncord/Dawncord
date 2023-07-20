@@ -17,7 +17,7 @@ public class InteractionResponseImpl implements InteractionResponse{
     }
     
     @Override
-    public void send() {
+    public void execute() {
         ApiClient.sendResponse(jsonObject, interactionId, interactionToken, CLIENT);
     }
 }
