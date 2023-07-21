@@ -35,7 +35,7 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.G0vMrq.uYGFWhkP1dJyUJd6s1POVCa_tiOOtFcWPDe2dI")
+        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GQI9bJ.PCBlXPPXOQRgLWDw3nwJyaMfWHT24xXuZjW4w8")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
         
@@ -44,8 +44,8 @@ public class Dawncord {
                 "test2",
                 "test2",
                 Option.addOptions(List.of(
-                    new OptionData(OptionType.STRING, "name3", "desc1", false),
-                    new OptionData(OptionType.STRING, "name4", "desc2", true)
+                    new OptionData(OptionType.STRING, "name3", "desc1", true),
+                    new OptionData(OptionType.STRING, "name4", "desc2", false)
                 ))
             )
         ).execute();

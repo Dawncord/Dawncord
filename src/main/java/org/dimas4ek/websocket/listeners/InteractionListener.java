@@ -54,7 +54,7 @@ public class InteractionListener extends WebSocketAdapter {
     
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) {
-        System.out.println("Closed: " + serverCloseFrame.getCloseReason() + " " + serverCloseFrame.getCloseReason());
+        System.out.println("Closed: " + serverCloseFrame.getCloseReason());
     }
     
     @Override

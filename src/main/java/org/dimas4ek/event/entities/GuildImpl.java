@@ -1,10 +1,8 @@
 package org.dimas4ek.event.entities;
 
 import org.dimas4ek.api.ApiClient;
-import org.dimas4ek.enities.guild.Guild;
-import org.dimas4ek.enities.guild.GuildChannel;
-import org.dimas4ek.enities.guild.GuildMember;
-import org.dimas4ek.enities.guild.GuildRole;
+import org.dimas4ek.enities.guild.*;
+import org.dimas4ek.enities.types.GuildChannelType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,5 +121,42 @@ public class GuildImpl implements Guild {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Override
+    public void createTextChannel(String name) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name);
+        jsonObject.put("type", GuildChannelType.GUILD_TEXT.getValue());
+        ApiClient.postApiRequest("/guilds/" + getId() + "/channels", jsonObject);
+    }
+    
+    @Override
+    public void createTextChannel(String name, GuildCategory category) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name);
+        jsonObject.put("type", GuildChannelType.GUILD_TEXT.getValue());
+        jsonObject.put("parent_id", category.getId());
+        ApiClient.postApiRequest("/guilds/" + getId() + "/channels", jsonObject);
+    }
+    
+    @Override
+    public GuildCategory getCategoryByName(String name) {
+        for (GuildChannel channel : getChannels()) {
+            if (channel.getName().equals(name) && channel.getType().equals("CATEGORY")) {
+                return new GuildCategoryImpl(channel);
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public GuildCategory getCategoryById(String id) {
+        for (GuildChannel channel : getChannels()) {
+            if (channel.getId().equals(id) && channel.getType().equals("CATEGORY")) {
+                return new GuildCategoryImpl(channel);
+            }
+        }
+        return null;
     }
 }

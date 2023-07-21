@@ -2,6 +2,7 @@ package org.dimas4ek.event.entities;
 
 import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.enities.guild.GuildChannel;
+import org.dimas4ek.enities.types.GuildChannelType;
 import org.json.JSONObject;
 
 public class GuildChannelImpl implements GuildChannel {
@@ -13,25 +14,22 @@ public class GuildChannelImpl implements GuildChannel {
     
     @Override
     public String getId() {
-        return channel.getInt("type") != 4
-               ? channel.getString("id")
-               : null;
+        return channel.getString("id");
     }
     
     @Override
     public String getName() {
-        return channel.getInt("type") != 4
-               ? channel.getString("name")
-               : null;
+        return channel.getString("name");
     }
     
     @Override
     public String getType() {
-        return channel.getInt("type") != 4
-               ? (channel.getInt("type") == 0)
-                 ? "TEXT"
-                 : "VOICE"
-               : null;
+        for (GuildChannelType type : GuildChannelType.values()) {
+            if (channel.getInt("type") == type.getValue()) {
+                return type.toString();
+            }
+        }
+        return null;
     }
     
     @Override

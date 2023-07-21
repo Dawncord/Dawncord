@@ -7,10 +7,10 @@ import org.dimas4ek.interaction.response.interaction.InteractionCallback;
 
 public interface SlashCommandInteractionEvent {
     String getCommandName();
-    
     InteractionCallback reply(String message);
+    InteractionCallback deferReply();
+    InteractionCallback deferReply(boolean ephemeral);
     void replyWithEmbed(Embed embed);
-    void deferReply();
     Guild getGuild();
     GuildChannel getChannel();
 }

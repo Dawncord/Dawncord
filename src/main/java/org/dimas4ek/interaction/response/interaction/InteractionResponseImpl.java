@@ -1,11 +1,9 @@
 package org.dimas4ek.interaction.response.interaction;
 
-import okhttp3.OkHttpClient;
 import org.dimas4ek.api.ApiClient;
 import org.json.JSONObject;
 
 public class InteractionResponseImpl implements InteractionResponse{
-    private static final OkHttpClient CLIENT = new OkHttpClient();
     private final JSONObject jsonObject;
     private final String interactionId;
     private final String interactionToken;
@@ -18,6 +16,6 @@ public class InteractionResponseImpl implements InteractionResponse{
     
     @Override
     public void execute() {
-        ApiClient.sendResponse(jsonObject, interactionId, interactionToken, CLIENT);
+        ApiClient.sendResponse(jsonObject, interactionId, interactionToken);
     }
 }

@@ -6,8 +6,8 @@ import org.dimas4ek.event.slashcommand.interaction.SlashCommandInteractionEvent;
 public class CommandTest extends Event {
     @Override
     public void onEvent(SlashCommandInteractionEvent event) {
-        if (event.getCommandName().equals("test2")) {
-            event.reply("test2").execute();
+        if (event.getCommandName().equals("test")) {
+            event.reply("true").setEphemeral(true).execute();
         }
     }
 }
