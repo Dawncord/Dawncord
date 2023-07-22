@@ -65,11 +65,9 @@ public class ApiClient {
         }
     }
     
-    public static void sendResponse(JSONObject jsonObject, String interactionId, String interactionToken) {
-        System.out.println(jsonObject.toString(4));
+    public static void sendInteractionResponse(JSONObject jsonObject, String interactionId, String interactionToken) {
         String url = "/interactions/" + interactionId + "/" + interactionToken + "/callback";
         try (Response response = handleApiRequest(url, jsonObject, "POST", false)) {
-            System.out.println(new JSONObject(response.body().string()).toString(4));
             if (response != null) {
                 try {
                     processResponse(response, 40060, "Interaction has already been acknowledged", InteractionAlreadyAcknowledgedException.class);
@@ -77,8 +75,6 @@ public class ApiClient {
                     System.out.println("Failed to process response: " + e.getMessage());
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
     

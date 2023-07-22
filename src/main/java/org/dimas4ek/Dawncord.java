@@ -7,13 +7,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.dimas4ek.commands.Option;
-import org.dimas4ek.commands.SlashCommand;
-import org.dimas4ek.enities.types.OptionType;
+import org.dimas4ek.enities.guild.OptionChoice;
 import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
 import org.dimas4ek.event.option.creation.OptionCreationEvent;
-import org.dimas4ek.event.option.creation.OptionData;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEvent;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponse;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponseImpl;
@@ -27,7 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Dawncord {
     private WebSocket webSocket;
@@ -35,29 +31,35 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GQI9bJ.PCBlXPPXOQRgLWDw3nwJyaMfWHT24xXuZjW4w8")
+        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GVLdUD.nssljGLYBzYwCuMbDs1QtS_1Wx6eY4M2ejiGZs")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
         
+        /*List<OptionChoice> optionChoices = new ArrayList<>();
+        optionChoices.add(new OptionChoiceData("name1", "name1"));
+        
         dawncord.createGlobalSlashCommands(
             SlashCommand.create(
-                "test2",
-                "test2",
-                Option.addOptions(List.of(
-                    new OptionData(OptionType.STRING, "name3", "desc1", true),
-                    new OptionData(OptionType.STRING, "name4", "desc2", false)
-                ))
+                "test3",
+                "test3",
+                new OptionData(
+                    OptionType.STRING,
+                    "test3",
+                    "test3",
+                    false,
+                    optionChoices
+                )
             )
-        ).execute();
+        ).execute();*/
     }
     
-    public SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {
+    private SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", event.getName());
         jsonObject.put("description", event.getDescription());
         
         if (event.getOptions() != null) {
-            if (event.getOptions().size() == 1) {
+            /*if (event.getOptions().size() == 1) {
                 jsonObject.put("options", new JSONArray()
                     .put(new JSONObject()
                              .put("type", event.getOptions().get(0).getType().getValue())
@@ -66,6 +68,13 @@ public class Dawncord {
                              .put("required", event.getOptions().get(0).isRequired())
                     )
                 );
+                if (event.getOptions().get(0).getChoices().size() == 1) {
+                    jsonObject.getJSONArray("options")
+                        .put(new JSONObject()
+                                 .put("name", event.getOptions().get(0).getChoices().get(0).getName())
+                                 .put("value", event.getOptions().get(0).getChoices().get(0).getValue())
+                        );
+                }
             } else {
                 JSONArray jsonArray = new JSONArray();
                 for (OptionCreationEvent option : event.getOptions()) {
@@ -78,13 +87,41 @@ public class Dawncord {
                         );
                 }
                 jsonObject.put("options", jsonArray);
+            }*/
+            
+            JSONArray jsonArray = new JSONArray();
+            for (OptionCreationEvent option : event.getOptions()) {
+                JSONArray choicesArray = null;
+                if (option.getChoices() != null) {
+                    choicesArray = new JSONArray();
+                    for (OptionChoice choice : option.getChoices()) {
+                        choicesArray
+                            .put(new JSONObject()
+                                     .put("name", choice.getName())
+                                     .put("value", choice.getValue())
+                            );
+                    }
+                }
+                
+                jsonArray.
+                    put(new JSONObject()
+                            .put("type", option.getType().getValue())
+                            .put("name", option.getName())
+                            .put("description", option.getDescription())
+                            .put("required", option.isRequired())
+                            .put("choices", choicesArray)
+                    );
             }
+            
+            jsonObject.put("options", jsonArray);
         }
+        
+        System.out.println(jsonObject.toString(4));
         
         return new SlashCommandCreationResponseImpl(jsonObject);
     }
     
-    public Dawncord create(String BOT_TOKEN) {
+    private Dawncord create(String BOT_TOKEN) {
         WebSocketFactory factory = new WebSocketFactory();
         try {
             webSocket = factory.createSocket(Constants.GATEWAY);
@@ -123,7 +160,7 @@ public class Dawncord {
         }
     }
     
-    public Dawncord addSlashCommands(Event... slashCommands) {
+    private Dawncord addSlashCommands(Event... slashCommands) {
         for (Event command : slashCommands) {
             EventListener.addEventListener(command);
         }

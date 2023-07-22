@@ -3,7 +3,7 @@ package org.dimas4ek.interaction.response.interaction;
 import org.dimas4ek.api.ApiClient;
 import org.json.JSONObject;
 
-public class InteractionResponseImpl implements InteractionResponse{
+public class InteractionResponseImpl implements ResponseAction {
     private final JSONObject jsonObject;
     private final String interactionId;
     private final String interactionToken;
@@ -16,6 +16,6 @@ public class InteractionResponseImpl implements InteractionResponse{
     
     @Override
     public void execute() {
-        ApiClient.sendResponse(jsonObject, interactionId, interactionToken);
+        ApiClient.sendInteractionResponse(jsonObject, interactionId, interactionToken);
     }
 }

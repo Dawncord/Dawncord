@@ -1,5 +1,6 @@
 package org.dimas4ek.event.slashcommand.creation;
 
-public interface SlashCommandCreationResponse {
-    void execute();
+import org.dimas4ek.interaction.response.interaction.ResponseAction;
+
+public interface SlashCommandCreationResponse extends ResponseAction {
 }

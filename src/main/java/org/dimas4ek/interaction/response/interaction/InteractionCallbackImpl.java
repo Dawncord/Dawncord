@@ -15,8 +15,11 @@ public class InteractionCallbackImpl implements InteractionCallback {
     }
     
     @Override
-    public InteractionResponse setEphemeral(boolean ephemeral) {
+    public ResponseAction setEphemeral(boolean ephemeral) {
         if (ephemeral) {
+            if (jsonObject.isNull("data")) {
+                jsonObject.put("data", new JSONObject());
+            }
             jsonObject.getJSONObject("data")
                 .put("flags", 1 << 6);
         }
@@ -25,6 +28,6 @@ public class InteractionCallbackImpl implements InteractionCallback {
     
     @Override
     public void execute() {
-        ApiClient.sendResponse(jsonObject, interactionId, interactionToken);
+        ApiClient.sendInteractionResponse(jsonObject, interactionId, interactionToken);
     }
 }

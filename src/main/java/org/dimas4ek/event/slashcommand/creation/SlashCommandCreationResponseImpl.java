@@ -4,7 +4,7 @@ import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONObject;
 
-public class SlashCommandCreationResponseImpl implements SlashCommandCreationResponse{
+public class SlashCommandCreationResponseImpl implements SlashCommandCreationResponse {
     private final JSONObject jsonObject;
     
     public SlashCommandCreationResponseImpl(JSONObject jsonObject) {
