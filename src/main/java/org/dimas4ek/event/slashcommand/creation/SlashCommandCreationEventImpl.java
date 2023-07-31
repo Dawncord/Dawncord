@@ -1,6 +1,6 @@
 package org.dimas4ek.event.slashcommand.creation;
 
-import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.option.OptionCreationEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;

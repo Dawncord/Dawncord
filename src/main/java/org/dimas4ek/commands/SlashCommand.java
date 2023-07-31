@@ -1,6 +1,6 @@
 package org.dimas4ek.commands;
 
-import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.option.OptionCreationEvent;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEvent;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEventImpl;
 

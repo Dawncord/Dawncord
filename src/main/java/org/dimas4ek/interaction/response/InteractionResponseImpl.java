@@ -1,4 +1,4 @@
-package org.dimas4ek.interaction.response.interaction;
+package org.dimas4ek.interaction.response;
 
 import org.dimas4ek.api.ApiClient;
 import org.json.JSONObject;

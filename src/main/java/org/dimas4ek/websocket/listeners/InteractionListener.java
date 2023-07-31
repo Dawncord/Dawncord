@@ -6,11 +6,17 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
+import org.dimas4ek.event.option.OptionDataResolver;
+import org.dimas4ek.event.option.OptionDataResolverImpl;
 import org.dimas4ek.event.slashcommand.interaction.SlashCommandInteractionEventImpl;
 import org.dimas4ek.interaction.Interaction;
 import org.dimas4ek.interaction.InteractionImpl;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionListener extends WebSocketAdapter {
     @Override
@@ -34,16 +40,28 @@ public class InteractionListener extends WebSocketAdapter {
             String interactionId = d.getString("id");
             String interactionToken = d.getString("token");
             
+            JSONObject data = d.getJSONObject("data");
+            
             String guildId = d.getString("guild_id");
             String channelId = d.getString("channel_id");
-            String commandName = d.getJSONObject("data").getString("name");
+            String commandName = data.getString("name");
             
             if (type.equals("INTERACTION_CREATE")) {
                 
                 Interaction guildInteraction = new InteractionImpl(commandName, guildId, channelId);
                 
+                List<OptionDataResolver> optionDataResolverList = new ArrayList<>();
+                if (!data.isNull("options")) {
+                    JSONArray optionsArray = data.getJSONArray("options");
+                    for (int i = 0; i < optionsArray.length(); i++) {
+                        JSONObject option = optionsArray.getJSONObject(i);
+                        OptionDataResolver optionDataResolver = new OptionDataResolverImpl(option);
+                        optionDataResolverList.add(optionDataResolver);
+                    }
+                }
+                
                 SlashCommandInteractionEventImpl slashCommandInteractionEvent =
-                    new SlashCommandInteractionEventImpl(interactionId, interactionToken, guildInteraction);
+                    new SlashCommandInteractionEventImpl(interactionId, interactionToken, guildInteraction, optionDataResolverList);
                 
                 for (Event listener : EventListener.getEventListeners()) {
                     listener.onEvent((slashCommandInteractionEvent));

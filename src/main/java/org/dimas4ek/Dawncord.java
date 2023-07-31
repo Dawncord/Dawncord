@@ -7,10 +7,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dimas4ek.commands.OptionData;
+import org.dimas4ek.commands.SlashCommand;
 import org.dimas4ek.enities.guild.OptionChoice;
+import org.dimas4ek.enities.types.OptionType;
 import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
-import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.option.OptionCreationEvent;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationEvent;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponse;
 import org.dimas4ek.event.slashcommand.creation.SlashCommandCreationResponseImpl;
@@ -31,26 +34,22 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GVLdUD.nssljGLYBzYwCuMbDs1QtS_1Wx6eY4M2ejiGZs")
+        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GOyn2b.pNbbAJjJYpoYPDr6Z8LVib1OX4Agx_tprkC1Os")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
         
-        /*List<OptionChoice> optionChoices = new ArrayList<>();
-        optionChoices.add(new OptionChoiceData("name1", "name1"));
-        
         dawncord.createGlobalSlashCommands(
             SlashCommand.create(
-                "test3",
-                "test3",
+                "test2",
+                "test2",
                 new OptionData(
-                    OptionType.STRING,
-                    "test3",
-                    "test3",
-                    false,
-                    optionChoices
+                    OptionType.USER,
+                    "user",
+                    "user",
+                    false
                 )
             )
-        ).execute();*/
+        ).execute();
     }
     
     private SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {

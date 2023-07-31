@@ -10,13 +10,15 @@ import org.dimas4ek.enities.embed.Field;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
 import org.dimas4ek.enities.guild.OptionChoice;
+import org.dimas4ek.enities.guild.OptionItem;
 import org.dimas4ek.enities.types.InteractionType;
 import org.dimas4ek.enities.types.OptionType;
 import org.dimas4ek.event.entities.OptionChoiceData;
-import org.dimas4ek.event.entities.OptionData;
+import org.dimas4ek.event.entities.OptionItemImpl;
+import org.dimas4ek.event.option.OptionDataResolver;
 import org.dimas4ek.interaction.Interaction;
-import org.dimas4ek.interaction.response.interaction.InteractionCallback;
-import org.dimas4ek.interaction.response.interaction.InteractionCallbackImpl;
+import org.dimas4ek.interaction.response.InteractionCallback;
+import org.dimas4ek.interaction.response.InteractionCallbackImpl;
 import org.dimas4ek.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,11 +33,13 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
     private final String interactionId;
     private final String interactionToken;
     private final Interaction interaction;
+    private final List<OptionDataResolver> resolver;
     
-    public SlashCommandInteractionEventImpl(String interactionId, String interactionToken, Interaction interaction) {
+    public SlashCommandInteractionEventImpl(String interactionId, String interactionToken, Interaction interaction, List<OptionDataResolver> resolver) {
         this.interactionId = interactionId;
         this.interactionToken = interactionToken;
         this.interaction = interaction;
+        this.resolver = resolver;
     }
     
     @Override
@@ -139,8 +143,8 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
     }
     
     @Override
-    public List<OptionData> getOptions() {
-        List<OptionData> options = new ArrayList<>();
+    public List<OptionItem> getOptions() {
+        List<OptionItem> options = new ArrayList<>();
         JSONArray jsonArray = ApiClient.getApiResponseArray("/applications/" + Constants.APPLICATION_ID + "/commands");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -149,12 +153,14 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
                     JSONArray optionsArray = jsonObject.getJSONArray("options");
                     for (int j = 0; j < optionsArray.length(); j++) {
                         JSONObject option = optionsArray.getJSONObject(j);
-                        OptionData optionData = new OptionData(
+                        OptionItem optionData = new OptionItemImpl(
+                            getGuild(),
                             getOptionType(option.getInt("type")),
                             option.getString("name"),
                             option.getString("description"),
                             !option.isNull("required") && option.getBoolean("required"),
-                            getOptionChoices(option)
+                            getOptionChoices(option),
+                            resolver
                         );
                         options.add(optionData);
                     }

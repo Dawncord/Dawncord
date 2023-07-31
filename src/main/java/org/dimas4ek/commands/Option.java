@@ -2,8 +2,7 @@ package org.dimas4ek.commands;
 
 import org.dimas4ek.enities.guild.OptionChoice;
 import org.dimas4ek.enities.types.OptionType;
-import org.dimas4ek.event.entities.OptionData;
-import org.dimas4ek.event.option.creation.OptionCreationEvent;
+import org.dimas4ek.event.option.OptionCreationEvent;
 
 import java.util.List;
 
