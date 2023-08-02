@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GuildImpl implements Guild {
     private final JSONObject guild;
@@ -39,124 +42,150 @@ public class GuildImpl implements Guild {
     
     @Override
     public List<GuildChannel> getChannels() {
-        try {
-            JSONArray channelData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/channels");
-            List<GuildChannel> channelList = new ArrayList<>();
-            
-            for (int i = 0; i < channelData.length(); i++) {
-                JSONObject channel = channelData.getJSONObject(i);
-                channelList.add(new GuildChannelImpl(channel));
+        return getEntityList("/guilds/" + getId() + "/channels", GuildChannelImpl::new);
+    }
+    
+    @Override
+    public GuildChannel getChannelById(String id) {
+        for (GuildChannel channel : getChannels()) {
+            if (channel.getId().equals(id)) {
+                return channel;
             }
-            
-            return channelList;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
         }
+        return null;
+    }
+    
+    @Override
+    public List<GuildChannel> getChannelsByName(String name) {
+        List<GuildChannel> channels = new ArrayList<>();
+        for (GuildChannel channel : getChannels()) {
+            if (channel.getName().equals(name)) {
+                channels.add(channel);
+            }
+        }
+        return channels;
     }
     
     @Override
     public List<GuildMember> getMembers() {
-        JSONArray memberData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/members");
-        
-        List<GuildMember> memberList = new ArrayList<>();
-        
-        for (int i = 0; i < memberData.length(); i++) {
-            JSONObject member = memberData.getJSONObject(i);
-            memberList.add(new GuildMemberImpl(member, getId()));
-        }
-        
-        return memberList;
-        
+        return getEntityList("/guilds/" + getId() + "/members", (JSONObject member) -> new GuildMemberImpl(member, getId()));
     }
     
     @Override
     public List<GuildRole> getRoles() {
-        try {
-            JSONArray serverRoleData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/roles");
-            List<GuildRole> roleList = new ArrayList<>();
-            
-            for (int i = 0; i < serverRoleData.length(); i++) {
-                JSONObject serverRole = serverRoleData.getJSONObject(i);
-                roleList.add(new GuildRoleImpl(serverRole));
-            }
-            
-            return roleList;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        return getEntityList("/guilds/" + getId() + "/roles", GuildRoleImpl::new);
     }
     
     @Override
     public List<GuildRole> getRolesByName(String roleName) {
-        try {
-            JSONArray serverRoleData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/roles");
-            List<GuildRole> roleList = new ArrayList<>();
-            
-            for (int i = 0; i < serverRoleData.length(); i++) {
-                JSONObject serverRole = serverRoleData.getJSONObject(i);
-                if (serverRole.getString("name").equals(roleName)) {
-                    roleList.add(new GuildRoleImpl(serverRole));
-                }
-            }
-            
-            return roleList;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        return getRoles().stream()
+            .filter(role -> role.getName().equalsIgnoreCase(roleName))
+            .collect(Collectors.toList());
     }
     
     @Override
     public GuildRole getRoleById(String id) {
+        return getRoles().stream()
+            .filter(role -> role.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+    }
+    
+    private <T> List<T> getEntityList(String url, Function<JSONObject, T> constructor) {
         try {
-            JSONArray serverRoleData = ApiClient.getApiResponseArray("/guilds/" + getId() + "/roles");
+            JSONArray jsonArray = ApiClient.getApiResponseArray(url);
+            List<T> list = new ArrayList<>();
             
-            for (int i = 0; i < serverRoleData.length(); i++) {
-                JSONObject serverRole = serverRoleData.getJSONObject(i);
-                if (serverRole.getString("id").equals(id)) {
-                    return new GuildRoleImpl(serverRole);
-                }
+            for (int i = 0; i < jsonArray.length(); i++) {
+                list.add(constructor.apply(jsonArray.getJSONObject(i)));
             }
             
-            return null;
+            return list;
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
     
-    @Override
-    public void createTextChannel(String name) {
+    private void createChannel(String name, GuildChannelType type, GuildCategory category) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
-        jsonObject.put("type", GuildChannelType.GUILD_TEXT.getValue());
+        jsonObject.put("type", type.getValue());
+        if (category != null) {
+            jsonObject.put("parent_id", category.getId());
+        }
         ApiClient.postApiRequest("/guilds/" + getId() + "/channels", jsonObject);
+    }
+    
+    @Override
+    public void createTextChannel(String name) {
+        createChannel(name, GuildChannelType.GUILD_TEXT, null);
     }
     
     @Override
     public void createTextChannel(String name, GuildCategory category) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", name);
-        jsonObject.put("type", GuildChannelType.GUILD_TEXT.getValue());
-        jsonObject.put("parent_id", category.getId());
-        ApiClient.postApiRequest("/guilds/" + getId() + "/channels", jsonObject);
+        createChannel(name, GuildChannelType.GUILD_TEXT, category);
+    }
+    
+    @Override
+    public void createVoiceChannel(String name) {
+        createChannel(name, GuildChannelType.GUILD_VOICE, null);
+    }
+    
+    @Override
+    public void createVoiceChannel(String name, GuildCategory category) {
+        createChannel(name, GuildChannelType.GUILD_VOICE, category);
+    }
+    
+    @Override
+    public void createForumChannel(String name) {
+        createChannel(name, GuildChannelType.GUILD_FORUM, null);
+    }
+    
+    @Override
+    public void createForumChannel(String name, GuildCategory category) {
+        createChannel(name, GuildChannelType.GUILD_FORUM, category);
+    }
+    
+    @Override
+    public void createStageChannel(String name) {
+        createChannel(name, GuildChannelType.GUILD_STAGE_VOICE, null);
+    }
+    
+    @Override
+    public void createStageChannel(String name, GuildCategory category) {
+        createChannel(name, GuildChannelType.GUILD_STAGE_VOICE, category);
+    }
+    
+    @Override
+    public void createNewsChannel(String name) {
+        createChannel(name, GuildChannelType.GUILD_ANNOUNCEMENT, null);
+    }
+    
+    @Override
+    public void createNewsChannel(String name, GuildCategory category) {
+        createChannel(name, GuildChannelType.GUILD_ANNOUNCEMENT, category);
+    }
+    
+    @Override
+    public void createCategory(String name) {
+        createChannel(name, GuildChannelType.GUILD_CATEGORY, null);
     }
     
     @Override
     public GuildCategory getCategoryByName(String name) {
-        for (GuildChannel channel : getChannels()) {
-            if (channel.getName().equals(name) && channel.getType().equals("CATEGORY")) {
-                return new GuildCategoryImpl(channel);
-            }
-        }
-        return null;
+        return getCategory(channel -> channel.getName().equals(name));
     }
     
     @Override
     public GuildCategory getCategoryById(String id) {
-        for (GuildChannel channel : getChannels()) {
-            if (channel.getId().equals(id) && channel.getType().equals("CATEGORY")) {
-                return new GuildCategoryImpl(channel);
-            }
-        }
-        return null;
+        return getCategory(channel -> channel.getId().equals(id));
+    }
+    
+    private GuildCategory getCategory(Predicate<GuildChannel> predicate) {
+        return getChannels().stream()
+            .filter(channel -> channel.getType().equals("CATEGORY") && predicate.test(channel))
+            .map(GuildCategoryImpl::new)
+            .findFirst()
+            .orElse(null);
     }
 }

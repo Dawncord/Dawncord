@@ -7,10 +7,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.dimas4ek.commands.OptionData;
-import org.dimas4ek.commands.SlashCommand;
 import org.dimas4ek.enities.guild.OptionChoice;
-import org.dimas4ek.enities.types.OptionType;
 import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
 import org.dimas4ek.event.option.OptionCreationEvent;
@@ -34,22 +31,9 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GOyn2b.pNbbAJjJYpoYPDr6Z8LVib1OX4Agx_tprkC1Os")
+        dawncord.create("***")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
-        
-        dawncord.createGlobalSlashCommands(
-            SlashCommand.create(
-                "test2",
-                "test2",
-                new OptionData(
-                    OptionType.USER,
-                    "user",
-                    "user",
-                    false
-                )
-            )
-        ).execute();
     }
     
     private SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {
@@ -58,36 +42,6 @@ public class Dawncord {
         jsonObject.put("description", event.getDescription());
         
         if (event.getOptions() != null) {
-            /*if (event.getOptions().size() == 1) {
-                jsonObject.put("options", new JSONArray()
-                    .put(new JSONObject()
-                             .put("type", event.getOptions().get(0).getType().getValue())
-                             .put("name", event.getOptions().get(0).getName())
-                             .put("description", event.getOptions().get(0).getDescription())
-                             .put("required", event.getOptions().get(0).isRequired())
-                    )
-                );
-                if (event.getOptions().get(0).getChoices().size() == 1) {
-                    jsonObject.getJSONArray("options")
-                        .put(new JSONObject()
-                                 .put("name", event.getOptions().get(0).getChoices().get(0).getName())
-                                 .put("value", event.getOptions().get(0).getChoices().get(0).getValue())
-                        );
-                }
-            } else {
-                JSONArray jsonArray = new JSONArray();
-                for (OptionCreationEvent option : event.getOptions()) {
-                    jsonArray.
-                        put(new JSONObject()
-                                .put("type", option.getType().getValue())
-                                .put("name", option.getName())
-                                .put("description", option.getDescription())
-                                .put("required", option.isRequired())
-                        );
-                }
-                jsonObject.put("options", jsonArray);
-            }*/
-            
             JSONArray jsonArray = new JSONArray();
             for (OptionCreationEvent option : event.getOptions()) {
                 JSONArray choicesArray = null;

@@ -7,6 +7,7 @@ public class CommandTest extends Event {
     @Override
     public void onEvent(SlashCommandInteractionEvent event) {
         if (event.getCommandName().equals("test2")) {
+        
         }
     }
 }

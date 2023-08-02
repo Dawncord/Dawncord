@@ -9,11 +9,51 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class ApiClient {
     private static final OkHttpClient CLIENT = new OkHttpClient();
     
-    private static Response handleApiRequest(String url, JSONObject payload, String method, boolean authNeeded) {
+    private static Response handleApiRequest(String url, JSONObject payload, String method, Map<String, String> params) {
+        RequestBody requestBody = null;
+        if (payload != null) {
+            requestBody = RequestBody.create(payload.toString(), Constants.MEDIA_TYPE_JSON);
+        }
+        
+        url = Constants.API_URL + url;
+        
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
+        if (params != null) {
+            for(Map.Entry<String, String> param : params.entrySet()) {
+                urlBuilder.addQueryParameter(param.getKey(), param.getValue());
+            }
+        }
+        
+        // Request builder
+        Request.Builder requestBuilder = new Request.Builder().url(urlBuilder.build().toString());
+        
+        requestBuilder.addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
+        
+        if (method.equalsIgnoreCase("POST") && payload != null) {
+            requestBuilder.post(requestBody);
+        } else if (method.equalsIgnoreCase("GET")) {
+            requestBuilder.get();
+        }
+        
+        // Build the request
+        Request request = requestBuilder.build();
+        
+        // Execute the request and return the response
+        try {
+            return CLIENT.newCall(request).execute();
+        } catch (IOException e) {
+            System.out.println("Encountered IOException: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /*private static Response handleApiRequest(String url, JSONObject payload, String method, boolean authNeeded) {
         RequestBody requestBody = null;
         if (payload != null) {
             requestBody = RequestBody.create(payload.toString(), Constants.MEDIA_TYPE_JSON);
@@ -45,7 +85,7 @@ public class ApiClient {
             System.out.println("Encountered IOException: " + e.getMessage());
             return null;
         }
-    }
+    }*/
     
     private static void processResponse(Response response, int exCode, String exceptionMessage, Class<? extends RuntimeException> exceptionClass) throws
         IOException {
@@ -67,23 +107,14 @@ public class ApiClient {
     
     public static void sendInteractionResponse(JSONObject jsonObject, String interactionId, String interactionToken) {
         String url = "/interactions/" + interactionId + "/" + interactionToken + "/callback";
-        try (Response response = handleApiRequest(url, jsonObject, "POST", false)) {
+        try (Response response = handleApiRequest(url, jsonObject, "POST", null)) {
             if (response != null) {
                 try {
-                    processResponse(response, 40060, "Interaction has already been acknowledged", InteractionAlreadyAcknowledgedException.class);
-                } catch (IOException e) {
-                    System.out.println("Failed to process response: " + e.getMessage());
-                }
-            }
-        }
-    }
-    
-    public static void postApiRequest(String url, JSONObject jsonPayload) {
-        try (Response response = handleApiRequest(url, jsonPayload, "POST", true)) {
-            if (response != null) {
-                try {
-                    processResponse(response, 50035, "Required options must be placed before non-required options",
-                                    InvalidOptionOrderException.class
+                    processResponse(
+                        response,
+                        40060,
+                        "Interaction has already been acknowledged",
+                        InteractionAlreadyAcknowledgedException.class
                     );
                 } catch (IOException e) {
                     System.out.println("Failed to process response: " + e.getMessage());
@@ -92,8 +123,25 @@ public class ApiClient {
         }
     }
     
-    public static JSONObject getApiResponseObject(String url) throws RuntimeException {
-        try (Response response = handleApiRequest(url, null, "GET", true)) {
+    public static void postApiRequest(String url, JSONObject jsonPayload) {
+        try (Response response = handleApiRequest(url, jsonPayload, "POST", null)) {
+            if (response != null) {
+                try {
+                    processResponse(
+                        response,
+                        50035,
+                        "Required options must be placed before non-required options",
+                        InvalidOptionOrderException.class
+                    );
+                } catch (IOException e) {
+                    System.out.println("Failed to process response: " + e.getMessage());
+                }
+            }
+        }
+    }
+    
+    public static JSONObject getApiResponseObject(String url) {
+        try (Response response = handleApiRequest(url, null, "GET", null)) {
             
             if (response != null) {
                 try (ResponseBody body = response.body()) {
@@ -109,8 +157,25 @@ public class ApiClient {
         }
     }
     
-    public static JSONArray getApiResponseArray(String url) throws RuntimeException {
-        try (Response response = handleApiRequest(url, null, "GET", true)) {
+    public static JSONArray getApiResponseArray(String url) {
+        try (Response response = handleApiRequest(url, null, "GET", null)) {
+            
+            if (response != null) {
+                try (ResponseBody body = response.body()) {
+                    if (response.isSuccessful() && body != null) {
+                        return new JSONArray(body.string());
+                    }
+                    throw new RuntimeException("Unexpected response code: " + response.code());
+                } catch (IOException | JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            throw new RuntimeException("Response not available");
+        }
+    }
+    
+    public static JSONArray getApiResponseArray(String url, Map<String, String> params) {
+        try (Response response = handleApiRequest(url, null, "GET", params)) {
             
             if (response != null) {
                 try (ResponseBody body = response.body()) {
