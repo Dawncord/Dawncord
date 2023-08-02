@@ -1,11 +1,10 @@
 package org.dimas4ek.event.slashcommand.interaction;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.dimas4ek.api.ApiClient;
+import org.dimas4ek.api.exceptions.EmptyEmbedTitleException;
 import org.dimas4ek.enities.embed.Embed;
+import org.dimas4ek.enities.embed.EmbedImage;
 import org.dimas4ek.enities.embed.Field;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
@@ -23,7 +22,7 @@ import org.dimas4ek.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,16 +80,21 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
      * @param embed the Embed object to be sent as the reply
      */
     @Override
-    public void replyWithEmbed(Embed embed) {
-        if (embed == null) {
-            System.out.println("Empty response embed");
-            return;
-        }
-        
+    public InteractionCallback replyWithEmbed(Embed embed) {
         JSONObject jsonObject = new JSONObject();
-        JSONObject embedJsonObject = new JSONObject()
-            .put("title", embed.getTitle())
-            .put("description", embed.getDescription());
+        JSONObject embedJsonObject = new JSONObject();
+        
+        try {
+            embedJsonObject
+                .put("title", embed.getTitle())
+                .put("description", embed.getDescription());
+            
+            if (embed.getTitle() == null || embed.getTitle().isEmpty()) {
+                throw new EmptyEmbedTitleException("Embed title should not be empty");
+            }
+        } catch (EmptyEmbedTitleException e) {
+            e.printStackTrace();
+        }
         
         JSONArray fieldsJsonArray = new JSONArray();
         for (Field field : embed.getFields()) {
@@ -106,30 +110,49 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
         embedJsonObject.put("footer", new JSONObject()
             .put("text", embed.getFooter()));
         
-        RequestBody requestBody = RequestBody.create(
-            jsonObject
-                .put("type", InteractionType.CHANNEL_MESSAGE_WITH_SOURCE.getValue())
-                .put("data", new JSONObject()
-                    .put("embeds", new JSONArray().put(embedJsonObject)))
-                .toString(),
-            Constants.MEDIA_TYPE_JSON
-        );
+        embedJsonObject.put("color", embed.getColorRaw() & 16777215);
         
-        String url = String.format("%s/interactions/%s/%s/callback", Constants.API_URL, interactionId, interactionToken);
-        Request request = new Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build();
+        embedJsonObject.put("timestamp", embed.getTimeStamp());
         
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                System.out.println("Response executed successfully");
-            } else {
-                System.out.println("API request failed with status code: " + response.code() + " body: " + response.body().string());
-            }
-        } catch (IOException e) {
-            System.out.println("Encountered IOException: " + e.getMessage());
+        EmbedImage image = embed.getImage();
+        if (image != null) {
+            embedJsonObject.put("image", new JSONObject()
+                .put("url", embed.getImage().getUrl())
+                .put("width", embed.getImage().getWidth())
+                .put("height", embed.getImage().getHeight()));
         }
+        
+        EmbedImage thumbnail = embed.getThumbnail();
+        if (thumbnail != null) {
+            embedJsonObject.put("thumbnail", new JSONObject()
+                .put("url", embed.getThumbnail().getUrl())
+                .put("width", embed.getThumbnail().getWidth())
+                .put("height", embed.getThumbnail().getHeight()));
+        }
+        
+        jsonObject
+            .put("type", InteractionType.CHANNEL_MESSAGE_WITH_SOURCE.getValue())
+            .put("data", new JSONObject()
+                .put("embeds", new JSONArray().put(embedJsonObject)));
+        
+        System.out.println(jsonObject.toString(4));
+        
+        return new InteractionCallbackImpl(jsonObject, interactionId, interactionToken);
+    }
+    
+    public int getIntFromColor(Color color){
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        
+        int result = 0;
+        result += red;
+        result = result << 8;
+        result += green;
+        result = result << 8;
+        result += blue;
+        
+        return result;
     }
     
     @Override

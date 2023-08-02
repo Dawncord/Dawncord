@@ -7,7 +7,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dimas4ek.commands.OptionData;
+import org.dimas4ek.commands.SlashCommand;
 import org.dimas4ek.enities.guild.OptionChoice;
+import org.dimas4ek.enities.types.OptionType;
 import org.dimas4ek.event.Event;
 import org.dimas4ek.event.listeners.EventListener;
 import org.dimas4ek.event.option.OptionCreationEvent;
@@ -34,6 +37,19 @@ public class Dawncord {
         dawncord.create("***")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
+        
+        dawncord.createGlobalSlashCommands(
+            SlashCommand.create(
+                "test2",
+                "test2",
+                new OptionData(
+                    OptionType.USER,
+                    "user",
+                    "user",
+                    false
+                )
+            )
+        ).execute();
     }
     
     private SlashCommandCreationResponse createGlobalSlashCommands(SlashCommandCreationEvent event) {

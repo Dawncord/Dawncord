@@ -19,6 +19,7 @@ public class ApiClient {
         RequestBody requestBody = null;
         if (payload != null) {
             requestBody = RequestBody.create(payload.toString(), Constants.MEDIA_TYPE_JSON);
+            System.out.println(payload.toString(4));
         }
         
         url = Constants.API_URL + url;
@@ -90,6 +91,7 @@ public class ApiClient {
     private static void processResponse(Response response, int exCode, String exceptionMessage, Class<? extends RuntimeException> exceptionClass) throws
         IOException {
         try (ResponseBody body = response.body()) {
+            System.out.println(new JSONObject(body.string()).toString(4));
             if (response.isSuccessful()) {
                 System.out.println("Response executed successfully");
             } else {

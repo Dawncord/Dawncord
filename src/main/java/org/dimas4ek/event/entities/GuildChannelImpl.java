@@ -3,6 +3,8 @@ package org.dimas4ek.event.entities;
 import org.dimas4ek.api.ApiClient;
 import org.dimas4ek.enities.guild.GuildChannel;
 import org.dimas4ek.enities.guild.GuildChannelMessage;
+import org.dimas4ek.enities.guild.action.MessageCreateAction;
+import org.dimas4ek.enities.guild.action.MessageCreateActionImpl;
 import org.dimas4ek.enities.types.GuildChannelType;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,10 +41,10 @@ public class GuildChannelImpl implements GuildChannel {
     }
     
     @Override
-    public void sendMessage(String message) {
+    public MessageCreateAction sendMessage(String message) {
         JSONObject messagePayload = new JSONObject();
         messagePayload.put("content", message);
-        ApiClient.postApiRequest("/channels/" + getId() + "/messages", messagePayload);
+        return new MessageCreateActionImpl(messagePayload, getId());
     }
     
     @Override

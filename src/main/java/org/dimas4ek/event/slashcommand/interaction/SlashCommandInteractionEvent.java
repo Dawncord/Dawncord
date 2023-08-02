@@ -12,7 +12,7 @@ public interface SlashCommandInteractionEvent {
     String getCommandName();
     InteractionCallback reply(String message);
     InteractionCallback deferReply();
-    void replyWithEmbed(Embed embed);
+    InteractionCallback replyWithEmbed(Embed embed);
     Guild getGuild();
     GuildChannel getChannel();
     List<OptionItem> getOptions();
