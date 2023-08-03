@@ -2,10 +2,7 @@ package org.dimas4ek.event.slashcommand.interaction;
 
 import okhttp3.OkHttpClient;
 import org.dimas4ek.api.ApiClient;
-import org.dimas4ek.api.exceptions.EmptyEmbedTitleException;
 import org.dimas4ek.enities.embed.Embed;
-import org.dimas4ek.enities.embed.EmbedImage;
-import org.dimas4ek.enities.embed.Field;
 import org.dimas4ek.enities.guild.Guild;
 import org.dimas4ek.enities.guild.GuildChannel;
 import org.dimas4ek.enities.guild.OptionChoice;
@@ -19,6 +16,7 @@ import org.dimas4ek.interaction.Interaction;
 import org.dimas4ek.interaction.response.InteractionCallback;
 import org.dimas4ek.interaction.response.InteractionCallbackImpl;
 import org.dimas4ek.utils.Constants;
+import org.dimas4ek.utils.MessageUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -82,60 +80,8 @@ public class SlashCommandInteractionEventImpl implements SlashCommandInteraction
     @Override
     public InteractionCallback replyWithEmbed(Embed embed) {
         JSONObject jsonObject = new JSONObject();
-        JSONObject embedJsonObject = new JSONObject();
         
-        try {
-            embedJsonObject
-                .put("title", embed.getTitle())
-                .put("description", embed.getDescription());
-            
-            if (embed.getTitle() == null || embed.getTitle().isEmpty()) {
-                throw new EmptyEmbedTitleException("Embed title should not be empty");
-            }
-        } catch (EmptyEmbedTitleException e) {
-            e.printStackTrace();
-        }
-        
-        JSONArray fieldsJsonArray = new JSONArray();
-        for (Field field : embed.getFields()) {
-            fieldsJsonArray.put(new JSONObject()
-                                    .put("name", field.getName())
-                                    .put("value", field.getValue())
-                                    .put("inline", field.isInline()));
-        }
-        embedJsonObject.put("fields", fieldsJsonArray);
-        
-        embedJsonObject.put("author", new JSONObject()
-            .put("name", embed.getAuthor()));
-        embedJsonObject.put("footer", new JSONObject()
-            .put("text", embed.getFooter()));
-        
-        embedJsonObject.put("color", embed.getColorRaw() & 16777215);
-        
-        embedJsonObject.put("timestamp", embed.getTimeStamp());
-        
-        EmbedImage image = embed.getImage();
-        if (image != null) {
-            embedJsonObject.put("image", new JSONObject()
-                .put("url", embed.getImage().getUrl())
-                .put("width", embed.getImage().getWidth())
-                .put("height", embed.getImage().getHeight()));
-        }
-        
-        EmbedImage thumbnail = embed.getThumbnail();
-        if (thumbnail != null) {
-            embedJsonObject.put("thumbnail", new JSONObject()
-                .put("url", embed.getThumbnail().getUrl())
-                .put("width", embed.getThumbnail().getWidth())
-                .put("height", embed.getThumbnail().getHeight()));
-        }
-        
-        jsonObject
-            .put("type", InteractionType.CHANNEL_MESSAGE_WITH_SOURCE.getValue())
-            .put("data", new JSONObject()
-                .put("embeds", new JSONArray().put(embedJsonObject)));
-        
-        System.out.println(jsonObject.toString(4));
+        MessageUtils.createEmbed(embed, jsonObject);
         
         return new InteractionCallbackImpl(jsonObject, interactionId, interactionToken);
     }

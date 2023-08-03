@@ -34,7 +34,7 @@ public class Dawncord {
     public static void main(String[] args) {
         Dawncord dawncord = new Dawncord();
         
-        dawncord.create("***")
+        dawncord.create("NzU0Mzk0NTI2OTYwODQ0ODgx.GLaWI6.txaQ-RaG8GoMlx3uoETtAFY0MDgjaYofWTPzxY")
             .addSlashCommands(new CommandTest(), new PingCommand(), new PingCommand2())
             .build();
         

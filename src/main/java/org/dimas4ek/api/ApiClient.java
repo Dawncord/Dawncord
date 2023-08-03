@@ -91,12 +91,13 @@ public class ApiClient {
     private static void processResponse(Response response, int exCode, String exceptionMessage, Class<? extends RuntimeException> exceptionClass) throws
         IOException {
         try (ResponseBody body = response.body()) {
-            System.out.println(new JSONObject(body.string()).toString(4));
+            JSONObject bodyJson = new JSONObject(body.string());
+            System.out.println(bodyJson.toString(4));
             if (response.isSuccessful()) {
                 System.out.println("Response executed successfully");
             } else {
                 System.out.println("API request failed with status code: " + response.code());
-                if (new JSONObject(body.string()).getInt("code") == exCode) {
+                if (bodyJson.getInt("code") == exCode) {
                     try {
                         throw exceptionClass.getDeclaredConstructor(String.class).newInstance(exceptionMessage);
                     } catch (ReflectiveOperationException e) {
