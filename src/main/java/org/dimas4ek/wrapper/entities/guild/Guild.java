@@ -1,4 +1,10 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.guild;
+
+import org.dimas4ek.wrapper.entities.GuildBan;
+import org.dimas4ek.wrapper.entities.GuildMember;
+import org.dimas4ek.wrapper.entities.GuildRole;
+import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 
 import java.util.List;
 

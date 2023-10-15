@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.events;
 
-import org.dimas4ek.wrapper.entities.Guild;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 
 public interface SlashCommandEvent {
     String getCommandName();
