@@ -4,6 +4,7 @@ import org.dimas4ek.wrapper.entities.Guild;
 import org.dimas4ek.wrapper.entities.GuildChannel;
 import org.dimas4ek.wrapper.entities.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.Message;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 
 public class MessageEventImpl implements MessageEvent {
     private final Message message;
@@ -26,12 +27,12 @@ public class MessageEventImpl implements MessageEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return new GuildChannelImpl(channelId);
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
     }
 
     @Override
     public GuildChannel getChannelById(long channelId) {
-        return new GuildChannelImpl(String.valueOf(channelId));
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
     }
 
     @Override

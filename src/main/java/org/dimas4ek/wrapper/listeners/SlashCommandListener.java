@@ -5,8 +5,14 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.interaction.Interaction;
+import org.dimas4ek.wrapper.entities.Guild;
+import org.dimas4ek.wrapper.entities.GuildChannel;
+import org.dimas4ek.wrapper.entities.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.GuildImpl;
 import org.dimas4ek.wrapper.events.SlashCommandEvent;
 import org.dimas4ek.wrapper.events.SlashCommandEventImpl;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,7 +43,12 @@ public class SlashCommandListener extends WebSocketAdapter {
                 String interactionId = d.getString("id");
                 String interactionToken = d.getString("token");
 
-                SlashCommandEvent slashCommandEvent = new SlashCommandEventImpl(commandName, interactionId, interactionToken);
+                Guild guild = new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId));
+                GuildChannel guildChannel = new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
+
+                Interaction response = new Interaction(interactionId, interactionToken, guild, guildChannel);
+
+                SlashCommandEvent slashCommandEvent = new SlashCommandEventImpl(commandName, response);
 
                 Dawncord.processSlashCommand(slashCommandEvent);
             }
