@@ -1,8 +1,8 @@
 package org.dimas4ek.wrapper.events;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.interaction.Interaction;
-import org.dimas4ek.wrapper.entities.Guild;
 import org.json.JSONObject;
 
 public class SlashCommandEventImpl implements SlashCommandEvent {

@@ -1,9 +1,9 @@
 package org.dimas4ek.wrapper.events;
 
-import org.dimas4ek.wrapper.entities.Guild;
-import org.dimas4ek.wrapper.entities.GuildChannel;
-import org.dimas4ek.wrapper.entities.GuildChannelImpl;
-import org.dimas4ek.wrapper.entities.Message;
+import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
 public class MessageEventImpl implements MessageEvent {

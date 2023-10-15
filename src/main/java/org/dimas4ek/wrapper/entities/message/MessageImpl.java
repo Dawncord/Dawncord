@@ -1,4 +1,6 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.message;
+
+import org.dimas4ek.wrapper.entities.User;
 
 public class MessageImpl implements Message{
     private final String content;

@@ -1,6 +1,9 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.*;
+import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
