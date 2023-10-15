@@ -1,17 +1,17 @@
 package org.dimas4ek.wrapper.events;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.interaction.Interaction;
+import org.dimas4ek.wrapper.entities.Guild;
 import org.json.JSONObject;
 
 public class SlashCommandEventImpl implements SlashCommandEvent {
     private final String commandName;
-    private final String interactionId;
-    private final String interactionToken;
+    private final Interaction response;
 
-    public SlashCommandEventImpl(String commandName, String interactionId, String interactionToken) {
+    public SlashCommandEventImpl(String commandName, Interaction response) {
         this.commandName = commandName;
-        this.interactionId = interactionId;
-        this.interactionToken = interactionToken;
+        this.response = response;
     }
 
     @Override
@@ -30,8 +30,13 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
                 .put("data", new JSONObject()
                         .put("content", message));
 
-        String url = "/interactions/" + interactionId + "/" + interactionToken + "/callback";
+        String url = "/interactions/" + response.getInteractionId() + "/" + response.getInteractionToken() + "/callback";
 
         ApiClient.post(jsonObject, url);
+    }
+
+    @Override
+    public Guild getGuild() {
+        return response.getGuild();
     }
 }

@@ -4,9 +4,11 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Dawncord;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.events.MessageEventImpl;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,8 +29,6 @@ public class MessageListener extends WebSocketAdapter {
             JSONObject d = json.getJSONObject("d");
             String type = json.getString("t");
 
-            String id = d.getString("id");
-
             String guildId = d.getString("guild_id");
             String channelId = d.getString("channel_id");
 
@@ -37,11 +37,13 @@ public class MessageListener extends WebSocketAdapter {
                 JSONObject author = d.getJSONObject("author");
                 String userId = author.getString("id");
 
-                User user = new UserImpl(userId);
+                User user = new UserImpl(ApiClient.getJsonObject("/users/" + userId));
 
-                GuildChannel guildChannel = new GuildChannelImpl(channelId);
+                JSONObject channel = JsonUtils.fetchEntity("/channels/" + channelId);
+                GuildChannel guildChannel = new GuildChannelImpl(channel);
 
                 Message message = new MessageImpl(content, user);
+
                 MessageEventImpl messageEvent = new MessageEventImpl(message, guildChannel);
 
                 Dawncord.processMessage(messageEvent);
