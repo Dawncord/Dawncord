@@ -14,11 +14,15 @@ import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.listeners.SlashCommandListener;
 import org.dimas4ek.wrapper.slashcommand.Option;
 import org.dimas4ek.wrapper.slashcommand.SlashCommand;
+import org.dimas4ek.wrapper.types.Locale;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Dawncord {
@@ -115,9 +119,9 @@ public class Dawncord {
             jsonObject.put("name", slashCommand.getName());
             jsonObject.put("description", slashCommand.getDescription());
 
-            if (!slashCommand.getOptionList().isEmpty()) {
-                setOptions(slashCommand, jsonObject);
-            }
+            setOptions(slashCommand, jsonObject);
+
+            setLocalizations(slashCommand, jsonObject);
 
             System.out.println(jsonObject.toString(4));
 
@@ -127,12 +131,31 @@ public class Dawncord {
         }
     }
 
-    private static void setOptions(SlashCommand slashCommand, JSONObject jsonObject) {
-        JSONArray optionsJson = new JSONArray();
-        for (Option option : slashCommand.getOptionList()) {
-            optionsJson.put(setOption(option));
+    private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
+        if (!slashCommand.getLocalizedNameList().isEmpty()) {
+            JSONObject nameLocalizations = new JSONObject();
+            for (Map.Entry<Locale, String> name : slashCommand.getLocalizedNameList().entrySet()) {
+                nameLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
+            }
+            jsonObject.put("name_localizations", nameLocalizations);
         }
-        jsonObject.put("options", optionsJson);
+        if (!slashCommand.getLocalizedDescriptionList().isEmpty()) {
+            JSONObject descriptionLocalizations = new JSONObject();
+            for (Map.Entry<Locale, String> name : slashCommand.getLocalizedDescriptionList().entrySet()) {
+                descriptionLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
+            }
+            jsonObject.put("description_localizations", descriptionLocalizations);
+        }
+    }
+
+    private static void setOptions(SlashCommand slashCommand, JSONObject jsonObject) {
+        if (!slashCommand.getOptionList().isEmpty()) {
+            JSONArray optionsJson = new JSONArray();
+            for (Option option : slashCommand.getOptionList()) {
+                optionsJson.put(setOption(option));
+            }
+            jsonObject.put("options", optionsJson);
+        }
     }
 
     @NotNull

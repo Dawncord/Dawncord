@@ -13,7 +13,7 @@ public class Option {
     private final String name;
     private final String description;
     private final boolean isRequired;
-    private final boolean isAutocomplete;
+    private final boolean isAutocomplete; //TODO add autocomplete
     private final List<Choice> choicesList = new ArrayList<>();
 
     public Option(OptionType type, String name, String description) {
