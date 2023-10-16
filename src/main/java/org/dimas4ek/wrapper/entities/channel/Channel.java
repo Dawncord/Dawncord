@@ -8,8 +8,8 @@ public interface Channel {
     String getName();
     String getType();
     Message getLastMessage();
-    Message getMessageById(String id);
-    Message getMessageById(long id);
+    Message getMessageById(String messageId);
+    Message getMessageById(long messageId);
     boolean isNsfw();
     GuildCategory getCategory();
     String getAsMention();

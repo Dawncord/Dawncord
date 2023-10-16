@@ -1,6 +1,8 @@
 package org.dimas4ek.wrapper.events;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.interaction.Interaction;
 import org.json.JSONObject;
@@ -38,5 +40,20 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     @Override
     public Guild getGuild() {
         return response.getGuild();
+    }
+
+    @Override
+    public GuildChannel getChannel() {
+        return response.getGuildChannel();
+    }
+
+    @Override
+    public GuildChannel getChannelById(String id) {
+        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + id));
+    }
+
+    @Override
+    public GuildChannel getChannelById(long id) {
+        return getChannelById(String.valueOf(id));
     }
 }

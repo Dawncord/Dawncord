@@ -34,20 +34,15 @@ public class MessageListener extends WebSocketAdapter {
             JSONObject d = json.getJSONObject("d");
             String type = json.getString("t");
 
-            String guildId = d.getString("guild_id");
             String channelId = d.getString("channel_id");
 
             if (type.equals("MESSAGE_CREATE")) {
-                String content = d.getString("content");
-                JSONObject author = d.getJSONObject("author");
-                String userId = author.getString("id");
-
-                User user = new UserImpl(ApiClient.getJsonObject("/users/" + userId));
+                String messageId = d.getString("id");
 
                 JSONObject channel = JsonUtils.fetchEntity("/channels/" + channelId);
                 GuildChannel guildChannel = new GuildChannelImpl(channel);
 
-                Message message = new MessageImpl(content, user);
+                Message message = new MessageImpl(ApiClient.getJsonObject("/channels/" + channelId + "/messages/" + messageId));
 
                 MessageEventImpl messageEvent = new MessageEventImpl(message, guildChannel);
 

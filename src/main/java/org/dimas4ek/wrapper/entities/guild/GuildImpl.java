@@ -4,6 +4,7 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildChannel> getChannels() {
         JSONArray channels = ApiClient.getJsonArray("/guilds/" + getId() + "/channels");
-        return getEntityList(channels, GuildChannelImpl::new);
+        return JsonUtils.getEntityList(channels, GuildChannelImpl::new);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildMember> getMembers() {
         JSONArray members = ApiClient.getJsonArray("/guilds/" + getId() + "/members");
-        return getEntityList(members, GuildMemberImpl::new);
+        return JsonUtils.getEntityList(members, GuildMemberImpl::new);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GuildImpl implements Guild {
                 )
         );
 
-        return getEntityList(members, GuildMemberImpl::new);
+        return JsonUtils.getEntityList(members, GuildMemberImpl::new);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildBan> getBans() {
         JSONArray bans = ApiClient.getJsonArray("/guilds/" + getId() + "/bans");
-        return getEntityList(bans, GuildBanImpl::new);
+        return JsonUtils.getEntityList(bans, GuildBanImpl::new);
     }
 
     @Override
@@ -119,7 +120,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildRole> getRoles() {
         JSONArray roles = ApiClient.getJsonArray("/guilds/" + getId() + "/roles");
-        return getEntityList(roles, GuildRoleImpl::new);
+        return JsonUtils.getEntityList(roles, GuildRoleImpl::new);
     }
 
     @Override
@@ -135,21 +136,5 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildRole> getRolesByName(String roleName) {
         return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
-    }
-
-    private <T> List<T> getEntityList(JSONArray jsonArray, Function<JSONObject, T> constructor) {
-        try {
-            List<T> list = new ArrayList<>();
-
-            if (jsonArray != null) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    list.add(constructor.apply(jsonArray.getJSONObject(i)));
-                }
-            }
-
-            return list;
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

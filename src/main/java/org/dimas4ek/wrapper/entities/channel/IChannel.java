@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.message.Message;
+import org.dimas4ek.wrapper.entities.message.MessageImpl;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.json.JSONObject;
 
@@ -44,17 +45,17 @@ public class IChannel implements Channel {
 
     @Override
     public Message getLastMessage() {
-        return null;
+        return new MessageImpl(ApiClient.getJsonObject("/channels/" + getId() + "/messages/" + channel.getString("last_message_id")));
     }
 
     @Override
-    public Message getMessageById(String id) {
-        return null;
+    public Message getMessageById(String messageId) {
+        return new MessageImpl(ApiClient.getJsonObject("/channels/" + getId() + "/messages/" + messageId));
     }
 
     @Override
-    public Message getMessageById(long id) {
-        return null;
+    public Message getMessageById(long messageId) {
+        return getMessageById(String.valueOf(messageId));
     }
 
     @Override
