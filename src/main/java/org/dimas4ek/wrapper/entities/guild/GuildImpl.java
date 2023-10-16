@@ -4,15 +4,14 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class GuildImpl implements Guild {
     private final JSONObject guild;
