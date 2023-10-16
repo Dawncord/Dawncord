@@ -12,8 +12,8 @@ public class Option {
     private final OptionType type;
     private final String name;
     private final String description;
-    private final boolean isRequired;
-    private final boolean isAutocomplete; //TODO add autocomplete
+    private boolean isRequired;
+    private boolean isAutocomplete; //TODO add autocomplete
     private final List<Choice> choicesList = new ArrayList<>();
 
     public Option(OptionType type, String name, String description) {
@@ -40,6 +40,14 @@ public class Option {
         this.isAutocomplete = isAutocomplete;
     }
 
+    public void setRequired(boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public void setAutocomplete(boolean isAutocomplete) {
+        this.isAutocomplete = isAutocomplete;
+    }
+
     public void addChoice(Choice choice) {
         choicesList.add(choice);
     }
@@ -59,3 +67,4 @@ public class Option {
         }
     }
 }
+

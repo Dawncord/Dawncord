@@ -12,17 +12,13 @@ import org.dimas4ek.wrapper.events.SlashCommandEvent;
 import org.dimas4ek.wrapper.listeners.MainListener;
 import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.listeners.SlashCommandListener;
-import org.dimas4ek.wrapper.slashcommand.Option;
 import org.dimas4ek.wrapper.slashcommand.SlashCommand;
-import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class Dawncord {
@@ -119,9 +115,9 @@ public class Dawncord {
             jsonObject.put("name", slashCommand.getName());
             jsonObject.put("description", slashCommand.getDescription());
 
-            setOptions(slashCommand, jsonObject);
+            /*setOptions(slashCommand, jsonObject);
 
-            setLocalizations(slashCommand, jsonObject);
+            setLocalizations(slashCommand, jsonObject);*/
 
             System.out.println(jsonObject.toString(4));
 
@@ -131,7 +127,12 @@ public class Dawncord {
         }
     }
 
-    private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
+    public List<SlashCommand> getSlashCommands() {
+        JSONArray commands = ApiClient.getJsonArray("/applications/" + Constants.APPLICATION_ID + "/commands");
+        return JsonUtils.getEntityList(commands, SlashCommand::new);
+    }
+
+    /*private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
         if (!slashCommand.getLocalizedNameList().isEmpty()) {
             JSONObject nameLocalizations = new JSONObject();
             for (Map.Entry<Locale, String> name : slashCommand.getLocalizedNameList().entrySet()) {
@@ -185,5 +186,5 @@ public class Dawncord {
             choicesJson.put(choiceJson);
         }
         optionJson.put("choices", choicesJson);
-    }
+    }*/
 }
