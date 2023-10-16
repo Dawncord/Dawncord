@@ -12,6 +12,10 @@ import org.dimas4ek.wrapper.events.SlashCommandEvent;
 import org.dimas4ek.wrapper.listeners.MainListener;
 import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.listeners.SlashCommandListener;
+import org.dimas4ek.wrapper.slashcommand.Option;
+import org.dimas4ek.wrapper.slashcommand.SlashCommand;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -111,9 +115,52 @@ public class Dawncord {
             jsonObject.put("name", slashCommand.getName());
             jsonObject.put("description", slashCommand.getDescription());
 
+            if (!slashCommand.getOptionList().isEmpty()) {
+                setOptions(slashCommand, jsonObject);
+            }
+
+            System.out.println(jsonObject.toString(4));
+
             String url = "/applications/" + Constants.APPLICATION_ID + "/commands";
 
             ApiClient.post(jsonObject, url);
         }
+    }
+
+    private static void setOptions(SlashCommand slashCommand, JSONObject jsonObject) {
+        JSONArray optionsJson = new JSONArray();
+        for (Option option : slashCommand.getOptionList()) {
+            optionsJson.put(setOption(option));
+        }
+        jsonObject.put("options", optionsJson);
+    }
+
+    @NotNull
+    private static JSONObject setOption(Option option) {
+        JSONObject optionJson = new JSONObject();
+        optionJson.put("type", option.getType().getValue());
+        optionJson.put("name", option.getName());
+        optionJson.put("description", option.getDescription());
+        if (option.isRequired()) {
+            optionJson.put("required", true);
+        }
+        if (option.isAutocomplete()) {
+            optionJson.put("autocomplete", true);
+        }
+        if (!option.getChoicesList().isEmpty()) {
+            setChoices(option, optionJson);
+        }
+        return optionJson;
+    }
+
+    private static void setChoices(Option option, JSONObject optionJson) {
+        JSONArray choicesJson = new JSONArray();
+        for (Option.Choice choice : option.getChoicesList()) {
+            JSONObject choiceJson = new JSONObject();
+            choiceJson.put("name", choice.getName());
+            choiceJson.put("value", choice.getValue());
+            choicesJson.put(choiceJson);
+        }
+        optionJson.put("choices", choicesJson);
     }
 }

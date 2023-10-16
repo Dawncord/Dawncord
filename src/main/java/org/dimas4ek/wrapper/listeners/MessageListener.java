@@ -6,8 +6,6 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Dawncord;
-import org.dimas4ek.wrapper.entities.User;
-import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.message.Message;

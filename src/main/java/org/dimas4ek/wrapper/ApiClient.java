@@ -2,15 +2,10 @@ package org.dimas4ek.wrapper;
 
 import okhttp3.*;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 
 public class ApiClient {
     private static final OkHttpClient CLIENT = new OkHttpClient();

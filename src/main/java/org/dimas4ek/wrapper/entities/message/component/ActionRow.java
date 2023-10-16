@@ -1,6 +1,5 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
-import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
