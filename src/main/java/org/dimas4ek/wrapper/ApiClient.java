@@ -41,7 +41,7 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
-                        System.out.println(new JSONObject(body).toString(4));
+                        System.out.println(new JSONObject(body.string()).toString(4));
                     }
                 }
             }

@@ -13,23 +13,23 @@ import org.dimas4ek.wrapper.listeners.MainListener;
 import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.listeners.SlashCommandListener;
 import org.dimas4ek.wrapper.slashcommand.SlashCommand;
+import org.dimas4ek.wrapper.slashcommand.option.Option;
+import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Dawncord {
     private final WebSocket webSocket;
-    private final String token;
     private static Consumer<MessageEvent> onMessageHandler;
     private static Consumer<SlashCommandEvent> onSlashCommandHandler;
 
     public Dawncord(String token) {
-        this.token = token;
-
         WebSocketFactory factory = new WebSocketFactory();
         try {
             webSocket = factory.createSocket(Constants.GATEWAY);
@@ -115,11 +115,13 @@ public class Dawncord {
             jsonObject.put("name", slashCommand.getName());
             jsonObject.put("description", slashCommand.getDescription());
 
-            /*setOptions(slashCommand, jsonObject);
+            try {
+                setOptions(slashCommand, jsonObject);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
 
-            setLocalizations(slashCommand, jsonObject);*/
-
-            System.out.println(jsonObject.toString(4));
+            setLocalizations(slashCommand, jsonObject);
 
             String url = "/applications/" + Constants.APPLICATION_ID + "/commands";
 
@@ -132,17 +134,17 @@ public class Dawncord {
         return JsonUtils.getEntityList(commands, SlashCommand::new);
     }
 
-    /*private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
-        if (!slashCommand.getLocalizedNameList().isEmpty()) {
+    private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
+        if (!slashCommand.getNameLocalizations().isEmpty()) {
             JSONObject nameLocalizations = new JSONObject();
-            for (Map.Entry<Locale, String> name : slashCommand.getLocalizedNameList().entrySet()) {
+            for (Map.Entry<Locale, String> name : slashCommand.getNameLocalizations().entrySet()) {
                 nameLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
             }
             jsonObject.put("name_localizations", nameLocalizations);
         }
-        if (!slashCommand.getLocalizedDescriptionList().isEmpty()) {
+        if (!slashCommand.getDescriptionLocalizations().isEmpty()) {
             JSONObject descriptionLocalizations = new JSONObject();
-            for (Map.Entry<Locale, String> name : slashCommand.getLocalizedDescriptionList().entrySet()) {
+            for (Map.Entry<Locale, String> name : slashCommand.getDescriptionLocalizations().entrySet()) {
                 descriptionLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
             }
             jsonObject.put("description_localizations", descriptionLocalizations);
@@ -150,16 +152,24 @@ public class Dawncord {
     }
 
     private static void setOptions(SlashCommand slashCommand, JSONObject jsonObject) {
-        if (!slashCommand.getOptionList().isEmpty()) {
+        List<Option> options = slashCommand.getOptions();
+        if (!options.isEmpty()) {
             JSONArray optionsJson = new JSONArray();
-            for (Option option : slashCommand.getOptionList()) {
+            boolean foundFalse = false;
+            for (Option option : options) {
+                if (option.isRequired()) {
+                    if (foundFalse) {
+                        throw new IllegalArgumentException("Required options must be placed before non-required options");
+                    }
+                } else {
+                    foundFalse = true;
+                }
                 optionsJson.put(setOption(option));
             }
             jsonObject.put("options", optionsJson);
         }
     }
 
-    @NotNull
     private static JSONObject setOption(Option option) {
         JSONObject optionJson = new JSONObject();
         optionJson.put("type", option.getType().getValue());
@@ -171,7 +181,7 @@ public class Dawncord {
         if (option.isAutocomplete()) {
             optionJson.put("autocomplete", true);
         }
-        if (!option.getChoicesList().isEmpty()) {
+        if (!option.getChoices().isEmpty()) {
             setChoices(option, optionJson);
         }
         return optionJson;
@@ -179,12 +189,12 @@ public class Dawncord {
 
     private static void setChoices(Option option, JSONObject optionJson) {
         JSONArray choicesJson = new JSONArray();
-        for (Option.Choice choice : option.getChoicesList()) {
+        for (Option.Choice choice : option.getChoices()) {
             JSONObject choiceJson = new JSONObject();
             choiceJson.put("name", choice.getName());
             choiceJson.put("value", choice.getValue());
             choicesJson.put(choiceJson);
         }
         optionJson.put("choices", choicesJson);
-    }*/
+    }
 }

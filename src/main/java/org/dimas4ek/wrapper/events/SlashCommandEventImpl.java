@@ -4,27 +4,30 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.interaction.Interaction;
+import org.dimas4ek.wrapper.interaction.InteractionData;
+import org.dimas4ek.wrapper.slashcommand.option.OptionData;
 import org.json.JSONObject;
 
-public class SlashCommandEventImpl implements SlashCommandEvent {
-    private final String commandName;
-    private final Interaction response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-    public SlashCommandEventImpl(String commandName, Interaction response) {
-        this.commandName = commandName;
-        this.response = response;
+public class SlashCommandEventImpl implements SlashCommandEvent {
+    private final InteractionData data;
+
+    public SlashCommandEventImpl(InteractionData data) {
+        this.data = data;
     }
 
     @Override
     public String getCommandName() {
-        return commandName;
+        return data.getSlashCommand().getName();
     }
 
     @Override
     public void reply(String message) {
         if (message == null || message.isEmpty()) {
-            System.out.println("Empty response text");
+            System.out.println("Empty data.getResponse() text");
         }
 
         JSONObject jsonObject = new JSONObject()
@@ -32,28 +35,44 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
                 .put("data", new JSONObject()
                         .put("content", message));
 
-        String url = "/interactions/" + response.getInteractionId() + "/" + response.getInteractionToken() + "/callback";
+        String url = "/interactions/" + data.getResponse().getInteractionId() + "/" + data.getResponse().getInteractionToken() + "/callback";
 
         ApiClient.post(jsonObject, url);
     }
 
     @Override
     public Guild getGuild() {
-        return response.getGuild();
+        return data.getResponse().getGuild();
     }
 
     @Override
     public GuildChannel getChannel() {
-        return response.getGuildChannel();
+        return data.getResponse().getGuildChannel();
     }
 
     @Override
-    public GuildChannel getChannelById(String id) {
-        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + id));
+    public GuildChannel getChannelById(String channelId) {
+        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + channelId));
     }
 
     @Override
-    public GuildChannel getChannelById(long id) {
-        return getChannelById(String.valueOf(id));
+    public GuildChannel getChannelById(long channelId) {
+        return getChannelById(String.valueOf(channelId));
+    }
+
+    @Override
+    public List<OptionData> getOptions() {
+        List<OptionData> optionDataList = new ArrayList<>();
+        for (Map<String, Object> map : data.getOptions()) {
+            OptionData optionData = new OptionData(map);
+            optionDataList.add(optionData);
+        }
+
+        return optionDataList;
+    }
+
+    @Override
+    public OptionData getOption(String name) {
+        return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
     }
 }

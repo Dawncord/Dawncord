@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.slashcommand;
 
+import org.dimas4ek.wrapper.slashcommand.option.Option;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
 import org.jetbrains.annotations.NotNull;
@@ -118,14 +119,17 @@ public class SlashCommand implements Command {
 
     @NotNull
     private Map<Locale, String> getLocaleStringMap(String localizations) {
-        Map<Locale, String> map = new EnumMap<>(Locale.class);
-        JSONObject nameLocalizations = command.getJSONObject(localizations);
-        for (int i = 0; i < nameLocalizations.length(); i++) {
-            for (String key : nameLocalizations.keySet()) {
-                String value = nameLocalizations.getString(key);
-                map.put(Locale.valueOf(key), value);
+        if (command.has(localizations)) {
+            Map<Locale, String> map = new EnumMap<>(Locale.class);
+            JSONObject nameLocalizations = command.getJSONObject(localizations);
+            for (int i = 0; i < nameLocalizations.length(); i++) {
+                for (String key : nameLocalizations.keySet()) {
+                    String value = nameLocalizations.getString(key);
+                    map.put(Locale.valueOf(key), value);
+                }
             }
+            return map;
         }
-        return map;
+        return Collections.emptyMap();
     }
 }

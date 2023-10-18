@@ -13,7 +13,7 @@ public interface Message {
     String getType();
     GuildChannel getChannel();
     String getContent();
-    User getUser();
+    User getFrom();
     List<Attachment> getAttachments();
     List<Embed> getEmbeds();
     List<User> getMentions();
