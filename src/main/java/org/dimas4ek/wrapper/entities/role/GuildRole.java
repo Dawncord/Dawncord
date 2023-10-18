@@ -1,9 +1,11 @@
 package org.dimas4ek.wrapper.entities.role;
 
+import org.dimas4ek.wrapper.entities.Mentionable;
+
 import java.awt.*;
 import java.util.List;
 
-public interface GuildRole {
+public interface GuildRole extends Mentionable {
     String getId();
     String getName();
     String getDescription();
@@ -13,6 +15,5 @@ public interface GuildRole {
     boolean isPinned();
     boolean isManaged();
     boolean isMentionable();
-    List<Tag> getTags();
-    List<String> getFlags();
+    Tags getTags();
 }

@@ -1,8 +1,6 @@
 package org.dimas4ek.wrapper.entities.role;
 
 import org.dimas4ek.wrapper.types.PermissionType;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -69,14 +67,13 @@ public class GuildRoleImpl implements GuildRole{
     }
 
     @Override
-    public List<Tag> getTags() {
-        JSONArray tags = role.getJSONArray("tags");
-        return JsonUtils.getEntityList(tags, Tag::new);
+    public Tags getTags() {
+        JSONObject tags = role.getJSONObject("tags");
+        return new Tags(tags);
     }
 
     @Override
-    public List<String> getFlags() {
-        //TODO return flags
-        return null;
+    public String getAsMention() {
+        return "<@&" + getId() + ">";
     }
 }

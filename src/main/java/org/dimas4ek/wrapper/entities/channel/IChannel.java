@@ -3,7 +3,6 @@ package org.dimas4ek.wrapper.entities.channel;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
-import org.dimas4ek.wrapper.types.ChannelType;
 import org.json.JSONObject;
 
 public class IChannel implements Channel {
@@ -14,6 +13,11 @@ public class IChannel implements Channel {
     }
 
     @Override
+    public boolean isNsfw() {
+        return channel.getBoolean("nsfw");
+    }
+
+    @Override
     public String getId() {
         return channel.getString("id");
     }
@@ -21,26 +25,6 @@ public class IChannel implements Channel {
     @Override
     public long getIdLong() {
         return Long.parseLong(getId());
-    }
-
-    @Override
-    public String getName() {
-        return channel.getString("name");
-    }
-
-    @Override
-    public String getType() {
-        for (ChannelType type : ChannelType.values()) {
-            if (channel.getInt("type") == type.getValue()) {
-                return type.toString();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isNsfw() {
-        return channel.getBoolean("nsfw");
     }
 
     @Override
@@ -60,12 +44,15 @@ public class IChannel implements Channel {
 
     @Override
     public GuildCategory getCategory() {
-        JSONObject category = ApiClient.getJsonObject("/channels/" + channel.getString("parent_id"));
-        return new GuildCategoryImpl(category);
+        if (channel.get("parent_id") != null) {
+            JSONObject category = ApiClient.getJsonObject("/channels/" + channel.getString("parent_id"));
+            return new GuildCategoryImpl(category);
+        }
+        return null;
     }
 
     @Override
     public String getAsMention() {
-        return null;
+        return "<#" + getId() + ">";
     }
 }

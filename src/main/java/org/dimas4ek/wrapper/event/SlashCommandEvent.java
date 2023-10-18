@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.events;
+package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
