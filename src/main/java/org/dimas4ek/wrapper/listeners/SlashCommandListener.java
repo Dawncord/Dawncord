@@ -7,6 +7,8 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.entities.GuildMember;
+import org.dimas4ek.wrapper.entities.GuildMemberImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -53,9 +55,10 @@ public class SlashCommandListener extends WebSocketAdapter {
                 String interactionId = d.getString("id");
                 String interactionToken = d.getString("token");
                 Guild guild = new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId));
+                GuildMember guildMember = new GuildMemberImpl(JsonUtils.fetchEntity("/guilds/" + guildId), d.getJSONObject("member"));
                 GuildChannel guildChannel = new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
 
-                Interaction response = new Interaction(interactionId, interactionToken, guild, guildChannel);
+                Interaction response = new Interaction(interactionId, interactionToken, guildMember, guild, guildChannel);
 
                 List<Map<String, Object>> options = new ArrayList<>();
                 if (data.has("options")) {

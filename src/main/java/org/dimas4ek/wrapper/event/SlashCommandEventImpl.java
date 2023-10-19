@@ -1,6 +1,8 @@
 package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.GuildMember;
+import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -38,6 +40,16 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
         String url = "/interactions/" + data.getResponse().getInteractionId() + "/" + data.getResponse().getInteractionToken() + "/callback";
 
         ApiClient.post(jsonObject, url);
+    }
+
+    @Override
+    public GuildMember getMember() {
+        return data.getResponse().getGuildMember();
+    }
+
+    @Override
+    public User getUser() {
+        return getMember().getUser();
     }
 
     @Override

@@ -66,20 +66,22 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildMember> getMembers() {
-        JSONArray members = ApiClient.getJsonArray("/guilds/" + getId() + "/members");
-        return JsonUtils.getEntityList(members, GuildMemberImpl::new);
+        JSONArray members = ApiClient.getJsonArrayParams(
+                "/guilds/" + getId() + "/members",
+                Map.of("limit", "100")
+        );
+        return JsonUtils.getEntityList(members, guildMember -> new GuildMemberImpl(guild, guildMember));
     }
 
     @Override
     public GuildMember getMemberById(String memberId) {
         JSONObject member = ApiClient.getJsonObject("/guilds/" + getId() + "/members/" + memberId);
-        return new GuildMemberImpl(member);
+        return new GuildMemberImpl(guild, member);
     }
 
     @Override
     public GuildMember getMemberById(long memberId) {
-        JSONObject member = ApiClient.getJsonObject("/guilds/" + getId() + "/members/" + memberId);
-        return new GuildMemberImpl(member);
+        return getMemberById(String.valueOf(memberId));
     }
 
     @Override
@@ -92,7 +94,7 @@ public class GuildImpl implements Guild {
                 )
         );
 
-        return JsonUtils.getEntityList(members, GuildMemberImpl::new);
+        return JsonUtils.getEntityList(members, guildMember -> new GuildMemberImpl(guild, guildMember));
     }
 
     @Override

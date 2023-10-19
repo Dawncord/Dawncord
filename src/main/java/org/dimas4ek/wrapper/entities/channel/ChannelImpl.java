@@ -5,10 +5,10 @@ import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
 import org.json.JSONObject;
 
-public class IChannel implements Channel {
+public class ChannelImpl implements Channel {
     private final JSONObject channel;
 
-    public IChannel(JSONObject channel) {
+    public ChannelImpl(JSONObject channel) {
         this.channel = channel;
     }
 

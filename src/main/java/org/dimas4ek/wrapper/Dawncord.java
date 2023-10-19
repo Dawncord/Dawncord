@@ -71,14 +71,14 @@ public class Dawncord {
         onMessageHandler = handler;
     }
 
-    public void onSlashCommand(Consumer<SlashCommandEvent> handler) {
-        onSlashCommandHandler = handler;
-    }
-
     public static void processMessage(MessageEvent messageEvent) {
         if (onMessageHandler != null) {
             onMessageHandler.accept(messageEvent);
         }
+    }
+
+    public void onSlashCommand(Consumer<SlashCommandEvent> handler) {
+        onSlashCommandHandler = handler;
     }
 
     public static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
@@ -98,7 +98,7 @@ public class Dawncord {
                 .put("op", 2)
                 .put("d", new JSONObject()
                         .put("token", Constants.BOT_TOKEN)
-                        .put("intents", 33280)
+                        .put("intents", 33026)
                         .put("properties", new JSONObject()
                                 .put("os", "linux")
                                 .put("browser", "discord-java-gateway")

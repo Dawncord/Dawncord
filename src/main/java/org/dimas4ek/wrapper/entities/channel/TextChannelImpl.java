@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.entities.channel;
 import org.dimas4ek.wrapper.ApiClient;
 import org.json.JSONObject;
 
-public class TextChannelImpl extends IChannel implements TextChannel{
+public class TextChannelImpl extends ChannelImpl implements TextChannel {
     public TextChannelImpl(JSONObject channel) {
         super(channel);
     }

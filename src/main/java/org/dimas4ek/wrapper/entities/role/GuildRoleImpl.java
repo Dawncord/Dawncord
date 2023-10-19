@@ -31,6 +31,7 @@ public class GuildRoleImpl implements GuildRole{
 
     @Override
     public List<String> getPermissions() {
+        System.out.println(role.getString("permissions"));
         List<String> permissions = new ArrayList<>();
         long permissionsFromJson = Long.parseLong(role.getString("permissions"));
         for (PermissionType permission : PermissionType.values()) {
