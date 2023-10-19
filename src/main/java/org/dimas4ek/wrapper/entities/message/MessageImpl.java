@@ -49,7 +49,7 @@ public class MessageImpl implements Message{
     }
 
     @Override
-    public User getUser() {
+    public User getFrom() {
         return new UserImpl(ApiClient.getJsonObject("/users/" + message.getString("user_id")));
     }
 

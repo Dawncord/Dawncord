@@ -10,7 +10,7 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
-import org.dimas4ek.wrapper.events.MessageEventImpl;
+import org.dimas4ek.wrapper.event.MessageEventImpl;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;

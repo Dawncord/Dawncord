@@ -1,15 +1,13 @@
 package org.dimas4ek.wrapper.entities.role;
 
 import org.dimas4ek.wrapper.types.PermissionType;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildRoleImpl implements GuildRole{
+public class GuildRoleImpl implements GuildRole {
     private final JSONObject role;
 
     public GuildRoleImpl(JSONObject role) {
@@ -69,14 +67,14 @@ public class GuildRoleImpl implements GuildRole{
     }
 
     @Override
-    public List<Tag> getTags() {
-        JSONArray tags = role.getJSONArray("tags");
-        return JsonUtils.getEntityList(tags, Tag::new);
+    public Tags getTags() {
+        return role.has("tags")
+                ? new Tags(role.getJSONObject("tags"))
+                : null;
     }
 
     @Override
-    public List<String> getFlags() {
-        //TODO return flags
-        return null;
+    public String getAsMention() {
+        return "<@&" + getId() + ">";
     }
 }

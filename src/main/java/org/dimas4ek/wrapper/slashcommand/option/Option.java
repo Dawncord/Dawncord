@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.slashcommand;
+package org.dimas4ek.wrapper.slashcommand.option;
 
 import lombok.Getter;
 import org.dimas4ek.wrapper.types.OptionType;
@@ -12,9 +12,9 @@ public class Option {
     private final OptionType type;
     private final String name;
     private final String description;
-    private final boolean isRequired;
-    private final boolean isAutocomplete; //TODO add autocomplete
-    private final List<Choice> choicesList = new ArrayList<>();
+    private boolean isRequired;
+    private boolean isAutocomplete; //TODO add autocomplete
+    private final List<Choice> choices = new ArrayList<>();
 
     public Option(OptionType type, String name, String description) {
         this.type = type;
@@ -40,12 +40,27 @@ public class Option {
         this.isAutocomplete = isAutocomplete;
     }
 
-    public void addChoice(Choice choice) {
-        choicesList.add(choice);
+    public void setRequired(boolean isRequired) {
+        this.isRequired = isRequired;
     }
 
-    public void addChoices(Choice... choices) {
-        Collections.addAll(choicesList, choices);
+    public void setAutocomplete(boolean isAutocomplete) {
+        this.isAutocomplete = isAutocomplete;
+    }
+
+    public Option addChoice(String name, String value) {
+        choices.add(new Choice(name, value));
+        return this;
+    }
+
+    public Option addChoice(Choice choice) {
+        choices.add(choice);
+        return this;
+    }
+
+    public Option addChoices(Choice... choices) {
+        Collections.addAll(this.choices, choices);
+        return this;
     }
 
     @Getter
@@ -59,3 +74,4 @@ public class Option {
         }
     }
 }
+

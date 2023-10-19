@@ -1,0 +1,59 @@
+package org.dimas4ek.wrapper.slashcommand.option;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.IMentionable;
+import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.UserImpl;
+import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.entities.message.Attachment;
+import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.json.JSONObject;
+
+import java.util.Map;
+
+@AllArgsConstructor
+@Getter
+public class OptionData {
+    private Map<String, Object> data;
+
+    public String getAsString() {
+        return String.valueOf(data.get("value"));
+    }
+
+    public int getAsInt() {
+        return Integer.parseInt(getAsString());
+    }
+
+    public boolean getAsBoolean() {
+        return Boolean.parseBoolean(getAsString());
+    }
+
+    public User getAsUser() {
+        return new UserImpl(ApiClient.getJsonObject("/users/" + getAsString()));
+    }
+
+    public GuildChannel getAsChannel() {
+        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + getAsString()));
+    }
+
+    public GuildRole getAsRole() {
+        return new GuildImpl(ApiClient.getJsonObject("/guilds/" + data.get("guildId"))).getRoleById(getAsString());
+    }
+
+    public IMentionable getAsMentionable() {
+        return new IMentionable(getAsString(), (JSONObject) data.get("resolved"));
+    }
+
+    public Attachment getAsAttachment() {
+        if (data.get("resolved") != null) {
+            JSONObject resolved = (JSONObject) data.get("resolved");
+            JSONObject attachment = resolved.getJSONObject("attachments").getJSONObject(getAsString());
+            return new Attachment(attachment);
+        }
+        return null;
+    }
+}
