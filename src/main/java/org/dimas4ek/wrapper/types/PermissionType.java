@@ -1,5 +1,8 @@
 package org.dimas4ek.wrapper.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum PermissionType {
     CREATE_INSTANT_INVITE(1L << 0),
     KICK_MEMBERS(1L << 1),
@@ -55,5 +58,13 @@ public enum PermissionType {
 
     public long getValue() {
         return value;
+    }
+
+    public static List<String> getAll(PermissionType... permissions) {
+        List<String> perms = new ArrayList<>();
+        for (PermissionType perm : PermissionType.values()) {
+            perms.add(perm.name());
+        }
+        return perms;
     }
 }

@@ -28,5 +28,7 @@ public interface Guild {
     List<GuildRole> getRoles();
     GuildRole getRoleById(String roleId);
     GuildRole getRoleById(long roleId);
+
+    GuildRole getPublicRole();
     List<GuildRole> getRolesByName(String roleName);
 }

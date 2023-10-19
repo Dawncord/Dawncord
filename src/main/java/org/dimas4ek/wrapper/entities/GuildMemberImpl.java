@@ -10,9 +10,7 @@ import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GuildMemberImpl implements GuildMember {
     private final JSONObject guild;
@@ -59,14 +57,13 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
-    public List<String> getPermissions() {
-        List<String> permissions = new ArrayList<>();
-        long permissionsFromJson = Long.parseLong("");
-        for (PermissionType permission : PermissionType.values()) {
-            if ((permissionsFromJson & permission.getValue()) != 0) {
-                permissions.add(permission.name());
-            }
+    public Set<String> getPermissions() {
+        Set<String> permissions = new HashSet<>();
+        if (isOwner()) {
+            permissions.addAll(PermissionType.getAll());
         }
+        permissions.addAll(getGuild().getPublicRole().getPermissions());
+        getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
         return permissions;
     }
 

@@ -135,6 +135,11 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public GuildRole getPublicRole() {
+        return getRoleById(getId());
+    }
+
+    @Override
     public List<GuildRole> getRolesByName(String roleName) {
         return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
     }

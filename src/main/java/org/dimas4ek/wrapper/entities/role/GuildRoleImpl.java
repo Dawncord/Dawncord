@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuildRoleImpl implements GuildRole{
+public class GuildRoleImpl implements GuildRole {
     private final JSONObject role;
 
     public GuildRoleImpl(JSONObject role) {
@@ -31,7 +31,6 @@ public class GuildRoleImpl implements GuildRole{
 
     @Override
     public List<String> getPermissions() {
-        System.out.println(role.getString("permissions"));
         List<String> permissions = new ArrayList<>();
         long permissionsFromJson = Long.parseLong(role.getString("permissions"));
         for (PermissionType permission : PermissionType.values()) {
@@ -69,8 +68,9 @@ public class GuildRoleImpl implements GuildRole{
 
     @Override
     public Tags getTags() {
-        JSONObject tags = role.getJSONObject("tags");
-        return new Tags(tags);
+        return role.has("tags")
+                ? new Tags(role.getJSONObject("tags"))
+                : null;
     }
 
     @Override

@@ -1,20 +1,37 @@
 package org.dimas4ek;
 
 import org.dimas4ek.wrapper.Dawncord;
-import org.dimas4ek.wrapper.entities.GuildMember;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class App {
-    public static void main(String[] args) {
-        Dawncord bot = new Dawncord("NzU0Mzk0NTI2OTYwODQ0ODgx.GL2q88.vH3-ghQaKAzadlnffHrR3qxWtuyQFV1EA_k3ww");
+    public static void main(String[] args) throws IOException {
+        Dawncord bot = new Dawncord(getProperty("bot.token"));
 
         bot.onSlashCommand(event -> {
             if (event.getCommandName().equals("test1")) {
-                for (GuildMember member : event.getGuild().getMembers()) {
-                    System.out.println(member.getNickname());
-                }
+                
             }
         });
 
         bot.start();
+    }
+
+    private static String getProperty(String name) throws IOException {
+        InputStream inputStream = null;
+        try {
+            Properties properties = new Properties();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            inputStream = loader.getResourceAsStream("bot.properties");
+            properties.load(inputStream);
+
+            return properties.getProperty(name);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
     }
 }

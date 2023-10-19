@@ -5,6 +5,7 @@ import org.dimas4ek.wrapper.entities.role.GuildRole;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface GuildMember {
     String getNickname();
@@ -15,7 +16,7 @@ public interface GuildMember {
 
     ZonedDateTime getTimeJoined();
 
-    List<String> getPermissions();
+    Set<String> getPermissions();
 
     List<GuildRole> getRoles();
 

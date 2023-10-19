@@ -90,7 +90,6 @@ public class ApiClient {
             if (response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
-                        System.out.println(new JSONArray(body.string()).toString(4));
                         return new JSONArray(body.string());
                     }
                 }
