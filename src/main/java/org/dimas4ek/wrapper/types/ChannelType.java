@@ -1,5 +1,10 @@
 package org.dimas4ek.wrapper.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ChannelType {
     GUILD_TEXT(0),
     DM(1),
@@ -16,12 +21,4 @@ public enum ChannelType {
     GUILD_MEDIA(16);
 
     private final int value;
-
-    ChannelType(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
 }

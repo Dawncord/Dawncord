@@ -2,7 +2,7 @@ package org.dimas4ek.wrapper.entities.channel;
 
 import org.json.JSONObject;
 
-public class GuildCategoryImpl implements GuildCategory{
+public class GuildCategoryImpl implements GuildCategory {
     private final JSONObject category;
 
     public GuildCategoryImpl(JSONObject category) {

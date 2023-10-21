@@ -10,15 +10,22 @@ import java.util.List;
 
 public interface SlashCommandEvent {
     String getCommandName();
+
     void reply(String message);
 
     GuildMember getMember();
 
     User getUser();
+
     Guild getGuild();
+
     GuildChannel getChannel();
+
     GuildChannel getChannelById(String channelId);
+
     GuildChannel getChannelById(long channelId);
+
     List<OptionData> getOptions();
+
     OptionData getOption(String name);
 }

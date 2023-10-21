@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class MessageImpl implements Message{
+public class MessageImpl implements Message {
     private final JSONObject message;
 
     public MessageImpl(JSONObject message) {

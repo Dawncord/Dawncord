@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.slashcommand.option;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.entities.IMentionable;
+import org.dimas4ek.wrapper.entities.Mentionable;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -44,8 +44,8 @@ public class OptionData {
         return new GuildImpl(ApiClient.getJsonObject("/guilds/" + data.get("guildId"))).getRoleById(getAsString());
     }
 
-    public IMentionable getAsMentionable() {
-        return new IMentionable(getAsString(), (JSONObject) data.get("resolved"));
+    public Mentionable getAsMentionable() {
+        return new Mentionable(getAsString(), (JSONObject) data.get("resolved"));
     }
 
     public Attachment getAsAttachment() {

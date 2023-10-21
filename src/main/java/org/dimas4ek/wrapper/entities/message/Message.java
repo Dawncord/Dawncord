@@ -10,17 +10,30 @@ import java.util.List;
 
 public interface Message {
     String getId();
+
     String getType();
+
     GuildChannel getChannel();
+
     String getContent();
+
     User getFrom();
+
     List<Attachment> getAttachments();
+
     List<Embed> getEmbeds();
+
     List<User> getMentions();
+
     List<ActionRow> getActionRows();
+
     boolean isPinned();
+
     boolean isMentionEveryone();
+
     boolean isTTS();
+
     ZonedDateTime getTimestamp();
+
     ZonedDateTime getEditedTimestamp();
 }

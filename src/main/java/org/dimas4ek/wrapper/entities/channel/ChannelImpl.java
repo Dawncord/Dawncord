@@ -1,8 +1,11 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 
 public class ChannelImpl implements Channel {
@@ -13,11 +16,6 @@ public class ChannelImpl implements Channel {
     }
 
     @Override
-    public boolean isNsfw() {
-        return channel.getBoolean("nsfw");
-    }
-
-    @Override
     public String getId() {
         return channel.getString("id");
     }
@@ -25,6 +23,11 @@ public class ChannelImpl implements Channel {
     @Override
     public long getIdLong() {
         return Long.parseLong(getId());
+    }
+
+    @Override
+    public Guild getGuild() {
+        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + channel.getString("guild_id")));
     }
 
     @Override
@@ -49,6 +52,11 @@ public class ChannelImpl implements Channel {
             return new GuildCategoryImpl(category);
         }
         return null;
+    }
+
+    @Override
+    public boolean isNsfw() {
+        return channel.getBoolean("nsfw");
     }
 
     @Override

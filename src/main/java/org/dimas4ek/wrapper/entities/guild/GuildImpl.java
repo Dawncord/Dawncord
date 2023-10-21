@@ -1,15 +1,20 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.GuildModifyAction;
 import org.dimas4ek.wrapper.entities.*;
+import org.dimas4ek.wrapper.entities.channel.GuildCategory;
+import org.dimas4ek.wrapper.entities.channel.GuildCategoryImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
+import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +81,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildMember getMemberById(String memberId) {
         JSONObject member = ApiClient.getJsonObject("/guilds/" + getId() + "/members/" + memberId);
+        System.out.println(member.toString(4));
         return new GuildMemberImpl(guild, member);
     }
 
@@ -142,5 +148,36 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildRole> getRolesByName(String roleName) {
         return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
+    }
+
+    @Override
+    public List<GuildCategory> getCategories() {
+        List<GuildCategory> categories = new ArrayList<>();
+        for (GuildChannel channel : getChannels()) {
+            if (channel.getTypeRaw() == ChannelType.GUILD_CATEGORY) {
+                categories.add(new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + channel.getId())));
+            }
+        }
+        return categories;
+    }
+
+    @Override
+    public GuildCategory getCategoryById(String categoryId) {
+        return getCategories().stream().filter(category -> category.getId().equals(categoryId)).findAny().orElse(null);
+    }
+
+    @Override
+    public GuildCategory getCategoryById(long categoryId) {
+        return getCategoryById(String.valueOf(categoryId));
+    }
+
+    @Override
+    public GuildModifyAction modify() {
+        return new GuildModifyAction(this);
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/guilds/" + getId());
     }
 }
