@@ -4,7 +4,12 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.ChannelModifyAction;
 import org.dimas4ek.wrapper.entities.IMentionable;
 import org.dimas4ek.wrapper.types.ChannelType;
+import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuildChannelImpl implements GuildChannel, IMentionable {
     private final JSONObject channel;
@@ -56,6 +61,21 @@ public class GuildChannelImpl implements GuildChannel, IMentionable {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<String> getFlags() {
+        if (channel.has("flags") || channel.getInt("flags") != 0) {
+            List<String> flags = new ArrayList<>();
+            long flagsFromJson = Long.parseLong(String.valueOf(channel.getInt("flags")));
+            for (GuildMemberFlag flag : GuildMemberFlag.values()) {
+                if ((flagsFromJson & flag.getValue()) != 0) {
+                    flags.add(flag.name());
+                }
+            }
+            return flags;
+        }
+        return Collections.emptyList();
     }
 
     @Override

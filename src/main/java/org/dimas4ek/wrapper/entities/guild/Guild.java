@@ -7,6 +7,7 @@ import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.thread.Thread;
 
 import java.util.List;
 
@@ -62,4 +63,10 @@ public interface Guild {
     GuildModifyAction modify();
 
     void delete();
+
+    List<Thread> getActiveThreads();
+
+    Thread getThreadById(String threadId);
+
+    Thread getThreadById(long threadId);
 }

@@ -9,6 +9,8 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
+import org.dimas4ek.wrapper.entities.thread.Thread;
+import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
@@ -81,7 +83,6 @@ public class GuildImpl implements Guild {
     @Override
     public GuildMember getMemberById(String memberId) {
         JSONObject member = ApiClient.getJsonObject("/guilds/" + getId() + "/members/" + memberId);
-        System.out.println(member.toString(4));
         return new GuildMemberImpl(guild, member);
     }
 
@@ -179,5 +180,21 @@ public class GuildImpl implements Guild {
     @Override
     public void delete() {
         ApiClient.delete("/guilds/" + getId());
+    }
+
+    @Override
+    public List<Thread> getActiveThreads() {
+        JSONArray threads = JsonUtils.fetchEntity("/guilds/" + getId() + "/threads/active").getJSONArray("threads");
+        return JsonUtils.getEntityList(threads, ThreadImpl::new);
+    }
+
+    @Override
+    public Thread getThreadById(String threadId) {
+        return getActiveThreads().stream().filter(thread -> thread.getId().equals(threadId)).findAny().orElse(null);
+    }
+
+    @Override
+    public Thread getThreadById(long threadId) {
+        return getThreadById(String.valueOf(threadId));
     }
 }
