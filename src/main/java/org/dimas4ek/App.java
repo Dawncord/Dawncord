@@ -23,7 +23,7 @@ public class App {
         InputStream inputStream = null;
         try {
             Properties properties = new Properties();
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            ClassLoader loader = java.lang.Thread.currentThread().getContextClassLoader();
             inputStream = loader.getResourceAsStream("bot.properties");
             properties.load(inputStream);
 

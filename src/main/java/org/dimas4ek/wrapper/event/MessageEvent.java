@@ -6,8 +6,12 @@ import org.dimas4ek.wrapper.entities.message.Message;
 
 public interface MessageEvent {
     Message getMessage();
+
     GuildChannel getChannel();
+
     GuildChannel getChannelById(String id);
+
     GuildChannel getChannelById(long id);
+
     Guild getGuild();
 }

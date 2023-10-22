@@ -2,7 +2,7 @@ package org.dimas4ek.wrapper.entities;
 
 import org.json.JSONObject;
 
-public class GuildBanImpl implements GuildBan{
+public class GuildBanImpl implements GuildBan {
     private final JSONObject ban;
 
     public GuildBanImpl(JSONObject ban) {

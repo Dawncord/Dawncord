@@ -28,7 +28,7 @@ public class UserImpl implements User {
     }
 
     @Override
-    public String globalName() {
+    public String getGlobalName() {
         return user.getString("global_name");
     }
 

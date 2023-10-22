@@ -1,12 +1,29 @@
 package org.dimas4ek.wrapper.entities.channel;
 
-import org.dimas4ek.wrapper.entities.Mentionable;
+import org.dimas4ek.wrapper.action.ChannelModifyAction;
+import org.dimas4ek.wrapper.entities.IMentionable;
+import org.dimas4ek.wrapper.types.ChannelType;
 
-public interface GuildChannel extends Mentionable {
-    String getId();
-    long getIdLong();
-    String getName();
-    String getType();
+import java.util.List;
+
+public interface GuildChannel extends IMentionable {
     TextChannel asText();
+
     VoiceChannel asVoice();
+
+    String getId();
+
+    long getIdLong();
+
+    String getName();
+
+    String getType();
+
+    ChannelType getTypeRaw();
+
+    List<String> getFlags();
+
+    ChannelModifyAction modify();
+
+    GuildCategory getCategory();
 }

@@ -17,17 +17,21 @@ public class Embed {
     public String getType() {
         return embed.getString("type");
     }
-    public String getTitle(){
+
+    public String getTitle() {
         return embed.getString("title");
     }
-    public List<Field> getFields(){
+
+    public List<Field> getFields() {
         JSONArray fields = embed.getJSONArray("fields");
         return JsonUtils.getEntityList(fields, Field::new);
     }
-    public Image getImage(){
+
+    public Image getImage() {
         return new Image(embed.getJSONObject("image"));
     }
-    public Image getThumbnail(){
+
+    public Image getThumbnail() {
         return new Image(embed.getJSONObject("thumbnail"));
     }
 }

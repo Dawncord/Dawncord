@@ -29,15 +29,42 @@ public class ApiClient {
     }
 
     public static void post(JSONObject jsonObject, String url) {
-        RequestBody requestBody = RequestBody.create(jsonObject.toString(), Constants.MEDIA_TYPE_JSON);
+        doAction("post", jsonObject, url);
+    }
 
-        Request request = new Request.Builder()
+    public static void patch(JSONObject jsonObject, String url) {
+        doAction("patch", jsonObject, url);
+    }
+
+    public static void delete(String url) {
+        doAction("delete", null, url);
+    }
+
+    private static void doAction(String action, JSONObject jsonObject, String url) {
+        RequestBody requestBody = null;
+        if (jsonObject != null) {
+            requestBody = RequestBody.create(jsonObject.toString(), Constants.MEDIA_TYPE_JSON);
+        }
+
+        Request.Builder request = new Request.Builder()
                 .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .post(requestBody)
-                .build();
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
-        try (Response response = CLIENT.newCall(request).execute()) {
+        switch (action) {
+            case "post" -> {
+                if (requestBody != null) {
+                    request.post(requestBody);
+                }
+            }
+            case "patch" -> {
+                if (requestBody != null) {
+                    request.patch(requestBody);
+                }
+            }
+            case "delete" -> request.delete();
+        }
+
+        try (Response response = CLIENT.newCall(request.build()).execute()) {
             if (!response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
@@ -75,7 +102,7 @@ public class ApiClient {
     public static JSONArray getJsonArrayParams(String url, Map<String, String> params) {
         HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
         if (params != null) {
-            for(Map.Entry<String, String> param : params.entrySet()) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
                 httpBuilder.addQueryParameter(param.getKey(), param.getValue());
             }
         }
