@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.types.ChannelType;
@@ -71,6 +72,11 @@ public class ChannelImpl implements Channel {
             return flags;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/channels/" + getId());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.action.ChannelModifyAction;
+import org.dimas4ek.wrapper.entities.thread.Thread;
+import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.json.JSONObject;
 
 public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
@@ -20,6 +22,12 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public VoiceChannel asVoice() {
         return new VoiceChannelImpl(channel);
     }
+
+    @Override
+    public Thread asThread() {
+        return new ThreadImpl(channel);
+    }
+
 
     @Override
     public ChannelModifyAction modify() {

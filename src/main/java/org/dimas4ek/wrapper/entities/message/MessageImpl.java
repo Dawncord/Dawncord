@@ -8,6 +8,7 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.types.MessageType;
+import org.dimas4ek.wrapper.utils.EmbedUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,7 +63,7 @@ public class MessageImpl implements Message {
     @Override
     public List<Embed> getEmbeds() {
         JSONArray embeds = message.getJSONArray("embeds");
-        return JsonUtils.getEntityList(embeds, Embed::new);
+        return JsonUtils.getEntityList(embeds, EmbedUtils::getEmbedFromJson);
     }
 
     @Override

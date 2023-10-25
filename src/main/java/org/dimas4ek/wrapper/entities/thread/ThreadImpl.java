@@ -6,7 +6,6 @@ import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.channel.MessageChannelImpl;
-import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,17 +37,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     }
 
     @Override
-    public Message getMessageById(String messageId) {
-        return getMessages().stream().filter(message -> message.getId().equals(messageId)).findAny().orElse(null);
-    }
-
-    @Override
-    public Message getMessageById(long messageId) {
-        return getMessageById(String.valueOf(messageId));
-    }
-
-    @Override
-    public List<ThreadMember> getMembers() {
+    public List<ThreadMember> getThreadMembers() {
         JSONArray members = ApiClient.getJsonArrayParams(
                 "/channels/" + getId() + "/thread-members",
                 Map.of("with_members", "true"));
@@ -56,12 +45,12 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     }
 
     @Override
-    public ThreadMember getMemberById(String userId) {
-        return getMembers().stream().filter(member -> member.asGuildMember().getUser().getId().equals(userId)).findAny().orElse(null);
+    public ThreadMember getThreadMemberById(String userId) {
+        return getThreadMembers().stream().filter(member -> member.asGuildMember().getUser().getId().equals(userId)).findAny().orElse(null);
     }
 
     @Override
-    public ThreadMember getMemberById(long userId) {
-        return getMemberById(String.valueOf(userId));
+    public ThreadMember getThreadMemberById(long userId) {
+        return getThreadMemberById(String.valueOf(userId));
     }
 }

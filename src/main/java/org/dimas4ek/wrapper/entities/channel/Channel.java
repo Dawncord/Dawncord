@@ -20,4 +20,6 @@ public interface Channel extends IMentionable {
     Guild getGuild();
 
     List<String> getFlags();
+
+    void delete();
 }

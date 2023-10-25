@@ -77,6 +77,26 @@ public class ApiClient {
         }
     }
 
+    public static void postAttachments(MultipartBody.Builder multipartBuilder, String url) {
+        Request request = new Request.Builder()
+                .url(Constants.API_URL + url)
+                .post(multipartBuilder.build())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        System.out.println(new JSONObject(body.string()).toString(4));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static JSONArray getJsonArray(String url) {
         Request request = new Request.Builder()
                 .url(Constants.API_URL + url)

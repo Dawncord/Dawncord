@@ -30,8 +30,42 @@ public class ChannelModifyAction {
         hasChanges = true;
     }
 
-    //TODO check threads
-    //https://discord.com/developers/docs/resources/channel#modify-channel-json-params-thread
+    //region Threads
+    @CheckReturnValue
+    public ChannelModifyAction setArchived(boolean enabled) {
+        if (channel.getTypeRaw() == ChannelType.PUBLIC_THREAD || channel.getTypeRaw() == ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() == ChannelType.ANNOUNCEMENT_THREAD) {
+            setProperty("archived", enabled);
+        }
+        return this;
+    }
+
+    @CheckReturnValue
+    public ChannelModifyAction setArchiveDuration(int minutes) {
+        if (channel.getTypeRaw() == ChannelType.PUBLIC_THREAD || channel.getTypeRaw() == ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() == ChannelType.ANNOUNCEMENT_THREAD) {
+            setProperty("auto_archive_duration", minutes);
+        }
+        return this;
+    }
+
+    @CheckReturnValue
+    public ChannelModifyAction setLocked(boolean enabled) {
+        if (channel.getTypeRaw() == ChannelType.PUBLIC_THREAD || channel.getTypeRaw() == ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() == ChannelType.ANNOUNCEMENT_THREAD) {
+            setProperty("locked", enabled);
+        }
+        return this;
+    }
+
+    @CheckReturnValue
+    public ChannelModifyAction setInvitable(boolean enabled) {
+        if (channel.getTypeRaw() == ChannelType.PRIVATE_THREAD) {
+            setProperty("invitable", enabled);
+        }
+        return this;
+    }
+    //endregion
 
     @CheckReturnValue
     public ChannelModifyAction setName(String name) {
@@ -99,37 +133,45 @@ public class ChannelModifyAction {
 
     @CheckReturnValue
     public ChannelModifyAction setPermissionOverrides(PermissionOverride... overrides) {
-        JSONArray array = new JSONArray();
-        for (PermissionOverride override : overrides) {
-            JSONObject overrideJson = new JSONObject();
-            overrideJson.put("id", override.getId());
-            overrideJson.put("type", override.getType().getValue());
-            overrideJson.put("deny", override.getDenied() != null && !override.getDenied().isEmpty()
-                    ? String.valueOf(override.getDenied().stream()
-                    .mapToLong(PermissionType::getValue)
-                    .reduce(0L, (x, y) -> x | y))
-                    : "0");
-            overrideJson.put("allow", override.getAllowed() != null && !override.getAllowed().isEmpty()
-                    ? String.valueOf(override.getAllowed().stream()
-                    .mapToLong(PermissionType::getValue)
-                    .reduce(0L, (x, y) -> x | y))
-                    : "0");
-            array.put(overrideJson);
+        if (channel.getTypeRaw() != ChannelType.PUBLIC_THREAD || channel.getTypeRaw() != ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() != ChannelType.ANNOUNCEMENT_THREAD) {
+            JSONArray overridesArray = new JSONArray();
+            for (PermissionOverride override : overrides) {
+                JSONObject overrideJson = new JSONObject();
+                overrideJson.put("id", override.getId());
+                overrideJson.put("type", override.getType().getValue());
+                overrideJson.put("deny", override.getDenied() != null && !override.getDenied().isEmpty()
+                        ? String.valueOf(override.getDenied().stream()
+                        .mapToLong(PermissionType::getValue)
+                        .reduce(0L, (x, y) -> x | y))
+                        : "0");
+                overrideJson.put("allow", override.getAllowed() != null && !override.getAllowed().isEmpty()
+                        ? String.valueOf(override.getAllowed().stream()
+                        .mapToLong(PermissionType::getValue)
+                        .reduce(0L, (x, y) -> x | y))
+                        : "0");
+                overridesArray.put(overrideJson);
+            }
+            setProperty("permission_overwrites", overridesArray);
         }
-        System.out.println(array.toString(4));
-        setProperty("permission_overwrites", array);
         return this;
     }
 
     @CheckReturnValue
     public ChannelModifyAction clearPermissionOverrides() {
-        setProperty("permission_overwrites", new JSONArray());
+        if (channel.getTypeRaw() != ChannelType.PUBLIC_THREAD || channel.getTypeRaw() != ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() != ChannelType.ANNOUNCEMENT_THREAD) {
+            setProperty("permission_overwrites", new JSONArray());
+        }
         return this;
     }
 
     @CheckReturnValue
     public ChannelModifyAction setCategory(GuildCategory category) {
-        setProperty("parent_id", category.getId());
+        if (channel.getTypeRaw() != ChannelType.PUBLIC_THREAD || channel.getTypeRaw() != ChannelType.PRIVATE_THREAD
+                || channel.getTypeRaw() != ChannelType.ANNOUNCEMENT_THREAD) {
+            setProperty("parent_id", category.getId());
+        }
         return this;
     }
 
@@ -141,22 +183,26 @@ public class ChannelModifyAction {
     }
 
     public ChannelModifyAction setOptimalVoiceRegion(VoiceRegion voiceRegion) {
-        String optimalVoiceRegion = null;
-        JSONArray voiceRegions = ApiClient.getJsonArray("/voice/regions");
-        for (int i = 0; i < Objects.requireNonNull(voiceRegions).length(); i++) {
-            JSONObject region = voiceRegions.getJSONObject(i);
-            if (region.getBoolean("optimal")) {
-                optimalVoiceRegion = region.getString("id");
-                break;
+        if (channel.getTypeRaw() == ChannelType.GUILD_VOICE || channel.getTypeRaw() == ChannelType.GUILD_STAGE_VOICE) {
+            String optimalVoiceRegion = null;
+            JSONArray voiceRegions = ApiClient.getJsonArray("/voice/regions");
+            for (int i = 0; i < Objects.requireNonNull(voiceRegions).length(); i++) {
+                JSONObject region = voiceRegions.getJSONObject(i);
+                if (region.getBoolean("optimal")) {
+                    optimalVoiceRegion = region.getString("id");
+                    break;
+                }
             }
+            setProperty("rtc_region", optimalVoiceRegion);
         }
-        setProperty("rtc_region", optimalVoiceRegion);
         return this;
     }
 
     @CheckReturnValue
     public ChannelModifyAction setVideoQuality(VideoQualityMode mode) {
-        setProperty("video_quality_mode", mode.getValue());
+        if (channel.getTypeRaw() == ChannelType.GUILD_VOICE || channel.getTypeRaw() == ChannelType.GUILD_STAGE_VOICE) {
+            setProperty("video_quality_mode", mode.getValue());
+        }
         return this;
     }
 
@@ -196,15 +242,19 @@ public class ChannelModifyAction {
     }
 
     public ChannelModifyAction setDefaultReaction(String emojiIdOrName) {
-        JSONObject defaultEmoji = new JSONObject();
-        defaultEmoji.put("emoji_id", isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
-        defaultEmoji.put("emoji_name", !isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
-        setProperty("default_reaction_emoji", defaultEmoji);
+        if (channel.getTypeRaw() == ChannelType.GUILD_FORUM || channel.getTypeRaw() == ChannelType.GUILD_MEDIA) {
+            JSONObject defaultEmoji = new JSONObject();
+            defaultEmoji.put("emoji_id", isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
+            defaultEmoji.put("emoji_name", !isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
+            setProperty("default_reaction_emoji", defaultEmoji);
+        }
         return this;
     }
 
     public ChannelModifyAction clearDefaultReaction() {
-        setProperty("default_reaction_emoji", new JSONObject());
+        if (channel.getTypeRaw() == ChannelType.GUILD_FORUM || channel.getTypeRaw() == ChannelType.GUILD_MEDIA) {
+            setProperty("default_reaction_emoji", new JSONObject());
+        }
         return this;
     }
 

@@ -1,37 +1,99 @@
 package org.dimas4ek.wrapper.entities.message.embed;
 
 
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
 public class Embed {
-    private final JSONObject embed;
+    private String title;
+    private String description;
+    private String url;
+    private ZonedDateTime timestamp;
+    private int color;
+    private Embed.Footer footer;
+    private Embed.EmbedImage image;
+    private Embed.EmbedImage thumbnail;
+    private Embed.Author author;
+    private List<Field> fields;
 
-    public Embed(JSONObject embed) {
-        this.embed = embed;
+    @Getter
+    public static class Footer {
+        private final String text;
+        private String iconUrl;
+
+        protected Footer(String text) {
+            this.text = text;
+        }
+
+        public Footer(String text, String iconUrl) {
+            this.text = text;
+            this.iconUrl = iconUrl;
+        }
     }
 
-    public String getType() {
-        return embed.getString("type");
+    @Getter
+    public static class Author {
+        private final String name;
+        private String url;
+        private String iconUrl;
+
+        protected Author(String name) {
+            this.name = name;
+        }
+
+        public Author(String name, String url) {
+            this.name = name;
+            this.url = url;
+        }
+
+        public Author(String name, String url, String iconUrl) {
+            this.name = name;
+            this.url = url;
+            this.iconUrl = iconUrl;
+        }
     }
 
-    public String getTitle() {
-        return embed.getString("title");
+
+    @Getter
+    public static class EmbedImage {
+        private final String url;
+        private String proxyUrl;
+        private int width;
+        private int height;
+
+        public EmbedImage(String url) {
+            this.url = url;
+        }
+
+        public EmbedImage(String url, String proxyUrl, int width, int height) {
+            this.url = url;
+            this.proxyUrl = proxyUrl;
+            this.width = width;
+            this.height = height;
+        }
     }
 
-    public List<Field> getFields() {
-        JSONArray fields = embed.getJSONArray("fields");
-        return JsonUtils.getEntityList(fields, Field::new);
-    }
+    @Getter
+    public static class Field {
+        private final String name;
+        private final String value;
+        private final boolean isInline;
 
-    public Image getImage() {
-        return new Image(embed.getJSONObject("image"));
-    }
+        public Field(String name, String value) {
+            this.name = name;
+            this.value = value;
+            this.isInline = false;
+        }
 
-    public Image getThumbnail() {
-        return new Image(embed.getJSONObject("thumbnail"));
+        public Field(String name, String value, boolean isInline) {
+            this.name = name;
+            this.value = value;
+            this.isInline = isInline;
+        }
     }
 }

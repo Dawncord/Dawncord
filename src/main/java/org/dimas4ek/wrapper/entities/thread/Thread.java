@@ -13,9 +13,9 @@ public interface Thread extends MessageChannel {
 
     ThreadMetaData getMetaData();
 
-    List<ThreadMember> getMembers();
+    List<ThreadMember> getThreadMembers();
 
-    ThreadMember getMemberById(String userId);
+    ThreadMember getThreadMemberById(String userId);
 
-    ThreadMember getMemberById(long userId);
+    ThreadMember getThreadMemberById(long userId);
 }
