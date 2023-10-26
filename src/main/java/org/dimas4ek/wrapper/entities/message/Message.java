@@ -2,7 +2,6 @@ package org.dimas4ek.wrapper.entities.message;
 
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 
 import java.time.ZonedDateTime;
@@ -25,7 +24,7 @@ public interface Message {
 
     List<User> getMentions();
 
-    List<ActionRow> getActionRows();
+    //List<ActionRow> getActionRows();
 
     boolean isPinned();
 

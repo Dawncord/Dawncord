@@ -5,7 +5,6 @@ import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
-import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.types.MessageType;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
@@ -72,11 +71,11 @@ public class MessageImpl implements Message {
         return JsonUtils.getEntityList(mentions, UserImpl::new);
     }
 
-    @Override
+    /*@Override
     public List<ActionRow> getActionRows() {
         JSONArray actionRows = message.getJSONArray("components");
         return JsonUtils.getEntityList(actionRows, ActionRow::new);
-    }
+    }*/
 
     @Override
     public boolean isPinned() {

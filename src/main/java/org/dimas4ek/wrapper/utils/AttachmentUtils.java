@@ -8,9 +8,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class AttachmentsUtils {
+public class AttachmentUtils {
     public static MultipartBody.Builder creteMultipartBuilder(JSONObject jsonObject, File[] files) {
-        jsonObject.put("attachments", AttachmentsUtils.createAttachmentsArray(files));
+        jsonObject.put("attachments", AttachmentUtils.createAttachmentsArray(files));
 
         RequestBody requestBodyJson = RequestBody.create(MediaType.parse("application/json"), jsonObject.toString());
 

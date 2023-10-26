@@ -1,51 +1,23 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
-import org.dimas4ek.wrapper.types.ButtonStyle;
-import org.dimas4ek.wrapper.types.ComponentType;
-import org.json.JSONObject;
-
 public class Button {
-    private final JSONObject button;
-
-    public Button(JSONObject button) {
-        this.button = button;
+    public static ButtonBuilder primary(String customId, String label) {
+        return new ButtonBuilder(1, customId, label);
     }
 
-    public String getType() {
-        for (ComponentType type : ComponentType.values()) {
-            if (button.getInt("type") == type.getValue()) {
-                return type.toString();
-            }
-        }
-        return null;
+    public static ButtonBuilder secondary(String customId, String label) {
+        return new ButtonBuilder(2, customId, label);
     }
 
-    public String getCustomId() {
-        return button.getString("custom_id");
+    public static ButtonBuilder success(String customId, String label) {
+        return new ButtonBuilder(3, customId, label);
     }
 
-    public String getUrl() {
-        return button.getString("url");
+    public static ButtonBuilder danger(String customId, String label) {
+        return new ButtonBuilder(4, customId, label);
     }
 
-    public String getStyle() {
-        for (ButtonStyle style : ButtonStyle.values()) {
-            if (button.getInt("type") == style.getValue()) {
-                return style.toString();
-            }
-        }
-        return null;
-    }
-
-    public String getLabel() {
-        return button.getString("label");
-    }
-
-    public boolean isDisabled() {
-        return button.has("disabled") && button.getBoolean("disabled");
-    }
-
-    public Emoji getEmoji() {
-        return new Emoji(button.getJSONObject("emoji"));
+    public static ButtonBuilder link(String url, String label) {
+        return new ButtonBuilder(5, url, label);
     }
 }

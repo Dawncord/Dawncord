@@ -2,8 +2,10 @@ package org.dimas4ek.wrapper.action;
 
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
-import org.dimas4ek.wrapper.utils.AttachmentsUtils;
+import org.dimas4ek.wrapper.utils.AttachmentUtils;
+import org.dimas4ek.wrapper.utils.ComponentUtils;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
 import org.json.JSONObject;
 
@@ -29,8 +31,17 @@ public class MessageCreateAction {
 
     public MessageCreateAction addAttachments(File... files) {
         if (files != null && files.length > 0) {
-            MultipartBody.Builder multipartBuilder = AttachmentsUtils.creteMultipartBuilder(jsonObject, files);
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, files);
             ApiClient.postAttachments(multipartBuilder, "/channels/" + channel.getString("id") + "/messages");
+        }
+
+        return this;
+    }
+
+    public MessageCreateAction addComponents(ComponentBuilder... components) {
+        if (components != null) {
+            jsonObject.put("components", ComponentUtils.createComponents(components));
+            ApiClient.post(jsonObject, "/channels/" + channel.getString("id") + "/messages");
         }
 
         return this;
