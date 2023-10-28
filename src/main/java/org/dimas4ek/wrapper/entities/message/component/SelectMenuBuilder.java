@@ -4,6 +4,7 @@ import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.SelectMenuType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SelectMenuBuilder implements ComponentBuilder {
@@ -56,7 +57,9 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     public List<SelectOption> getOptions() {
-        return options;
+        return options != null && !options.isEmpty()
+                ? options
+                : Collections.emptyList();
     }
 
     public SelectMenuBuilder addPlaceholder(String placeholder) {

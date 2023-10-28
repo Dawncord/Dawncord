@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.entities;
 
+import org.dimas4ek.wrapper.entities.image.Avatar;
+
 import java.util.List;
 
 public interface User {

@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities;
 
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.dimas4ek.wrapper.types.PermissionType;

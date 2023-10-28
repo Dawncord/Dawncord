@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities;
 
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 
 import java.time.ZonedDateTime;

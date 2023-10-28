@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities;
 
 import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.NitroType;
 import org.dimas4ek.wrapper.types.UserFlag;
 import org.jetbrains.annotations.NotNull;

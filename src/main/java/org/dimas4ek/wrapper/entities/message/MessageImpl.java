@@ -1,7 +1,6 @@
 package org.dimas4ek.wrapper.entities.message;
 
-import org.dimas4ek.wrapper.entities.User;
-import org.dimas4ek.wrapper.entities.UserImpl;
+import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -103,6 +102,16 @@ public class MessageImpl implements Message {
     @Override
     public Reaction getReactionByEmojiIdOrName(String emojiIdOrName) {
         return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findAny().orElse(null);
+    }
+
+    @Override
+    public Activity getActivity() {
+        return new ActivityImpl(message.getJSONObject("activity"));
+    }
+
+    @Override
+    public Application getApplication() {
+        return new ApplicationImpl(message.getJSONObject("application"));
     }
 
     @Override

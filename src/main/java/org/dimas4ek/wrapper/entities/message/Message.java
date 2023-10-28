@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import org.dimas4ek.wrapper.entities.Activity;
+import org.dimas4ek.wrapper.entities.Application;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -41,10 +43,9 @@ public interface Message {
 
     Reaction getReactionByEmojiIdOrName(String emojiIdOrName);
 
-    //Activity getActivity(); TODO add activity
-    //Application getApplication(); TODO add application
-    //RoleSubscription getRoleSubscription(); TODO add role subscription data
-    //Resolved getResolved(); TODO add resolved
+    Activity getActivity(); //TODO add something to activity or remove it
+
+    Application getApplication(); //TODO add something
 
     Message getReferencedMessage();
 

@@ -16,8 +16,6 @@ public class ActionRow {
         this.actionRow = actionRow;
     }
 
-
-    //TODO check
     public List<ButtonBuilder> getButtons() {
         List<ButtonBuilder> buttons = new ArrayList<>();
         JSONArray components = actionRow.getJSONArray("components");
@@ -26,7 +24,9 @@ public class ActionRow {
             if (component.getInt("type") == ComponentType.BUTTON.getValue()) {
                 buttons.add(new ButtonBuilder(
                         component.getInt("style"),
-                        component.getString("custom_id"),
+                        component.has("custom_id")
+                                ? component.getString("custom_id")
+                                : component.getString("url"),
                         component.getString("label"))
                 );
             }
@@ -35,7 +35,6 @@ public class ActionRow {
         return buttons;
     }
 
-    //TODO check
     public List<SelectMenuBuilder> getSelectMenus() {
         List<SelectMenuBuilder> selectMenus = new ArrayList<>();
         JSONArray components = actionRow.getJSONArray("components");
