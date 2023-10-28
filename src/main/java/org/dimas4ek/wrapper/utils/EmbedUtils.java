@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmbedUtils {
-    public static JSONArray createEmbedsArray(Embed... embeds) {
+    public static JSONArray createEmbedsArray(List<Embed> embeds) {
         JSONArray embedsArray = new JSONArray();
 
         for (Embed embed : embeds) {
@@ -18,7 +18,7 @@ public class EmbedUtils {
                     .put("title", embed.getTitle())
                     .put("description", embed.getDescription())
                     .put("url", embed.getUrl())
-                    .put("timestamp", embed.getTimestamp().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                    .put("timestamp", embed.getTimestamp() != null ? embed.getTimestamp().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) : null)
                     .put("color", embed.getColor() == 536870911 ? 0 : embed.getColor());
             if (embed.getFooter() != null) {
                 embedJson
@@ -75,7 +75,7 @@ public class EmbedUtils {
         String title = embed.getString("title");
         String description = embed.has("description") ? embed.getString("description") : null;
         String url = embed.has("url") ? embed.getString("url") : null;
-        ZonedDateTime timestamp = embed.has("timestamp") ? getTimestamp(embed.getString("timestamp")) : null;
+        ZonedDateTime timestamp = embed.has("timestamp") ? MessageUtils.getZonedDateTime(embed, "timestamp") : null;
         int color = embed.has("color") ? embed.getInt("color") : 0;
         Embed.Footer footer = embed.has("footer") ? getEmbedFooterFromJson(embed.getJSONObject("footer")) : null;
         Embed.EmbedImage image = embed.has("image") ? getEmbedImageFromJson(embed.getJSONObject("image")) : null;
@@ -84,11 +84,6 @@ public class EmbedUtils {
         List<Embed.Field> fields = embed.has("fields") ? getEmbedFieldsFromJson(embed.getJSONArray("fields")) : null;
 
         return new Embed(title, description, url, timestamp, color, footer, image, thumbnail, author, fields);
-    }
-
-    private static ZonedDateTime getTimestamp(String timestampJson) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(timestampJson, formatter);
     }
 
     private static Embed.Footer getEmbedFooterFromJson(JSONObject footerJson) {

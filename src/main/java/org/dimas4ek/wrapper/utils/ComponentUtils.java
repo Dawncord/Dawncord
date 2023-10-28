@@ -9,8 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class ComponentUtils {
-    public static JSONArray createComponents(ComponentBuilder[] components) {
+    public static JSONArray createComponents(List<ComponentBuilder> components) {
         JSONArray actionRowsArray = new JSONArray();
 
         for (ComponentBuilder component : components) {
@@ -71,7 +73,7 @@ public class ComponentUtils {
         }
 
         JSONObject emojiJson = new JSONObject();
-        if (isEmojiLong(emoji)) {
+        if (MessageUtils.isEmojiLong(emoji)) {
             emojiJson.put("id", emoji);
         } else {
             emojiJson.put("name", emoji);
@@ -132,14 +134,5 @@ public class ComponentUtils {
         });
 
         return channelTypes;
-    }
-
-    public static boolean isEmojiLong(String input) {
-        try {
-            Long.parseLong(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }

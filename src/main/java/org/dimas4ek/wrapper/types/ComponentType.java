@@ -1,14 +1,14 @@
 package org.dimas4ek.wrapper.types;
 
 public enum ComponentType {
-    Action(1),
-    Button(2),
-    String(3),
-    Text(4),
-    User(5),
-    Role(6),
-    Mentionable(7),
-    Channel(8);
+    ACTION(1),
+    BUTTON(2),
+    TEXT(3),
+    TEXT_INPUT(4),
+    USER(5),
+    ROLE(6),
+    MENTIONABLE(7),
+    CHANNEL(8);
 
     private final int value;
 

@@ -13,7 +13,7 @@ public class App {
 
         bot.onSlashCommand(event -> {
             if (event.getCommandName().equals("test1")) {
-
+                event.getChannel().
             }
         });
 

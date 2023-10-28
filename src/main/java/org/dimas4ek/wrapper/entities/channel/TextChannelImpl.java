@@ -21,6 +21,6 @@ public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
 
     @Override
     public GuildCategory getCategory() {
-        return (GuildCategory) new ChannelImpl(JsonUtils.fetchEntity("/channels/" + channel.getString("parent_id")));
+        return new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + channel.getString("parent_id")));
     }
 }

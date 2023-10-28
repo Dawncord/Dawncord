@@ -1,19 +1,25 @@
 package org.dimas4ek.wrapper.entities.message;
 
-import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
+import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.thread.Thread;
+import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.MessageType;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
+import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageImpl implements Message {
@@ -29,6 +35,11 @@ public class MessageImpl implements Message {
     }
 
     @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
+
+    @Override
     public String getType() {
         for (MessageType type : MessageType.values()) {
             if (message.getInt("type") == type.getValue()) {
@@ -40,8 +51,14 @@ public class MessageImpl implements Message {
 
     @Override
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + message.getString("channel_id")));
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + message.getString("channel_id")));
     }
+
+    @Override
+    public Guild getGuild() {
+        return getChannel().getGuild();
+    }
+
 
     @Override
     public String getContent() {
@@ -50,32 +67,67 @@ public class MessageImpl implements Message {
 
     @Override
     public User getFrom() {
-        return new UserImpl(ApiClient.getJsonObject("/users/" + message.getString("user_id")));
+        return new UserImpl(JsonUtils.fetchEntity("/users/" + message.getString("user_id")));
     }
 
     @Override
     public List<Attachment> getAttachments() {
-        JSONArray attachments = message.getJSONArray("attachments");
-        return JsonUtils.getEntityList(attachments, Attachment::new);
+        return JsonUtils.getEntityList(message.getJSONArray("attachments"), Attachment::new);
     }
 
     @Override
     public List<Embed> getEmbeds() {
-        JSONArray embeds = message.getJSONArray("embeds");
-        return JsonUtils.getEntityList(embeds, EmbedUtils::getEmbedFromJson);
+        return JsonUtils.getEntityList(message.getJSONArray("embeds"), EmbedUtils::getEmbedFromJson);
     }
 
     @Override
     public List<User> getMentions() {
-        JSONArray mentions = message.getJSONArray("mentions");
-        return JsonUtils.getEntityList(mentions, UserImpl::new);
+        return JsonUtils.getEntityList(message.getJSONArray("mentions"), UserImpl::new);
     }
 
-    /*@Override
+    @Override
+    public List<GuildRole> getMentionRoles() {
+        List<GuildRole> roles = new ArrayList<>();
+        JSONArray mentionRoles = message.getJSONArray("mention_roles");
+        for (int i = 0; i < mentionRoles.length(); i++) {
+            roles.add(getGuild().getRoleById(mentionRoles.getString(i)));
+        }
+        return roles;
+    }
+
+    @Override
+    public List<Reaction> getReactions() {
+        return JsonUtils.getEntityList(message.getJSONArray("reactions"), ReactionImpl::new);
+    }
+
+    @Override
+    public Reaction getReactionByEmojiIdOrName(String emojiIdOrName) {
+        return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findAny().orElse(null);
+    }
+
+    @Override
+    public Message getReferencedMessage() {
+        return message.has("referenced_message") && !message.isNull("referenced_message")
+                ? new MessageImpl(message.getJSONObject("referenced_message"))
+                : null;
+    }
+
+    @Override
+    public Thread getThread() {
+        return message.has("thread")
+                ? new ThreadImpl(message.getJSONObject("thread"))
+                : null;
+    }
+
+    @Override
+    public List<Sticker> getStickers() {
+        return MessageUtils.retrieveStickersFromMessage(message, getGuild());
+    }
+
+    @Override
     public List<ActionRow> getActionRows() {
-        JSONArray actionRows = message.getJSONArray("components");
-        return JsonUtils.getEntityList(actionRows, ActionRow::new);
-    }*/
+        return JsonUtils.getEntityList(message.getJSONArray("components"), ActionRow::new);
+    }
 
     @Override
     public boolean isPinned() {
@@ -94,13 +146,11 @@ public class MessageImpl implements Message {
 
     @Override
     public ZonedDateTime getTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(message.getString("timestamp"), formatter);
+        return MessageUtils.getZonedDateTime(message, "timestamp");
     }
 
     @Override
     public ZonedDateTime getEditedTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(message.getString("edited_timestamp"), formatter);
+        return MessageUtils.getZonedDateTime(message, "edited_timestamp");
     }
 }

@@ -5,11 +5,11 @@ import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class GuildMemberImpl implements GuildMember {
@@ -52,8 +52,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public ZonedDateTime getTimeJoined() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(guildMember.getString("joined_at"), formatter);
+        return MessageUtils.getZonedDateTime(guildMember, "joined_at");
     }
 
     @Override

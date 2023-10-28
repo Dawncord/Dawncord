@@ -1,10 +1,10 @@
 package org.dimas4ek.wrapper.entities.thread;
 
 import org.dimas4ek.wrapper.entities.GuildMember;
+import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ThreadMember {
     private final JSONObject threadMember;
@@ -24,7 +24,6 @@ public class ThreadMember {
     }
 
     public ZonedDateTime getJoinedTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(threadMember.getString("join_timestamp"), formatter);
+        return MessageUtils.getZonedDateTime(threadMember, "join_timestamp");
     }
 }

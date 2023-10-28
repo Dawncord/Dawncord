@@ -1,9 +1,9 @@
 package org.dimas4ek.wrapper.entities.thread;
 
+import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ThreadMetaData {
     private final JSONObject metadata;
@@ -17,13 +17,11 @@ public class ThreadMetaData {
     }
 
     public ZonedDateTime getArchiveTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(metadata.getString("archive_timestamp"), formatter);
+        return MessageUtils.getZonedDateTime(metadata, "archive_timestamp");
     }
 
     public ZonedDateTime getCreationTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        return ZonedDateTime.parse(metadata.getString("create_timestamp"), formatter);
+        return MessageUtils.getZonedDateTime(metadata, "create_timestamp");
     }
 
     public int getArchiveDuration() {

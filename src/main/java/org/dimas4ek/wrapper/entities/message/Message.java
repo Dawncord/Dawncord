@@ -2,7 +2,12 @@ package org.dimas4ek.wrapper.entities.message;
 
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
+import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.thread.Thread;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -10,9 +15,13 @@ import java.util.List;
 public interface Message {
     String getId();
 
+    long getIdLong();
+
     String getType();
 
     GuildChannel getChannel();
+
+    Guild getGuild();
 
     String getContent();
 
@@ -22,9 +31,26 @@ public interface Message {
 
     List<Embed> getEmbeds();
 
+    List<ActionRow> getActionRows();
+
     List<User> getMentions();
 
-    //List<ActionRow> getActionRows();
+    List<GuildRole> getMentionRoles();
+
+    List<Reaction> getReactions();
+
+    Reaction getReactionByEmojiIdOrName(String emojiIdOrName);
+
+    //Activity getActivity(); TODO add activity
+    //Application getApplication(); TODO add application
+    //RoleSubscription getRoleSubscription(); TODO add role subscription data
+    //Resolved getResolved(); TODO add resolved
+
+    Message getReferencedMessage();
+
+    Thread getThread();
+
+    List<Sticker> getStickers();
 
     boolean isPinned();
 
