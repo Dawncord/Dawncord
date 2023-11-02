@@ -4,7 +4,6 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.Dawncord;
 import org.dimas4ek.wrapper.entities.GuildMember;
@@ -49,8 +48,7 @@ public class SlashCommandListener extends WebSocketAdapter {
 
             if (type.equals("INTERACTION_CREATE")) {
                 JSONObject data = d.getJSONObject("data");
-                JSONObject slashCommandData = ApiClient.getJsonObject("/applications/" + Constants.APPLICATION_ID + "/commands/" + data.getString("id"));
-                SlashCommand slashCommand = new SlashCommand(slashCommandData);
+                SlashCommand slashCommand = new SlashCommand(JsonUtils.fetchEntity("/applications/" + Constants.APPLICATION_ID + "/commands/" + data.getString("id")));
 
                 String interactionId = d.getString("id");
                 String interactionToken = d.getString("token");

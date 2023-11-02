@@ -1,8 +1,9 @@
 package org.dimas4ek.wrapper.entities.message;
 
-import org.dimas4ek.wrapper.entities.Activity;
-import org.dimas4ek.wrapper.entities.Application;
+import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.application.Activity;
+import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.message.component.ActionRow;
@@ -10,6 +11,8 @@ import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
+import org.dimas4ek.wrapper.types.MessageFlag;
+import org.dimas4ek.wrapper.types.MessageType;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -19,7 +22,7 @@ public interface Message {
 
     long getIdLong();
 
-    String getType();
+    MessageType getType();
 
     GuildChannel getChannel();
 
@@ -28,6 +31,8 @@ public interface Message {
     String getContent();
 
     User getFrom();
+
+    List<MessageFlag> getFlags();
 
     List<Attachment> getAttachments();
 
@@ -41,7 +46,7 @@ public interface Message {
 
     List<Reaction> getReactions();
 
-    Reaction getReactionByEmojiIdOrName(String emojiIdOrName);
+    Reaction getReaction(String emojiIdOrName);
 
     Activity getActivity(); //TODO add something to activity or remove it
 
@@ -62,4 +67,8 @@ public interface Message {
     ZonedDateTime getTimestamp();
 
     ZonedDateTime getEditedTimestamp();
+
+    MessageModifyAction modify();
+
+    void delete();
 }

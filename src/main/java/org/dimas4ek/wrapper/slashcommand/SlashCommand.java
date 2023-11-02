@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.slashcommand;
 import org.dimas4ek.wrapper.slashcommand.option.Option;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -99,12 +100,13 @@ public class SlashCommand implements Command {
     }
 
     private OptionType setOptionType(int type) {
-        for (OptionType optionType : OptionType.values()) {
+        return EnumUtils.getEnumObjectFromInt(type, OptionType.class);
+        /*for (OptionType optionType : OptionType.values()) {
             if (type == optionType.getValue()) {
                 return optionType;
             }
         }
-        return null;
+        return null;*/
     }
 
     @Override

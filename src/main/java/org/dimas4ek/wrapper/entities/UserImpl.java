@@ -4,6 +4,7 @@ import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.NitroType;
 import org.dimas4ek.wrapper.types.UserFlag;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -46,13 +47,15 @@ public class UserImpl implements User {
     }
 
     @Override
-    public List<String> getFlags() {
-        return getUserFlags("flags");
+    public List<UserFlag> getFlags() {
+        return EnumUtils.getEnumListFromLong(user, "flags", UserFlag.class);
+        /*return getUserFlags("flags");*/
     }
 
     @Override
-    public List<String> getPublicFlags() {
-        return getUserFlags("public_flags");
+    public List<UserFlag> getPublicFlags() {
+        return EnumUtils.getEnumListFromLong(user, "public_flags", UserFlag.class);
+        /*return getUserFlags("public_flags");*/
     }
 
     @Override
@@ -61,13 +64,14 @@ public class UserImpl implements User {
     }
 
     @Override
-    public String getNitroType() {
-        for (NitroType type : NitroType.values()) {
+    public NitroType getNitroType() {
+        return EnumUtils.getEnumObject(user, "premium_type", NitroType.class);
+        /*for (NitroType type : NitroType.values()) {
             if (user.getInt("premium_type") == type.getValue()) {
-                return type.getName();
+                return type;
             }
         }
-        return null;
+        return null;*/
     }
 
     @NotNull

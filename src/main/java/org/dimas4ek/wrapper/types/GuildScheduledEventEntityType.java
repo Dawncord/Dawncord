@@ -5,12 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ButtonStyle {
-    Primary(1),
-    Secondary(2),
-    Success(3),
-    Danger(4),
-    Link(5);
+public enum GuildScheduledEventEntityType {
+    STAGE_INSTANCE(1),
+    VOICE(2),
+    EXTERNAL(3);
 
     private final int value;
 }

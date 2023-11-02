@@ -1,6 +1,13 @@
 package org.dimas4ek.wrapper.entities.message;
 
-import org.dimas4ek.wrapper.entities.*;
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.MessageModifyAction;
+import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.UserImpl;
+import org.dimas4ek.wrapper.entities.application.Activity;
+import org.dimas4ek.wrapper.entities.application.ActivityImpl;
+import org.dimas4ek.wrapper.entities.application.Application;
+import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -10,8 +17,10 @@ import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
+import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.types.MessageType;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
@@ -39,13 +48,14 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public String getType() {
-        for (MessageType type : MessageType.values()) {
+    public MessageType getType() {
+        return EnumUtils.getEnumObject(message, "type", MessageType.class);
+        /*for (MessageType type : MessageType.values()) {
             if (message.getInt("type") == type.getValue()) {
-                return type.toString();
+                return type;
             }
         }
-        return null;
+        return null;*/
     }
 
     @Override
@@ -67,6 +77,18 @@ public class MessageImpl implements Message {
     @Override
     public User getFrom() {
         return new UserImpl(JsonUtils.fetchEntity("/users/" + message.getString("user_id")));
+    }
+
+    @Override
+    public List<MessageFlag> getFlags() {
+        return EnumUtils.getEnumListFromLong(message, "flags", MessageFlag.class);
+        /*List<MessageFlag> flags = new ArrayList<>();
+        for (MessageFlag flag : MessageFlag.values()) {
+            if ((flag.getValue() & message.getInt("flags")) != 0) {
+                flags.add(flag);
+            }
+        }
+        return flags;*/
     }
 
     @Override
@@ -100,7 +122,7 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public Reaction getReactionByEmojiIdOrName(String emojiIdOrName) {
+    public Reaction getReaction(String emojiIdOrName) {
         return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findAny().orElse(null);
     }
 
@@ -161,5 +183,15 @@ public class MessageImpl implements Message {
     @Override
     public ZonedDateTime getEditedTimestamp() {
         return MessageUtils.getZonedDateTime(message, "edited_timestamp");
+    }
+
+    @Override
+    public MessageModifyAction modify() {
+        return new MessageModifyAction(this);
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId());
     }
 }

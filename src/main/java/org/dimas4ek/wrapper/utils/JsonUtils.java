@@ -7,11 +7,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class JsonUtils {
     public static JSONObject fetchEntity(String url) {
         return ApiClient.getJsonObject(url);
+    }
+
+    public static JSONObject fetchEntityParams(String url, Map<String, String> params) {
+        return ApiClient.getJsonObjectParams(url, params);
+    }
+
+    public static JSONArray fetchArray(String url) {
+        return ApiClient.getJsonArray(url);
     }
 
     public static <T> List<T> getEntityList(JSONArray jsonArray, Function<JSONObject, T> constructor) {

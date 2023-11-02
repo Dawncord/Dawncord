@@ -1,10 +1,10 @@
 package org.dimas4ek.wrapper.entities.role;
 
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GuildRoleImpl implements GuildRole {
@@ -30,15 +30,16 @@ public class GuildRoleImpl implements GuildRole {
     }
 
     @Override
-    public List<String> getPermissions() {
-        List<String> permissions = new ArrayList<>();
+    public List<PermissionType> getPermissions() {
+        return EnumUtils.getEnumListFromLong(role, "permissions", PermissionType.class);
+        /*List<PermissionType> permissions = new ArrayList<>();
         long permissionsFromJson = Long.parseLong(role.getString("permissions"));
         for (PermissionType permission : PermissionType.values()) {
             if ((permissionsFromJson & permission.getValue()) != 0) {
-                permissions.add(permission.name());
+                permissions.add(permission);
             }
         }
-        return permissions;
+        return permissions;*/
     }
 
     @Override

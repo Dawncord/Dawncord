@@ -5,11 +5,10 @@ import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ChannelImpl implements Channel {
@@ -35,23 +34,14 @@ public class ChannelImpl implements Channel {
     }
 
     @Override
-    public String getType() {
-        for (ChannelType type : ChannelType.values()) {
-            if (channel.getInt("type") == type.getValue()) {
-                return type.toString();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public ChannelType getTypeRaw() {
-        for (ChannelType type : ChannelType.values()) {
+    public ChannelType getType() {
+        return EnumUtils.getEnumObject(channel, "type", ChannelType.class);
+        /*for (ChannelType type : ChannelType.values()) {
             if (channel.getInt("type") == type.getValue()) {
                 return type;
             }
         }
-        return null;
+        return null;*/
     }
 
     @Override
@@ -60,8 +50,9 @@ public class ChannelImpl implements Channel {
     }
 
     @Override
-    public List<String> getFlags() {
-        if (channel.has("flags") || channel.getInt("flags") != 0) {
+    public List<GuildMemberFlag> getFlags() {
+        return EnumUtils.getEnumListFromLong(channel, "flags", GuildMemberFlag.class);
+        /*if (channel.has("flags") || channel.getInt("flags") != 0) {
             List<String> flags = new ArrayList<>();
             long flagsFromJson = Long.parseLong(String.valueOf(channel.getInt("flags")));
             for (GuildMemberFlag flag : GuildMemberFlag.values()) {
@@ -71,7 +62,7 @@ public class ChannelImpl implements Channel {
             }
             return flags;
         }
-        return Collections.emptyList();
+        return Collections.emptyList();*/
     }
 
     @Override

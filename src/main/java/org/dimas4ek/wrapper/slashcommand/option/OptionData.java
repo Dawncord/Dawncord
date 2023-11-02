@@ -2,7 +2,6 @@ package org.dimas4ek.wrapper.slashcommand.option;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.Mentionable;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -11,6 +10,7 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.message.Attachment;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -33,15 +33,15 @@ public class OptionData {
     }
 
     public User getAsUser() {
-        return new UserImpl(ApiClient.getJsonObject("/users/" + getAsString()));
+        return new UserImpl(JsonUtils.fetchEntity("/users/" + getAsString()));
     }
 
     public GuildChannel getAsChannel() {
-        return new GuildChannelImpl(ApiClient.getJsonObject("/channels/" + getAsString()));
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + getAsString()));
     }
 
     public GuildRole getAsRole() {
-        return new GuildImpl(ApiClient.getJsonObject("/guilds/" + data.get("guildId"))).getRoleById(getAsString());
+        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + data.get("guildId"))).getRoleById(getAsString());
     }
 
     public Mentionable getAsMentionable() {

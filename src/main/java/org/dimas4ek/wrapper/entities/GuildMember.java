@@ -3,6 +3,8 @@ package org.dimas4ek.wrapper.entities;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.types.GuildMemberFlag;
+import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,11 +15,11 @@ public interface GuildMember {
 
     Avatar getAvatar();
 
-    List<String> getFlags();
+    List<GuildMemberFlag> getFlags();
 
     ZonedDateTime getTimeJoined();
 
-    Set<String> getPermissions();
+    Set<PermissionType> getPermissions();
 
     List<GuildRole> getRoles();
 

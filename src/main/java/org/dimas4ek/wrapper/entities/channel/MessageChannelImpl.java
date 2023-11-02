@@ -19,18 +19,17 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
 
     @Override
     public List<Message> getMessages() {
-        JSONArray messages = ApiClient.getJsonArray("/channels/" + getId() + "/messages");
-        return JsonUtils.getEntityList(messages, MessageImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/messages"), MessageImpl::new);
     }
 
     @Override
     public Message getLastMessage() {
-        return new MessageImpl(ApiClient.getJsonObject("/channels/" + getId() + "/messages/" + channel.getString("last_message_id")));
+        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + channel.getString("last_message_id")));
     }
 
     @Override
     public Message getMessageById(String messageId) {
-        return new MessageImpl(ApiClient.getJsonObject("/channels/" + getId() + "/messages/" + messageId));
+        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + messageId));
     }
 
     @Override
@@ -46,5 +45,12 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     @Override
     public boolean isNsfw() {
         return channel.getBoolean("nsfw");
+    }
+
+    @Override
+    public void deleteMessages(int count) {
+        List<Message> messagesToDelete = getMessages().subList(0, count);
+
+        ApiClient.postArray(new JSONArray(messagesToDelete.stream().map(Message::getId)), "/channels/" + getId() + "/messages/bulk-delete");
     }
 }

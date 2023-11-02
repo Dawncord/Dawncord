@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.application;
 
 import org.dimas4ek.wrapper.types.ActivityType;
 

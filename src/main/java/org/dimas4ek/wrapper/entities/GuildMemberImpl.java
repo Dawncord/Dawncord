@@ -6,12 +6,16 @@ import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GuildMemberImpl implements GuildMember {
     private final JSONObject guild;
@@ -37,8 +41,9 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
-    public List<String> getFlags() {
-        if (guildMember.has("flags") || guildMember.getInt("flags") != 0) {
+    public List<GuildMemberFlag> getFlags() {
+        return EnumUtils.getEnumListFromLong(guildMember, "flags", GuildMemberFlag.class);
+        /*if (guildMember.has("flags") || guildMember.getInt("flags") != 0) {
             List<String> flags = new ArrayList<>();
             long flagsFromJson = Long.parseLong(String.valueOf(guildMember.getInt("flags")));
             for (GuildMemberFlag flag : GuildMemberFlag.values()) {
@@ -48,7 +53,7 @@ public class GuildMemberImpl implements GuildMember {
             }
             return flags;
         }
-        return Collections.emptyList();
+        return Collections.emptyList();*/
     }
 
     @Override
@@ -57,10 +62,10 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
-    public Set<String> getPermissions() {
-        Set<String> permissions = new HashSet<>();
+    public Set<PermissionType> getPermissions() {
+        Set<PermissionType> permissions = new HashSet<>();
         if (isOwner()) {
-            permissions.addAll(PermissionType.getAll());
+            permissions.addAll(List.of(PermissionType.values()));
         }
         permissions.addAll(getGuild().getPublicRole().getPermissions());
         getRoles().forEach(role -> permissions.addAll(role.getPermissions()));

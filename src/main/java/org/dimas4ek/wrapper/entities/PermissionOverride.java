@@ -6,13 +6,6 @@ import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.util.List;
 
-/*@Getter
-public class PermissionOverride {
-    private final int id;
-    private final PermissionOverrideType type;
-    private final List<PermissionType> denied;
-    private final List<PermissionType> allowed;
-}*/
 
 @Getter
 public class PermissionOverride {

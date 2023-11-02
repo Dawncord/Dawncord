@@ -5,12 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ButtonStyle {
-    Primary(1),
-    Secondary(2),
-    Success(3),
-    Danger(4),
-    Link(5);
+public enum MembershipState {
+    INVITED(1),
+    ACCEPTED(2);
 
     private final int value;
 }

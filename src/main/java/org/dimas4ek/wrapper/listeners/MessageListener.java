@@ -4,7 +4,6 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Dawncord;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
@@ -37,10 +36,9 @@ public class MessageListener extends WebSocketAdapter {
             if (type.equals("MESSAGE_CREATE")) {
                 String messageId = d.getString("id");
 
-                JSONObject channel = JsonUtils.fetchEntity("/channels/" + channelId);
-                GuildChannel guildChannel = new GuildChannelImpl(channel);
+                GuildChannel guildChannel = new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
 
-                Message message = new MessageImpl(ApiClient.getJsonObject("/channels/" + channelId + "/messages/" + messageId));
+                Message message = new MessageImpl(JsonUtils.fetchEntity("/channels/" + channelId + "/messages/" + messageId));
 
                 MessageEventImpl messageEvent = new MessageEventImpl(message, guildChannel);
 

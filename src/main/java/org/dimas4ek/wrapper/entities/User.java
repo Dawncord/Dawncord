@@ -1,6 +1,8 @@
 package org.dimas4ek.wrapper.entities;
 
 import org.dimas4ek.wrapper.entities.image.Avatar;
+import org.dimas4ek.wrapper.types.NitroType;
+import org.dimas4ek.wrapper.types.UserFlag;
 
 import java.util.List;
 
@@ -15,13 +17,13 @@ public interface User {
 
     Avatar getAvatar();
 
-    List<String> getFlags();
+    List<UserFlag> getFlags();
 
-    List<String> getPublicFlags();
+    List<UserFlag> getPublicFlags();
 
     boolean hasNitro();
 
-    String getNitroType();
+    NitroType getNitroType();
 
     boolean isBot();
 }

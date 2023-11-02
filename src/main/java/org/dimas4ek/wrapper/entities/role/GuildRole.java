@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.role;
 
 import org.dimas4ek.wrapper.entities.IMentionable;
+import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.awt.*;
 import java.util.List;
@@ -12,7 +13,7 @@ public interface GuildRole extends IMentionable {
 
     String getDescription();
 
-    List<String> getPermissions();
+    List<PermissionType> getPermissions();
 
     int getPosition();
 

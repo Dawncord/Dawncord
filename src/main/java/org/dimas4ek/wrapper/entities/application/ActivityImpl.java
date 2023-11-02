@@ -1,6 +1,7 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.application;
 
 import org.dimas4ek.wrapper.types.ActivityType;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONObject;
 
 public class ActivityImpl implements Activity {
@@ -12,12 +13,7 @@ public class ActivityImpl implements Activity {
 
     @Override
     public ActivityType getType() {
-        for (ActivityType type : ActivityType.values()) {
-            if (type.getValue() == activity.getInt("type")) {
-                return type;
-            }
-        }
-        return null;
+        return EnumUtils.getEnumObject(activity, "type", ActivityType.class);
     }
 
     @Override

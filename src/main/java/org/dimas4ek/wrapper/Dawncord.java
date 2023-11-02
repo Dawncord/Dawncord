@@ -130,8 +130,7 @@ public class Dawncord {
     }
 
     public List<SlashCommand> getSlashCommands() {
-        JSONArray commands = ApiClient.getJsonArray("/applications/" + Constants.APPLICATION_ID + "/commands");
-        return JsonUtils.getEntityList(commands, SlashCommand::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/applications/" + Constants.APPLICATION_ID + "/commands"), SlashCommand::new);
     }
 
     private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {

@@ -36,6 +36,10 @@ public class ApiClient {
         doAction("patch", jsonObject, url);
     }
 
+    public static void put(JSONObject jsonObject, String url) {
+        doAction("put", jsonObject, url);
+    }
+
     public static void delete(String url) {
         doAction("delete", null, url);
     }
@@ -61,7 +65,39 @@ public class ApiClient {
                     request.patch(requestBody);
                 }
             }
+            case "put" -> {
+                if (requestBody != null) {
+                    request.put(requestBody);
+                }
+            }
             case "delete" -> request.delete();
+        }
+
+        try (Response response = CLIENT.newCall(request.build()).execute()) {
+            if (!response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        System.out.println(new JSONObject(body.string()).toString(4));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void postArray(JSONArray jsonArray, String url) {
+        RequestBody requestBody = null;
+        if (jsonArray != null) {
+            requestBody = RequestBody.create(jsonArray.toString(), Constants.MEDIA_TYPE_JSON);
+        }
+
+        Request.Builder request = new Request.Builder()
+                .url(Constants.API_URL + url)
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
+
+        if (requestBody != null) {
+            request.post(requestBody);
         }
 
         try (Response response = CLIENT.newCall(request.build()).execute()) {
@@ -109,6 +145,35 @@ public class ApiClient {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
                         return new JSONArray(body.string());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    public static JSONObject getJsonObjectParams(String url, Map<String, String> params) {
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
+        if (params != null) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
+                httpBuilder.addQueryParameter(param.getKey(), param.getValue());
+            }
+        }
+
+        Request request = new Request.Builder()
+                .url(httpBuilder.build().toString())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .get()
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        return new JSONObject(body.string());
                     }
                 }
             }

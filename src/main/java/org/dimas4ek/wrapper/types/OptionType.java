@@ -1,5 +1,10 @@
 package org.dimas4ek.wrapper.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum OptionType {
     SUB_COMMAND(1),
     SUB_COMMAND_GROUP(2),
@@ -14,12 +19,4 @@ public enum OptionType {
     ATTACHMENT(11);
 
     private final int value;
-
-    OptionType(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return value;
-    }
 }

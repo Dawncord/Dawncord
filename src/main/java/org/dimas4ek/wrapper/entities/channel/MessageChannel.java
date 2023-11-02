@@ -16,4 +16,6 @@ public interface MessageChannel extends Channel {
     int getRateLimit();
 
     boolean isNsfw();
+
+    void deleteMessages(int count);
 }

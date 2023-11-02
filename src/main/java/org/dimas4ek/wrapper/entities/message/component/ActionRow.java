@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.message.component;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.types.SelectMenuType;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -98,12 +99,13 @@ public class ActionRow {
     }
 
     private ChannelType getChannelType(int type) {
-        for (ChannelType selectMenuType : ChannelType.values()) {
+        return EnumUtils.getEnumObjectFromInt(type, ChannelType.class);
+        /*for (ChannelType selectMenuType : ChannelType.values()) {
             if (type == selectMenuType.getValue()) {
                 return selectMenuType;
             }
         }
-        return null;
+        return null;*/
     }
 
     private List<SelectOption> getSelectMenuOptions(JSONArray optionsArray) {
@@ -123,11 +125,12 @@ public class ActionRow {
     }
 
     private SelectMenuType getSelectMenuType(int type) {
-        for (SelectMenuType selectMenuType : SelectMenuType.values()) {
+        return EnumUtils.getEnumObjectFromInt(type, SelectMenuType.class);
+        /*for (SelectMenuType selectMenuType : SelectMenuType.values()) {
             if (type == selectMenuType.getValue()) {
                 return selectMenuType;
             }
         }
-        return null;
+        return null;*/
     }
 }

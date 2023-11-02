@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.channel;
 import org.dimas4ek.wrapper.entities.IMentionable;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.ChannelType;
+import org.dimas4ek.wrapper.types.GuildMemberFlag;
 
 import java.util.List;
 
@@ -13,13 +14,11 @@ public interface Channel extends IMentionable {
 
     String getName();
 
-    String getType();
-
-    ChannelType getTypeRaw();
+    ChannelType getType();
 
     Guild getGuild();
 
-    List<String> getFlags();
+    List<GuildMemberFlag> getFlags();
 
     void delete();
 }

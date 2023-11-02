@@ -46,26 +46,22 @@ public class GuildImpl implements Guild {
 
     @Override
     public User getOwner() {
-        JSONObject user = ApiClient.getJsonObject("/users/" + guild.getString("owner_id"));
-        return new UserImpl(user);
+        return new UserImpl(JsonUtils.fetchEntity("/users/" + guild.getString("owner_id")));
     }
 
     @Override
     public List<GuildChannel> getChannels() {
-        JSONArray channels = ApiClient.getJsonArray("/guilds/" + getId() + "/channels");
-        return JsonUtils.getEntityList(channels, GuildChannelImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/channels"), GuildChannelImpl::new);
     }
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        JSONObject channel = ApiClient.getJsonObject("/channels/" + channelId);
-        return new GuildChannelImpl(channel);
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
     }
 
     @Override
     public GuildChannel getChannelById(long channelId) {
-        JSONObject channel = ApiClient.getJsonObject("/channels/" + channelId);
-        return new GuildChannelImpl(channel);
+        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
     }
 
     @Override
@@ -79,8 +75,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public GuildMember getMemberById(String memberId) {
-        JSONObject member = ApiClient.getJsonObject("/guilds/" + getId() + "/members/" + memberId);
-        return new GuildMemberImpl(guild, member);
+        return new GuildMemberImpl(guild, JsonUtils.fetchEntity("/guilds/" + getId() + "/members/" + memberId));
     }
 
     @Override
@@ -108,13 +103,12 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildBan> getBans() {
-        JSONArray bans = ApiClient.getJsonArray("/guilds/" + getId() + "/bans");
-        return JsonUtils.getEntityList(bans, GuildBanImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/bans"), GuildBanImpl::new);
     }
 
     @Override
     public GuildBan getBanByUserId(String userId) {
-        return new GuildBanImpl(ApiClient.getJsonObject("/guilds/" + getId() + "/bans/" + userId));
+        return new GuildBanImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/bans/" + userId));
     }
 
     @Override
@@ -124,8 +118,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildRole> getRoles() {
-        JSONArray roles = ApiClient.getJsonArray("/guilds/" + getId() + "/roles");
-        return JsonUtils.getEntityList(roles, GuildRoleImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/roles"), GuildRoleImpl::new);
     }
 
     @Override
@@ -152,7 +145,7 @@ public class GuildImpl implements Guild {
     public List<GuildCategory> getCategories() {
         List<GuildCategory> categories = new ArrayList<>();
         for (Channel channel : getChannels()) {
-            if (channel.getTypeRaw() == ChannelType.GUILD_CATEGORY) {
+            if (channel.getType() == ChannelType.GUILD_CATEGORY) {
                 categories.add(new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + channel.getId())));
             }
         }
@@ -181,8 +174,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<Thread> getActiveThreads() {
-        JSONArray threads = JsonUtils.fetchEntity("/guilds/" + getId() + "/threads/active").getJSONArray("threads");
-        return JsonUtils.getEntityList(threads, ThreadImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/guilds/" + getId() + "/threads/active").getJSONArray("threads"), ThreadImpl::new);
     }
 
     @Override
