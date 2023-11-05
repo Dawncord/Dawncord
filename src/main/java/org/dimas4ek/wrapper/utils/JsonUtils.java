@@ -23,6 +23,10 @@ public class JsonUtils {
         return ApiClient.getJsonArray(url);
     }
 
+    public static JSONArray fetchArrayParams(String url, Map<String, String> params) {
+        return ApiClient.getJsonArrayParams(url, params);
+    }
+
     public static <T> List<T> getEntityList(JSONArray jsonArray, Function<JSONObject, T> constructor) {
         try {
             List<T> list = new ArrayList<>();

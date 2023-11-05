@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.slashcommand.option.OptionData;
@@ -28,4 +29,8 @@ public interface SlashCommandEvent {
     List<OptionData> getOptions();
 
     OptionData getOption(String name);
+
+    Application getApplication();
+
+    void editApplication();
 }

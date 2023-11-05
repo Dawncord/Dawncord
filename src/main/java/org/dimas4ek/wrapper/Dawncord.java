@@ -20,14 +20,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class Dawncord {
     private final WebSocket webSocket;
-    private static Consumer<MessageEvent> onMessageHandler;
-    private static Consumer<SlashCommandEvent> onSlashCommandHandler;
+    private static Consumer<MessageEvent> defaultMessageHandler;
+    private static Map<String, Consumer<SlashCommandEvent>> slashCommandHandlers = new HashMap<>();
+    private static Consumer<SlashCommandEvent> defaultSlashCommandHandler;
 
     public Dawncord(String token) {
         WebSocketFactory factory = new WebSocketFactory();
@@ -68,22 +70,30 @@ public class Dawncord {
     }
 
     public void onMessage(Consumer<MessageEvent> handler) {
-        onMessageHandler = handler;
+        defaultMessageHandler = handler;
     }
 
     public static void processMessage(MessageEvent messageEvent) {
-        if (onMessageHandler != null) {
-            onMessageHandler.accept(messageEvent);
+        if (defaultMessageHandler != null) {
+            defaultMessageHandler.accept(messageEvent);
         }
     }
 
+    public void onSlashCommand(String commandName, Consumer<SlashCommandEvent> handler) {
+        slashCommandHandlers.put(commandName, handler);
+    }
+
     public void onSlashCommand(Consumer<SlashCommandEvent> handler) {
-        onSlashCommandHandler = handler;
+        defaultSlashCommandHandler = handler;
     }
 
     public static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
-        if (onSlashCommandHandler != null) {
-            onSlashCommandHandler.accept(slashCommandEvent);
+        String commandName = slashCommandEvent.getCommandName();
+        Consumer<SlashCommandEvent> handler = slashCommandHandlers.get(commandName);
+        if (handler != null) {
+            handler.accept(slashCommandEvent);
+        } else if (defaultSlashCommandHandler != null) {
+            defaultSlashCommandHandler.accept(slashCommandEvent);
         }
     }
 
@@ -98,7 +108,7 @@ public class Dawncord {
                 .put("op", 2)
                 .put("d", new JSONObject()
                         .put("token", Constants.BOT_TOKEN)
-                        .put("intents", 33026)
+                        .put("intents", 33538)
                         .put("properties", new JSONObject()
                                 .put("os", "linux")
                                 .put("browser", "discord-java-gateway")

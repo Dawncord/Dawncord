@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
 import org.dimas4ek.wrapper.utils.JsonUtils;
@@ -52,5 +53,50 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
         List<Message> messagesToDelete = getMessages().subList(0, count);
 
         ApiClient.postArray(new JSONArray(messagesToDelete.stream().map(Message::getId)), "/channels/" + getId() + "/messages/bulk-delete");
+    }
+
+    @Override
+    public void setTyping() {
+        ApiClient.post(null, "/channels/" + getId() + "/typing");
+    }
+
+    @Override
+    public List<Message> getPinnedMessages() {
+        return JsonUtils.getEntityList(ApiClient.getJsonArray("/channels/" + getId() + "/pins"), MessageImpl::new);
+    }
+
+    @Override
+    public void pinMessage(String messageId) {
+        ApiClient.put(null, "/channels/" + getId() + "/pins/" + messageId);
+    }
+
+    @Override
+    public void pinMessage(long messageId) {
+        pinMessage(String.valueOf(messageId));
+    }
+
+    @Override
+    public void unpinMessage(String messageId) {
+        ApiClient.delete("/channels/" + getId() + "/pins/" + messageId);
+    }
+
+    @Override
+    public void unpinMessage(long messageId) {
+        unpinMessage(String.valueOf(messageId));
+    }
+
+    @Override
+    public ThreadCreateAction startThread(String messageId) {
+        return new ThreadCreateAction(messageId, channel);
+    }
+
+    @Override
+    public ThreadCreateAction startThread(long messageId) {
+        return startThread(String.valueOf(messageId));
+    }
+
+    @Override
+    public ThreadCreateAction startThread() {
+        return new ThreadCreateAction(channel);
     }
 }

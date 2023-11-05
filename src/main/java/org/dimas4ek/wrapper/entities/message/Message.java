@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.message;
 
 import org.dimas4ek.wrapper.action.MessageModifyAction;
+import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.application.Activity;
 import org.dimas4ek.wrapper.entities.application.Application;
@@ -27,6 +28,8 @@ public interface Message {
     GuildChannel getChannel();
 
     Guild getGuild();
+
+    ThreadCreateAction startThread(String name);
 
     String getContent();
 

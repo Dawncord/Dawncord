@@ -50,7 +50,7 @@ public class AttachmentUtils {
         return multipartBuilder;
     }
 
-    public static JSONArray createAttachmentsArray(List<File> files) {
+    private static JSONArray createAttachmentsArray(List<File> files) {
         JSONArray attachments = new JSONArray();
 
         for (int i = 0; i < files.size(); i++) {

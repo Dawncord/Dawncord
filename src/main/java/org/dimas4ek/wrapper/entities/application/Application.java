@@ -57,6 +57,4 @@ public interface Application {
     List<String> getTags();
 
     boolean isMonetized();
-
-    //todo check embedded_activity_config
 }

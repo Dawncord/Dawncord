@@ -22,18 +22,15 @@ public class MessageCreateAction {
     private final JSONObject channel;
     private List<File> attachments;
     private int flags;
-    private boolean hasChanges;
 
     public MessageCreateAction(JSONObject jsonObject, JSONObject channel) {
         this.jsonObject = jsonObject;
         this.channel = channel;
         flags = 0;
-        hasChanges = false;
     }
 
     private void setProperty(String key, Object value) {
         jsonObject.put(key, value);
-        hasChanges = true;
     }
 
     @CheckReturnValue
@@ -66,21 +63,25 @@ public class MessageCreateAction {
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction setAllowedMentions(AllowedMention... allowedMentions) {
         MessageUtils.setAllowedMentions(jsonObject, allowedMentions);
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction mentionUsers(String... userIds) {
         MessageUtils.updateMentions(jsonObject, userIds, "users");
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction mentionRoles(String... roleIds) {
         MessageUtils.updateMentions(jsonObject, roleIds, "roles");
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction setMessageReference(Message message) {
         setProperty("message_reference", new JSONObject()
                 .put("message_id", message.getId())
@@ -92,6 +93,7 @@ public class MessageCreateAction {
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction setStickers(Sticker... stickers) {
         if (stickers != null && stickers.length > 0) {
             setProperty("sticker_ids", new JSONArray().put(stickers));
@@ -99,6 +101,7 @@ public class MessageCreateAction {
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction setSuppressEmbeds(boolean enabled) {
         if (enabled) {
             flags |= MessageFlag.SUPPRESS_EMBEDS.getValue();
@@ -107,6 +110,7 @@ public class MessageCreateAction {
         return this;
     }
 
+    @CheckReturnValue
     public MessageCreateAction setSuppressNotifications(boolean enabled) {
         if (enabled) {
             flags |= MessageFlag.SUPPRESS_NOTIFICATIONS.getValue();
@@ -116,15 +120,12 @@ public class MessageCreateAction {
     }
 
     public void submit() {
-        if (hasChanges) {
-            if (attachments != null && !attachments.isEmpty()) {
-                MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, attachments);
-                ApiClient.postAttachments(multipartBuilder, "/channels/" + channel.getString("id") + "/messages");
-            } else {
-                ApiClient.post(jsonObject, "/channels/" + channel.getString("id") + "/messages");
-            }
-            hasChanges = false;
-            jsonObject.clear();
+        if (attachments != null && !attachments.isEmpty()) {
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, attachments);
+            ApiClient.postAttachments(multipartBuilder, "/channels/" + channel.getString("id") + "/messages");
+        } else {
+            ApiClient.post(jsonObject, "/channels/" + channel.getString("id") + "/messages");
         }
+        jsonObject.clear();
     }
 }

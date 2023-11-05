@@ -6,6 +6,7 @@ import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 
@@ -64,9 +65,31 @@ public interface Guild {
 
     void delete();
 
+    boolean hasActiveThreads();
+
+    int getActiveThreadsCount();
+
     List<Thread> getActiveThreads();
+
+    List<Thread> getPublicArchiveThreads(String channelId);
+
+    List<Thread> getPublicArchiveThreads(long channelId);
+
+    List<Thread> getPrivateArchiveThreads(String channelId);
+
+    List<Thread> getPrivateArchiveThreads(long channelId);
+
+    List<Thread> getJoinedPrivateArchiveThreads(String channelId);
+
+    List<Thread> getJoinedPrivateArchiveThreads(long channelId);
 
     Thread getThreadById(String threadId);
 
     Thread getThreadById(long threadId);
+
+    List<GuildEvent> getGuildEvents();
+
+    GuildEvent getGuildEventById(String eventId);
+
+    GuildEvent getGuildEventById(long eventId);
 }

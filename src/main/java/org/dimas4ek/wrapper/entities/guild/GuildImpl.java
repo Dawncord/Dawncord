@@ -4,6 +4,7 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildModifyAction;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.*;
+import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.thread.Thread;
@@ -173,8 +174,50 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public boolean hasActiveThreads() {
+        return !getActiveThreads().isEmpty();
+    }
+
+    @Override
+    public int getActiveThreadsCount() {
+        return getActiveThreads().size();
+    }
+
+    @Override
     public List<Thread> getActiveThreads() {
         return JsonUtils.getEntityList(JsonUtils.fetchEntity("/guilds/" + getId() + "/threads/active").getJSONArray("threads"), ThreadImpl::new);
+    }
+
+    @Override
+    public List<Thread> getPublicArchiveThreads(String channelId) {
+        //todo add before and limit
+        return getChannelById(channelId).getPublicArchiveThreads();
+    }
+
+    @Override
+    public List<Thread> getPublicArchiveThreads(long channelId) {
+        return getPublicArchiveThreads(String.valueOf(channelId));
+    }
+
+    @Override
+    public List<Thread> getPrivateArchiveThreads(String channelId) {
+        //todo add before and limit
+        return getChannelById(channelId).getPrivateArchiveThreads();
+    }
+
+    @Override
+    public List<Thread> getPrivateArchiveThreads(long channelId) {
+        return getPrivateArchiveThreads(String.valueOf(channelId));
+    }
+
+    @Override
+    public List<Thread> getJoinedPrivateArchiveThreads(String channelId) {
+        return getChannelById(channelId).getJoinedPrivateArchiveThreads();
+    }
+
+    @Override
+    public List<Thread> getJoinedPrivateArchiveThreads(long channelId) {
+        return getJoinedPrivateArchiveThreads(String.valueOf(channelId));
     }
 
     @Override
@@ -185,5 +228,20 @@ public class GuildImpl implements Guild {
     @Override
     public Thread getThreadById(long threadId) {
         return getThreadById(String.valueOf(threadId));
+    }
+
+    @Override
+    public List<GuildEvent> getGuildEvents() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/scheduled-events"), GuildEventImpl::new);
+    }
+
+    @Override
+    public GuildEvent getGuildEventById(String eventId) {
+        return new GuildEventImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/scheduled-events" + eventId));
+    }
+
+    @Override
+    public GuildEvent getGuildEventById(long eventId) {
+        return getGuildEventById(String.valueOf(eventId));
     }
 }

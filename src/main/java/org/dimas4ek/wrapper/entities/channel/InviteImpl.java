@@ -1,12 +1,13 @@
 package org.dimas4ek.wrapper.entities.channel;
 
-import org.dimas4ek.wrapper.entities.GuildScheduledEventImpl;
+import org.dimas4ek.wrapper.entities.GuildEventImpl;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.types.TargetType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
@@ -87,8 +88,8 @@ public class InviteImpl implements Invite {
     }
 
     @Override
-    public GuildScheduledEvent getGuildScheduledEvent() {
-        return new GuildScheduledEventImpl(invite.getJSONObject("guild_scheduled_event"));
+    public GuildEvent getGuildScheduledEvent() {
+        return new GuildEventImpl(invite.getJSONObject("guild_scheduled_event"));
     }
 
     @Override

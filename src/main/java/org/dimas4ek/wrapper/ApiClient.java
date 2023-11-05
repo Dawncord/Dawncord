@@ -58,6 +58,8 @@ public class ApiClient {
             case "post" -> {
                 if (requestBody != null) {
                     request.post(requestBody);
+                } else {
+                    request.post(RequestBody.create(new byte[0]));
                 }
             }
             case "patch" -> {
@@ -68,6 +70,8 @@ public class ApiClient {
             case "put" -> {
                 if (requestBody != null) {
                     request.put(requestBody);
+                } else {
+                    request.put(RequestBody.create(new byte[0]));
                 }
             }
             case "delete" -> request.delete();

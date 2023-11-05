@@ -41,6 +41,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
         JSONArray members = ApiClient.getJsonArrayParams(
                 "/channels/" + getId() + "/thread-members",
                 Map.of("with_members", "true"));
+        //todo add after and limit
         return JsonUtils.getEntityList(members, threadMember -> new ThreadMember(threadMember, this));
     }
 
@@ -52,5 +53,36 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     @Override
     public ThreadMember getThreadMemberById(long userId) {
         return getThreadMemberById(String.valueOf(userId));
+    }
+
+    @Override
+    public void join() {
+        ApiClient.put(null, "/channels/" + getId() + "/thread-members/@me");
+    }
+
+
+    @Override
+    public void join(String userId) {
+        ApiClient.put(null, "/channels/" + getId() + "/thread-members/" + userId);
+    }
+
+    @Override
+    public void join(long userId) {
+        join(String.valueOf(userId));
+    }
+
+    @Override
+    public void leave() {
+        ApiClient.delete("/channels/" + getId() + "/thread-members/@me");
+    }
+
+    @Override
+    public void leave(String userId) {
+        ApiClient.delete("/channels/" + getId() + "/thread-members/" + userId);
+    }
+
+    @Override
+    public void leave(long userId) {
+        leave(String.valueOf(userId));
     }
 }

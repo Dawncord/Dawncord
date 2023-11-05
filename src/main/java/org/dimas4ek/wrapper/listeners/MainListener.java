@@ -26,7 +26,6 @@ public class MainListener extends WebSocketAdapter {
         if (op == 10) {
             JSONObject d = json.getJSONObject("d");
             int heartbeatInterval = d.getInt("heartbeat_interval");
-            System.out.println(heartbeatInterval);
 
             JSONObject payload = new JSONObject()
                     .put("op", 1)

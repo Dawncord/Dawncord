@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.message;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
+import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.Activity;
@@ -68,6 +69,10 @@ public class MessageImpl implements Message {
         return getChannel().getGuild();
     }
 
+    @Override
+    public ThreadCreateAction startThread(String name) {
+        return new ThreadCreateAction(getId(), name);
+    }
 
     @Override
     public String getContent() {

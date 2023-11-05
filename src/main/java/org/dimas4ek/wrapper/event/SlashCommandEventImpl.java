@@ -3,6 +3,8 @@ package org.dimas4ek.wrapper.event;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.application.Application;
+import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -87,5 +89,15 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     @Override
     public OptionData getOption(String name) {
         return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
+    }
+
+    @Override
+    public Application getApplication() {
+        return new ApplicationImpl(JsonUtils.fetchEntity("/applications/@me"));
+    }
+
+    @Override
+    public void editApplication() {
+        //todo edit current app
     }
 }

@@ -11,9 +11,8 @@ public class App {
     public static void main(String[] args) throws IOException {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
 
-        bot.onSlashCommand(event -> {
-            if (event.getCommandName().equals("test1")) {
-            }
+        bot.onSlashCommand("test1", event -> {
+
         });
 
         bot.start();

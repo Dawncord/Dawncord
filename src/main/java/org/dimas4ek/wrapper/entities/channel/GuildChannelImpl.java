@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.ChannelModifyAction;
+import org.dimas4ek.wrapper.action.InviteCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
@@ -35,6 +36,11 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     @Override
     public Thread asThread() {
         return new ThreadImpl(channel);
+    }
+
+    @Override
+    public GuildForum asForum() {
+        return new GuildForumImpl(channel);
     }
 
 
@@ -85,8 +91,48 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
+    public void deletePermission(int permissionId) {
+        ApiClient.delete("/channels/" + getId() + "/permissions/" + permissionId);
+    }
+
+    @Override
     public List<Invite> getInvites() {
         return JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/invites"), InviteImpl::new);
+    }
+
+    @Override
+    public InviteCreateAction createInvite() {
+        return new InviteCreateAction(this);
+    }
+
+    @Override
+    public boolean hasActiveThreads() {
+        return !getActiveThreads().isEmpty();
+    }
+
+    @Override
+    public int getActiveThreadsCount() {
+        return getActiveThreads().size();
+    }
+
+    @Override
+    public List<Thread> getActiveThreads() {
+        return getGuild().getActiveThreads().stream().filter(thread -> thread.getChannel().equals(this)).toList();
+    }
+
+    @Override
+    public List<Thread> getPublicArchiveThreads() {
+        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/public").getJSONArray("threads"), ThreadImpl::new);
+    }
+
+    @Override
+    public List<Thread> getPrivateArchiveThreads() {
+        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/private").getJSONArray("threads"), ThreadImpl::new);
+    }
+
+    @Override
+    public List<Thread> getJoinedPrivateArchiveThreads() {
+        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/users/@me/threads/archived/private").getJSONArray("threads"), ThreadImpl::new);
     }
 
     private PermissionOverrideType getPermissionType(int type) {

@@ -18,4 +18,16 @@ public interface Thread extends MessageChannel {
     ThreadMember getThreadMemberById(String userId);
 
     ThreadMember getThreadMemberById(long userId);
+
+    void join();
+
+    void join(String userId);
+
+    void join(long userId);
+
+    void leave();
+
+    void leave(String userId);
+
+    void leave(long userId);
 }

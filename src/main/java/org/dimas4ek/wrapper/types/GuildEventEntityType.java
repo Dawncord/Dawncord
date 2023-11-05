@@ -5,11 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum GuildScheduledEventStatus {
-    SCHEDULED(1),
-    ACTIVE(2),
-    COMPLETED(3),
-    CANCELED(4);
+public enum GuildEventEntityType {
+    STAGE_INSTANCE(1),
+    VOICE(2),
+    EXTERNAL(3);
 
     private final int value;
 }
