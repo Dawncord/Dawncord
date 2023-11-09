@@ -4,7 +4,9 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildModifyAction;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.*;
+import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.thread.Thread;
@@ -243,5 +245,10 @@ public class GuildImpl implements Guild {
     @Override
     public GuildEvent getGuildEventById(long eventId) {
         return getGuildEventById(String.valueOf(eventId));
+    }
+
+    @Override
+    public AuditLog getAuditLog() {
+        return new AuditLog(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/audit-logs"));
     }
 }

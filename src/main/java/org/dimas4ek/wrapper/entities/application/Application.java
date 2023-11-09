@@ -9,14 +9,7 @@ import org.dimas4ek.wrapper.types.ApplicationFlag;
 
 import java.util.List;
 
-public interface Application {
-    String getId();
-
-    long getIdLong();
-
-    String getName();
-
-    String getDescription();
+public interface Application extends IApplication {
 
     Guild getGuild();
 
@@ -35,8 +28,6 @@ public interface Application {
     ApplicationIcon getCoverImage();
 
     ActivityType getType();
-
-    User getBot();
 
     User getOwner();
 

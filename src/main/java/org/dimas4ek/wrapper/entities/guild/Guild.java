@@ -6,6 +6,7 @@ import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
+import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
@@ -92,4 +93,6 @@ public interface Guild {
     GuildEvent getGuildEventById(String eventId);
 
     GuildEvent getGuildEventById(long eventId);
+
+    AuditLog getAuditLog();
 }

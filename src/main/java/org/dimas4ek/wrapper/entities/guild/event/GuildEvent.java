@@ -5,6 +5,7 @@ import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.image.GuildEventImage;
 import org.dimas4ek.wrapper.types.GuildEventEntityType;
 import org.dimas4ek.wrapper.types.GuildEventPrivacyLevel;
 import org.dimas4ek.wrapper.types.GuildEventStatus;

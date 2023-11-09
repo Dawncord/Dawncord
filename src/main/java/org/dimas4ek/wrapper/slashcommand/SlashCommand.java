@@ -1,8 +1,10 @@
 package org.dimas4ek.wrapper.slashcommand;
 
 import org.dimas4ek.wrapper.slashcommand.option.Option;
+import org.dimas4ek.wrapper.types.CommandType;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
+import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -67,6 +69,31 @@ public class SlashCommand implements Command {
     }
 
     @Override
+    public String getApplicationId() {
+        return command.optString("application_id");
+    }
+
+    @Override
+    public List<PermissionType> getMemberPermissions() {
+        return EnumUtils.getEnumListFromLong(command, "default_member_permissions", PermissionType.class);
+    }
+
+    @Override
+    public CommandType getType() {
+        return EnumUtils.getEnumObject(command, "type", CommandType.class);
+    }
+
+    @Override
+    public boolean isNsfw() {
+        return command.optBoolean("nsfw", false);
+    }
+
+    @Override
+    public String getVersion() {
+        return command.getString("version");
+    }
+
+    @Override
     public List<Option> getOptions() {
         if (command.has("options")) {
             List<Option> options = new ArrayList<>();
@@ -99,16 +126,6 @@ public class SlashCommand implements Command {
         return Collections.emptyList();
     }
 
-    private OptionType setOptionType(int type) {
-        return EnumUtils.getEnumObjectFromInt(type, OptionType.class);
-        /*for (OptionType optionType : OptionType.values()) {
-            if (type == optionType.getValue()) {
-                return optionType;
-            }
-        }
-        return null;*/
-    }
-
     @Override
     public Map<Locale, String> getNameLocalizations() {
         return getLocaleStringMap("name_localizations");
@@ -117,6 +134,16 @@ public class SlashCommand implements Command {
     @Override
     public Map<Locale, String> getDescriptionLocalizations() {
         return getLocaleStringMap("description_localizations");
+    }
+
+    private OptionType setOptionType(int type) {
+        return EnumUtils.getEnumObjectFromInt(type, OptionType.class);
+        /*for (OptionType optionType : OptionType.values()) {
+            if (type == optionType.getValue()) {
+                return optionType;
+            }
+        }
+        return null;*/
     }
 
     @NotNull

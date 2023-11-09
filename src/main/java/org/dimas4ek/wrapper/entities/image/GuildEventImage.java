@@ -1,7 +1,6 @@
-package org.dimas4ek.wrapper.entities.guild.event;
+package org.dimas4ek.wrapper.entities.image;
 
 import org.dimas4ek.wrapper.Constants;
-import org.dimas4ek.wrapper.entities.image.Icon;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
 public class GuildEventImage implements Icon {

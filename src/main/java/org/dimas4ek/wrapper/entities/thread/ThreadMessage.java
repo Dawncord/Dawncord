@@ -1,7 +1,6 @@
 package org.dimas4ek.wrapper.entities.thread;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-@Setter
 public class ThreadMessage {
     private final String content;
     private List<Embed> embeds;
