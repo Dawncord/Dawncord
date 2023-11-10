@@ -1,6 +1,9 @@
 package org.dimas4ek.wrapper.entities.guild;
 
+import org.dimas4ek.wrapper.action.EmojiCreateAction;
+import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.action.GuildModifyAction;
+import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.GuildBan;
 import org.dimas4ek.wrapper.entities.GuildMember;
 import org.dimas4ek.wrapper.entities.User;
@@ -95,4 +98,22 @@ public interface Guild {
     GuildEvent getGuildEventById(long eventId);
 
     AuditLog getAuditLog();
+
+    List<Emoji> getEmojis();
+
+    Emoji getEmojiById(String emojiId);
+
+    Emoji getEmojiById(long emojiId);
+
+    List<Emoji> getEmojisByName(String emojiName);
+
+    EmojiCreateAction createEmoji();
+
+    EmojiModifyAction modifyEmoji(String emojiId);
+
+    EmojiModifyAction modifyEmoji(long emojiId);
+
+    void deleteEmoji(String emojiId);
+
+    void deleteEmoji(long emojiId);
 }

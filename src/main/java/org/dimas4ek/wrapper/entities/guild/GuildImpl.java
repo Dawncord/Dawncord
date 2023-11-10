@@ -1,6 +1,8 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.EmojiCreateAction;
+import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.action.GuildModifyAction;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.*;
@@ -250,5 +252,50 @@ public class GuildImpl implements Guild {
     @Override
     public AuditLog getAuditLog() {
         return new AuditLog(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/audit-logs"));
+    }
+
+    @Override
+    public List<Emoji> getEmojis() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/emojis"), (JSONObject t) -> new EmojiImpl(this, t));
+    }
+
+    @Override
+    public Emoji getEmojiById(String emojiId) {
+        return new EmojiImpl(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/emojis/" + emojiId));
+    }
+
+    @Override
+    public Emoji getEmojiById(long emojiId) {
+        return getEmojiById(String.valueOf(emojiId));
+    }
+
+    @Override
+    public List<Emoji> getEmojisByName(String emojiName) {
+        return getEmojis().stream().filter(emoji -> emoji.getName().equals(emojiName)).toList();
+    }
+
+    @Override
+    public EmojiCreateAction createEmoji() {
+        return new EmojiCreateAction(getId());
+    }
+
+    @Override
+    public EmojiModifyAction modifyEmoji(String emojiId) {
+        return new EmojiModifyAction(getId(), emojiId);
+    }
+
+    @Override
+    public EmojiModifyAction modifyEmoji(long emojiId) {
+        return modifyEmoji(String.valueOf(emojiId));
+    }
+
+    @Override
+    public void deleteEmoji(String emojiId) {
+        ApiClient.delete("/guilds/" + getId() + "/emojis/" + emojiId);
+    }
+
+    @Override
+    public void deleteEmoji(long emojiId) {
+        deleteEmoji(String.valueOf(emojiId));
     }
 }
