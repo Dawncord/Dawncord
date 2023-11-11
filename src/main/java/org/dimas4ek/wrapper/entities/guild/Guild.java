@@ -1,8 +1,6 @@
 package org.dimas4ek.wrapper.entities.guild;
 
-import org.dimas4ek.wrapper.action.EmojiCreateAction;
-import org.dimas4ek.wrapper.action.EmojiModifyAction;
-import org.dimas4ek.wrapper.action.GuildModifyAction;
+import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.GuildBan;
 import org.dimas4ek.wrapper.entities.GuildMember;
@@ -10,6 +8,7 @@ import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
+import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
@@ -107,6 +106,13 @@ public interface Guild {
 
     List<Emoji> getEmojisByName(String emojiName);
 
+    List<Emoji> getEmojisByCreator(User user);
+
+
+    List<Emoji> getEmojisByCreatorId(String userId);
+
+    List<Emoji> getEmojisByCreatorId(long userId);
+
     EmojiCreateAction createEmoji();
 
     EmojiModifyAction modifyEmoji(String emojiId);
@@ -116,4 +122,28 @@ public interface Guild {
     void deleteEmoji(String emojiId);
 
     void deleteEmoji(long emojiId);
+
+    List<AutoModRule> getAutoModRules();
+
+    AutoModRule getAutoModRuleById(String ruleId);
+
+    AutoModRule getAutoModRuleById(long ruleId);
+
+    List<AutoModRule> getAutoModRuleByName(String ruleName);
+
+    List<AutoModRule> getAutoModRuleByCreator(User user);
+
+    List<AutoModRule> getAutoModRuleByCreatorId(String userId);
+
+    List<AutoModRule> getAutoModRuleByCreatorId(long userId);
+
+    AutoModRuleCreateAction createAutoModRule();
+
+    AutoModRuleModifyAction modifyAutoModRule(String ruleId);
+
+    AutoModRuleModifyAction modifyAutoModRule(long ruleId);
+
+    void deleteAutoModRule(String ruleId);
+
+    void deleteAutoModRule(long ruleId);
 }

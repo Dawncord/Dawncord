@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import org.dimas4ek.wrapper.action.AutoModRuleModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.AutoModEventType;
@@ -31,4 +32,8 @@ public interface AutoModRule {
     List<String> getExemptRoles();
 
     List<String> getExemptChannels();
+
+    AutoModRuleModifyAction modify();
+
+    void delete();
 }

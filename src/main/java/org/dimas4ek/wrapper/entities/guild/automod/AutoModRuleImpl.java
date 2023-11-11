@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.AutoModRuleModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -80,6 +82,16 @@ public class AutoModRuleImpl implements AutoModRule {
     @Override
     public List<String> getExemptChannels() {
         return getStringList("exempt_channels");
+    }
+
+    @Override
+    public AutoModRuleModifyAction modify() {
+        return new AutoModRuleModifyAction(getGuild().getId(), getTriggerType());
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/guilds/" + getGuild().getId() + "/auto-moderation/rules/" + getId());
     }
 
     @NotNull

@@ -1,12 +1,12 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.action.EmojiCreateAction;
-import org.dimas4ek.wrapper.action.EmojiModifyAction;
-import org.dimas4ek.wrapper.action.GuildModifyAction;
+import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.*;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
+import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
+import org.dimas4ek.wrapper.entities.guild.automod.AutoModRuleImpl;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
@@ -275,6 +275,21 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public List<Emoji> getEmojisByCreator(User user) {
+        return getEmojisByCreatorId(user.getId());
+    }
+
+    @Override
+    public List<Emoji> getEmojisByCreatorId(String userId) {
+        return getEmojis().stream().filter(emoji -> emoji.getCreator().getId().equals(userId)).toList();
+    }
+
+    @Override
+    public List<Emoji> getEmojisByCreatorId(long userId) {
+        return getEmojisByCreatorId(String.valueOf(userId));
+    }
+
+    @Override
     public EmojiCreateAction createEmoji() {
         return new EmojiCreateAction(getId());
     }
@@ -297,5 +312,65 @@ public class GuildImpl implements Guild {
     @Override
     public void deleteEmoji(long emojiId) {
         deleteEmoji(String.valueOf(emojiId));
+    }
+
+    @Override
+    public List<AutoModRule> getAutoModRules() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/auto-moderation/rules"), AutoModRuleImpl::new);
+    }
+
+    @Override
+    public AutoModRule getAutoModRuleById(String ruleId) {
+        return new AutoModRuleImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/auto-moderation/rules/" + ruleId));
+    }
+
+    @Override
+    public AutoModRule getAutoModRuleById(long ruleId) {
+        return getAutoModRuleById(String.valueOf(ruleId));
+    }
+
+    @Override
+    public List<AutoModRule> getAutoModRuleByName(String ruleName) {
+        return getAutoModRules().stream().filter(rule -> rule.getName().equals(ruleName)).toList();
+    }
+
+    @Override
+    public List<AutoModRule> getAutoModRuleByCreator(User user) {
+        return getAutoModRuleByCreatorId(user.getId());
+    }
+
+    @Override
+    public List<AutoModRule> getAutoModRuleByCreatorId(String userId) {
+        return getAutoModRules().stream().filter(rule -> rule.getCreator().getId().equals(userId)).toList();
+    }
+
+    @Override
+    public List<AutoModRule> getAutoModRuleByCreatorId(long userId) {
+        return getAutoModRuleByCreatorId(String.valueOf(userId));
+    }
+
+    @Override
+    public AutoModRuleCreateAction createAutoModRule() {
+        return new AutoModRuleCreateAction(getId());
+    }
+
+    @Override
+    public AutoModRuleModifyAction modifyAutoModRule(String ruleId) {
+        return new AutoModRuleModifyAction(getId(), getAutoModRuleById(ruleId).getTriggerType());
+    }
+
+    @Override
+    public AutoModRuleModifyAction modifyAutoModRule(long ruleId) {
+        return modifyAutoModRule(String.valueOf(ruleId));
+    }
+
+    @Override
+    public void deleteAutoModRule(String ruleId) {
+        ApiClient.delete("/guilds/" + getId() + "/auto-moderation/rules/" + ruleId);
+    }
+
+    @Override
+    public void deleteAutoModRule(long ruleId) {
+        deleteAutoModRule(String.valueOf(ruleId));
     }
 }
