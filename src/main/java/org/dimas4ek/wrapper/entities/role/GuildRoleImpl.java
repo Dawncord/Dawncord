@@ -1,5 +1,8 @@
 package org.dimas4ek.wrapper.entities.role;
 
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONObject;
@@ -9,8 +12,10 @@ import java.util.List;
 
 public class GuildRoleImpl implements GuildRole {
     private final JSONObject role;
+    private final Guild guild;
 
-    public GuildRoleImpl(JSONObject role) {
+    public GuildRoleImpl(Guild guild, JSONObject role) {
+        this.guild = guild;
         this.role = role;
     }
 
@@ -72,6 +77,26 @@ public class GuildRoleImpl implements GuildRole {
         return role.has("tags")
                 ? new Tags(role.getJSONObject("tags"))
                 : null;
+    }
+
+    @Override
+    public void setPosition(int position) {
+        ApiClient.patch(
+                new JSONObject()
+                        .put("id", getId())
+                        .put("position", position),
+                "/guilds/" + getId() + "/roles"
+        );
+    }
+
+    @Override
+    public GuildRoleModifyAction modify() {
+        return new GuildRoleModifyAction(guild.getId(), getId());
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/guilds/" + guild.getId() + "/roles/" + getId());
     }
 
     @Override

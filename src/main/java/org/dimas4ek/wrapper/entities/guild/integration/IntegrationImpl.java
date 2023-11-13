@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.guild.integration;
 
+import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -124,5 +125,10 @@ public class IntegrationImpl implements Integration {
     @Override
     public int getSubscriberCount() {
         return integration.optInt("subscriber_count", 0);
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/guilds/" + getGuild().getId() + "/integrations/" + getId());
     }
 }

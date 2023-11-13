@@ -1,7 +1,8 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.guild;
 
-import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
@@ -119,5 +120,25 @@ public class GuildMemberImpl implements GuildMember {
     @Override
     public User getUser() {
         return new UserImpl(guildMember.getJSONObject("user"));
+    }
+
+    @Override
+    public void addRole(String roleId) {
+        ApiClient.put(null, "/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+    }
+
+    @Override
+    public void addRole(long roleId) {
+        addRole(String.valueOf(roleId));
+    }
+
+    @Override
+    public void removeRole(String roleId) {
+        ApiClient.delete("/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+    }
+
+    @Override
+    public void removeRole(long roleId) {
+        removeRole(String.valueOf(roleId));
     }
 }

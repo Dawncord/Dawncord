@@ -3,17 +3,16 @@ package org.dimas4ek.wrapper.action;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.*;
 import org.json.JSONObject;
 
 public class GuildModifyAction {
-    private final Guild guild;
+    private final String guildId;
     private final JSONObject jsonObject;
     private boolean hasChanges;
 
-    public GuildModifyAction(Guild guild) {
-        this.guild = guild;
+    public GuildModifyAction(String guildId) {
+        this.guildId = guildId;
         this.jsonObject = new JSONObject();
         this.hasChanges = false;
     }
@@ -119,7 +118,7 @@ public class GuildModifyAction {
 
     public void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guild.getId());
+            ApiClient.patch(jsonObject, "/guilds/" + guildId);
             hasChanges = false;
             jsonObject.clear();
         }

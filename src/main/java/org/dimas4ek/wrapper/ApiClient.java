@@ -32,8 +32,16 @@ public class ApiClient {
         doAction("post", jsonObject, url);
     }
 
+    public static void postArray(JSONArray jsonArray, String url) {
+        doActionArray("post", jsonArray, url);
+    }
+
     public static void patch(JSONObject jsonObject, String url) {
         doAction("patch", jsonObject, url);
+    }
+
+    public static void patchArray(JSONArray jsonArray, String url) {
+        doActionArray("patch", jsonArray, url);
     }
 
     public static void put(JSONObject jsonObject, String url) {
@@ -90,7 +98,7 @@ public class ApiClient {
         }
     }
 
-    public static void postArray(JSONArray jsonArray, String url) {
+    private static void doActionArray(String action, JSONArray jsonArray, String url) {
         RequestBody requestBody = null;
         if (jsonArray != null) {
             requestBody = RequestBody.create(jsonArray.toString(), Constants.MEDIA_TYPE_JSON);
@@ -100,8 +108,27 @@ public class ApiClient {
                 .url(Constants.API_URL + url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
-        if (requestBody != null) {
-            request.post(requestBody);
+        switch (action) {
+            case "post" -> {
+                if (requestBody != null) {
+                    request.post(requestBody);
+                } else {
+                    request.post(RequestBody.create(new byte[0]));
+                }
+            }
+            case "patch" -> {
+                if (requestBody != null) {
+                    request.patch(requestBody);
+                }
+            }
+            case "put" -> {
+                if (requestBody != null) {
+                    request.put(requestBody);
+                } else {
+                    request.put(RequestBody.create(new byte[0]));
+                }
+            }
+            case "delete" -> request.delete();
         }
 
         try (Response response = CLIENT.newCall(request.build()).execute()) {

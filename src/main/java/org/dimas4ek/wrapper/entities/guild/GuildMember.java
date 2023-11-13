@@ -1,6 +1,6 @@
-package org.dimas4ek.wrapper.entities;
+package org.dimas4ek.wrapper.entities.guild;
 
-import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
@@ -36,4 +36,12 @@ public interface GuildMember {
     Guild getGuild();
 
     User getUser();
+
+    void addRole(String roleId);
+
+    void addRole(long roleId);
+
+    void removeRole(String roleId);
+
+    void removeRole(long roleId);
 }

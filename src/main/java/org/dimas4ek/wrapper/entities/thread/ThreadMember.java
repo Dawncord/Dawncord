@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.entities.thread;
 
-import org.dimas4ek.wrapper.entities.GuildMember;
+import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONObject;
 

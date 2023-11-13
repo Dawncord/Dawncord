@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.role;
 
+import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
 import org.dimas4ek.wrapper.entities.IMentionable;
 import org.dimas4ek.wrapper.types.PermissionType;
 
@@ -26,4 +27,10 @@ public interface GuildRole extends IMentionable {
     boolean isMentionable();
 
     Tags getTags();
+
+    void setPosition(int position);
+
+    GuildRoleModifyAction modify();
+
+    void delete();
 }

@@ -41,4 +41,6 @@ public interface Integration {
     int getExpireGrace();
 
     int getSubscriberCount();
+
+    void delete();
 }

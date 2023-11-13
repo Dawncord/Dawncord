@@ -2,18 +2,34 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.*;
-import org.dimas4ek.wrapper.entities.*;
+import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.EmojiImpl;
+import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.*;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRuleImpl;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
+import org.dimas4ek.wrapper.entities.guild.integration.Integration;
+import org.dimas4ek.wrapper.entities.guild.integration.IntegrationImpl;
+import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
+import org.dimas4ek.wrapper.entities.guild.widget.GuildWidget;
+import org.dimas4ek.wrapper.entities.guild.widget.GuildWidgetSettings;
+import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
+import org.dimas4ek.wrapper.entities.image.Splash;
+import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
+import org.dimas4ek.wrapper.entities.message.sticker.StickerImpl;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.ChannelType;
+import org.dimas4ek.wrapper.types.GuildFeature;
+import org.dimas4ek.wrapper.types.MfaLevel;
+import org.dimas4ek.wrapper.types.VoiceRegion;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,6 +71,53 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public Splash getSplash() {
+        String splash = guild.optString("splash", null);
+        return splash != null ? new Splash(getId(), splash) : null;
+    }
+
+    @Override
+    public DiscoverySplash getDiscoverySplash() {
+        String splash = guild.optString("discovery_splash", null);
+        return splash != null ? new DiscoverySplash(getId(), splash) : null;
+    }
+
+    @Override
+    public List<GuildFeature> getFeatures() {
+        return EnumUtils.getEnumList(guild.getJSONArray("features"), GuildFeature.class);
+    }
+
+    @Override
+    public List<Sticker> getStickers() {
+        return JsonUtils.getEntityList(guild.getJSONArray("stickers"), StickerImpl::new);
+    }
+
+    @Override
+    public Sticker getStickerById(String stickerId) {
+        return getStickers().stream().filter(sticker -> sticker.getId().equals(stickerId)).findFirst().orElse(null);
+    }
+
+    @Override
+    public Sticker getStickerById(long stickerId) {
+        return getStickerById(String.valueOf(stickerId));
+    }
+
+    @Override
+    public List<Sticker> getStickersByName(String stickerName) {
+        return getStickers().stream().filter(sticker -> sticker.getName().equals(stickerName)).toList();
+    }
+
+    @Override
+    public List<Sticker> getStickersByAuthorId(String userId) {
+        return getStickers().stream().filter(sticker -> sticker.getAuthor().getId().equals(userId)).toList();
+    }
+
+    @Override
+    public List<Sticker> getStickersByAuthorId(long userId) {
+        return getStickersByAuthorId(String.valueOf(userId));
+    }
+
+    @Override
     public List<GuildChannel> getChannels() {
         return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/channels"), GuildChannelImpl::new);
     }
@@ -67,6 +130,21 @@ public class GuildImpl implements Guild {
     @Override
     public GuildChannel getChannelById(long channelId) {
         return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
+    }
+
+    @Override
+    public List<GuildChannel> getChannelsByName(String channelName) {
+        return getChannels().stream().filter(channel -> channel.getName().equals(channelName)).toList();
+    }
+
+    @Override
+    public ChannelPositionModifyAction modifyChannelPosition(String channelId) {
+        return new ChannelPositionModifyAction(getId(), channelId);
+    }
+
+    @Override
+    public ChannelPositionModifyAction modifyChannelPosition(long channelId) {
+        return modifyChannelPosition(String.valueOf(channelId));
     }
 
     @Override
@@ -107,13 +185,53 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public GuildMemberModifyAction modifyMember(String memberId) {
+        return new GuildMemberModifyAction(getId(), memberId);
+    }
+
+    @Override
+    public GuildMemberModifyAction modifyMember(long memberId) {
+        return modifyMember(String.valueOf(memberId));
+    }
+
+    @Override
+    public void kickMember(String memberId) {
+        ApiClient.delete("/guilds/" + getId() + "/members/" + memberId);
+    }
+
+    @Override
+    public void kickMember(long memberId) {
+        kickMember(String.valueOf(memberId));
+    }
+
+    @Override
+    public void banMember(String memberId) {
+        ApiClient.put(null, "/guilds/" + getId() + "/bans/" + memberId);
+    }
+
+    @Override
+    public void banMember(long memberId) {
+        banMember(String.valueOf(memberId));
+    }
+
+    @Override
+    public void unbanMember(String memberId) {
+        ApiClient.delete("/guilds/" + getId() + "/bans/" + memberId);
+    }
+
+    @Override
+    public void unbanMember(long memberId) {
+        unbanMember(String.valueOf(memberId));
+    }
+
+    @Override
     public List<GuildBan> getBans() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/bans"), GuildBanImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/bans"), GuildBan::new);
     }
 
     @Override
     public GuildBan getBanByUserId(String userId) {
-        return new GuildBanImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/bans/" + userId));
+        return new GuildBan(JsonUtils.fetchEntity("/guilds/" + getId() + "/bans/" + userId));
     }
 
     @Override
@@ -123,7 +241,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildRole> getRoles() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/roles"), GuildRoleImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/roles"), (JSONObject t) -> new GuildRoleImpl(this, t));
     }
 
     @Override
@@ -139,6 +257,31 @@ public class GuildImpl implements Guild {
     @Override
     public GuildRole getPublicRole() {
         return getRoleById(getId());
+    }
+
+    @Override
+    public GuildRoleCreateAction createRole() {
+        return new GuildRoleCreateAction(getId());
+    }
+
+    @Override
+    public GuildRoleModifyAction modifyRole(String roleId) {
+        return new GuildRoleModifyAction(getId(), roleId);
+    }
+
+    @Override
+    public GuildRoleModifyAction modifyRole(long roleId) {
+        return modifyRole(String.valueOf(roleId));
+    }
+
+    @Override
+    public void deleteRole(String roleId) {
+        ApiClient.delete("/guilds/" + getId() + "/roles/" + roleId);
+    }
+
+    @Override
+    public void deleteRole(long roleId) {
+        deleteRole(String.valueOf(roleId));
     }
 
     @Override
@@ -168,8 +311,13 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public List<GuildCategory> getCategoriesByName(String categoryName) {
+        return getCategories().stream().filter(category -> category.getName().equals(categoryName)).toList();
+    }
+
+    @Override
     public GuildModifyAction modify() {
-        return new GuildModifyAction(this);
+        return new GuildModifyAction(getId());
     }
 
     @Override
@@ -235,6 +383,11 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public List<Thread> getActiveThreadsByName(String threadName) {
+        return getActiveThreads().stream().filter(thread -> thread.getName().equals(threadName)).toList();
+    }
+
+    @Override
     public List<GuildEvent> getGuildEvents() {
         return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/scheduled-events"), GuildEventImpl::new);
     }
@@ -247,6 +400,11 @@ public class GuildImpl implements Guild {
     @Override
     public GuildEvent getGuildEventById(long eventId) {
         return getGuildEventById(String.valueOf(eventId));
+    }
+
+    @Override
+    public List<GuildEvent> getGuildEventsByName(String eventName) {
+        return getGuildEvents().stream().filter(event -> event.getName().equals(eventName)).toList();
     }
 
     @Override
@@ -272,11 +430,6 @@ public class GuildImpl implements Guild {
     @Override
     public List<Emoji> getEmojisByName(String emojiName) {
         return getEmojis().stream().filter(emoji -> emoji.getName().equals(emojiName)).toList();
-    }
-
-    @Override
-    public List<Emoji> getEmojisByCreator(User user) {
-        return getEmojisByCreatorId(user.getId());
     }
 
     @Override
@@ -335,11 +488,6 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<AutoModRule> getAutoModRuleByCreator(User user) {
-        return getAutoModRuleByCreatorId(user.getId());
-    }
-
-    @Override
     public List<AutoModRule> getAutoModRuleByCreatorId(String userId) {
         return getAutoModRules().stream().filter(rule -> rule.getCreator().getId().equals(userId)).toList();
     }
@@ -372,5 +520,117 @@ public class GuildImpl implements Guild {
     @Override
     public void deleteAutoModRule(long ruleId) {
         deleteAutoModRule(String.valueOf(ruleId));
+    }
+
+    @Override
+    public GuildPreview getPreview() {
+        return new GuildPreview(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/preview"));
+    }
+
+    @Override
+    public void setMfaLevel(MfaLevel mfaLevel) {
+        ApiClient.post(
+                new JSONObject()
+                        .put("level", mfaLevel.getValue()),
+                "/guilds/" + getId() + "/mfa"
+        );
+    }
+
+    @Override
+    public List<VoiceRegion> getVoiceRegions() {
+        List<VoiceRegion> regions = new ArrayList<>();
+        JSONArray regionsArray = JsonUtils.fetchArray("/guilds/" + getId() + "/regions");
+        for (int i = 0; i < regionsArray.length(); i++) {
+            regions.add(EnumUtils.getEnumObject(regionsArray.getJSONObject(i), "id", VoiceRegion.class));
+        }
+        return regions;
+    }
+
+    @Override
+    public VoiceRegion getOptimalVoiceRegion() {
+        JSONArray regionsArray = JsonUtils.fetchArray("/guilds/" + getId() + "/regions");
+        for (int i = 0; i < regionsArray.length(); i++) {
+            if (regionsArray.getJSONObject(i).getBoolean("optimal")) {
+                return EnumUtils.getEnumObject(regionsArray.getJSONObject(i), "id", VoiceRegion.class);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Invite> getInvites() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/invites"), InviteImpl::new);
+    }
+
+    @Override
+    public List<Integration> getIntegrations() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/integrations"), (JSONObject t) -> new IntegrationImpl(this, t));
+    }
+
+    @Override
+    public Integration getIntegrationById(String integrationId) {
+        return getIntegrations().stream().filter(integration -> integration.getId().equals(integrationId)).findFirst().orElse(null);
+    }
+
+    @Override
+    public Integration getIntegrationById(long integrationId) {
+        return getIntegrationById(String.valueOf(integrationId));
+    }
+
+    @Override
+    public void deleteIntegration(String integrationId) {
+        ApiClient.delete("/guilds/" + getId() + "/integrations/" + integrationId);
+    }
+
+    @Override
+    public void deleteIntegration(long integrationId) {
+        deleteIntegration(String.valueOf(integrationId));
+    }
+
+    @Override
+    public GuildWidget getWidget() {
+        //todo check
+        return new GuildWidget(JsonUtils.fetchEntity("/guilds/" + getId() + "/widget.json"));
+    }
+
+    @Override
+    public GuildWidgetSettings getWidgetSettings() {
+        //todo check
+        return new GuildWidgetSettings(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/widget"));
+    }
+
+    @Override
+    public GuildWidgetSettingsModifyAction modifyWidgetSettings() {
+        //todo check
+        return new GuildWidgetSettingsModifyAction(getId());
+    }
+
+    @Override
+    public GuildWelcomeScreen getWelcomeScreen() {
+        //todo check
+        return new GuildWelcomeScreen(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/welcome-screen"));
+    }
+
+    @Override
+    public GuildWelcomeScreenModifyAction modifyWelcomeScreen() {
+        //todo check
+        return new GuildWelcomeScreenModifyAction(getId());
+    }
+
+    @Override
+    public GuildOnboarding getOnboarding() {
+        //todo check
+        return new GuildOnboarding(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/onboarding"));
+    }
+
+    @Override
+    public GuildOnboardingModifyAction modifyOnboarding() {
+        //todo check
+        return new GuildOnboardingModifyAction(getId());
+    }
+
+    @Override
+    public CurrentMemberModifyAction modifyMe() {
+        return new CurrentMemberModifyAction(getId());
     }
 }
