@@ -4,11 +4,13 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class EmojiImpl implements Emoji {
     private final Guild guild;
@@ -79,8 +81,8 @@ public class EmojiImpl implements Emoji {
     }
 
     @Override
-    public EmojiModifyAction modify() {
-        return new EmojiModifyAction(getGuild().getId(), getId());
+    public void modify(Consumer<EmojiModifyAction> handler) {
+        ActionExecutor.modifyEmoji(handler, getGuild().getId(), getId());
     }
 
     @Override

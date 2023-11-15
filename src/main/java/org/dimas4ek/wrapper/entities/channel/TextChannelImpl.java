@@ -1,8 +1,11 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.action.MessageCreateAction;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
+
+import java.util.function.Consumer;
 
 public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
     private final JSONObject channel;
@@ -13,10 +16,13 @@ public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
     }
 
     @Override
-    public MessageCreateAction sendMessage(String message) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("content", message);
-        return new MessageCreateAction(jsonObject, channel);
+    public void sendMessage(String message, Consumer<MessageCreateAction> handler) {
+        ActionExecutor.createMessage(handler, message, getId());
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        ActionExecutor.createMessage(null, message, getId());
     }
 
     @Override

@@ -2,13 +2,13 @@ package org.dimas4ek.wrapper.action;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.json.JSONObject;
-import org.slf4j.helpers.CheckReturnValue;
 
 import java.util.List;
 
 public class EmojiCreateAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public EmojiCreateAction(String guildId) {
         this.guildId = guildId;
@@ -17,15 +17,14 @@ public class EmojiCreateAction {
 
     private void setProperty(String key, Object value) {
         jsonObject.put(key, value);
+        hasChanges = true;
     }
 
-    @CheckReturnValue
     public EmojiCreateAction setName(String name) {
         setProperty("name", name);
         return this;
     }
 
-    @CheckReturnValue
     public EmojiCreateAction setRoles(List<String> roleIds) {
         setProperty("roles", roleIds);
         return this;
@@ -33,8 +32,11 @@ public class EmojiCreateAction {
 
     //todo setImage
 
-    public void submit() {
-        ApiClient.post(jsonObject, "/guilds/" + guildId + "/emojis");
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.post(jsonObject, "/guilds/" + guildId + "/emojis");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

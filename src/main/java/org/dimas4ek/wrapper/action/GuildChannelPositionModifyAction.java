@@ -3,13 +3,13 @@ package org.dimas4ek.wrapper.action;
 import org.dimas4ek.wrapper.ApiClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.helpers.CheckReturnValue;
 
-public class ChannelPositionModifyAction {
+public class GuildChannelPositionModifyAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
-    public ChannelPositionModifyAction(String guildId, String channelId) {
+    public GuildChannelPositionModifyAction(String guildId, String channelId) {
         this.guildId = guildId;
         this.jsonObject = new JSONObject();
         this.jsonObject.put("id", channelId);
@@ -17,34 +17,34 @@ public class ChannelPositionModifyAction {
 
     private void setProperty(String name, Object value) {
         jsonObject.put(name, value);
+        hasChanges = true;
     }
 
-    @CheckReturnValue
-    public ChannelPositionModifyAction setPosition(int position) {
+    public GuildChannelPositionModifyAction setPosition(int position) {
         setProperty("position", position);
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelPositionModifyAction lockPermissions(boolean lockPermissions) {
+    public GuildChannelPositionModifyAction lockPermissions(boolean lockPermissions) {
         setProperty("lock_permissions", lockPermissions);
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelPositionModifyAction setParent(String parentId) {
+    public GuildChannelPositionModifyAction setParent(String parentId) {
         setProperty("parent_id", parentId);
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelPositionModifyAction setParent(long parentId) {
+    public GuildChannelPositionModifyAction setParent(long parentId) {
         setParent(String.valueOf(parentId));
         return this;
     }
 
     public void submit() {
-        ApiClient.patchArray(new JSONArray().put(jsonObject), "/guilds/" + guildId + "/channels");
+        if (hasChanges) {
+            ApiClient.patchArray(new JSONArray().put(jsonObject), "/guilds/" + guildId + "/channels");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

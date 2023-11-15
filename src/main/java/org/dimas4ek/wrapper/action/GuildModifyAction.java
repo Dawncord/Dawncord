@@ -9,12 +9,11 @@ import org.json.JSONObject;
 public class GuildModifyAction {
     private final String guildId;
     private final JSONObject jsonObject;
-    private boolean hasChanges;
+    private boolean hasChanges = false;
 
     public GuildModifyAction(String guildId) {
         this.guildId = guildId;
         this.jsonObject = new JSONObject();
-        this.hasChanges = false;
     }
 
     private void setProperty(String key, Object value) {
@@ -116,12 +115,12 @@ public class GuildModifyAction {
         return null;
     }
 
-    public void submit() {
+    private void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, "/guilds/" + guildId);
             hasChanges = false;
-            jsonObject.clear();
         }
+        jsonObject.clear();
     }
 }
 

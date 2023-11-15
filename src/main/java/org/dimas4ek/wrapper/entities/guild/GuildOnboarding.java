@@ -6,6 +6,7 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.OnboardingMode;
 import org.dimas4ek.wrapper.types.PromptType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuildOnboarding {
     private static Guild guild = null;
@@ -40,8 +42,8 @@ public class GuildOnboarding {
         return EnumUtils.getEnumObject(onboarding, "mode", OnboardingMode.class);
     }
 
-    public GuildOnboardingModifyAction modify() {
-        return new GuildOnboardingModifyAction(guild.getId());
+    public void modify(Consumer<GuildOnboardingModifyAction> handler) {
+        ActionExecutor.execute(handler, GuildOnboardingModifyAction.class, guild.getId());
     }
 
     public static class Prompt {

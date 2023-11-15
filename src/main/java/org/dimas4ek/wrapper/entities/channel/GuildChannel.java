@@ -1,14 +1,15 @@
 package org.dimas4ek.wrapper.entities.channel;
 
-import org.dimas4ek.wrapper.action.ChannelModifyAction;
+import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
+import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
 import org.dimas4ek.wrapper.action.InviteCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
-import org.slf4j.helpers.CheckReturnValue;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface GuildChannel extends Channel {
     TextChannel asText();
@@ -19,7 +20,7 @@ public interface GuildChannel extends Channel {
 
     GuildForum asForum();
 
-    ChannelModifyAction modify();
+    void modify(Consumer<GuildChannelModifyAction> handler);
 
     List<PermissionOverride> getPermissions();
 
@@ -33,8 +34,7 @@ public interface GuildChannel extends Channel {
 
     List<Invite> getInvites();
 
-    @CheckReturnValue
-    InviteCreateAction createInvite();
+    void createInvite(Consumer<InviteCreateAction> handler);
 
     boolean hasActiveThreads();
 
@@ -47,4 +47,6 @@ public interface GuildChannel extends Channel {
     List<Thread> getPrivateArchiveThreads();
 
     List<Thread> getJoinedPrivateArchiveThreads();
+
+    void modifyPosition(Consumer<GuildChannelPositionModifyAction> handler);
 }

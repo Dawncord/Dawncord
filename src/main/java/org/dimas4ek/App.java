@@ -1,7 +1,6 @@
 package org.dimas4ek;
 
 import org.dimas4ek.wrapper.Dawncord;
-import org.dimas4ek.wrapper.slashcommand.SlashCommandBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +10,6 @@ import java.util.Properties;
 public class App {
     public static void main(String[] args) throws IOException {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
-
-        bot.registerSlashCommands(new SlashCommandBuilder("test1", "test1").build());
 
         bot.onSlashCommand("test1", event -> {
 

@@ -7,11 +7,11 @@ import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.OnboardingMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.helpers.CheckReturnValue;
 
 public class GuildOnboardingModifyAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public GuildOnboardingModifyAction(String guildId) {
         this.guildId = guildId;
@@ -20,9 +20,9 @@ public class GuildOnboardingModifyAction {
 
     private void setProperty(String name, Object value) {
         jsonObject.put(name, value);
+        hasChanges = true;
     }
 
-    @CheckReturnValue
     public GuildOnboardingModifyAction setPrompts(GuildOnboarding.Prompt... prompts) {
         JSONArray promptsArray = new JSONArray();
         for (GuildOnboarding.Prompt prompt : prompts) {
@@ -57,26 +57,26 @@ public class GuildOnboardingModifyAction {
         return optionsArray;
     }
 
-    @CheckReturnValue
     public GuildOnboardingModifyAction setChannelIds(String... channelIds) {
         jsonObject.put("default_channel_ids", channelIds);
         return this;
     }
 
-    @CheckReturnValue
     public GuildOnboardingModifyAction setEnabled(boolean enabled) {
         jsonObject.put("enabled", enabled);
         return this;
     }
 
-    @CheckReturnValue
     public GuildOnboardingModifyAction setMode(OnboardingMode mode) {
         jsonObject.put("mode", mode.getValue());
         return this;
     }
 
-    public void submit() {
-        ApiClient.put(jsonObject, "/guilds/" + guildId + "/onboarding");
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.put(jsonObject, "/guilds/" + guildId + "/onboarding");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

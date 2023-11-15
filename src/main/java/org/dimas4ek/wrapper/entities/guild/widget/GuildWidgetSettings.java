@@ -4,8 +4,11 @@ import org.dimas4ek.wrapper.action.GuildWidgetSettingsModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
+
+import java.util.function.Consumer;
 
 public class GuildWidgetSettings {
     private final Guild guild;
@@ -24,8 +27,8 @@ public class GuildWidgetSettings {
         return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + settings.getString("channel_id")));
     }
 
-    public GuildWidgetSettingsModifyAction modify() {
-        return new GuildWidgetSettingsModifyAction(guild.getId());
+    public void modify(Consumer<GuildWidgetSettingsModifyAction> handler) {
+        ActionExecutor.execute(handler, GuildWidgetSettingsModifyAction.class, guild.getId());
     }
 
 }

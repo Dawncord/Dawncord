@@ -2,6 +2,9 @@ package org.dimas4ek.wrapper.action;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.ForumTag;
+import org.dimas4ek.wrapper.entities.channel.Channel;
+import org.dimas4ek.wrapper.entities.channel.GuildForum;
+import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.thread.ThreadMessage;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.utils.MessageUtils;
@@ -9,29 +12,29 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ThreadCreateAction {
-    private JSONObject channel;
-    private String messageId;
+    private Channel channel;
+    private Message message;
     private final JSONObject jsonObject;
 
-    public ThreadCreateAction(String messageId, String name) {
-        this.messageId = messageId;
+    public ThreadCreateAction(Message message, String name) {
+        this.message = message;
         this.jsonObject = new JSONObject();
         this.jsonObject.put("name", name);
     }
 
-    public ThreadCreateAction(JSONObject channel) {
+    public ThreadCreateAction(Channel channel) {
         this.channel = channel;
         this.jsonObject = new JSONObject();
     }
 
-    public ThreadCreateAction(JSONObject forum, String name) {
+    public ThreadCreateAction(GuildForum forum, String name) {
         this.channel = forum;
         this.jsonObject = new JSONObject();
         this.jsonObject.put("name", name);
     }
 
-    public ThreadCreateAction(String messageId, JSONObject channel) {
-        this.messageId = messageId;
+    public ThreadCreateAction(Message message, Channel channel) {
+        this.message = message;
         this.channel = channel;
         this.jsonObject = new JSONObject();
     }
@@ -56,21 +59,21 @@ public class ThreadCreateAction {
     }
 
     public ThreadCreateAction setInvitable(boolean invitable) {
-        if (messageId == null) {
+        if (message == null) {
             setProperty("invitable", invitable);
         }
         return this;
     }
 
     public ThreadCreateAction sendMessage(ThreadMessage message) {
-        if (channel.getInt("type") == ChannelType.GUILD_FORUM.getValue()) {
+        if (channel.getType() == ChannelType.GUILD_FORUM) {
             setProperty("message", MessageUtils.createThreadMessage(message));
         }
         return this;
     }
 
     public ThreadCreateAction setTags(ForumTag... tags) {
-        if (channel.getInt("type") == ChannelType.GUILD_FORUM.getValue()) {
+        if (channel.getType() == ChannelType.GUILD_FORUM) {
             JSONArray tagsArray = new JSONArray();
             for (ForumTag tag : tags) {
                 tagsArray.put(tag.getId());
@@ -80,11 +83,11 @@ public class ThreadCreateAction {
         return this;
     }
 
-    public void submit() {
-        if (messageId == null) {
-            ApiClient.post(jsonObject, "/channels/" + channel.getString("id") + "/threads");
+    private void submit() {
+        if (message == null) {
+            ApiClient.post(jsonObject, "/channels/" + channel.getId() + "/threads");
         } else {
-            ApiClient.post(jsonObject, "/channels/" + channel.getString("id") + "/messages/" + messageId + "/threads");
+            ApiClient.post(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/threads");
         }
         jsonObject.clear();
     }

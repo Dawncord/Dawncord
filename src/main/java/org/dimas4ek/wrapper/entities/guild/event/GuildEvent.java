@@ -12,6 +12,7 @@ import org.dimas4ek.wrapper.types.GuildEventStatus;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface GuildEvent {
     String getId();
@@ -52,7 +53,7 @@ public interface GuildEvent {
 
     GuildEventImage getImage();
 
-    GuildEventModifyAction modify();
+    void modify(Consumer<GuildEventModifyAction> handler);
 
     void delete();
 }

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 public class CurrentMemberModifyAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public CurrentMemberModifyAction(String guildId) {
         this.guildId = guildId;
@@ -14,11 +15,15 @@ public class CurrentMemberModifyAction {
 
     public CurrentMemberModifyAction setNickname(String nickname) {
         jsonObject.put("nick", nickname);
+        hasChanges = true;
         return this;
     }
 
-    public void submit() {
-        ApiClient.patch(jsonObject, "/guilds/" + guildId + "/members/@me");
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/members/@me");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

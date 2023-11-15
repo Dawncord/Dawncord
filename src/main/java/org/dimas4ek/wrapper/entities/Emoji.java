@@ -5,6 +5,7 @@ import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Emoji {
     String getId();
@@ -27,7 +28,7 @@ public interface Emoji {
 
     boolean isAvailable();
 
-    EmojiModifyAction modify();
+    void modify(Consumer<EmojiModifyAction> handler);
 
     void delete();
 }

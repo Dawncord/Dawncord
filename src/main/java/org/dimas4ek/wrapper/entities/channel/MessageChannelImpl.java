@@ -1,14 +1,17 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     private final JSONObject channel;
@@ -86,17 +89,32 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     }
 
     @Override
-    public ThreadCreateAction startThread(String messageId) {
-        return new ThreadCreateAction(messageId, channel);
+    public void startThread(String messageId, Consumer<ThreadCreateAction> handler) {
+        ActionExecutor.startThread(handler, getMessageById(messageId), this);
     }
 
     @Override
-    public ThreadCreateAction startThread(long messageId) {
-        return startThread(String.valueOf(messageId));
+    public void startThread(long messageId, Consumer<ThreadCreateAction> handler) {
+        startThread(String.valueOf(messageId), handler);
     }
 
     @Override
-    public ThreadCreateAction startThread() {
-        return new ThreadCreateAction(channel);
+    public void startThread(Consumer<ThreadCreateAction> handler) {
+        ActionExecutor.startThread(handler, null, this);
+    }
+
+    @Override
+    public void startThread() {
+        startThread(null);
+    }
+
+    @Override
+    public void modifyMessageById(String messageId, Consumer<MessageModifyAction> handler) {
+        ActionExecutor.modifyMessage(handler, getMessageById(messageId));
+    }
+
+    @Override
+    public void modifyMessageById(long messageId, Consumer<MessageModifyAction> handler) {
+        modifyMessageById(String.valueOf(messageId), handler);
     }
 }

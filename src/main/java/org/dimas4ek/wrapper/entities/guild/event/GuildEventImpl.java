@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class GuildEventImpl implements GuildEvent {
     private final JSONObject event;
@@ -160,8 +161,8 @@ public class GuildEventImpl implements GuildEvent {
     }
 
     @Override
-    public GuildEventModifyAction modify() {
-        return new GuildEventModifyAction(getGuild().getId(), getId());
+    public void modify(Consumer<GuildEventModifyAction> handler) {
+
     }
 
     @Override

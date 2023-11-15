@@ -29,6 +29,7 @@ import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.GuildFeature;
 import org.dimas4ek.wrapper.types.MfaLevel;
 import org.dimas4ek.wrapper.types.VoiceRegion;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
@@ -37,6 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class GuildImpl implements Guild {
     private final JSONObject guild;
@@ -138,13 +140,23 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public ChannelPositionModifyAction modifyChannelPosition(String channelId) {
-        return new ChannelPositionModifyAction(getId(), channelId);
+    public void modifyChannel(String id, Consumer<GuildChannelModifyAction> handler) {
+        ActionExecutor.modifyChannel(handler, getChannelById(id));
     }
 
     @Override
-    public ChannelPositionModifyAction modifyChannelPosition(long channelId) {
-        return modifyChannelPosition(String.valueOf(channelId));
+    public void modifyChannel(long id, Consumer<GuildChannelModifyAction> handler) {
+        modifyChannel(String.valueOf(id), handler);
+    }
+
+    @Override
+    public void modifyChannelPosition(String channelId, Consumer<GuildChannelPositionModifyAction> handler) {
+        ActionExecutor.modifyChannelPosition(handler, getId(), getChannelById(channelId).getId());
+    }
+
+    @Override
+    public void modifyChannelPosition(long channelId, Consumer<GuildChannelPositionModifyAction> handler) {
+        modifyChannelPosition(String.valueOf(channelId), handler);
     }
 
     @Override
@@ -185,13 +197,13 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildMemberModifyAction modifyMember(String memberId) {
-        return new GuildMemberModifyAction(getId(), memberId);
+    public void modifyMember(String memberId, Consumer<GuildMemberModifyAction> handler) {
+        ActionExecutor.modifyGuildMember(handler, getId(), memberId);
     }
 
     @Override
-    public GuildMemberModifyAction modifyMember(long memberId) {
-        return modifyMember(String.valueOf(memberId));
+    public void modifyMember(long memberId, Consumer<GuildMemberModifyAction> handler) {
+        modifyMember(String.valueOf(memberId), handler);
     }
 
     @Override
@@ -260,18 +272,18 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildRoleCreateAction createRole() {
-        return new GuildRoleCreateAction(getId());
+    public void createRole(Consumer<GuildRoleCreateAction> handler) {
+        ActionExecutor.execute(handler, GuildRoleCreateAction.class, getId());
     }
 
     @Override
-    public GuildRoleModifyAction modifyRole(String roleId) {
-        return new GuildRoleModifyAction(getId(), roleId);
+    public void modifyRole(String roleId, Consumer<GuildRoleModifyAction> handler) {
+        ActionExecutor.modifyGuildRole(handler, getId(), roleId);
     }
 
     @Override
-    public GuildRoleModifyAction modifyRole(long roleId) {
-        return modifyRole(String.valueOf(roleId));
+    public void modifyRole(long roleId, Consumer<GuildRoleModifyAction> handler) {
+        modifyRole(String.valueOf(roleId), handler);
     }
 
     @Override
@@ -316,8 +328,8 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildModifyAction modify() {
-        return new GuildModifyAction(getId());
+    public void modify(Consumer<GuildModifyAction> handler) {
+        ActionExecutor.execute(handler, GuildModifyAction.class, getId());
     }
 
     @Override
@@ -408,6 +420,16 @@ public class GuildImpl implements Guild {
     }
 
     @Override
+    public void modifyGuildEvent(String eventId, Consumer<GuildEventModifyAction> handler) {
+        ActionExecutor.modifyGuildEvent(handler, getId(), eventId);
+    }
+
+    @Override
+    public void modifyGuildEvent(long eventId, Consumer<GuildEventModifyAction> handler) {
+        modifyGuildEvent(String.valueOf(eventId), handler);
+    }
+
+    @Override
     public AuditLog getAuditLog() {
         return new AuditLog(this, JsonUtils.fetchEntity("/guilds/" + getId() + "/audit-logs"));
     }
@@ -443,18 +465,18 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public EmojiCreateAction createEmoji() {
-        return new EmojiCreateAction(getId());
+    public void createEmoji(Consumer<EmojiCreateAction> handler) {
+        ActionExecutor.execute(handler, EmojiCreateAction.class, getId());
     }
 
     @Override
-    public EmojiModifyAction modifyEmoji(String emojiId) {
-        return new EmojiModifyAction(getId(), emojiId);
+    public void modifyEmoji(String emojiId, Consumer<EmojiModifyAction> handler) {
+        ActionExecutor.modifyEmoji(handler, getId(), emojiId);
     }
 
     @Override
-    public EmojiModifyAction modifyEmoji(long emojiId) {
-        return modifyEmoji(String.valueOf(emojiId));
+    public void modifyEmoji(long emojiId, Consumer<EmojiModifyAction> handler) {
+        modifyEmoji(String.valueOf(emojiId), handler);
     }
 
     @Override
@@ -498,18 +520,18 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public AutoModRuleCreateAction createAutoModRule() {
-        return new AutoModRuleCreateAction(getId());
+    public void createAutoModRule(Consumer<AutoModRuleCreateAction> handler) {
+        ActionExecutor.execute(handler, AutoModRuleCreateAction.class, getId());
     }
 
     @Override
-    public AutoModRuleModifyAction modifyAutoModRule(String ruleId) {
-        return new AutoModRuleModifyAction(getId(), getAutoModRuleById(ruleId).getTriggerType());
+    public void modifyAutoModRule(String ruleId, Consumer<AutoModRuleModifyAction> handler) {
+        ActionExecutor.modifyAutoModRule(handler, getId(), getAutoModRuleById(ruleId).getTriggerType());
     }
 
     @Override
-    public AutoModRuleModifyAction modifyAutoModRule(long ruleId) {
-        return modifyAutoModRule(String.valueOf(ruleId));
+    public void modifyAutoModRule(long ruleId, Consumer<AutoModRuleModifyAction> handler) {
+        modifyAutoModRule(String.valueOf(ruleId), handler);
     }
 
     @Override
@@ -600,9 +622,9 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildWidgetSettingsModifyAction modifyWidgetSettings() {
+    public void modifyWidgetSettings(Consumer<GuildWidgetSettingsModifyAction> handler) {
         //todo check
-        return new GuildWidgetSettingsModifyAction(getId());
+        ActionExecutor.execute(handler, GuildWidgetSettingsModifyAction.class, getId());
     }
 
     @Override
@@ -612,9 +634,9 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildWelcomeScreenModifyAction modifyWelcomeScreen() {
+    public void modifyWelcomeScreen(Consumer<GuildWelcomeScreenModifyAction> handler) {
         //todo check
-        return new GuildWelcomeScreenModifyAction(getId());
+        ActionExecutor.execute(handler, GuildWelcomeScreenModifyAction.class, getId());
     }
 
     @Override
@@ -624,13 +646,13 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public GuildOnboardingModifyAction modifyOnboarding() {
+    public void modifyOnboarding(Consumer<GuildOnboardingModifyAction> handler) {
         //todo check
-        return new GuildOnboardingModifyAction(getId());
+        ActionExecutor.execute(handler, GuildOnboardingModifyAction.class, getId());
     }
 
     @Override
-    public CurrentMemberModifyAction modifyMe() {
-        return new CurrentMemberModifyAction(getId());
+    public void modifyMe(Consumer<CurrentMemberModifyAction> handler) {
+        ActionExecutor.execute(handler, CurrentMemberModifyAction.class, getId());
     }
 }

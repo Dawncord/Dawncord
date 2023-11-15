@@ -23,6 +23,7 @@ import org.dimas4ek.wrapper.types.MfaLevel;
 import org.dimas4ek.wrapper.types.VoiceRegion;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Guild {
     String getId();
@@ -61,9 +62,13 @@ public interface Guild {
 
     List<GuildChannel> getChannelsByName(String channelName);
 
-    ChannelPositionModifyAction modifyChannelPosition(String channelId);
+    void modifyChannel(String channelId, Consumer<GuildChannelModifyAction> handler);
 
-    ChannelPositionModifyAction modifyChannelPosition(long channelId);
+    void modifyChannel(long channelId, Consumer<GuildChannelModifyAction> handler);
+
+    void modifyChannelPosition(String channelId, Consumer<GuildChannelPositionModifyAction> handler);
+
+    void modifyChannelPosition(long channelId, Consumer<GuildChannelPositionModifyAction> handler);
 
     List<GuildMember> getMembers();
 
@@ -77,11 +82,11 @@ public interface Guild {
 
     //todo add guild member
 
-    GuildMemberModifyAction modifyMember(String memberId);
+    void modifyMember(String memberId, Consumer<GuildMemberModifyAction> handler);
 
-    GuildMemberModifyAction modifyMember(long memberId);
+    void modifyMember(long memberId, Consumer<GuildMemberModifyAction> handler);
 
-    CurrentMemberModifyAction modifyMe();
+    void modifyMe(Consumer<CurrentMemberModifyAction> handler);
 
     void kickMember(String memberId);
 
@@ -111,11 +116,11 @@ public interface Guild {
 
     GuildRole getPublicRole();
 
-    GuildRoleCreateAction createRole();
+    void createRole(Consumer<GuildRoleCreateAction> handler);
 
-    GuildRoleModifyAction modifyRole(String roleId);
+    void modifyRole(String roleId, Consumer<GuildRoleModifyAction> handler);
 
-    GuildRoleModifyAction modifyRole(long roleId);
+    void modifyRole(long roleId, Consumer<GuildRoleModifyAction> handler);
 
     void deleteRole(String roleId);
 
@@ -129,7 +134,7 @@ public interface Guild {
 
     List<GuildCategory> getCategoriesByName(String categoryName);
 
-    GuildModifyAction modify();
+    void modify(Consumer<GuildModifyAction> handler);
 
     void delete();
 
@@ -165,6 +170,10 @@ public interface Guild {
 
     List<GuildEvent> getGuildEventsByName(String eventName);
 
+    void modifyGuildEvent(String eventId, Consumer<GuildEventModifyAction> handler);
+
+    void modifyGuildEvent(long eventId, Consumer<GuildEventModifyAction> handler);
+
     AuditLog getAuditLog();
 
     List<Emoji> getEmojis();
@@ -179,11 +188,11 @@ public interface Guild {
 
     List<Emoji> getEmojisByCreatorId(long userId);
 
-    EmojiCreateAction createEmoji();
+    void createEmoji(Consumer<EmojiCreateAction> handler);
 
-    EmojiModifyAction modifyEmoji(String emojiId);
+    void modifyEmoji(String emojiId, Consumer<EmojiModifyAction> handler);
 
-    EmojiModifyAction modifyEmoji(long emojiId);
+    void modifyEmoji(long emojiId, Consumer<EmojiModifyAction> handler);
 
     void deleteEmoji(String emojiId);
 
@@ -201,11 +210,11 @@ public interface Guild {
 
     List<AutoModRule> getAutoModRuleByCreatorId(long userId);
 
-    AutoModRuleCreateAction createAutoModRule();
+    void createAutoModRule(Consumer<AutoModRuleCreateAction> handler);
 
-    AutoModRuleModifyAction modifyAutoModRule(String ruleId);
+    void modifyAutoModRule(String ruleId, Consumer<AutoModRuleModifyAction> handler);
 
-    AutoModRuleModifyAction modifyAutoModRule(long ruleId);
+    void modifyAutoModRule(long ruleId, Consumer<AutoModRuleModifyAction> handler);
 
     void deleteAutoModRule(String ruleId);
 
@@ -235,13 +244,13 @@ public interface Guild {
 
     GuildWidgetSettings getWidgetSettings();
 
-    GuildWidgetSettingsModifyAction modifyWidgetSettings();
+    void modifyWidgetSettings(Consumer<GuildWidgetSettingsModifyAction> handler);
 
     GuildWelcomeScreen getWelcomeScreen();
 
-    GuildWelcomeScreenModifyAction modifyWelcomeScreen();
+    void modifyWelcomeScreen(Consumer<GuildWelcomeScreenModifyAction> handler);
 
     GuildOnboarding getOnboarding();
 
-    GuildOnboardingModifyAction modifyOnboarding();
+    void modifyOnboarding(Consumer<GuildOnboardingModifyAction> handler);
 }

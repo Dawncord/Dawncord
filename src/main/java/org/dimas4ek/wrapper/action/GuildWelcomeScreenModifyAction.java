@@ -9,6 +9,7 @@ import org.json.JSONObject;
 public class GuildWelcomeScreenModifyAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public GuildWelcomeScreenModifyAction(String guildId) {
         this.guildId = guildId;
@@ -17,6 +18,7 @@ public class GuildWelcomeScreenModifyAction {
 
     private void setProperty(String name, Object value) {
         jsonObject.put(name, value);
+        hasChanges = true;
     }
 
     public GuildWelcomeScreenModifyAction setEnabled(boolean enabled) {
@@ -44,8 +46,11 @@ public class GuildWelcomeScreenModifyAction {
         return this;
     }
 
-    public void submit() {
-        ApiClient.patch(jsonObject, "/guilds/" + guildId + "/welcome-screen");
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/welcome-screen");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

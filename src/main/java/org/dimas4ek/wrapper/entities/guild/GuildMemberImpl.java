@@ -1,12 +1,14 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.GuildMemberModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class GuildMemberImpl implements GuildMember {
     private final JSONObject guild;
@@ -140,5 +143,10 @@ public class GuildMemberImpl implements GuildMember {
     @Override
     public void removeRole(long roleId) {
         removeRole(String.valueOf(roleId));
+    }
+
+    @Override
+    public void modify(Consumer<GuildMemberModifyAction> handler) {
+        ActionExecutor.modifyGuildMember(handler, getGuild().getId(), getUser().getId());
     }
 }

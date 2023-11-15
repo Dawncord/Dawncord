@@ -10,6 +10,7 @@ import java.util.List;
 public class GuildRoleCreateAction {
     private final String guildId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public GuildRoleCreateAction(String guildId) {
         this.guildId = guildId;
@@ -18,6 +19,7 @@ public class GuildRoleCreateAction {
 
     private void setProperty(String name, Object value) {
         jsonObject.put(name, value);
+        hasChanges = true;
     }
 
     public GuildRoleCreateAction setName(String name) {
@@ -49,8 +51,11 @@ public class GuildRoleCreateAction {
         return this;
     }
 
-    public void submit() {
-        ApiClient.post(jsonObject, "/guilds/" + guildId + "/roles");
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.post(jsonObject, "/guilds/" + guildId + "/roles");
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

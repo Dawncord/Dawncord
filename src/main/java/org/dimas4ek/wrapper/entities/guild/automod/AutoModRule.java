@@ -7,6 +7,7 @@ import org.dimas4ek.wrapper.types.AutoModEventType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface AutoModRule {
     String getId();
@@ -33,7 +34,7 @@ public interface AutoModRule {
 
     List<String> getExemptChannels();
 
-    AutoModRuleModifyAction modify();
+    void modify(Consumer<AutoModRuleModifyAction> handler);
 
     void delete();
 }

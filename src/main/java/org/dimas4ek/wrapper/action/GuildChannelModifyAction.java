@@ -10,20 +10,18 @@ import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.helpers.CheckReturnValue;
 
 import java.util.List;
 import java.util.Objects;
 
-public class ChannelModifyAction {
+public class GuildChannelModifyAction {
     private final GuildChannel channel;
     private final JSONObject jsonObject;
-    private boolean hasChanges;
+    private boolean hasChanges = false;
 
-    public ChannelModifyAction(GuildChannel channel) {
+    public GuildChannelModifyAction(GuildChannel channel) {
         this.channel = channel;
         jsonObject = new JSONObject();
-        hasChanges = false;
     }
 
     private void setProperty(String key, Object value) {
@@ -32,8 +30,7 @@ public class ChannelModifyAction {
     }
 
     //region Threads
-    @CheckReturnValue
-    public ChannelModifyAction setArchived(boolean enabled) {
+    public GuildChannelModifyAction setArchived(boolean enabled) {
         if (channel.getType() == ChannelType.PUBLIC_THREAD || channel.getType() == ChannelType.PRIVATE_THREAD
                 || channel.getType() == ChannelType.ANNOUNCEMENT_THREAD) {
             setProperty("archived", enabled);
@@ -41,8 +38,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setArchiveDuration(int minutes) {
+    public GuildChannelModifyAction setArchiveDuration(int minutes) {
         if (channel.getType() == ChannelType.PUBLIC_THREAD || channel.getType() == ChannelType.PRIVATE_THREAD
                 || channel.getType() == ChannelType.ANNOUNCEMENT_THREAD) {
             setProperty("auto_archive_duration", minutes);
@@ -50,8 +46,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setLocked(boolean enabled) {
+    public GuildChannelModifyAction setLocked(boolean enabled) {
         if (channel.getType() == ChannelType.PUBLIC_THREAD || channel.getType() == ChannelType.PRIVATE_THREAD
                 || channel.getType() == ChannelType.ANNOUNCEMENT_THREAD) {
             setProperty("locked", enabled);
@@ -59,8 +54,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setInvitable(boolean enabled) {
+    public GuildChannelModifyAction setInvitable(boolean enabled) {
         if (channel.getType() == ChannelType.PRIVATE_THREAD) {
             setProperty("invitable", enabled);
         }
@@ -68,14 +62,12 @@ public class ChannelModifyAction {
     }
     //endregion
 
-    @CheckReturnValue
-    public ChannelModifyAction setName(String name) {
+    public GuildChannelModifyAction setName(String name) {
         setProperty("name", name);
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setType(ChannelType type) {
+    public GuildChannelModifyAction setType(ChannelType type) {
         if ((channel.getType() == ChannelType.GUILD_TEXT || channel.getType() == ChannelType.GUILD_ANNOUNCEMENT)
                 && (type == ChannelType.GUILD_TEXT || type == ChannelType.GUILD_ANNOUNCEMENT)) {
             setProperty("type", type.getValue());
@@ -83,22 +75,19 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setPosition(int position) {
+    public GuildChannelModifyAction setPosition(int position) {
         setProperty("position", position);
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setTopic(String topic) {
+    public GuildChannelModifyAction setTopic(String topic) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setProperty("topic", topic);
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setNsfw(boolean enabled) {
+    public GuildChannelModifyAction setNsfw(boolean enabled) {
         if (channel.getType() == ChannelType.GUILD_TEXT || channel.getType() == ChannelType.GUILD_ANNOUNCEMENT
                 || channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setProperty("nsfw", enabled);
@@ -106,8 +95,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setRateLimit(int seconds) {
+    public GuildChannelModifyAction setRateLimit(int seconds) {
         if (channel.getType() == ChannelType.GUILD_TEXT || channel.getType() == ChannelType.GUILD_VOICE
                 || channel.getType() == ChannelType.GUILD_STAGE_VOICE || channel.getType() == ChannelType.GUILD_FORUM
                 || channel.getType() == ChannelType.GUILD_MEDIA) {
@@ -116,24 +104,21 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setBitrate(int bitrate) {
+    public GuildChannelModifyAction setBitrate(int bitrate) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             setProperty("bitrate", bitrate);
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setUserLimit(int limit) {
+    public GuildChannelModifyAction setUserLimit(int limit) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             setProperty("user_limit", limit);
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setPermissionOverrides(PermissionOverride... overrides) {
+    public GuildChannelModifyAction setPermissionOverrides(PermissionOverride... overrides) {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
             JSONArray overridesArray = new JSONArray();
@@ -158,8 +143,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction clearPermissionOverrides() {
+    public GuildChannelModifyAction clearPermissionOverrides() {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
             setProperty("permission_overwrites", new JSONArray());
@@ -167,8 +151,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setCategory(GuildCategory category) {
+    public GuildChannelModifyAction setCategory(GuildCategory category) {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
             setProperty("parent_id", category.getId());
@@ -176,14 +159,14 @@ public class ChannelModifyAction {
         return this;
     }
 
-    public ChannelModifyAction setVoiceRegion(VoiceRegion voiceRegion) {
+    public GuildChannelModifyAction setVoiceRegion(VoiceRegion voiceRegion) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             setProperty("rtc_region", voiceRegion.getId());
         }
         return this;
     }
 
-    public ChannelModifyAction setOptimalVoiceRegion(VoiceRegion voiceRegion) {
+    public GuildChannelModifyAction setOptimalVoiceRegion(VoiceRegion voiceRegion) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             String optimalVoiceRegion = null;
             JSONArray voiceRegions = JsonUtils.fetchArray("/voice/regions");
@@ -199,16 +182,14 @@ public class ChannelModifyAction {
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setVideoQuality(VideoQualityMode mode) {
+    public GuildChannelModifyAction setVideoQuality(VideoQualityMode mode) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             setProperty("video_quality_mode", mode.getValue());
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setFlags(ChannelFlag flag, ChannelFlag... flags) {
+    public GuildChannelModifyAction setFlags(ChannelFlag flag, ChannelFlag... flags) {
         int value = 0;
         value = setFlagValue(value, flag);
         for (ChannelFlag f : flags) {
@@ -219,7 +200,7 @@ public class ChannelModifyAction {
         return this;
     }
 
-    public ChannelModifyAction setTags(List<ForumTag> tags) {
+    public GuildChannelModifyAction setTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             JSONArray array = new JSONArray();
             setForumTags(tags, array);
@@ -227,21 +208,21 @@ public class ChannelModifyAction {
         return this;
     }
 
-    public ChannelModifyAction updateTags(List<ForumTag> tags) {
+    public GuildChannelModifyAction updateTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setForumTags(tags, JsonUtils.fetchEntity("/channels/" + channel.getId()).getJSONArray("available_tags"));
         }
         return this;
     }
 
-    public ChannelModifyAction clearTags() {
+    public GuildChannelModifyAction clearTags() {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setProperty("available_tags", new JSONArray());
         }
         return this;
     }
 
-    public ChannelModifyAction setDefaultReaction(String emojiIdOrName) {
+    public GuildChannelModifyAction setDefaultReaction(String emojiIdOrName) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             JSONObject defaultEmoji = new JSONObject();
             defaultEmoji.put("emoji_id", MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
@@ -251,35 +232,25 @@ public class ChannelModifyAction {
         return this;
     }
 
-    public ChannelModifyAction clearDefaultReaction() {
+    public GuildChannelModifyAction clearDefaultReaction() {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setProperty("default_reaction_emoji", new JSONObject());
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setPostsOrder(OrderType type) {
+    public GuildChannelModifyAction setPostsOrder(OrderType type) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
             setProperty("default_sort_order", type.getValue());
         }
         return this;
     }
 
-    @CheckReturnValue
-    public ChannelModifyAction setForumLayout(ForumLayoutType type) {
+    public GuildChannelModifyAction setForumLayout(ForumLayoutType type) {
         if (channel.getType() == ChannelType.GUILD_FORUM) {
             setProperty("default_forum_layout", type.getValue());
         }
         return this;
-    }
-
-    public void submit() {
-        if (hasChanges) {
-            ApiClient.patch(jsonObject, "/channels/" + channel.getId());
-            hasChanges = false;
-            jsonObject.clear();
-        }
     }
 
     private int setFlagValue(int value, ChannelFlag f) {
@@ -307,5 +278,13 @@ public class ChannelModifyAction {
             array.put(tagJson);
         }
         setProperty("available_tags", array);
+    }
+
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.patch(jsonObject, "/channels/" + channel.getId());
+            hasChanges = false;
+        }
+        jsonObject.clear();
     }
 }

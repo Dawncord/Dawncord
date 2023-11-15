@@ -1,9 +1,11 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.message.Message;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface MessageChannel extends Channel {
     List<Message> getMessages();
@@ -32,9 +34,15 @@ public interface MessageChannel extends Channel {
 
     void unpinMessage(long messageId);
 
-    ThreadCreateAction startThread(String messageId);
+    void startThread(String messageId, Consumer<ThreadCreateAction> handler);
 
-    ThreadCreateAction startThread(long messageId);
+    void startThread(long messageId, Consumer<ThreadCreateAction> handler);
 
-    ThreadCreateAction startThread();
+    void startThread(Consumer<ThreadCreateAction> handler);
+
+    void startThread();
+
+    void modifyMessageById(String messageId, Consumer<MessageModifyAction> handler);
+
+    void modifyMessageById(long messageId, Consumer<MessageModifyAction> handler);
 }

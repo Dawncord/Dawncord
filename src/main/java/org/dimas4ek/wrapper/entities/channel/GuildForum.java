@@ -7,6 +7,7 @@ import org.dimas4ek.wrapper.types.ForumLayoutType;
 import org.dimas4ek.wrapper.types.OrderType;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface GuildForum extends Channel {
     String getTopic();
@@ -31,5 +32,7 @@ public interface GuildForum extends Channel {
 
     GuildCategory getCategory();
 
-    ThreadCreateAction startThread(String name);
+    void startThread(String name, Consumer<ThreadCreateAction> handler);
+
+    void startThread(String name);
 }

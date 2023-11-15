@@ -20,16 +20,14 @@ import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.types.MessageType;
-import org.dimas4ek.wrapper.utils.EmbedUtils;
-import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.dimas4ek.wrapper.utils.MessageUtils;
+import org.dimas4ek.wrapper.utils.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MessageImpl implements Message {
     private final JSONObject message;
@@ -70,8 +68,13 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public ThreadCreateAction startThread(String name) {
-        return new ThreadCreateAction(getId(), name);
+    public void startThread(String name, Consumer<ThreadCreateAction> handler) {
+        ActionExecutor.startThreadFromMessage(handler, this, name);
+    }
+
+    @Override
+    public void startThread(String name) {
+        startThread(name, null);
     }
 
     @Override
@@ -191,8 +194,8 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public MessageModifyAction modify() {
-        return new MessageModifyAction(this);
+    public void modify(Consumer<MessageModifyAction> handler) {
+        ActionExecutor.modifyMessage(handler, this);
     }
 
     @Override

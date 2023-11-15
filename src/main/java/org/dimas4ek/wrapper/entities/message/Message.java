@@ -17,6 +17,7 @@ import org.dimas4ek.wrapper.types.MessageType;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Message {
     String getId();
@@ -29,7 +30,9 @@ public interface Message {
 
     Guild getGuild();
 
-    ThreadCreateAction startThread(String name);
+    void startThread(String name, Consumer<ThreadCreateAction> handler);
+
+    void startThread(String name);
 
     String getContent();
 
@@ -71,7 +74,7 @@ public interface Message {
 
     ZonedDateTime getEditedTimestamp();
 
-    MessageModifyAction modify();
+    void modify(Consumer<MessageModifyAction> handler);
 
     void delete();
 }

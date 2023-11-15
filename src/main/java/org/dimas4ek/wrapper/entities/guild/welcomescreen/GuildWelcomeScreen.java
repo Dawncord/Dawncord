@@ -2,14 +2,16 @@ package org.dimas4ek.wrapper.entities.guild.welcomescreen;
 
 import org.dimas4ek.wrapper.action.GuildWelcomeScreenModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuildWelcomeScreen {
-    public final Guild guild;
+    private final Guild guild;
     private final JSONObject welcomeScreen;
 
     public GuildWelcomeScreen(Guild guild, JSONObject welcomeScreen) {
@@ -28,7 +30,7 @@ public class GuildWelcomeScreen {
                 : null;
     }
 
-    public GuildWelcomeScreenModifyAction modify() {
-        return new GuildWelcomeScreenModifyAction(guild.getId());
+    public void modify(Consumer<GuildWelcomeScreenModifyAction> handler) {
+        ActionExecutor.execute(handler, GuildWelcomeScreenModifyAction.class, guild.getId());
     }
 }

@@ -4,11 +4,13 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuildRoleImpl implements GuildRole {
     private final JSONObject role;
@@ -90,8 +92,8 @@ public class GuildRoleImpl implements GuildRole {
     }
 
     @Override
-    public GuildRoleModifyAction modify() {
-        return new GuildRoleModifyAction(guild.getId(), getId());
+    public void modify(Consumer<GuildRoleModifyAction> handler) {
+        ActionExecutor.modifyGuildRole(handler, guild.getId(), getId());
     }
 
     @Override

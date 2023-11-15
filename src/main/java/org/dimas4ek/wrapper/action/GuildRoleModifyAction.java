@@ -11,6 +11,7 @@ public class GuildRoleModifyAction {
     private final String guildId;
     private final String roleId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public GuildRoleModifyAction(String guildId, String roleId) {
         this.guildId = guildId;
@@ -20,6 +21,7 @@ public class GuildRoleModifyAction {
 
     private void setProperty(String name, Object value) {
         jsonObject.put(name, value);
+        hasChanges = true;
     }
 
     public GuildRoleModifyAction setName(String name) {
@@ -51,8 +53,11 @@ public class GuildRoleModifyAction {
         return this;
     }
 
-    public void submit() {
-        ApiClient.patch(jsonObject, "/guilds/" + guildId + "/roles/" + roleId);
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/roles/" + roleId);
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

@@ -18,13 +18,12 @@ public class MessageModifyAction {
     private final Message message;
     private final JSONObject jsonObject;
     private final Map<String, String> actions;
-    private boolean hasChanges;
+    private boolean hasChanges = false;
 
     public MessageModifyAction(Message message) {
         this.message = message;
         this.jsonObject = new JSONObject();
         this.actions = new HashMap<>();
-        hasChanges = false;
     }
 
     private void setProperty(String key, Object value) {
@@ -99,11 +98,23 @@ public class MessageModifyAction {
         return this;
     }
 
-    public void submit() {
+    private void submit() {
         if (hasChanges) {
+            if (!actions.isEmpty()) {
+                for (Map.Entry<String, String> entry : actions.entrySet()) {
+                    switch (entry.getKey()) {
+                        case "put":
+                            ApiClient.put(null, entry.getValue());
+                            break;
+                        case "delete":
+                            ApiClient.delete(entry.getValue());
+                            break;
+                    }
+                }
+            }
             ApiClient.patch(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId());
             hasChanges = false;
-            jsonObject.clear();
         }
+        jsonObject.clear();
     }
 }

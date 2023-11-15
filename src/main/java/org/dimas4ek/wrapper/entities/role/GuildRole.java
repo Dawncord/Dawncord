@@ -6,6 +6,7 @@ import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface GuildRole extends IMentionable {
     String getId();
@@ -30,7 +31,7 @@ public interface GuildRole extends IMentionable {
 
     void setPosition(int position);
 
-    GuildRoleModifyAction modify();
+    void modify(Consumer<GuildRoleModifyAction> handler);
 
     void delete();
 }

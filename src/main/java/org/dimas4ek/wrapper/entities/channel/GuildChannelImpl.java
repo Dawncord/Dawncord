@@ -1,19 +1,22 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.action.ChannelModifyAction;
+import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
+import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
 import org.dimas4ek.wrapper.action.InviteCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     private final JSONObject channel;
@@ -43,10 +46,9 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
         return new GuildForumImpl(channel);
     }
 
-
     @Override
-    public ChannelModifyAction modify() {
-        return new ChannelModifyAction(this);
+    public void modify(Consumer<GuildChannelModifyAction> handler) {
+        ActionExecutor.modifyChannel(handler, this);
     }
 
     @Override
@@ -101,8 +103,8 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
-    public InviteCreateAction createInvite() {
-        return new InviteCreateAction(this);
+    public void createInvite(Consumer<InviteCreateAction> handler) {
+        ActionExecutor.createChannelInvite(handler, this);
     }
 
     @Override
@@ -133,6 +135,11 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     @Override
     public List<Thread> getJoinedPrivateArchiveThreads() {
         return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/users/@me/threads/archived/private").getJSONArray("threads"), ThreadImpl::new);
+    }
+
+    @Override
+    public void modifyPosition(Consumer<GuildChannelPositionModifyAction> handler) {
+        ActionExecutor.modifyChannelPosition(handler, getGuild().getId(), getId());
     }
 
     private PermissionOverrideType getPermissionType(int type) {

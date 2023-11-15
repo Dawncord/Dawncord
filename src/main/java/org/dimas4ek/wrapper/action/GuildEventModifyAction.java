@@ -4,7 +4,6 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.GuildEventEntityType;
 import org.dimas4ek.wrapper.types.GuildEventStatus;
 import org.json.JSONObject;
-import org.slf4j.helpers.CheckReturnValue;
 
 import java.time.ZonedDateTime;
 
@@ -12,6 +11,7 @@ public class GuildEventModifyAction {
     private final String guildId;
     private final String eventId;
     private final JSONObject jsonObject;
+    private boolean hasChanges = false;
 
     public GuildEventModifyAction(String guildId, String eventId) {
         this.guildId = guildId;
@@ -21,21 +21,19 @@ public class GuildEventModifyAction {
 
     private void setProperty(String key, Object value) {
         jsonObject.put(key, value);
+        hasChanges = true;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setName(String name) {
         setProperty("name", name);
         return this;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setDescription(String description) {
         setProperty("description", description);
         return this;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setLocation(String location) {
         setProperty("location", location);
         return this;
@@ -46,27 +44,23 @@ public class GuildEventModifyAction {
 
     }*/
 
-    @CheckReturnValue
     public GuildEventModifyAction setStatus(GuildEventStatus status) {
         setProperty("status", status.getValue());
         return this;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setChannelEntityType(GuildEventEntityType entityType, String channelId) {
         setProperty("entity_type", entityType.getValue());
         setProperty("channel_id", channelId);
         return this;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setChannelEntityType(GuildEventEntityType entityType, long channelId) {
         setProperty("entity_type", entityType.getValue());
         setProperty("channel_id", channelId);
         return this;
     }
 
-    @CheckReturnValue
     public GuildEventModifyAction setExternalEntityType(String location, ZonedDateTime endTimestamp) {
         setProperty("entity_type", GuildEventEntityType.EXTERNAL.getValue());
         setProperty("channel_id", null);
@@ -75,8 +69,11 @@ public class GuildEventModifyAction {
         return this;
     }
 
-    public void submit() {
-        ApiClient.patch(jsonObject, "/guilds/" + guildId + "/scheduled-events/" + eventId);
+    private void submit() {
+        if (hasChanges) {
+            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/scheduled-events/" + eventId);
+            hasChanges = false;
+        }
         jsonObject.clear();
     }
 }

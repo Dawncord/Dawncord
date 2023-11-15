@@ -8,6 +8,7 @@ import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.types.AutoModEventType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AutoModRuleImpl implements AutoModRule {
     private final JSONObject autoMod;
@@ -85,8 +87,8 @@ public class AutoModRuleImpl implements AutoModRule {
     }
 
     @Override
-    public AutoModRuleModifyAction modify() {
-        return new AutoModRuleModifyAction(getGuild().getId(), getTriggerType());
+    public void modify(Consumer<AutoModRuleModifyAction> handler) {
+        ActionExecutor.modifyAutoModRule(handler, getGuild().getId(), getTriggerType());
     }
 
     @Override

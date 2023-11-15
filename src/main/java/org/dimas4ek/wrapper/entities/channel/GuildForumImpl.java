@@ -6,12 +6,14 @@ import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.ForumLayoutType;
 import org.dimas4ek.wrapper.types.OrderType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class GuildForumImpl extends ChannelImpl implements GuildForum {
@@ -96,7 +98,12 @@ public class GuildForumImpl extends ChannelImpl implements GuildForum {
     }
 
     @Override
-    public ThreadCreateAction startThread(String name) {
-        return new ThreadCreateAction(forum, name);
+    public void startThread(String name, Consumer<ThreadCreateAction> handler) {
+        ActionExecutor.startForumThread(handler, this, name);
+    }
+
+    @Override
+    public void startThread(String name) {
+        startThread(name, null);
     }
 }
