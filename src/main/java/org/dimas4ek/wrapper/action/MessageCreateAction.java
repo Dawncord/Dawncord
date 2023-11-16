@@ -6,7 +6,9 @@ import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
+import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AllowedMention;
+import org.dimas4ek.wrapper.types.InteractionCallbackType;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.utils.*;
 import org.json.JSONArray;
@@ -21,10 +23,29 @@ public class MessageCreateAction {
     private final String channelId;
     private List<File> attachments;
     private int flags;
+    private boolean hasChanges = false;
+    private final InteractionData interactionData;
+
+    public MessageCreateAction(String content, String channelId, InteractionData interactionData) {
+        this.interactionData = interactionData;
+        this.jsonObject = new JSONObject();
+        this.jsonObject.put("type", InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE.getValue());
+        this.jsonObject.put("data", new JSONObject());
+        if (content != null) {
+            this.jsonObject.getJSONObject("data").put("content", content);
+            hasChanges = true;
+        }
+        this.channelId = channelId;
+        flags = 0;
+    }
 
     public MessageCreateAction(String content, String channelId) {
+        this.interactionData = null;
         this.jsonObject = new JSONObject();
-        this.jsonObject.put("content", content);
+        if (content != null) {
+            this.jsonObject.put("content", content);
+            hasChanges = true;
+        }
         this.channelId = channelId;
         flags = 0;
     }
@@ -33,27 +54,51 @@ public class MessageCreateAction {
         jsonObject.put(key, value);
     }
 
-    public MessageCreateAction addEmbeds(Embed... embeds) {
+    private void setReplyProperty(String key, Object value) {
+        jsonObject.getJSONObject("data").put(key, value);
+    }
+
+    public MessageCreateAction setContent(String content) {
+        if (interactionData != null) {
+            setReplyProperty("content", content);
+        } else {
+            setProperty("content", content);
+        }
+        hasChanges = true;
+        return this;
+    }
+
+    public MessageCreateAction setEmbeds(Embed... embeds) {
         if (embeds != null && embeds.length > 0) {
-            setProperty("embeds", EmbedUtils.createEmbedsArray(List.of(embeds)));
+            if (interactionData != null) {
+                setReplyProperty("embeds", EmbedUtils.createEmbedsArray(List.of(embeds)));
+            } else {
+                setProperty("embeds", EmbedUtils.createEmbedsArray(List.of(embeds)));
+            }
+            hasChanges = true;
         }
 
         return this;
     }
 
-    public MessageCreateAction addComponents(ComponentBuilder... components) {
+    public MessageCreateAction setComponents(ComponentBuilder... components) {
         if (components != null && components.length > 0) {
-            setProperty("components", ComponentUtils.createComponents(List.of(components)));
+            if (interactionData != null) {
+                setReplyProperty("components", ComponentUtils.createComponents(List.of(components)));
+            } else {
+                setProperty("components", ComponentUtils.createComponents(List.of(components)));
+            }
+            hasChanges = true;
         }
 
         return this;
     }
 
-    public MessageCreateAction addAttachments(File... files) {
+    public MessageCreateAction setAttachments(File... files) {
         if (files != null && files.length > 0) {
             if (this.attachments == null || this.attachments.isEmpty()) {
-                this.attachments = new ArrayList<>();
-                this.attachments.addAll(List.of(files));
+                this.attachments = new ArrayList<>(List.of(files));
+                hasChanges = true;
             }
         }
 
@@ -61,34 +106,61 @@ public class MessageCreateAction {
     }
 
     public MessageCreateAction setAllowedMentions(AllowedMention... allowedMentions) {
-        MessageUtils.setAllowedMentions(jsonObject, allowedMentions);
+        if (interactionData != null) {
+            MessageUtils.setAllowedMentions(jsonObject.getJSONObject("data"), allowedMentions);
+        } else {
+            MessageUtils.setAllowedMentions(jsonObject, allowedMentions);
+        }
         return this;
     }
 
     public MessageCreateAction mentionUsers(String... userIds) {
-        MessageUtils.updateMentions(jsonObject, userIds, "users");
+        if (interactionData != null) {
+            MessageUtils.updateMentions(jsonObject.getJSONObject("data"), userIds, "users");
+        } else {
+            MessageUtils.updateMentions(jsonObject, userIds, "users");
+        }
         return this;
     }
 
     public MessageCreateAction mentionRoles(String... roleIds) {
-        MessageUtils.updateMentions(jsonObject, roleIds, "roles");
+        if (interactionData != null) {
+            MessageUtils.updateMentions(jsonObject.getJSONObject("data"), roleIds, "roles");
+        } else {
+            MessageUtils.updateMentions(jsonObject, roleIds, "roles");
+        }
         return this;
     }
 
     public MessageCreateAction setMessageReference(Message message) {
-        setProperty("message_reference", new JSONObject()
-                .put("message_id", message.getId())
-                .put("channel_id", message.getChannel().getId())
-                .put("guild_id", message.getGuild().getId())
-                .put("fail_if_not_exists", JsonUtils.fetchEntity("/channels/" + message.getChannel().getId() + "/messages/" + message.getId()) == null
-                        ? true : null)
-        );
+        if (interactionData == null) {
+            setProperty("message_reference", new JSONObject()
+                    .put("message_id", message.getId())
+                    .put("channel_id", message.getChannel().getId())
+                    .put("guild_id", message.getGuild().getId())
+                    .put("fail_if_not_exists", JsonUtils.fetchEntity("/channels/" + message.getChannel().getId() + "/messages/" + message.getId()) == null ? true : null)
+            );
+        }
         return this;
     }
 
     public MessageCreateAction setStickers(Sticker... stickers) {
         if (stickers != null && stickers.length > 0) {
-            setProperty("sticker_ids", new JSONArray().put(stickers));
+            if (interactionData == null) {
+                setProperty("sticker_ids", new JSONArray().put(stickers));
+            }
+        }
+        return this;
+    }
+
+    public MessageCreateAction setEphemeral(boolean enabled) {
+        if (enabled) {
+            flags |= MessageFlag.EPHEMERAL.getValue();
+        }
+        if (interactionData != null) {
+            setReplyProperty("flags", flags);
+        } else {
+            setProperty("flags", flags);
         }
         return this;
     }
@@ -97,7 +169,11 @@ public class MessageCreateAction {
         if (enabled) {
             flags |= MessageFlag.SUPPRESS_EMBEDS.getValue();
         }
-        setProperty("flags", flags);
+        if (interactionData != null) {
+            setReplyProperty("flags", flags);
+        } else {
+            setProperty("flags", flags);
+        }
         return this;
     }
 
@@ -105,17 +181,30 @@ public class MessageCreateAction {
         if (enabled) {
             flags |= MessageFlag.SUPPRESS_NOTIFICATIONS.getValue();
         }
-        setProperty("flags", flags);
+        if (interactionData == null) {
+            setProperty("flags", flags);
+        }
         return this;
     }
 
     private void submit() {
-        if (attachments != null && !attachments.isEmpty()) {
-            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, attachments);
-            ApiClient.postAttachments(multipartBuilder, "/channels/" + channelId + "/messages");
-        } else {
-            ApiClient.post(jsonObject, "/channels/" + channelId + "/messages");
+        if (hasChanges) {
+            if (interactionData != null) {
+                postMessage(jsonObject, "/interactions/" + interactionData.getResponse().getInteractionId() + "/" + interactionData.getResponse().getInteractionToken() + "/callback");
+            } else {
+                postMessage(jsonObject, "/channels/" + channelId + "/messages");
+            }
+            hasChanges = false;
         }
         jsonObject.clear();
+    }
+
+    void postMessage(JSONObject jsonObject, String url) {
+        if (attachments != null && !attachments.isEmpty()) {
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, attachments);
+            ApiClient.postAttachments(multipartBuilder, url);
+        } else {
+            ApiClient.post(jsonObject, url);
+        }
     }
 }

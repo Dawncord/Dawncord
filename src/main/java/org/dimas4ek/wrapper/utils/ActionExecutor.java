@@ -6,7 +6,9 @@ import org.dimas4ek.wrapper.entities.channel.Channel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildForum;
 import org.dimas4ek.wrapper.entities.message.Message;
+import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
+import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
@@ -122,18 +124,24 @@ public class ActionExecutor {
         }
     }
 
-    public static void createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId) {
-        MessageCreateAction action = new MessageCreateAction(message, channelId);
+    public static JSONObject createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId, InteractionData interactionData) {
+        MessageCreateAction action;
+        if (interactionData != null) {
+            action = new MessageCreateAction(message, channelId, interactionData);
+        } else {
+            action = new MessageCreateAction(message, channelId);
+        }
         if (handler != null) {
             handler.accept(action);
         }
         try {
             Method executeMethod = MessageCreateAction.class.getDeclaredMethod("submit");
             executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
+            return (JSONObject) executeMethod.invoke(action);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {

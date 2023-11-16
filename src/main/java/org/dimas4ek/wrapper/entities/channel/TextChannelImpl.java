@@ -17,12 +17,12 @@ public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
 
     @Override
     public void sendMessage(String message, Consumer<MessageCreateAction> handler) {
-        ActionExecutor.createMessage(handler, message, getId());
+        ActionExecutor.createMessage(handler, message, getId(), null);
     }
 
     @Override
     public void sendMessage(String message) {
-        ActionExecutor.createMessage(null, message, getId());
+        ActionExecutor.createMessage(null, message, getId(), null);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.event;
 
-import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
@@ -10,12 +10,13 @@ import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.slashcommand.option.OptionData;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SlashCommandEventImpl implements SlashCommandEvent {
     private final InteractionData data;
@@ -30,19 +31,18 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     }
 
     @Override
+    public void reply(String message, Consumer<MessageCreateAction> handler) {
+        ActionExecutor.createMessage(handler, message, data.getResponse().getGuildChannel().getId(), data);
+    }
+
+    @Override
     public void reply(String message) {
-        if (message == null || message.isEmpty()) {
-            System.out.println("Empty data.getResponse() text");
-        }
+        reply(message, null);
+    }
 
-        JSONObject jsonObject = new JSONObject()
-                .put("type", 4)
-                .put("data", new JSONObject()
-                        .put("content", message));
-
-        String url = "/interactions/" + data.getResponse().getInteractionId() + "/" + data.getResponse().getInteractionToken() + "/callback";
-
-        ApiClient.post(jsonObject, url);
+    @Override
+    public void reply(Consumer<MessageCreateAction> handler) {
+        reply(null, handler);
     }
 
     @Override
