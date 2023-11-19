@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities.role;
+package org.dimas4ek.wrapper.entities.guild.role;
 
 import org.json.JSONObject;
 

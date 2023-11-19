@@ -1,7 +1,7 @@
 package org.dimas4ek.wrapper.action;
 
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.ForumTag;
+import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;

@@ -1,11 +1,27 @@
 package org.dimas4ek.wrapper.entities.guild.integration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dimas4ek.wrapper.entities.ISnowflake;
 
-@Getter
-@AllArgsConstructor
-public class IntegrationAccount {
+public class IntegrationAccount implements ISnowflake {
     private final String id;
     private final String name;
+
+    public IntegrationAccount(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(id);
+    }
+
+    public String getName() {
+        return name;
+    }
 }

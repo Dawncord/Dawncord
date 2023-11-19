@@ -10,7 +10,6 @@ import org.dimas4ek.wrapper.types.ApplicationFlag;
 import java.util.List;
 
 public interface Application extends IApplication {
-
     Guild getGuild();
 
     int getGuildCount();

@@ -129,5 +129,4 @@ public class SelectMenuBuilder implements ComponentBuilder {
             return type;
         }
     }
-
 }

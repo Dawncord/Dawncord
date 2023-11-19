@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.entities;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.json.JSONArray;
 import org.json.JSONObject;

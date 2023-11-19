@@ -1,6 +1,5 @@
 package org.dimas4ek.wrapper.entities.guild.audit;
 
-import org.dimas4ek.wrapper.ForumTag;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.application.CommandPermission;
 import org.dimas4ek.wrapper.entities.guild.Guild;

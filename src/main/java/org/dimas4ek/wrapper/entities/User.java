@@ -6,11 +6,7 @@ import org.dimas4ek.wrapper.types.UserFlag;
 
 import java.util.List;
 
-public interface User {
-    String getId();
-
-    long getIdLong();
-
+public interface User extends ISnowflake, IMentionable {
     String getGlobalName();
 
     String getUsername();

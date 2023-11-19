@@ -1,7 +1,7 @@
 package org.dimas4ek.wrapper.entities.channel;
 
-import org.dimas4ek.wrapper.ForumTag;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
+import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.ForumLayoutType;

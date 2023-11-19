@@ -1,21 +1,24 @@
 package org.dimas4ek.wrapper.entities.guild.widget;
 
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.OnlineStatus;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.json.JSONObject;
 
-public class GuildWidgetMember {
+public class GuildWidgetMember implements ISnowflake {
     private final JSONObject member;
 
     public GuildWidgetMember(JSONObject member) {
         this.member = member;
     }
 
+    @Override
     public String getId() {
         return member.getString("id");
     }
 
+    @Override
     public long getIdLong() {
         return Long.parseLong(getId());
     }

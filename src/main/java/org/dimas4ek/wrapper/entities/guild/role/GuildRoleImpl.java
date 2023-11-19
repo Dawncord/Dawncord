@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities.role;
+package org.dimas4ek.wrapper.entities.guild.role;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
@@ -24,6 +24,11 @@ public class GuildRoleImpl implements GuildRole {
     @Override
     public String getId() {
         return role.getString("id");
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
     }
 
     @Override

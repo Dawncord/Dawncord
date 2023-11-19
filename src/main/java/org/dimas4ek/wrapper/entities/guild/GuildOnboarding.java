@@ -2,8 +2,9 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.action.GuildOnboardingModifyAction;
 import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.types.OnboardingMode;
 import org.dimas4ek.wrapper.types.PromptType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
@@ -46,18 +47,20 @@ public class GuildOnboarding {
         ActionExecutor.execute(handler, GuildOnboardingModifyAction.class, guild.getId());
     }
 
-    public static class Prompt {
+    public static class Prompt implements ISnowflake {
         private final JSONObject prompt;
 
         public Prompt(JSONObject prompt) {
             this.prompt = prompt;
         }
 
+        @Override
         public String getId() {
             return prompt.getString("id");
         }
 
-        public Long getIdLong() {
+        @Override
+        public long getIdLong() {
             return Long.parseLong(getId());
         }
 
@@ -114,18 +117,20 @@ public class GuildOnboarding {
             return optionsArray;
         }
 
-        public static class Option {
+        public static class Option implements ISnowflake {
             private final JSONObject option;
 
             public Option(JSONObject option) {
                 this.option = option;
             }
 
+            @Override
             public String getId() {
                 return option.getString("id");
             }
 
-            public Long getIdLong() {
+            @Override
+            public long getIdLong() {
                 return Long.parseLong(getId());
             }
 

@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -10,13 +11,13 @@ import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidget;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidgetSettings;
 import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.types.GuildFeature;
 import org.dimas4ek.wrapper.types.MfaLevel;
@@ -25,11 +26,7 @@ import org.dimas4ek.wrapper.types.VoiceRegion;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface Guild {
-    String getId();
-
-    long getIdLong();
-
+public interface Guild extends ISnowflake {
     String getName();
 
     String getDescription();

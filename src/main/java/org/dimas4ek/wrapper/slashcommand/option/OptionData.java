@@ -8,8 +8,8 @@ import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.message.Attachment;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
 

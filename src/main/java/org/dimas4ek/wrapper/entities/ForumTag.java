@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper;
+package org.dimas4ek.wrapper.entities;
 
 import lombok.Getter;
 

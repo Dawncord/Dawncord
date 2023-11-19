@@ -20,6 +20,11 @@ public class StickerImpl implements Sticker {
     }
 
     @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
+
+    @Override
     public String getName() {
         return sticker.getString("name");
     }

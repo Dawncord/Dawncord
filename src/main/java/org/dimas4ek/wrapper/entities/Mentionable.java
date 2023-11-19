@@ -27,6 +27,13 @@ public class Mentionable implements IMentionable {
                 }
             }
         }
+        if (resolved.has("channels")) {
+            for (String key : resolved.getJSONObject("channels").keySet()) {
+                if (key.equals(value)) {
+                    return "<#" + value + ">";
+                }
+            }
+        }
         return null;
     }
 }

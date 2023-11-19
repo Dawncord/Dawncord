@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.action;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.GuildOnboarding;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.types.OnboardingMode;
 import org.json.JSONArray;
 import org.json.JSONObject;

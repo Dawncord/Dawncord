@@ -6,7 +6,6 @@ import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.util.List;
 
-
 @Getter
 public class PermissionOverride {
     private final String id;

@@ -12,7 +12,6 @@ public class App {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
 
         bot.onSlashCommand("test1", event -> {
-
         });
 
         bot.start();

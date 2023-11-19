@@ -1,9 +1,10 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.action.GuildMemberModifyAction;
+import org.dimas4ek.wrapper.entities.IMentionable;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.image.Avatar;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public interface GuildMember {
+public interface GuildMember extends IMentionable {
     String getNickname();
 
     Avatar getAvatar();

@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
 import org.dimas4ek.wrapper.action.AutoModRuleModifyAction;
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.AutoModEventType;
@@ -9,11 +10,7 @@ import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface AutoModRule {
-    String getId();
-
-    long getIdLong();
-
+public interface AutoModRule extends ISnowflake {
     String getName();
 
     Guild getGuild();

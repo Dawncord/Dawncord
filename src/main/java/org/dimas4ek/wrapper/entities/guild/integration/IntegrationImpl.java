@@ -4,7 +4,7 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.types.IntegrationExpireBehavior;
 import org.dimas4ek.wrapper.types.IntegrationType;
 import org.dimas4ek.wrapper.types.Scope;
@@ -28,6 +28,11 @@ public class IntegrationImpl implements Integration {
     @Override
     public String getId() {
         return integration.getString("id");
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
     }
 
     @Override

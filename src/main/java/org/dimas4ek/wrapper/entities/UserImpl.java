@@ -93,4 +93,9 @@ public class UserImpl implements User {
     public boolean isBot() {
         return Constants.APPLICATION_ID.equals(user.getString("id"));
     }
+
+    @Override
+    public String getAsMention() {
+        return "<@" + getId() + ">";
+    }
 }

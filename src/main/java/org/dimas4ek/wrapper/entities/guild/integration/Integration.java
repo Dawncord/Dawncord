@@ -1,7 +1,8 @@
 package org.dimas4ek.wrapper.entities.guild.integration;
 
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
-import org.dimas4ek.wrapper.entities.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.types.IntegrationExpireBehavior;
 import org.dimas4ek.wrapper.types.IntegrationType;
 import org.dimas4ek.wrapper.types.Scope;
@@ -9,9 +10,7 @@ import org.dimas4ek.wrapper.types.Scope;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public interface Integration {
-    String getId();
-
+public interface Integration extends ISnowflake {
     String getName();
 
     IntegrationType getType();

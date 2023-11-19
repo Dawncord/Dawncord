@@ -1,16 +1,23 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.json.JSONObject;
 
-public class Attachment {
+public class Attachment implements ISnowflake {
     private final JSONObject attachment;
 
     public Attachment(JSONObject attachment) {
         this.attachment = attachment;
     }
 
+    @Override
     public String getId() {
         return attachment.getString("id");
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
     }
 
     public String getFilename() {

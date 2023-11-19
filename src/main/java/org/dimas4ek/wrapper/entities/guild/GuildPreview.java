@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.EmojiImpl;
+import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class GuildPreview {
+public class GuildPreview implements ISnowflake {
     private final Guild guild;
     private final JSONObject preview;
 
@@ -22,10 +23,12 @@ public class GuildPreview {
         this.preview = preview;
     }
 
+    @Override
     public String getId() {
         return preview.getString("id");
     }
 
+    @Override
     public long getIdLong() {
         return Long.parseLong(getId());
     }
