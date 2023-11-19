@@ -3,6 +3,8 @@ package org.dimas4ek.wrapper.entities.guild.role;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.image.RoleIcon;
+import org.dimas4ek.wrapper.types.GuildFeature;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
@@ -37,8 +39,9 @@ public class GuildRoleImpl implements GuildRole {
     }
 
     @Override
-    public String getDescription() {
-        return role.getString("description");
+    public RoleIcon getIcon() {
+        String iconId = role.optString("icon", null);
+        return iconId != null ? new RoleIcon(getId(), iconId) : null;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class GuildRoleImpl implements GuildRole {
 
     @Override
     public void modify(Consumer<GuildRoleModifyAction> handler) {
-        ActionExecutor.modifyGuildRole(handler, guild.getId(), getId());
+        ActionExecutor.modifyGuildRole(handler, guild.getId(), getId(), guild.getFeatures().contains(GuildFeature.ROLE_ICONS));
     }
 
     @Override

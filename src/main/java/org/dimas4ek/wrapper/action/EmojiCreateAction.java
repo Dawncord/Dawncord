@@ -1,9 +1,8 @@
 package org.dimas4ek.wrapper.action;
 
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.utils.IOUtils;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class EmojiCreateAction {
     private final String guildId;
@@ -25,12 +24,15 @@ public class EmojiCreateAction {
         return this;
     }
 
-    public EmojiCreateAction setRoles(List<String> roleIds) {
+    public EmojiCreateAction setRoles(String... roleIds) {
         setProperty("roles", roleIds);
         return this;
     }
 
-    //todo setImage
+    public EmojiCreateAction setImage(String path) {
+        setProperty("image", IOUtils.setImageData(path));
+        return this;
+    }
 
     private void submit() {
         if (hasChanges) {

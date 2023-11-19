@@ -16,9 +16,4 @@ public class GuildEventImage implements Icon {
     public String getUrl(ImageFormat format) {
         return Constants.CDN_URL + "/guild-events/" + eventId + "/" + hash + format.getFormat();
     }
-
-    @Override
-    public void download() {
-        //todo download
-    }
 }

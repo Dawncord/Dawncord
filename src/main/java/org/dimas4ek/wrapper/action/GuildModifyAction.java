@@ -4,15 +4,20 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.types.*;
+import org.dimas4ek.wrapper.utils.IOUtils;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class GuildModifyAction {
     private final String guildId;
+    private final List<GuildFeature> guildFeatures;
     private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
-    public GuildModifyAction(String guildId) {
+    public GuildModifyAction(String guildId, List<GuildFeature> guildFeatures) {
         this.guildId = guildId;
+        this.guildFeatures = guildFeatures;
         this.jsonObject = new JSONObject();
     }
 
@@ -100,19 +105,40 @@ public class GuildModifyAction {
         return this;
     }
 
-    public GuildModifyAction setIcon() {
-        //TODO set icon
-        return null;
+    public GuildModifyAction setIcon(String path) {
+        if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_ICON)) {
+                setProperty("icon", IOUtils.setImageData(path));
+            }
+        } else {
+            setProperty("icon", IOUtils.setImageData(path));
+        }
+        return this;
     }
 
-    public GuildModifyAction setSplash() {
-        //TODO set splash
-        return null;
+    public GuildModifyAction setSplash(String path) {
+        if (guildFeatures.contains(GuildFeature.INVITE_SPLASH)) {
+            setProperty("splash", IOUtils.setImageData(path));
+        }
+        return this;
     }
 
-    public GuildModifyAction setDiscoverySplash() {
-        //TODO set discovery splash
-        return null;
+    public GuildModifyAction setDiscoverySplash(String path) {
+        if (guildFeatures.contains(GuildFeature.DISCOVERABLE)) {
+            setProperty("discovery_splash", IOUtils.setImageData(path));
+        }
+        return this;
+    }
+
+    public GuildModifyAction setBanner(String path) {
+        if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_BANNER)) {
+                setProperty("banner", IOUtils.setImageData(path));
+            }
+        } else {
+            setProperty("banner", IOUtils.setImageData(path));
+        }
+        return this;
     }
 
     private void submit() {

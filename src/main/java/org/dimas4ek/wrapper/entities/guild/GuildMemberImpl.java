@@ -149,4 +149,9 @@ public class GuildMemberImpl implements GuildMember {
     public void modify(Consumer<GuildMemberModifyAction> handler) {
         ActionExecutor.modifyGuildMember(handler, getGuild().getId(), getUser().getId());
     }
+
+    @Override
+    public String getAsMention() {
+        return "<@" + getUser().getId() + ">";
+    }
 }

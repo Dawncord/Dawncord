@@ -26,9 +26,4 @@ public class Avatar implements Icon {
                 ? Constants.CDN_URL + "/guilds/" + guildId + "/users/" + userId + "/avatars/" + hash + format.getFormat()
                 : Constants.CDN_URL + "/avatars/" + userId + "/" + hash + format.getFormat();
     }
-
-    @Override
-    public void download() {
-        //TODO download
-    }
 }

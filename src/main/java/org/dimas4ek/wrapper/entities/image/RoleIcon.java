@@ -3,17 +3,17 @@ package org.dimas4ek.wrapper.entities.image;
 import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
-public class Splash implements Icon {
-    private final String guildId;
+public class RoleIcon implements Icon {
+    private final String roleId;
     private final String hash;
 
-    public Splash(String guildId, String hash) {
-        this.guildId = guildId;
+    public RoleIcon(String roleId, String hash) {
+        this.roleId = roleId;
         this.hash = hash;
     }
 
     @Override
     public String getUrl(ImageFormat format) {
-        return Constants.CDN_URL + "/splashes/" + guildId + "/" + hash + format.getFormat();
+        return Constants.CDN_URL + "/role-icons/" + roleId + "/" + hash + format.getFormat();
     }
 }

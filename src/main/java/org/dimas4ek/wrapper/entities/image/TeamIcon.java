@@ -1,7 +1,6 @@
-package org.dimas4ek.wrapper.entities.application.team;
+package org.dimas4ek.wrapper.entities.image;
 
 import org.dimas4ek.wrapper.Constants;
-import org.dimas4ek.wrapper.entities.image.Icon;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
 public class TeamIcon implements Icon {
@@ -16,10 +15,5 @@ public class TeamIcon implements Icon {
     @Override
     public String getUrl(ImageFormat format) {
         return Constants.CDN_URL + "/team-icons/" + teamId + "/" + hash + format.getFormat();
-    }
-
-    @Override
-    public void download() {
-        //todo download
     }
 }

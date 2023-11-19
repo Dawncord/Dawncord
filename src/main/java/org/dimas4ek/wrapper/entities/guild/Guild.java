@@ -16,6 +16,7 @@ import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidget;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidgetSettings;
 import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
+import org.dimas4ek.wrapper.entities.image.GuildIcon;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.thread.Thread;
@@ -32,6 +33,8 @@ public interface Guild extends ISnowflake {
     String getDescription();
 
     User getOwner();
+
+    GuildIcon getIcon();
 
     Splash getSplash();
 

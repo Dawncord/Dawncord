@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.GuildEventEntityType;
 import org.dimas4ek.wrapper.types.GuildEventStatus;
+import org.dimas4ek.wrapper.utils.IOUtils;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
@@ -39,10 +40,10 @@ public class GuildEventModifyAction {
         return this;
     }
 
-    //todo set image data
-    /*public GuildEventModifyAction setImage() {
-
-    }*/
+    public GuildEventModifyAction setImage(String path) {
+        setProperty("image", IOUtils.setImageData(path));
+        return this;
+    }
 
     public GuildEventModifyAction setStatus(GuildEventStatus status) {
         setProperty("status", status.getValue());

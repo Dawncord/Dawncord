@@ -8,9 +8,11 @@ import org.dimas4ek.wrapper.entities.channel.GuildForum;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
+import org.dimas4ek.wrapper.types.GuildFeature;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ActionExecutor {
@@ -19,8 +21,19 @@ public class ActionExecutor {
         try {
             T action = actionClass.getDeclaredConstructor(String.class).newInstance(guildId);
             handler.accept(action);
-
             Method executeMethod = actionClass.getDeclaredMethod("submit");
+            executeMethod.setAccessible(true);
+            executeMethod.invoke(action);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<GuildFeature> guildFeatures) {
+        GuildModifyAction action = new GuildModifyAction(guildId, guildFeatures);
+        handler.accept(action);
+        try {
+            Method executeMethod = GuildModifyAction.class.getDeclaredMethod("submit");
             executeMethod.setAccessible(true);
             executeMethod.invoke(action);
         } catch (Exception e) {
@@ -100,8 +113,20 @@ public class ActionExecutor {
         }
     }
 
-    public static void modifyGuildRole(Consumer<GuildRoleModifyAction> handler, String guildId, String roleId) {
-        GuildRoleModifyAction action = new GuildRoleModifyAction(guildId, roleId);
+    public static void createGuildRole(Consumer<GuildRoleCreateAction> handler, String guildId, boolean hasRoleIcons) {
+        GuildRoleCreateAction action = new GuildRoleCreateAction(guildId, hasRoleIcons);
+        handler.accept(action);
+        try {
+            Method executeMethod = GuildRoleCreateAction.class.getDeclaredMethod("submit");
+            executeMethod.setAccessible(true);
+            executeMethod.invoke(action);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void modifyGuildRole(Consumer<GuildRoleModifyAction> handler, String guildId, String roleId, boolean hasRoleIcons) {
+        GuildRoleModifyAction action = new GuildRoleModifyAction(guildId, roleId, hasRoleIcons);
         handler.accept(action);
         try {
             Method executeMethod = GuildRoleModifyAction.class.getDeclaredMethod("submit");

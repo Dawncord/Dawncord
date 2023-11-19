@@ -12,9 +12,11 @@ public class App {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
 
         bot.onSlashCommand("test1", event -> {
+
         });
 
         bot.start();
+
     }
 
     private static String getProperty(String name) throws IOException {

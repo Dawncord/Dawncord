@@ -16,8 +16,4 @@ public class ApplicationIcon implements Icon {
     public String getUrl(ImageFormat format) {
         return Constants.CDN_URL + "/app-icons/" + applicationId + "/" + hash + format.getFormat();
     }
-
-    public void download() {
-        //TODO download
-    }
 }

@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.guild.role;
 import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
 import org.dimas4ek.wrapper.entities.IMentionable;
 import org.dimas4ek.wrapper.entities.ISnowflake;
+import org.dimas4ek.wrapper.entities.image.RoleIcon;
 import org.dimas4ek.wrapper.types.PermissionType;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
 public interface GuildRole extends ISnowflake, IMentionable {
     String getName();
 
-    String getDescription();
+    RoleIcon getIcon();
 
     List<PermissionType> getPermissions();
 

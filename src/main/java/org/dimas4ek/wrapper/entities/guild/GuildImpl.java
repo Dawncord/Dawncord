@@ -20,6 +20,7 @@ import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidget;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidgetSettings;
 import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
+import org.dimas4ek.wrapper.entities.image.GuildIcon;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.message.sticker.StickerImpl;
@@ -70,6 +71,12 @@ public class GuildImpl implements Guild {
     @Override
     public User getOwner() {
         return new UserImpl(JsonUtils.fetchEntity("/users/" + guild.getString("owner_id")));
+    }
+
+    @Override
+    public GuildIcon getIcon() {
+        String icon = guild.optString("icon", null);
+        return icon != null ? new GuildIcon(getId(), icon) : null;
     }
 
     @Override
@@ -273,12 +280,12 @@ public class GuildImpl implements Guild {
 
     @Override
     public void createRole(Consumer<GuildRoleCreateAction> handler) {
-        ActionExecutor.execute(handler, GuildRoleCreateAction.class, getId());
+        ActionExecutor.createGuildRole(handler, getId(), getFeatures().contains(GuildFeature.ROLE_ICONS));
     }
 
     @Override
     public void modifyRole(String roleId, Consumer<GuildRoleModifyAction> handler) {
-        ActionExecutor.modifyGuildRole(handler, getId(), roleId);
+        ActionExecutor.modifyGuildRole(handler, getId(), roleId, getFeatures().contains(GuildFeature.ROLE_ICONS));
     }
 
     @Override
@@ -329,7 +336,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void modify(Consumer<GuildModifyAction> handler) {
-        ActionExecutor.execute(handler, GuildModifyAction.class, getId());
+        ActionExecutor.modifyGuild(handler, getId(), getFeatures());
     }
 
     @Override

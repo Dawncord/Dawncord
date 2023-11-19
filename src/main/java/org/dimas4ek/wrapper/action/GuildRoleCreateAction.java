@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.action;
 
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.IOUtils;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -9,11 +10,13 @@ import java.util.List;
 
 public class GuildRoleCreateAction {
     private final String guildId;
+    private final boolean roleIcons;
     private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
-    public GuildRoleCreateAction(String guildId) {
+    public GuildRoleCreateAction(String guildId, boolean roleIcons) {
         this.guildId = guildId;
+        this.roleIcons = roleIcons;
         this.jsonObject = new JSONObject();
     }
 
@@ -24,6 +27,13 @@ public class GuildRoleCreateAction {
 
     public GuildRoleCreateAction setName(String name) {
         setProperty("name", name);
+        return this;
+    }
+
+    public GuildRoleCreateAction setIcon(String path) {
+        if (roleIcons) {
+            setProperty("icon", IOUtils.setImageData(path));
+        }
         return this;
     }
 
