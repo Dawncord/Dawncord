@@ -3,6 +3,8 @@ package org.dimas4ek.wrapper.event;
 import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.Webhook;
+import org.dimas4ek.wrapper.entities.WebhookImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -100,5 +102,20 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     @Override
     public void editApplication(Consumer<ApplicationModifyAction> handler) {
         ActionExecutor.modifyApplication(handler);
+    }
+
+    @Override
+    public Webhook getWebhookById(String webhookId) {
+        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId));
+    }
+
+    @Override
+    public Webhook getWebhookById(long webhookId) {
+        return getWebhookById(String.valueOf(webhookId));
+    }
+
+    @Override
+    public Webhook getWebhookByToken(String webhookId, String webhookToken) {
+        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId + "/" + webhookToken));
     }
 }

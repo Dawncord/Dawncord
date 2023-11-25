@@ -54,13 +54,13 @@ public interface GuildChannel extends Channel {
 
     void modifyPosition(Consumer<GuildChannelPositionModifyAction> handler);
 
-    List<Webhook> getChannelWebhooks();
+    List<Webhook> getWebhooks();
 
     Webhook getWebhookById(String webhookId);
 
     Webhook getWebhookById(long webhookId);
 
-    Webhook getChannelWebhookByName(String webhookName);
+    Webhook getWebhookByName(String webhookName);
 
     void createWebhook(Consumer<WebhookCreateAction> handler);
 }

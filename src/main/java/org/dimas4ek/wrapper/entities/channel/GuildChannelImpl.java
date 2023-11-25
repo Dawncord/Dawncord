@@ -151,13 +151,13 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
-    public List<Webhook> getChannelWebhooks() {
+    public List<Webhook> getWebhooks() {
         return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/webhooks").getJSONArray("webhooks"), WebhookImpl::new);
     }
 
     @Override
     public Webhook getWebhookById(String webhookId) {
-        return getChannelWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findAny().orElse(null);
+        return getWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findAny().orElse(null);
     }
 
     @Override
@@ -166,8 +166,8 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
-    public Webhook getChannelWebhookByName(String webhookName) {
-        return getChannelWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findAny().orElse(null);
+    public Webhook getWebhookByName(String webhookName) {
+        return getWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findAny().orElse(null);
     }
 
     @Override

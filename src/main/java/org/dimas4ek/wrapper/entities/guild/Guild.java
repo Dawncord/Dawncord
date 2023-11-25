@@ -43,6 +43,7 @@ public interface Guild extends ISnowflake {
     DiscoverySplash getDiscoverySplash();
 
     //List<GuildFeature> getFeatures(); todo fix missing features
+
     List<String> getFeatures();
 
     List<Sticker> getStickers();
@@ -281,11 +282,11 @@ public interface Guild extends ISnowflake {
 
     void modifyOnboarding(Consumer<GuildOnboardingModifyAction> handler);
 
-    List<Webhook> getGuildWebhooks();
+    List<Webhook> getWebhooks();
 
-    Webhook getGuildWebhookById(String webhookId);
+    Webhook getWebhookById(String webhookId);
 
-    Webhook getGuildWebhookById(long webhookId);
+    Webhook getWebhookById(long webhookId);
 
-    Webhook getGuildWebhookByName(String webhookName);
+    Webhook getWebhookByName(String webhookName);
 }

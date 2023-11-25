@@ -717,23 +717,23 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<Webhook> getGuildWebhooks() {
+    public List<Webhook> getWebhooks() {
         return JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/webhooks"), WebhookImpl::new);
     }
 
     @Override
-    public Webhook getGuildWebhookById(String webhookId) {
-        return getGuildWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findFirst().orElse(null);
+    public Webhook getWebhookById(String webhookId) {
+        return getWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findFirst().orElse(null);
     }
 
     @Override
-    public Webhook getGuildWebhookById(long webhookId) {
-        return getGuildWebhookById(String.valueOf(webhookId));
+    public Webhook getWebhookById(long webhookId) {
+        return getWebhookById(String.valueOf(webhookId));
     }
 
     @Override
-    public Webhook getGuildWebhookByName(String webhookName) {
-        return getGuildWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findFirst().orElse(null);
+    public Webhook getWebhookByName(String webhookName) {
+        return getWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findFirst().orElse(null);
     }
 
     @Override

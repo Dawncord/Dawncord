@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.event;
 import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -40,4 +41,10 @@ public interface SlashCommandEvent {
     Application getApplication();
 
     void editApplication(Consumer<ApplicationModifyAction> handler);
+
+    Webhook getWebhookById(String webhookId);
+
+    Webhook getWebhookById(long webhookId);
+
+    Webhook getWebhookByToken(String webhookId, String webhookToken);
 }
