@@ -1,14 +1,19 @@
 package org.dimas4ek.wrapper.entities;
 
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.WebhookModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.WebhookType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
+
+import java.util.function.Consumer;
 
 public class WebhookImpl implements Webhook {
     private final JSONObject webhook;
@@ -66,5 +71,15 @@ public class WebhookImpl implements Webhook {
     @Override
     public WebhookType getType() {
         return EnumUtils.getEnumObject(webhook, "type", WebhookType.class);
+    }
+
+    @Override
+    public void modify(Consumer<WebhookModifyAction> handler) {
+        ActionExecutor.modifyWebhook(handler, getId());
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/webhooks/" + getId());
     }
 }

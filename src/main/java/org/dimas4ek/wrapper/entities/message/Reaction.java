@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import org.dimas4ek.wrapper.entities.Emoji;
+
 import java.util.List;
 
 public interface Reaction {
@@ -13,7 +15,13 @@ public interface Reaction {
 
     boolean isMeBurst();
 
-    String getEmoji();
+    Emoji getGuildEmoji();
+
+    boolean isGuildEmoji();
 
     List<String> getBurstColors();
+
+    void delete(String userId);
+
+    void delete(long userId);
 }

@@ -7,6 +7,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dimas4ek.wrapper.action.GuildCreateAction;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.event.MessageEvent;
 import org.dimas4ek.wrapper.event.SlashCommandEvent;
 import org.dimas4ek.wrapper.listeners.MainListener;
@@ -14,12 +17,15 @@ import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.listeners.SlashCommandListener;
 import org.dimas4ek.wrapper.slashcommand.SlashCommand;
 import org.dimas4ek.wrapper.slashcommand.option.Option;
+import org.dimas4ek.wrapper.types.GatewayIntent;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +36,7 @@ public class Dawncord {
     private static Consumer<MessageEvent> defaultMessageHandler;
     private static Map<String, Consumer<SlashCommandEvent>> slashCommandHandlers = new HashMap<>();
     private static Consumer<SlashCommandEvent> defaultSlashCommandHandler;
+    private long intentsValue = 0;
 
     public Dawncord(String token) {
         WebSocketFactory factory = new WebSocketFactory();
@@ -42,8 +49,21 @@ public class Dawncord {
         webSocket.addListener(new MainListener());
         webSocket.addListener(new MessageListener());
         webSocket.addListener(new SlashCommandListener());
+        //todo add GuildListener
 
         assignConstants(token);
+    }
+
+    public void setIntents(GatewayIntent... intents) {
+        for (GatewayIntent intent : intents) {
+            if (intent == GatewayIntent.ALL) {
+                for (GatewayIntent i : GatewayIntent.values()) {
+                    intentsValue |= i.getValue();
+                }
+                break;
+            }
+            intentsValue |= intent.getValue();
+        }
     }
 
     private void assignConstants(String token) {
@@ -108,7 +128,7 @@ public class Dawncord {
                 .put("op", 2)
                 .put("d", new JSONObject()
                         .put("token", Constants.BOT_TOKEN)
-                        .put("intents", 33538)
+                        .put("intents", intentsValue)
                         .put("properties", new JSONObject()
                                 .put("os", "linux")
                                 .put("browser", "discord-java-gateway")
@@ -205,5 +225,26 @@ public class Dawncord {
             choicesJson.put(choiceJson);
         }
         optionJson.put("choices", choicesJson);
+    }
+
+    public List<Guild> getGuilds() {
+        List<Guild> guilds = new ArrayList<>();
+        JSONArray array = JsonUtils.fetchArray("/users/@me/guilds");
+        for (int i = 0; i < array.length(); i++) {
+            guilds.add(new GuildImpl(JsonUtils.fetchEntity("/guilds/" + array.getJSONObject(i).getString("id"))));
+        }
+        return guilds;
+    }
+
+    public void createGuild(Consumer<GuildCreateAction> handler) {
+        GuildCreateAction action = new GuildCreateAction();
+        handler.accept(action);
+        try {
+            Method executeMethod = GuildCreateAction.class.getDeclaredMethod("submit");
+            executeMethod.setAccessible(true);
+            executeMethod.invoke(action);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

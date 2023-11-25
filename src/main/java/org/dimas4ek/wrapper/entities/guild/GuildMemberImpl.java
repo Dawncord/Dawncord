@@ -91,6 +91,21 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
+    public List<GuildRole> getRolesByName(String roleName) {
+        return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
+    }
+
+    @Override
+    public void deleteRoleById(String roleId) {
+        ApiClient.delete("/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+    }
+
+    @Override
+    public void deleteRoleById(long roleId) {
+        deleteRoleById(String.valueOf(roleId));
+    }
+
+    @Override
     public boolean isPending() {
         return guildMember.getBoolean("pending");
     }
@@ -118,6 +133,16 @@ public class GuildMemberImpl implements GuildMember {
     @Override
     public Guild getGuild() {
         return new GuildImpl(guild);
+    }
+
+    @Override
+    public void addToGuild(String guildId) {
+        ApiClient.put(null, "/guilds/" + guildId + "/members/" + getUser().getId());
+    }
+
+    @Override
+    public void addToGuild(long guildId) {
+        addToGuild(String.valueOf(guildId));
     }
 
     @Override

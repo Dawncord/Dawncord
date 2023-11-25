@@ -4,7 +4,10 @@ import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
 import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
 import org.dimas4ek.wrapper.action.InviteCreateAction;
+import org.dimas4ek.wrapper.action.WebhookCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
+import org.dimas4ek.wrapper.entities.Webhook;
+import org.dimas4ek.wrapper.entities.WebhookImpl;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
@@ -103,6 +106,11 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
+    public Invite getInvite(String code) {
+        return getInvites().stream().filter(invite -> invite.getCode().equals(code)).findAny().orElse(null);
+    }
+
+    @Override
     public void createInvite(Consumer<InviteCreateAction> handler) {
         ActionExecutor.createChannelInvite(handler, this);
     }
@@ -140,6 +148,31 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     @Override
     public void modifyPosition(Consumer<GuildChannelPositionModifyAction> handler) {
         ActionExecutor.modifyChannelPosition(handler, getGuild().getId(), getId());
+    }
+
+    @Override
+    public List<Webhook> getChannelWebhooks() {
+        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/webhooks").getJSONArray("webhooks"), WebhookImpl::new);
+    }
+
+    @Override
+    public Webhook getWebhookById(String webhookId) {
+        return getChannelWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findAny().orElse(null);
+    }
+
+    @Override
+    public Webhook getWebhookById(long webhookId) {
+        return getWebhookById(String.valueOf(webhookId));
+    }
+
+    @Override
+    public Webhook getChannelWebhookByName(String webhookName) {
+        return getChannelWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findAny().orElse(null);
+    }
+
+    @Override
+    public void createWebhook(Consumer<WebhookCreateAction> handler) {
+        ActionExecutor.createWebhook(handler, getId());
     }
 
     private PermissionOverrideType getPermissionType(int type) {

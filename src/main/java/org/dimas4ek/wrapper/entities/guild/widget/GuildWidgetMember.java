@@ -23,8 +23,8 @@ public class GuildWidgetMember implements ISnowflake {
         return Long.parseLong(getId());
     }
 
-    public String getName() {
-        return member.getString("name");
+    public String getUsername() {
+        return member.getString("username");
     }
 
     public Avatar getAvatar() {

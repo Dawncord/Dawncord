@@ -4,9 +4,11 @@ import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
+import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.Invite;
+import org.dimas4ek.wrapper.entities.channel.Stage;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
@@ -20,7 +22,7 @@ import org.dimas4ek.wrapper.entities.image.GuildIcon;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.thread.Thread;
-import org.dimas4ek.wrapper.types.GuildFeature;
+import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.MfaLevel;
 import org.dimas4ek.wrapper.types.VoiceRegion;
 
@@ -40,7 +42,8 @@ public interface Guild extends ISnowflake {
 
     DiscoverySplash getDiscoverySplash();
 
-    List<GuildFeature> getFeatures();
+    //List<GuildFeature> getFeatures(); todo fix missing features
+    List<String> getFeatures();
 
     List<Sticker> getStickers();
 
@@ -54,6 +57,10 @@ public interface Guild extends ISnowflake {
 
     List<Sticker> getStickersByAuthorId(long userId);
 
+    void createSticker(Consumer<GuildStickerCreateAction> handler);
+
+    void modifySticker(String stickerId, Consumer<GuildStickerModifyAction> handler);
+
     List<GuildChannel> getChannels();
 
     GuildChannel getChannelById(String channelId);
@@ -62,6 +69,8 @@ public interface Guild extends ISnowflake {
 
     List<GuildChannel> getChannelsByName(String channelName);
 
+    void createChannel(ChannelType type, Consumer<GuildChannelCreateAction> handler);
+
     void modifyChannel(String channelId, Consumer<GuildChannelModifyAction> handler);
 
     void modifyChannel(long channelId, Consumer<GuildChannelModifyAction> handler);
@@ -69,6 +78,20 @@ public interface Guild extends ISnowflake {
     void modifyChannelPosition(String channelId, Consumer<GuildChannelPositionModifyAction> handler);
 
     void modifyChannelPosition(long channelId, Consumer<GuildChannelPositionModifyAction> handler);
+
+    void deleteChannelById(String channelId);
+
+    void deleteChannelById(long channelId);
+
+    Stage getStageByChannelId(String channelId);
+
+    Stage getStageByChannelId(long channelId);
+
+    void createStage(Consumer<StageCreateAction> handler);
+
+    void modifyStageByChannelId(String channelId, String topic);
+
+    void deleteStage(String channelId);
 
     List<GuildMember> getMembers();
 
@@ -79,8 +102,6 @@ public interface Guild extends ISnowflake {
     List<GuildMember> searchMembers(String username, int limit);
 
     List<GuildMember> searchMembers(String username);
-
-    //todo add guild member
 
     void modifyMember(String memberId, Consumer<GuildMemberModifyAction> handler);
 
@@ -99,6 +120,10 @@ public interface Guild extends ISnowflake {
     void unbanMember(String memberId);
 
     void unbanMember(long memberId);
+
+    void addMember(String userId);
+
+    void addMember(long userId);
 
     List<GuildBan> getBans();
 
@@ -230,6 +255,8 @@ public interface Guild extends ISnowflake {
 
     List<Invite> getInvites();
 
+    Invite getInvite(String code);
+
     List<Integration> getIntegrations();
 
     Integration getIntegrationById(String integrationId);
@@ -253,4 +280,12 @@ public interface Guild extends ISnowflake {
     GuildOnboarding getOnboarding();
 
     void modifyOnboarding(Consumer<GuildOnboardingModifyAction> handler);
+
+    List<Webhook> getGuildWebhooks();
+
+    Webhook getGuildWebhookById(String webhookId);
+
+    Webhook getGuildWebhookById(long webhookId);
+
+    Webhook getGuildWebhookByName(String webhookName);
 }

@@ -61,6 +61,10 @@ public class GuildRoleCreateAction {
         return this;
     }
 
+    private JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
     private void submit() {
         if (hasChanges) {
             ApiClient.post(jsonObject, "/guilds/" + guildId + "/roles");

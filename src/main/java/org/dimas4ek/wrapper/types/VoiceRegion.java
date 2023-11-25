@@ -20,5 +20,5 @@ public enum VoiceRegion {
     US_SOUTH("us-south"),
     US_WEST("us-west");
 
-    private final String id;
+    private final String value;
 }

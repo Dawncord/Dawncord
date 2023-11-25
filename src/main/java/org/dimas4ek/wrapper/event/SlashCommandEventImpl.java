@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.event;
 
+import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.application.Application;
@@ -97,7 +98,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     }
 
     @Override
-    public void editApplication() {
-        //todo edit current app
+    public void editApplication(Consumer<ApplicationModifyAction> handler) {
+        ActionExecutor.modifyApplication(handler);
     }
 }

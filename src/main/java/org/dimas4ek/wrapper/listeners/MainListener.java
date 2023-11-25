@@ -16,7 +16,6 @@ public class MainListener extends WebSocketAdapter {
         JSONObject json;
         try {
             json = new JSONObject(text);
-            System.out.println(json.toString(4));
         } catch (JSONException e) {
             System.err.println("Error parsing JSON: " + e.getMessage());
             return;

@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
@@ -105,5 +106,10 @@ public class InviteImpl implements Invite {
     @Override
     public boolean isTemporary() {
         return invite.getBoolean("temporary");
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/invites/" + getCode());
     }
 }

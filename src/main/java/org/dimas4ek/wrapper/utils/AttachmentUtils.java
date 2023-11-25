@@ -39,7 +39,6 @@ public class AttachmentUtils {
                     mediaType = "image/gif";
                     break;
                 default:
-                    //TODO add logger error
                     break;
             }
 

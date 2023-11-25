@@ -1,13 +1,21 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.EmojiImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.json.JSONObject;
 
 import java.util.List;
 
 public class ReactionImpl implements Reaction {
+    private final Guild guild;
+    private final Message message;
     private final JSONObject reaction;
 
-    public ReactionImpl(JSONObject reaction) {
+    public ReactionImpl(Guild guild, Message message, JSONObject reaction) {
+        this.guild = guild;
+        this.message = message;
         this.reaction = reaction;
     }
 
@@ -37,10 +45,17 @@ public class ReactionImpl implements Reaction {
     }
 
     @Override
+    public Emoji getGuildEmoji() {
+        return new EmojiImpl(guild, reaction.getJSONObject("emoji"));
+    }
+
     public String getEmoji() {
-        return reaction.getJSONObject("emoji").isNull("id")
-                ? reaction.getJSONObject("emoji").getString("name")
-                : reaction.getJSONObject("emoji").getString("id");
+        return reaction.getJSONObject("emoji").getString("name");
+    }
+
+    @Override
+    public boolean isGuildEmoji() {
+        return !reaction.getJSONObject("emoji").isNull("id");
     }
 
     @Override
@@ -49,12 +64,14 @@ public class ReactionImpl implements Reaction {
         return null;
     }
 
-    public static boolean isEmojiLong(String input) {
-        try {
-            Long.parseLong(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    @Override
+    public void delete(String userId) {
+        ApiClient.delete("/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/" +
+                (isGuildEmoji() ? getGuildEmoji().getName() : getEmoji()) + "/" + userId);
+    }
+
+    @Override
+    public void delete(long userId) {
+        delete(String.valueOf(userId));
     }
 }

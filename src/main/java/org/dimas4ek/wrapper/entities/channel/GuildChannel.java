@@ -3,7 +3,9 @@ package org.dimas4ek.wrapper.entities.channel;
 import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
 import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
 import org.dimas4ek.wrapper.action.InviteCreateAction;
+import org.dimas4ek.wrapper.action.WebhookCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
+import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
@@ -34,6 +36,8 @@ public interface GuildChannel extends Channel {
 
     List<Invite> getInvites();
 
+    Invite getInvite(String code);
+
     void createInvite(Consumer<InviteCreateAction> handler);
 
     boolean hasActiveThreads();
@@ -49,4 +53,14 @@ public interface GuildChannel extends Channel {
     List<Thread> getJoinedPrivateArchiveThreads();
 
     void modifyPosition(Consumer<GuildChannelPositionModifyAction> handler);
+
+    List<Webhook> getChannelWebhooks();
+
+    Webhook getWebhookById(String webhookId);
+
+    Webhook getWebhookById(long webhookId);
+
+    Webhook getChannelWebhookByName(String webhookName);
+
+    void createWebhook(Consumer<WebhookCreateAction> handler);
 }

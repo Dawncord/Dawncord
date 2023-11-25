@@ -11,9 +11,11 @@ import org.dimas4ek.wrapper.types.ActivityType;
 import org.dimas4ek.wrapper.types.ApplicationFlag;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ApplicationImpl implements Application {
@@ -58,8 +60,9 @@ public class ApplicationImpl implements Application {
     public List<String> getRedirectURIs() {
         List<String> uris = new ArrayList<>();
         if (application.has("redirect_uris")) {
-            for (int i = 0; i < application.getJSONArray("redirect_uris").length(); i++) {
-                uris.add(application.getJSONArray("redirect_uris").getString(i));
+            JSONArray array = application.getJSONArray("redirect_uris");
+            for (int i = 0; i < array.length(); i++) {
+                uris.add(array.getString(i));
             }
         }
         return uris;
@@ -76,7 +79,7 @@ public class ApplicationImpl implements Application {
     }
 
     @Override
-    public String getInstallUrl() {
+    public String getCustomInstallUrl() {
         return application.optString("custom_install_url", null);
     }
 
@@ -136,20 +139,23 @@ public class ApplicationImpl implements Application {
 
     @Override
     public String getVerifyKey() {
-        return application.getString("verify_key");
+        return application.optString("verify_key", null);
     }
 
     @Override
     public List<ApplicationFlag> getFlags() {
-        return EnumUtils.getEnumListFromLong(application, "flags", ApplicationFlag.class);
+        return application.has("flags")
+                ? EnumUtils.getEnumListFromLong(application, "flags", ApplicationFlag.class)
+                : Collections.emptyList();
     }
 
     @Override
     public List<String> getTags() {
         List<String> tags = new ArrayList<>();
         if (application.has("tags")) {
-            for (int i = 0; i < application.getJSONArray("tags").length(); i++) {
-                tags.add(application.getJSONArray("tags").getString(i));
+            JSONArray array = application.getJSONArray("tags");
+            for (int i = 0; i < array.length(); i++) {
+                tags.add(array.getString(i));
             }
         }
         return tags;
@@ -158,5 +164,11 @@ public class ApplicationImpl implements Application {
     @Override
     public boolean isMonetized() {
         return application.optBoolean("is_monetized", false);
+    }
+
+    @Override
+    public InstallParams getInstallParams() {
+        JSONObject installParams = application.optJSONObject("install_params");
+        return installParams != null ? new InstallParams(installParams) : null;
     }
 }

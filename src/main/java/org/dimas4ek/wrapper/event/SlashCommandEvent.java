@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.event;
 
+import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.application.Application;
@@ -38,5 +39,5 @@ public interface SlashCommandEvent {
 
     Application getApplication();
 
-    void editApplication();
+    void editApplication(Consumer<ApplicationModifyAction> handler);
 }

@@ -7,12 +7,17 @@ import java.util.Base64;
 
 public class IOUtils {
     public static String setImageData(String path) {
-        try {
-            byte[] imageBytes = Files.readAllBytes(Paths.get(path));
-            String base64 = Base64.getEncoder().encodeToString(imageBytes);
-            return "data:image/" + path.substring(path.lastIndexOf(".") + 1) + ";base64," + base64;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String format = path.substring(path.lastIndexOf(".") + 1);
+        if (format.matches("gif|png|jpg|jpeg")) {
+            try {
+                byte[] imageBytes = Files.readAllBytes(Paths.get(path));
+                String base64 = Base64.getEncoder().encodeToString(imageBytes);
+                return "data:image/" + format + ";base64," + base64;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new RuntimeException("Unsupported file format: " + format);
         }
     }
 }

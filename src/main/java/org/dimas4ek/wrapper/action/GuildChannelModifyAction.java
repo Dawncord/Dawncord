@@ -161,7 +161,7 @@ public class GuildChannelModifyAction {
 
     public GuildChannelModifyAction setVoiceRegion(VoiceRegion voiceRegion) {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
-            setProperty("rtc_region", voiceRegion.getId());
+            setProperty("rtc_region", voiceRegion.getValue());
         }
         return this;
     }

@@ -11,11 +11,11 @@ import java.util.List;
 
 public class GuildModifyAction {
     private final String guildId;
-    private final List<GuildFeature> guildFeatures;
+    private final List<String> guildFeatures;
     private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
-    public GuildModifyAction(String guildId, List<GuildFeature> guildFeatures) {
+    public GuildModifyAction(String guildId, List<String> guildFeatures) {
         this.guildId = guildId;
         this.guildFeatures = guildFeatures;
         this.jsonObject = new JSONObject();
@@ -107,7 +107,7 @@ public class GuildModifyAction {
 
     public GuildModifyAction setIcon(String path) {
         if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
-            if (guildFeatures.contains(GuildFeature.ANIMATED_ICON)) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_ICON.name())) {
                 setProperty("icon", IOUtils.setImageData(path));
             }
         } else {
@@ -117,14 +117,14 @@ public class GuildModifyAction {
     }
 
     public GuildModifyAction setSplash(String path) {
-        if (guildFeatures.contains(GuildFeature.INVITE_SPLASH)) {
+        if (guildFeatures.contains(GuildFeature.INVITE_SPLASH.name())) {
             setProperty("splash", IOUtils.setImageData(path));
         }
         return this;
     }
 
     public GuildModifyAction setDiscoverySplash(String path) {
-        if (guildFeatures.contains(GuildFeature.DISCOVERABLE)) {
+        if (guildFeatures.contains(GuildFeature.DISCOVERABLE.name())) {
             setProperty("discovery_splash", IOUtils.setImageData(path));
         }
         return this;
@@ -132,7 +132,7 @@ public class GuildModifyAction {
 
     public GuildModifyAction setBanner(String path) {
         if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
-            if (guildFeatures.contains(GuildFeature.ANIMATED_BANNER)) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_BANNER.name())) {
                 setProperty("banner", IOUtils.setImageData(path));
             }
         } else {

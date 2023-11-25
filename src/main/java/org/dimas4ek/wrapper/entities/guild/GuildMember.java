@@ -26,6 +26,12 @@ public interface GuildMember extends IMentionable {
 
     List<GuildRole> getRoles();
 
+    List<GuildRole> getRolesByName(String roleName);
+
+    void deleteRoleById(String roleId);
+
+    void deleteRoleById(long roleId);
+
     boolean isPending();
 
     boolean isOwner();
@@ -37,6 +43,10 @@ public interface GuildMember extends IMentionable {
     boolean isDeafened();
 
     Guild getGuild();
+
+    void addToGuild(String guildId);
+
+    void addToGuild(long guildId);
 
     User getUser();
 

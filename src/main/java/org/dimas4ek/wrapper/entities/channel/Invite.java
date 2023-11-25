@@ -38,4 +38,6 @@ public interface Invite {
     int getUses();
 
     boolean isTemporary();
+
+    void delete();
 }

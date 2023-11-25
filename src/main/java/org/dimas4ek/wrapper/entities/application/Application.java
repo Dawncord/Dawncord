@@ -20,7 +20,7 @@ public interface Application extends IApplication {
 
     String getVerificationUrl();
 
-    String getInstallUrl();
+    String getCustomInstallUrl();
 
     ApplicationIcon getIcon();
 
@@ -47,4 +47,6 @@ public interface Application extends IApplication {
     List<String> getTags();
 
     boolean isMonetized();
+
+    InstallParams getInstallParams();
 }

@@ -126,12 +126,22 @@ public class MessageImpl implements Message {
 
     @Override
     public List<Reaction> getReactions() {
-        return JsonUtils.getEntityList(message.getJSONArray("reactions"), ReactionImpl::new);
+        return JsonUtils.getEntityList(message.getJSONArray("reactions"), reaction -> new ReactionImpl(getGuild(), this, reaction));
     }
 
     @Override
     public Reaction getReaction(String emojiIdOrName) {
-        return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findAny().orElse(null);
+        return getReactions().stream().filter(reaction -> reaction.getGuildEmoji().equals(emojiIdOrName)).findAny().orElse(null);
+    }
+
+    @Override
+    public void deleteReactions(String emojiIdOrName) {
+        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId() + "/reactions/" + emojiIdOrName);
+    }
+
+    @Override
+    public void deleteReactions() {
+        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId() + "/reactions");
     }
 
     @Override

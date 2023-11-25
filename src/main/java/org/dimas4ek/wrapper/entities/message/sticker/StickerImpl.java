@@ -1,11 +1,16 @@
 package org.dimas4ek.wrapper.entities.message.sticker;
 
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.action.GuildStickerModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.json.JSONObject;
+
+import java.util.function.Consumer;
 
 public class StickerImpl implements Sticker {
     private final JSONObject sticker;
@@ -72,5 +77,15 @@ public class StickerImpl implements Sticker {
     @Override
     public User getAuthor() {
         return new UserImpl(sticker.getJSONObject("user"));
+    }
+
+    @Override
+    public void modify(Consumer<GuildStickerModifyAction> handler) {
+        ActionExecutor.modifyGuildSticker(handler, getGuild().getId(), getId());
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/guilds/" + getGuild().getId() + "/stickers/" + getId());
     }
 }

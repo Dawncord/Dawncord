@@ -8,7 +8,7 @@ import org.dimas4ek.wrapper.entities.channel.GuildForum;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
-import org.dimas4ek.wrapper.types.GuildFeature;
+import org.dimas4ek.wrapper.types.ChannelType;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
@@ -16,20 +16,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ActionExecutor {
-
     public static <T> void execute(Consumer<T> handler, Class<T> actionClass, String guildId) {
+        T action = null;
         try {
-            T action = actionClass.getDeclaredConstructor(String.class).newInstance(guildId);
+            action = actionClass.getDeclaredConstructor(String.class).newInstance(guildId);
             handler.accept(action);
-            Method executeMethod = actionClass.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        invokeSubmit(action, actionClass);
     }
 
-    public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<GuildFeature> guildFeatures) {
+    public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<String> guildFeatures) {
         GuildModifyAction action = new GuildModifyAction(guildId, guildFeatures);
         handler.accept(action);
         try {
@@ -39,114 +37,73 @@ public class ActionExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //invokeSubmit(action, GuildModifyAction.class);
     }
 
     public static void modifyAutoModRule(Consumer<AutoModRuleModifyAction> handler, String guildId, AutoModTriggerType triggerType) {
         AutoModRuleModifyAction action = new AutoModRuleModifyAction(guildId, triggerType);
         handler.accept(action);
-        try {
-            Method executeMethod = AutoModRuleModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, AutoModRuleModifyAction.class);
     }
 
     public static void modifyChannel(Consumer<GuildChannelModifyAction> handler, GuildChannel channel) {
         GuildChannelModifyAction action = new GuildChannelModifyAction(channel);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildChannelModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildChannelModifyAction.class);
     }
 
     public static void modifyChannelPosition(Consumer<GuildChannelPositionModifyAction> handler, String guildId, String channelId) {
         GuildChannelPositionModifyAction action = new GuildChannelPositionModifyAction(guildId, channelId);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildChannelPositionModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildChannelPositionModifyAction.class);
     }
 
     public static void modifyEmoji(Consumer<EmojiModifyAction> handler, String guildId, String emojiId) {
         EmojiModifyAction action = new EmojiModifyAction(guildId, emojiId);
         handler.accept(action);
-        try {
-            Method executeMethod = EmojiModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, EmojiModifyAction.class);
     }
 
     public static void modifyGuildEvent(Consumer<GuildEventModifyAction> handler, String guildId, String eventId) {
         GuildEventModifyAction action = new GuildEventModifyAction(guildId, eventId);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildEventModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildEventModifyAction.class);
     }
 
     public static void modifyGuildMember(Consumer<GuildMemberModifyAction> handler, String guildId, String memberId) {
         GuildMemberModifyAction action = new GuildMemberModifyAction(guildId, memberId);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildMemberModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildMemberModifyAction.class);
+    }
+
+    public static void createGuildChannel(Consumer<GuildChannelCreateAction> handler, String guildId, ChannelType type) {
+        GuildChannelCreateAction action = new GuildChannelCreateAction(guildId, type);
+        handler.accept(action);
+        invokeSubmit(action, GuildChannelCreateAction.class);
     }
 
     public static void createGuildRole(Consumer<GuildRoleCreateAction> handler, String guildId, boolean hasRoleIcons) {
         GuildRoleCreateAction action = new GuildRoleCreateAction(guildId, hasRoleIcons);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildRoleCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildRoleCreateAction.class);
     }
 
     public static void modifyGuildRole(Consumer<GuildRoleModifyAction> handler, String guildId, String roleId, boolean hasRoleIcons) {
         GuildRoleModifyAction action = new GuildRoleModifyAction(guildId, roleId, hasRoleIcons);
         handler.accept(action);
-        try {
-            Method executeMethod = GuildRoleModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, GuildRoleModifyAction.class);
+    }
+
+    public static void modifyGuildSticker(Consumer<GuildStickerModifyAction> handler, String guildId, String stickerId) {
+        GuildStickerModifyAction action = new GuildStickerModifyAction(guildId, stickerId);
+        handler.accept(action);
+        invokeSubmit(action, GuildStickerModifyAction.class);
     }
 
     public static void createChannelInvite(Consumer<InviteCreateAction> handler, GuildChannel channel) {
         InviteCreateAction action = new InviteCreateAction(channel);
         handler.accept(action);
-        try {
-            Method executeMethod = InviteCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, InviteCreateAction.class);
     }
 
     public static JSONObject createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId, InteractionData interactionData) {
@@ -159,26 +116,14 @@ public class ActionExecutor {
         if (handler != null) {
             handler.accept(action);
         }
-        try {
-            Method executeMethod = MessageCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            return (JSONObject) executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, MessageCreateAction.class);
         return null;
     }
 
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {
         MessageModifyAction action = new MessageModifyAction(message);
         handler.accept(action);
-        try {
-            Method executeMethod = MessageModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, MessageModifyAction.class);
     }
 
     public static void startThread(@Nullable Consumer<ThreadCreateAction> handler, Message message, Channel channel) {
@@ -191,13 +136,7 @@ public class ActionExecutor {
         if (handler != null) {
             handler.accept(action);
         }
-        try {
-            Method executeMethod = ThreadCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, ThreadCreateAction.class);
     }
 
     public static void startForumThread(Consumer<ThreadCreateAction> handler, GuildForum forum, String name) {
@@ -205,13 +144,7 @@ public class ActionExecutor {
         if (handler != null) {
             handler.accept(action);
         }
-        try {
-            Method executeMethod = ThreadCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, ThreadCreateAction.class);
     }
 
     public static void startThreadFromMessage(@Nullable Consumer<ThreadCreateAction> handler, Message message, String name) {
@@ -219,8 +152,36 @@ public class ActionExecutor {
         if (handler != null) {
             handler.accept(action);
         }
+        invokeSubmit(action, ThreadCreateAction.class);
+    }
+
+    public static void modifyApplication(Consumer<ApplicationModifyAction> handler) {
+        ApplicationModifyAction action = new ApplicationModifyAction();
+        handler.accept(action);
+        invokeSubmit(action, ApplicationModifyAction.class);
+    }
+
+    public static void createWebhook(Consumer<WebhookCreateAction> handler, String id) {
+        WebhookCreateAction action = new WebhookCreateAction(id);
+        handler.accept(action);
+        invokeSubmit(action, WebhookCreateAction.class);
+    }
+
+    public static void modifyWebhook(Consumer<WebhookModifyAction> handler, String id) {
+        WebhookModifyAction action = new WebhookModifyAction(id);
+        handler.accept(action);
+        invokeSubmit(action, WebhookModifyAction.class);
+    }
+
+    public static void createStage(Consumer<StageCreateAction> handler) {
+        StageCreateAction action = new StageCreateAction();
+        handler.accept(action);
+        invokeSubmit(action, StageCreateAction.class);
+    }
+
+    private static void invokeSubmit(Object action, Class<?> clazz) {
         try {
-            Method executeMethod = ThreadCreateAction.class.getDeclaredMethod("submit");
+            Method executeMethod = clazz.getDeclaredMethod("submit");
             executeMethod.setAccessible(true);
             executeMethod.invoke(action);
         } catch (Exception e) {

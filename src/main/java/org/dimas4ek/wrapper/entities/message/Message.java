@@ -51,9 +51,13 @@ public interface Message extends ISnowflake {
 
     Reaction getReaction(String emojiIdOrName);
 
-    Activity getActivity(); //TODO add something to activity or remove it
+    void deleteReactions(String emojiIdOrName);
 
-    Application getApplication(); //TODO add something
+    void deleteReactions();
+
+    Activity getActivity();
+
+    Application getApplication();
 
     Message getReferencedMessage();
 

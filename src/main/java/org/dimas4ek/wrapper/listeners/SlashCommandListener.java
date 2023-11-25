@@ -47,6 +47,8 @@ public class SlashCommandListener extends WebSocketAdapter {
             String channelId = d.getString("channel_id");
 
             if (type.equals("INTERACTION_CREATE")) {
+                System.out.println(json.toString(4));
+
                 JSONObject data = d.getJSONObject("data");
                 SlashCommand slashCommand = new SlashCommand(JsonUtils.fetchEntity("/applications/" + Constants.APPLICATION_ID + "/commands/" + data.getString("id")));
 
