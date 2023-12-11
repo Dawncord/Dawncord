@@ -1,17 +1,18 @@
 package org.dimas4ek.wrapper.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
 
 public class AttachmentUtils {
-    public static MultipartBody.Builder creteMultipartBuilder(JSONObject jsonObject, List<File> files) {
-        jsonObject.put("attachments", AttachmentUtils.createAttachmentsArray(files));
+    public static MultipartBody.Builder createMultipartBuilder(ObjectNode jsonObject, List<File> files) {
+        jsonObject.set("attachments", createAttachmentsArray(files));
 
         RequestBody requestBodyJson = RequestBody.create(MediaType.parse("application/json"), jsonObject.toString());
 
@@ -49,14 +50,15 @@ public class AttachmentUtils {
         return multipartBuilder;
     }
 
-    private static JSONArray createAttachmentsArray(List<File> files) {
-        JSONArray attachments = new JSONArray();
+    private static ArrayNode createAttachmentsArray(List<File> files) {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode attachments = mapper.createArrayNode();
 
         for (int i = 0; i < files.size(); i++) {
-            JSONObject file = new JSONObject();
+            ObjectNode file = mapper.createObjectNode();
             file.put("id", i);
             file.put("filename", files.get(i).getName());
-            attachments.put(file);
+            attachments.add(file);
         }
 
         return attachments;

@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
@@ -10,19 +11,16 @@ import org.dimas4ek.wrapper.entities.application.ActivityImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
-import org.dimas4ek.wrapper.entities.thread.Thread;
-import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.types.MessageType;
 import org.dimas4ek.wrapper.utils.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -30,15 +28,42 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class MessageImpl implements Message {
-    private final JSONObject message;
+    private final JsonNode message;
+    private final Guild guild;
+    private String id;
+    private MessageType type;
+    private GuildChannel channel;
+    private String content;
+    private User author;
+    private List<MessageFlag> flags;
+    private List<Attachment> attachments;
+    private List<Embed> embeds;
+    private List<User> mentions;
+    private List<GuildRole> mentionRoles;
+    private List<Reaction> reactions;
+    private Activity activity;
+    private Application application;
+    private Message referencedMessage;
+    private Thread thread;
+    private List<Sticker> stickers;
+    private List<ActionRow> actionRows;
+    private Boolean isPinned;
+    private Boolean isMentionEveryone;
+    private Boolean isTTS;
+    private ZonedDateTime timestamp;
+    private ZonedDateTime editedTimestamp;
 
-    public MessageImpl(JSONObject message) {
+    public MessageImpl(JsonNode message, Guild guild) {
         this.message = message;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return message.getString("id");
+        if (id == null) {
+            id = message.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -48,23 +73,23 @@ public class MessageImpl implements Message {
 
     @Override
     public MessageType getType() {
-        return EnumUtils.getEnumObject(message, "type", MessageType.class);
-        /*for (MessageType type : MessageType.values()) {
-            if (message.getInt("type") == type.getValue()) {
-                return type;
-            }
+        if (type == null) {
+            type = EnumUtils.getEnumObject(message, "type", MessageType.class);
         }
-        return null;*/
+        return type;
     }
 
     @Override
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + message.getString("channel_id")));
+        if (channel == null) {
+            channel = guild.getChannelById(message.get("channel_id").asText());
+        }
+        return channel;
     }
 
     @Override
     public Guild getGuild() {
-        return getChannel().getGuild();
+        return guild;
     }
 
     @Override
@@ -79,59 +104,79 @@ public class MessageImpl implements Message {
 
     @Override
     public String getContent() {
-        return message.getString("content");
+        if (content == null) {
+            content = message.has("content")
+                    ? message.get("content").asText()
+                    : null;
+        }
+        return content;
     }
 
     @Override
     public User getFrom() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + message.getString("user_id")));
+        if (author == null) {
+            author = new UserImpl(message.get("author"));
+        }
+        return author;
     }
 
     @Override
     public List<MessageFlag> getFlags() {
-        return EnumUtils.getEnumListFromLong(message, "flags", MessageFlag.class);
-        /*List<MessageFlag> flags = new ArrayList<>();
-        for (MessageFlag flag : MessageFlag.values()) {
-            if ((flag.getValue() & message.getInt("flags")) != 0) {
-                flags.add(flag);
-            }
+        if (flags == null) {
+            flags = EnumUtils.getEnumListFromLong(message, "flags", MessageFlag.class);
         }
-        return flags;*/
+        return flags;
     }
 
     @Override
     public List<Attachment> getAttachments() {
-        return JsonUtils.getEntityList(message.getJSONArray("attachments"), Attachment::new);
+        if (attachments == null) {
+            attachments = JsonUtils.getEntityList(message.get("attachments"), Attachment::new);
+        }
+        return attachments;
     }
 
     @Override
     public List<Embed> getEmbeds() {
-        return JsonUtils.getEntityList(message.getJSONArray("embeds"), EmbedUtils::getEmbedFromJson);
+        if (embeds == null) {
+            embeds = JsonUtils.getEntityList(message.get("embeds"), EmbedUtils::getEmbedFromJson);
+        }
+        return embeds;
     }
 
     @Override
     public List<User> getMentions() {
-        return JsonUtils.getEntityList(message.getJSONArray("mentions"), UserImpl::new);
+        if (mentions == null) {
+            mentions = JsonUtils.getEntityList(message.get("mentions"), UserImpl::new);
+        }
+        return mentions;
     }
 
     @Override
     public List<GuildRole> getMentionRoles() {
-        List<GuildRole> roles = new ArrayList<>();
-        JSONArray mentionRoles = message.getJSONArray("mention_roles");
-        for (int i = 0; i < mentionRoles.length(); i++) {
-            roles.add(getGuild().getRoleById(mentionRoles.getString(i)));
+        if (mentionRoles == null) {
+            mentionRoles = new ArrayList<>();
+            for (JsonNode roleNode : message.get("mention_roles")) {
+                mentionRoles.add(guild.getRoleById(roleNode.asText()));
+            }
         }
-        return roles;
+        return mentionRoles;
     }
 
     @Override
     public List<Reaction> getReactions() {
-        return JsonUtils.getEntityList(message.getJSONArray("reactions"), reaction -> new ReactionImpl(getGuild(), this, reaction));
+        if (reactions == null) {
+            reactions = JsonUtils.getEntityList(message.get("reactions"), reaction -> new ReactionImpl(reaction, guild, this));
+        }
+        return reactions;
     }
 
     @Override
     public Reaction getReaction(String emojiIdOrName) {
-        return getReactions().stream().filter(reaction -> reaction.getGuildEmoji().equals(emojiIdOrName)).findAny().orElse(null);
+        if (MessageUtils.isEmojiLong(emojiIdOrName)) {
+            return getReactions().stream().filter(reaction -> reaction.getGuildEmoji().getId().equals(emojiIdOrName)).findFirst().orElse(null);
+        }
+        return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findFirst().orElse(null);
     }
 
     @Override
@@ -146,61 +191,96 @@ public class MessageImpl implements Message {
 
     @Override
     public Activity getActivity() {
-        return new ActivityImpl(message.getJSONObject("activity"));
+        if (activity == null) {
+            activity = message.has("activity") ? new ActivityImpl(message.get("activity")) : null;
+        }
+        return activity;
     }
 
     @Override
     public Application getApplication() {
-        return new ApplicationImpl(message.getJSONObject("application"));
+        if (application == null) {
+            application = message.has("application") ? new ApplicationImpl(message.get("application"), guild) : null;
+        }
+        return application;
     }
 
     @Override
     public Message getReferencedMessage() {
-        return message.has("referenced_message") && !message.isNull("referenced_message")
-                ? new MessageImpl(message.getJSONObject("referenced_message"))
-                : null;
+        if (referencedMessage == null) {
+            referencedMessage = message.has("referenced_message") && message.hasNonNull("referenced_message")
+                    ? new MessageImpl(message.get("referenced_message"), guild)
+                    : null;
+        }
+        return referencedMessage;
     }
 
     @Override
     public Thread getThread() {
-        return message.has("thread")
-                ? new ThreadImpl(message.getJSONObject("thread"))
-                : null;
+        if (thread == null) {
+            thread = message.has("thread")
+                    ? new ThreadImpl(message.get("thread"), guild)
+                    : null;
+        }
+        return thread;
     }
 
     @Override
     public List<Sticker> getStickers() {
-        return MessageUtils.retrieveStickersFromMessage(message, getGuild());
+        if (stickers == null) {
+            stickers = MessageUtils.retrieveStickersFromMessage(message, guild);
+        }
+        return stickers;
     }
 
     @Override
     public List<ActionRow> getActionRows() {
-        return JsonUtils.getEntityList(message.getJSONArray("components"), ActionRow::new);
+        if (actionRows == null) {
+            actionRows = !message.get("components").isEmpty() ? JsonUtils.getEntityList(message.get("components"), ActionRow::new) : null;
+        }
+        return actionRows;
     }
 
     @Override
     public boolean isPinned() {
-        return message.getBoolean("pinned");
+        if (isPinned == null) {
+            isPinned = message.get("pinned").asBoolean();
+        }
+        return isPinned;
     }
 
     @Override
     public boolean isMentionEveryone() {
-        return message.getBoolean("mention_everyone");
+        if (isMentionEveryone == null) {
+            isMentionEveryone = message.get("mention_everyone").asBoolean();
+        }
+        return isMentionEveryone;
     }
 
     @Override
     public boolean isTTS() {
-        return message.getBoolean("tts");
+        if (isTTS == null) {
+            isTTS = message.get("tts").asBoolean();
+        }
+        return isTTS;
     }
 
     @Override
     public ZonedDateTime getTimestamp() {
-        return MessageUtils.getZonedDateTime(message, "timestamp");
+        if (timestamp == null) {
+            timestamp = MessageUtils.getZonedDateTime(message, "timestamp");
+        }
+        return timestamp;
     }
 
     @Override
     public ZonedDateTime getEditedTimestamp() {
-        return MessageUtils.getZonedDateTime(message, "edited_timestamp");
+        if (editedTimestamp == null) {
+            editedTimestamp = message.hasNonNull("edited_timestamp")
+                    ? MessageUtils.getZonedDateTime(message, "edited_timestamp")
+                    : null;
+        }
+        return editedTimestamp;
     }
 
     @Override

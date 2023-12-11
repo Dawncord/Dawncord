@@ -1,18 +1,21 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.function.Consumer;
 
 public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
-    private final JSONObject channel;
+    private final JsonNode channel;
+    private final Guild guild;
+    private GuildCategory category;
 
-    public TextChannelImpl(JSONObject channel) {
-        super(channel);
+    public TextChannelImpl(JsonNode channel, Guild guild) {
+        super(channel, guild);
         this.channel = channel;
+        this.guild = guild;
     }
 
     @Override
@@ -27,6 +30,9 @@ public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
 
     @Override
     public GuildCategory getCategory() {
-        return new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + channel.getString("parent_id")));
+        if (category == null) {
+            category = guild.getCategoryById(channel.get("parent_id").asText());
+        }
+        return category;
     }
 }

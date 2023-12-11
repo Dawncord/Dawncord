@@ -1,16 +1,18 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.json.JSONObject;
 
 public class CurrentMemberModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public CurrentMemberModifyAction(String guildId) {
         this.guildId = guildId;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     public CurrentMemberModifyAction setNickname(String nickname) {
@@ -24,6 +26,6 @@ public class CurrentMemberModifyAction {
             ApiClient.patch(jsonObject, "/guilds/" + guildId + "/members/@me");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

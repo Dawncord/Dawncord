@@ -1,21 +1,29 @@
 package org.dimas4ek.wrapper.entities.guild;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
-import org.json.JSONObject;
 
 public class GuildBan {
-    private final JSONObject ban;
+    private final JsonNode ban;
+    private User user;
+    private String reason;
 
-    public GuildBan(JSONObject ban) {
+    public GuildBan(JsonNode ban) {
         this.ban = ban;
     }
 
     public User getUser() {
-        return new UserImpl(ban.getJSONObject("user"));
+        if (user == null) {
+            user = new UserImpl(ban.get("user"));
+        }
+        return user;
     }
 
     public String getReason() {
-        return ban.getString("reason");
+        if (reason == null) {
+            reason = ban.get("reason").asText();
+        }
+        return reason;
     }
 }

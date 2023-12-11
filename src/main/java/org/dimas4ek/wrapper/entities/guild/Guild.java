@@ -9,11 +9,12 @@ import org.dimas4ek.wrapper.entities.channel.GuildCategory;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.Invite;
 import org.dimas4ek.wrapper.entities.channel.Stage;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
-import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidget;
 import org.dimas4ek.wrapper.entities.guild.widget.GuildWidgetSettings;
@@ -21,7 +22,6 @@ import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
 import org.dimas4ek.wrapper.entities.image.GuildIcon;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
-import org.dimas4ek.wrapper.entities.thread.Thread;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.MfaLevel;
 import org.dimas4ek.wrapper.types.VoiceRegion;
@@ -132,15 +132,15 @@ public interface Guild extends ISnowflake {
 
     GuildBan getBanByUserId(long userId);
 
-    List<GuildRole> getRoles();
+    List<GuildRoleImpl> getRoles();
 
-    GuildRole getRoleById(String roleId);
+    GuildRoleImpl getRoleById(String roleId);
 
-    GuildRole getRoleById(long roleId);
+    GuildRoleImpl getRoleById(long roleId);
 
-    List<GuildRole> getRolesByName(String roleName);
+    List<GuildRoleImpl> getRolesByName(String roleName);
 
-    GuildRole getPublicRole();
+    GuildRoleImpl getPublicRole();
 
     void createRole(Consumer<GuildRoleCreateAction> handler);
 

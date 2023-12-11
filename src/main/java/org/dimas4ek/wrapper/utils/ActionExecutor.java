@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.annotation.Nullable;
 import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.channel.Channel;
@@ -9,7 +10,6 @@ import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.types.ChannelType;
-import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -106,7 +106,7 @@ public class ActionExecutor {
         invokeSubmit(action, InviteCreateAction.class);
     }
 
-    public static JSONObject createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId, InteractionData interactionData) {
+    public static JsonNode createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId, InteractionData interactionData) {
         MessageCreateAction action;
         if (interactionData != null) {
             action = new MessageCreateAction(message, channelId, interactionData);

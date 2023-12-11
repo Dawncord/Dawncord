@@ -16,7 +16,7 @@ public interface Stage extends ISnowflake {
 
     boolean isDiscoverable();
 
-    GuildEvent getEvent();
+    GuildEvent getGuildEvent();
 
     void delete();
 

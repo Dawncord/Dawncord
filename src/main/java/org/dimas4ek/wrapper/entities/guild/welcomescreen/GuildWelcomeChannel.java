@@ -1,36 +1,53 @@
 package org.dimas4ek.wrapper.entities.guild.welcomescreen;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONObject;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 
 public class GuildWelcomeChannel {
-    private final JSONObject channel;
+    private final JsonNode welcomeChannel;
+    private static Guild guild;
+    private GuildChannel channel;
+    private String description;
+    private String emoji;
 
-    public GuildWelcomeChannel(JSONObject channel) {
-        this.channel = channel;
+    public GuildWelcomeChannel(JsonNode welcomeChannel, Guild guild) {
+        this.welcomeChannel = welcomeChannel;
+        GuildWelcomeChannel.guild = guild;
+    }
+
+    private GuildWelcomeChannel(String channelId, String description, String emojiIdOrName, Guild guild) {
+        this.welcomeChannel = null;
+        GuildWelcomeChannel.guild = guild;
+        this.channel = guild.getChannelById(channelId);
+        this.description = description;
+        this.emoji = emojiIdOrName;
     }
 
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channel.getString("channel_id")));
+        if (channel == null) {
+            channel = guild.getChannelById(welcomeChannel.get("channel_id").asText());
+        }
+        return channel;
     }
 
     public String getDescription() {
-        return channel.optString("description", null);
+        if (description == null) {
+            description = welcomeChannel.get("description").asText();
+        }
+        return description;
     }
 
     public String getEmoji() {
-        return channel.optString("emoji_id", channel.optString("emoji_name", null));
+        if (emoji == null) {
+            emoji = welcomeChannel.has("emoji_id")
+                    ? welcomeChannel.get("emoji_id").asText()
+                    : welcomeChannel.get("emoji_name").asText();
+        }
+        return emoji;
     }
 
     public static GuildWelcomeChannel of(String channelId, String description, String emojiIdOrName) {
-        JSONObject json = new JSONObject();
-        json.put("channel_id", channelId);
-        json.put("description", description);
-        json.put("emoji_id", MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
-        json.put("emoji_name", !MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
-        return new GuildWelcomeChannel(json);
+        return new GuildWelcomeChannel(channelId, description, emojiIdOrName, guild);
     }
 }

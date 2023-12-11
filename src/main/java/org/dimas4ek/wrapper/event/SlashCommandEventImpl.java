@@ -2,17 +2,16 @@ package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
+import org.dimas4ek.wrapper.command.option.OptionData;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.WebhookImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.interaction.InteractionData;
-import org.dimas4ek.wrapper.slashcommand.option.OptionData;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
@@ -35,7 +34,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public void reply(String message, Consumer<MessageCreateAction> handler) {
-        ActionExecutor.createMessage(handler, message, data.getResponse().getGuildChannel().getId(), data);
+        ActionExecutor.createMessage(handler, message, data.getGuildChannel().getId(), data);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public GuildMember getMember() {
-        return data.getResponse().getGuildMember();
+        return data.getGuildMember();
     }
 
     @Override
@@ -60,17 +59,17 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public Guild getGuild() {
-        return data.getResponse().getGuild();
+        return data.getGuild();
     }
 
     @Override
     public GuildChannel getChannel() {
-        return data.getResponse().getGuildChannel();
+        return data.getGuildChannel();
     }
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
+        return getGuild().getChannelById(channelId);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
     public List<OptionData> getOptions() {
         List<OptionData> optionDataList = new ArrayList<>();
         for (Map<String, Object> map : data.getOptions()) {
-            OptionData optionData = new OptionData(map);
+            OptionData optionData = new OptionData(map, getGuild());
             optionDataList.add(optionData);
         }
 
@@ -96,7 +95,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public Application getApplication() {
-        return new ApplicationImpl(JsonUtils.fetchEntity("/applications/@me"));
+        return new ApplicationImpl(JsonUtils.fetchEntity("/applications/@me"), getGuild());
     }
 
     @Override
@@ -106,7 +105,7 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId));
+        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId), getGuild());
     }
 
     @Override
@@ -116,6 +115,6 @@ public class SlashCommandEventImpl implements SlashCommandEvent {
 
     @Override
     public Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId + "/" + webhookToken));
+        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId + "/" + webhookToken), getGuild());
     }
 }

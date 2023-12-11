@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities.thread;
+package org.dimas4ek.wrapper.entities.channel.thread;
 
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -11,7 +11,7 @@ public interface Thread extends MessageChannel {
 
     User getCreator();
 
-    ThreadMetaData getMetaData();
+    ThreadMetadata getMetaData();
 
     List<ThreadMember> getThreadMembers();
 

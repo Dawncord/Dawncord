@@ -1,18 +1,18 @@
 package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.message.Message;
-import org.dimas4ek.wrapper.utils.JsonUtils;
 
 public class MessageEventImpl implements MessageEvent {
     private final Message message;
     private final GuildChannel guildChannel;
+    private final Guild guild;
 
-    public MessageEventImpl(Message message, GuildChannel guildChannel) {
+    public MessageEventImpl(Message message, GuildChannel guildChannel, Guild guild) {
         this.message = message;
         this.guildChannel = guildChannel;
+        this.guild = guild;
     }
 
     @Override
@@ -27,16 +27,16 @@ public class MessageEventImpl implements MessageEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
+        return guild.getChannelById(channelId);
     }
 
     @Override
     public GuildChannel getChannelById(long channelId) {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + channelId));
+        return getChannelById(String.valueOf(channelId));
     }
 
     @Override
     public Guild getGuild() {
-        return null;
+        return guild;
     }
 }

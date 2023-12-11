@@ -1,5 +1,8 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
 import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
@@ -8,45 +11,54 @@ import org.dimas4ek.wrapper.action.WebhookCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.WebhookImpl;
-import org.dimas4ek.wrapper.entities.thread.Thread;
-import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
-    private final JSONObject channel;
+    private final JsonNode channel;
+    private final Guild guild;
+    private List<PermissionOverride> permissionOverrides;
+    private List<Invite> invites;
+    private List<Thread> publicArchiveThreads;
+    private List<Thread> privateArchiveThreads;
+    private List<Thread> joinedPrivateArchiveThreads;
+    private List<Webhook> webhooks;
 
-    public GuildChannelImpl(JSONObject channel) {
-        super(channel);
+    public GuildChannelImpl(JsonNode channel, Guild guild) {
+        super(channel, guild);
         this.channel = channel;
+        this.guild = guild;
     }
 
     @Override
     public TextChannel asText() {
-        return new TextChannelImpl(channel);
+        return new TextChannelImpl(channel, guild);
     }
 
     @Override
     public VoiceChannel asVoice() {
-        return new VoiceChannelImpl(channel);
+        return new VoiceChannelImpl(channel, guild);
     }
 
     @Override
     public Thread asThread() {
-        return new ThreadImpl(channel);
+        return new ThreadImpl(channel, guild);
     }
 
     @Override
     public GuildForum asForum() {
-        return new GuildForumImpl(channel);
+        return new GuildForumImpl(channel, guild);
     }
 
     @Override
@@ -56,14 +68,17 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
 
     @Override
     public List<PermissionOverride> getPermissions() {
-        return JsonUtils.getEntityList(channel.getJSONArray("permission_overwrites"), (JSONObject t) ->
-                new PermissionOverride(
-                        t.getString("id"),
-                        getPermissionType(t.getInt("type")),
-                        getDenied(t.getString("deny")),
-                        getAllowed(t.getString("allow"))
-                )
-        );
+        if (permissionOverrides == null) {
+            permissionOverrides = JsonUtils.getEntityList(channel.get("permission_overwrites"), override ->
+                    new PermissionOverride(
+                            override.get("id").asText(),
+                            getPermissionType(override.get("type").asInt()),
+                            getDenied(override.get("deny").asText()),
+                            getAllowed(override.get("allow").asText())
+                    )
+            );
+        }
+        return permissionOverrides;
     }
 
     @Override
@@ -86,13 +101,13 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
         for (PermissionType allow : allowed) {
             allowValue |= allow.getValue();
         }
-        JSONObject jsonObject = new JSONObject()
-                .put("type", type)
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode()
+                .put("type", type.getValue())
                 .put("deny", String.valueOf(denyValue))
                 .put("allow", String.valueOf(allowValue));
 
         ApiClient.put(jsonObject, "/channels/" + getId() + "/permissions/" + permissionId);
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 
     @Override
@@ -102,7 +117,12 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
 
     @Override
     public List<Invite> getInvites() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/invites"), InviteImpl::new);
+        if (invites == null) {
+            invites = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
+                    ? JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/invites"), invite -> new InviteImpl(invite, guild))
+                    : null;
+        }
+        return invites;
     }
 
     @Override
@@ -132,17 +152,32 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
 
     @Override
     public List<Thread> getPublicArchiveThreads() {
-        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/public").getJSONArray("threads"), ThreadImpl::new);
+        if (publicArchiveThreads == null) {
+            publicArchiveThreads = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/public").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    : null;
+        }
+        return publicArchiveThreads;
     }
 
     @Override
     public List<Thread> getPrivateArchiveThreads() {
-        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/private").getJSONArray("threads"), ThreadImpl::new);
+        if (privateArchiveThreads == null) {
+            privateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/private").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    : null;
+        }
+        return privateArchiveThreads;
     }
 
     @Override
     public List<Thread> getJoinedPrivateArchiveThreads() {
-        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/users/@me/threads/archived/private").getJSONArray("threads"), ThreadImpl::new);
+        if (joinedPrivateArchiveThreads == null) {
+            joinedPrivateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/users/@me/threads/archived/private").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    : null;
+        }
+        return joinedPrivateArchiveThreads;
     }
 
     @Override
@@ -152,7 +187,12 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
 
     @Override
     public List<Webhook> getWebhooks() {
-        return JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/webhooks").getJSONArray("webhooks"), WebhookImpl::new);
+        if (webhooks == null) {
+            webhooks = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/webhooks").get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
+                    : null;
+        }
+        return webhooks;
     }
 
     @Override
@@ -177,12 +217,6 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
 
     private PermissionOverrideType getPermissionType(int type) {
         return EnumUtils.getEnumObjectFromInt(type, PermissionOverrideType.class);
-        /*for (PermissionOverrideType permissionOverrideType : PermissionOverrideType.values()) {
-            if (type == permissionOverrideType.getValue()) {
-                return permissionOverrideType;
-            }
-        }
-        return null;*/
     }
 
     private List<PermissionType> getDenied(String deny) {

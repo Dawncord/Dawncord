@@ -1,20 +1,22 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.json.JSONObject;
 
 public class GuildWidgetSettingsModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildWidgetSettingsModifyAction(String guildId) {
         this.guildId = guildId;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -38,6 +40,6 @@ public class GuildWidgetSettingsModifyAction {
             ApiClient.patch(jsonObject, "/guilds/" + guildId + "/widget");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

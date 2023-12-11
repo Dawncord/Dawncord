@@ -1,69 +1,58 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.types.SelectMenuType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActionRow {
-    private final JSONObject actionRow;
+    private final List<ButtonBuilder> buttons = new ArrayList<>();
+    private final List<SelectMenuBuilder> selectMenus = new ArrayList<>();
 
-    public ActionRow(JSONObject actionRow) {
-        this.actionRow = actionRow;
-    }
+    public ActionRow(JsonNode actionRow) {
+        JsonNode components = actionRow.get("components");
 
-    public List<ButtonBuilder> getButtons() {
-        List<ButtonBuilder> buttons = new ArrayList<>();
-        JSONArray components = actionRow.getJSONArray("components");
-        for (int i = 0; i < components.length(); i++) {
-            JSONObject component = components.getJSONObject(i);
-            if (component.getInt("type") == ComponentType.BUTTON.getValue()) {
-                buttons.add(new ButtonBuilder(
-                        component.getInt("style"),
-                        component.has("custom_id")
-                                ? component.getString("custom_id")
-                                : component.getString("url"),
-                        component.getString("label"))
+        for (JsonNode component : components) {
+            int type = component.get("type").asInt();
+
+            if (type == ComponentType.BUTTON.getValue()) {
+                buttons.add(
+                        new ButtonBuilder(
+                                component.get("style").asInt(),
+                                component.has("custom_id")
+                                        ? component.get("custom_id").asText()
+                                        : component.get("url").asText(),
+                                component.get("label").asText()
+                        )
                 );
             }
-        }
-
-        return buttons;
-    }
-
-    public List<SelectMenuBuilder> getSelectMenus() {
-        List<SelectMenuBuilder> selectMenus = new ArrayList<>();
-        JSONArray components = actionRow.getJSONArray("components");
-        for (int i = 0; i < components.length(); i++) {
-            JSONObject component = components.getJSONObject(i);
-            if (component.getInt("type") != ComponentType.ACTION.getValue()
-                    || component.getInt("type") != ComponentType.BUTTON.getValue()
-                    || component.getInt("type") != ComponentType.TEXT_INPUT.getValue()) {
+            if (type != ComponentType.ACTION.getValue()
+                    || type != ComponentType.BUTTON.getValue()
+                    || type != ComponentType.TEXT_INPUT.getValue()) {
                 SelectMenuBuilder selectMenu = new SelectMenuBuilder(
-                        getSelectMenuType(component.getInt("type")),
-                        component.getString("custom_id"));
+                        EnumUtils.getEnumObjectFromInt(type, SelectMenuType.class), component.get("custom_id").asText()
+                );
                 if (component.has("options")) {
-                    selectMenu.addOptions(getSelectMenuOptions(component.getJSONArray("options")));
+                    selectMenu.addOptions(getSelectMenuOptions(component.get("options")));
                 }
                 if (component.has("channel_types")) {
-                    selectMenu.setChannelTypes(getChannelTypes(component.getJSONArray("channel_types")));
+                    selectMenu.setChannelTypes(EnumUtils.getEnumList(component.get("channel_types"), ChannelType.class).toArray(new ChannelType[0]));
                 }
                 if (component.has("placeholder")) {
-                    selectMenu.addPlaceholder(component.getString("placeholder"));
+                    selectMenu.addPlaceholder(component.get("placeholder").asText());
                 }
                 if (component.has("default_values")) {
-                    selectMenu.setDefaultValues(getDefaultValues(component.getJSONArray("default_values")));
+                    selectMenu.setDefaultValues(getDefaultValues(component.get("default_values")));
                 }
                 if (component.has("min_values")) {
-                    selectMenu.setMinValues(component.getInt("min_values"));
+                    selectMenu.setMinValues(component.get("min_values").asInt());
                 }
                 if (component.has("max_values")) {
-                    selectMenu.setMaxValues(component.getInt("max_values"));
+                    selectMenu.setMaxValues(component.get("max_values").asInt());
                 }
                 if (component.has("disabled")) {
                     selectMenu.disabled();
@@ -72,17 +61,23 @@ public class ActionRow {
                 selectMenus.add(selectMenu);
             }
         }
+    }
 
+    public List<ButtonBuilder> getButtons() {
+        return buttons;
+    }
+
+    public List<SelectMenuBuilder> getSelectMenus() {
         return selectMenus;
     }
 
-    private List<SelectMenuBuilder.DefaultValue> getDefaultValues(JSONArray defaultValuesArray) {
+    private List<SelectMenuBuilder.DefaultValue> getDefaultValues(JsonNode defaultValuesArray) {
         List<SelectMenuBuilder.DefaultValue> defaultValues = new ArrayList<>();
-        for (int i = 0; i < defaultValuesArray.length(); i++) {
-            JSONObject defaultValueJson = defaultValuesArray.getJSONObject(i);
+        for (int i = 0; i < defaultValuesArray.size(); i++) {
+            JsonNode defaultValueJson = defaultValuesArray.get(i);
             SelectMenuBuilder.DefaultValue defaultValue = new SelectMenuBuilder.DefaultValue(
-                    defaultValueJson.getString("id"),
-                    getSelectMenuType(defaultValueJson.getInt("type"))
+                    defaultValueJson.get("id").asText(),
+                    EnumUtils.getEnumObject(defaultValueJson, "value", SelectMenuType.class)
             );
             defaultValues.add(defaultValue);
         }
@@ -90,31 +85,13 @@ public class ActionRow {
         return defaultValues;
     }
 
-    private ChannelType[] getChannelTypes(JSONArray channelTypesArray) {
-        ChannelType[] channelTypes = new ChannelType[channelTypesArray.length()];
-        for (int i = 0; i < channelTypesArray.length(); i++) {
-            channelTypes[i] = (getChannelType(channelTypesArray.getInt(i)));
-        }
-        return channelTypes;
-    }
-
-    private ChannelType getChannelType(int type) {
-        return EnumUtils.getEnumObjectFromInt(type, ChannelType.class);
-        /*for (ChannelType selectMenuType : ChannelType.values()) {
-            if (type == selectMenuType.getValue()) {
-                return selectMenuType;
-            }
-        }
-        return null;*/
-    }
-
-    private List<SelectOption> getSelectMenuOptions(JSONArray optionsArray) {
+    private List<SelectOption> getSelectMenuOptions(JsonNode optionsArray) {
         List<SelectOption> selectOptions = new ArrayList<>();
-        for (int i = 0; i < optionsArray.length(); i++) {
-            JSONObject optionJson = optionsArray.getJSONObject(i);
-            SelectOption option = new SelectOption(optionJson.getString("label"), optionJson.getString("value"));
+        for (int i = 0; i < optionsArray.size(); i++) {
+            JsonNode optionJson = optionsArray.get(i);
+            SelectOption option = new SelectOption(optionJson.get("label").asText(), optionJson.get("value").asText());
             if (optionJson.has("description")) {
-                option.setDescription(optionJson.getString("description"));
+                option.setDescription(optionJson.get("description").asText());
             }
             if (optionJson.has("default")) {
                 option.setDefault(true);
@@ -122,15 +99,5 @@ public class ActionRow {
             selectOptions.add(option);
         }
         return selectOptions;
-    }
-
-    private SelectMenuType getSelectMenuType(int type) {
-        return EnumUtils.getEnumObjectFromInt(type, SelectMenuType.class);
-        /*for (SelectMenuType selectMenuType : SelectMenuType.values()) {
-            if (type == selectMenuType.getValue()) {
-                return selectMenuType;
-            }
-        }
-        return null;*/
     }
 }

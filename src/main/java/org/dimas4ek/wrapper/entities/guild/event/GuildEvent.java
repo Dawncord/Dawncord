@@ -38,7 +38,9 @@ public interface GuildEvent extends ISnowflake {
 
     boolean inChannel();
 
-    int getEntityId();
+    String getEntityId();
+
+    long getEntityIdLong();
 
     String getLocation();
 

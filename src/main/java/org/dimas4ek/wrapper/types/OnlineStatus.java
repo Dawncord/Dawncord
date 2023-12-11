@@ -11,5 +11,5 @@ public enum OnlineStatus {
     IDLE("idle"),
     ONLINE("online");
 
-    private final String status;
+    private final String value;
 }

@@ -1,24 +1,34 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.AutoModActionType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.json.JSONObject;
 
 public class AutoModAction {
-    private final JSONObject action;
+    private final JsonNode action;
+    private final Guild guild;
+    private AutoModActionType type;
+    private ActionMetadata metadata;
 
-    public AutoModAction(JSONObject action) {
+    public AutoModAction(JsonNode action, Guild guild) {
         this.action = action;
+        this.guild = guild;
     }
 
     public AutoModActionType getType() {
-        return EnumUtils.getEnumObject(action, "type", AutoModActionType.class);
+        if (type == null) {
+            type = EnumUtils.getEnumObject(action, "type", AutoModActionType.class);
+        }
+        return type;
     }
 
     public ActionMetadata getMetadata() {
-        JSONObject metadata = action.optJSONObject("metadata");
-        return metadata != null
-                ? new ActionMetadata(metadata)
-                : null;
+        if (metadata == null) {
+            metadata = action.has("metadata") && action.hasNonNull("metadata") && !action.get("metadata").isEmpty()
+                    ? new ActionMetadata(action.get("metadata"), guild)
+                    : null;
+        }
+        return metadata;
     }
 }

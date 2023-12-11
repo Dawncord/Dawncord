@@ -19,6 +19,8 @@ public interface Reaction {
 
     boolean isGuildEmoji();
 
+    String getEmoji();
+
     List<String> getBurstColors();
 
     void delete(String userId);

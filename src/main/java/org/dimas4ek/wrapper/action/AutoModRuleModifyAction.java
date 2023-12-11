@@ -1,29 +1,31 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.AutoModActionType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.types.KeywordPreset;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 
 public class AutoModRuleModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
     private final AutoModTriggerType triggerType;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public AutoModRuleModifyAction(String guildId, AutoModTriggerType triggerType) {
         this.guildId = guildId;
         this.triggerType = triggerType;
-        this.jsonObject = new JSONObject();
-        this.jsonObject.put("actions", new JSONArray());
+        this.jsonObject = mapper.createObjectNode();
+        this.jsonObject.set("actions", mapper.createArrayNode());
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -35,9 +37,9 @@ public class AutoModRuleModifyAction {
     public AutoModRuleModifyAction setKeywordTrigger(List<String> keywordFilter, List<String> allows) {
         if (triggerType == AutoModTriggerType.KEYWORD) {
             setProperty("trigger_metadata",
-                    new JSONObject()
-                            .put("keyword_filter", keywordFilter)
-                            .put("allow_list", allows)
+                    mapper.createObjectNode()
+                            .<ObjectNode>set("keyword_filter", mapper.valueToTree(keywordFilter))
+                            .set("allow_list", mapper.valueToTree(allows))
             );
         }
         return this;
@@ -45,7 +47,7 @@ public class AutoModRuleModifyAction {
 
     public AutoModRuleModifyAction setSpamTrigger() {
         if (triggerType == AutoModTriggerType.SPAM) {
-            setProperty("trigger_metadata", new JSONObject());
+            setProperty("trigger_metadata", mapper.createObjectNode());
         }
         return this;
     }
@@ -53,9 +55,9 @@ public class AutoModRuleModifyAction {
     public AutoModRuleModifyAction setKeywordPresetTrigger(List<KeywordPreset> presets, List<String> allows) {
         if (triggerType == AutoModTriggerType.KEYWORD_PRESET) {
             setProperty("trigger_metadata",
-                    new JSONObject()
-                            .put("presets", presets.stream().map(KeywordPreset::getValue).toList())
-                            .put("allow_list", allows)
+                    mapper.createObjectNode()
+                            .<ObjectNode>set("presets", mapper.valueToTree(presets.stream().map(KeywordPreset::getValue).toList()))
+                            .set("allow_list", mapper.valueToTree(allows))
             );
         }
         return this;
@@ -64,7 +66,7 @@ public class AutoModRuleModifyAction {
     public AutoModRuleModifyAction setMentionSpamTrigger(int mentionLimit, boolean isRaidProtected) {
         if (triggerType == AutoModTriggerType.MENTION_SPAM) {
             setProperty("trigger_metadata",
-                    new JSONObject()
+                    mapper.createObjectNode()
                             .put("mention_total_limit", mentionLimit)
                             .put("mention_raid_protection_enabled", isRaidProtected)
             );
@@ -73,11 +75,11 @@ public class AutoModRuleModifyAction {
     }
 
     public AutoModRuleModifyAction setTimeoutAction(int duration) {
-        JSONArray actionsArray = jsonObject.getJSONArray("actions");
-        actionsArray.put(
-                new JSONObject()
+        ArrayNode actionsArray = (ArrayNode) jsonObject.get("actions");
+        actionsArray.add(
+                mapper.createObjectNode()
                         .put("type", AutoModActionType.TIMEOUT.getValue())
-                        .put("metadata", new JSONObject()
+                        .set("metadata", mapper.createObjectNode()
                                 .put("duration_seconds", duration)
                         )
         );
@@ -86,11 +88,11 @@ public class AutoModRuleModifyAction {
     }
 
     public AutoModRuleModifyAction setAlertMessageAction(String channelId) {
-        JSONArray actionsArray = jsonObject.getJSONArray("actions");
-        actionsArray.put(
-                new JSONObject()
+        ArrayNode actionsArray = (ArrayNode) jsonObject.get("actions");
+        actionsArray.add(
+                mapper.createObjectNode()
                         .put("type", AutoModActionType.SEND_ALERT_MESSAGE.getValue())
-                        .put("metadata", new JSONObject()
+                        .set("metadata", mapper.createObjectNode()
                                 .put("channel_id", channelId)
                         )
         );
@@ -99,11 +101,11 @@ public class AutoModRuleModifyAction {
     }
 
     public AutoModRuleModifyAction setBlockMessageAction(String message) {
-        JSONArray actionsArray = jsonObject.getJSONArray("actions");
-        actionsArray.put(
-                new JSONObject()
+        ArrayNode actionsArray = (ArrayNode) jsonObject.get("actions");
+        actionsArray.add(
+                mapper.createObjectNode()
                         .put("type", AutoModActionType.BLOCK_MESSAGE.getValue())
-                        .put("metadata", new JSONObject()
+                        .set("metadata", mapper.createObjectNode()
                                 .put("custom_message", message)
                         )
         );
@@ -112,11 +114,11 @@ public class AutoModRuleModifyAction {
     }
 
     public AutoModRuleModifyAction setBlockMessageAction() {
-        JSONArray actionsArray = jsonObject.getJSONArray("actions");
-        actionsArray.put(
-                new JSONObject()
+        ArrayNode actionsArray = (ArrayNode) jsonObject.get("actions");
+        actionsArray.add(
+                mapper.createObjectNode()
                         .put("type", AutoModActionType.BLOCK_MESSAGE.getValue())
-                        .put("metadata", new JSONObject())
+                        .set("metadata", mapper.createObjectNode())
         );
         setProperty("actions", actionsArray);
         return this;
@@ -142,6 +144,6 @@ public class AutoModRuleModifyAction {
             ApiClient.patch(jsonObject, "/guilds/" + guildId + "/auto-moderation/rules");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

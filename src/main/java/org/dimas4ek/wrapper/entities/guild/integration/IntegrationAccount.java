@@ -18,7 +18,7 @@ public class IntegrationAccount implements ISnowflake {
 
     @Override
     public long getIdLong() {
-        return Long.parseLong(id);
+        return Long.parseLong(getId());
     }
 
     public String getName() {

@@ -1,74 +1,76 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.GuildOnboarding;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.types.OnboardingMode;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class GuildOnboardingModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildOnboardingModifyAction(String guildId) {
         this.guildId = guildId;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
     public GuildOnboardingModifyAction setPrompts(GuildOnboarding.Prompt... prompts) {
-        JSONArray promptsArray = new JSONArray();
+        ArrayNode promptsArray = mapper.createArrayNode();
         for (GuildOnboarding.Prompt prompt : prompts) {
-            JSONObject promptJson = new JSONObject()
+            ObjectNode promptJson = mapper.createObjectNode()
                     .put("id", prompt.getId())
                     .put("type", prompt.getType().getValue())
-                    .put("options", setOptions(prompt))
+                    .<ObjectNode>set("options", setOptions(prompt))
                     .put("title", prompt.getTitle())
                     .put("single_select", prompt.isSingleSelect())
                     .put("required", prompt.isRequired())
                     .put("in_onboarding", prompt.inOnboarding());
-            promptsArray.put(promptJson);
+            promptsArray.add(promptJson);
         }
-        jsonObject.put("prompts", promptsArray);
+        jsonObject.set("prompts", promptsArray);
         return this;
     }
 
-    private JSONArray setOptions(GuildOnboarding.Prompt prompt) {
-        JSONArray optionsArray = new JSONArray();
+    private ArrayNode setOptions(GuildOnboarding.Prompt prompt) {
+        ArrayNode optionsArray = mapper.createArrayNode();
         for (GuildOnboarding.Prompt.Option option : prompt.getOptions()) {
-            JSONObject optionJson = new JSONObject()
+            ObjectNode optionJson = mapper.createObjectNode()
                     .put("id", option.getId())
                     .put("title", option.getTitle())
                     .put("description", option.getDescription())
-                    .put("channel_ids", option.getChannels().stream().map(GuildChannel::getId).toList())
-                    .put("role_ids", option.getRoles().stream().map(GuildRole::getId).toList())
                     .put("emoji_id", option.getEmoji().getId())
                     .put("emoji_name", option.getEmoji().getName())
-                    .put("emoji_animated", option.getEmoji().isAnimated());
-            optionsArray.put(optionJson);
+                    .put("emoji_animated", option.getEmoji().isAnimated())
+                    .<ObjectNode>set("channel_ids", mapper.valueToTree(option.getChannels().stream().map(GuildChannel::getId).toList()))
+                    .set("role_ids", mapper.valueToTree(option.getRoles().stream().map(GuildRole::getId).toList()));
+            optionsArray.add(optionJson);
         }
         return optionsArray;
     }
 
     public GuildOnboardingModifyAction setChannelIds(String... channelIds) {
-        jsonObject.put("default_channel_ids", channelIds);
+        setProperty("default_channel_ids", channelIds);
         return this;
     }
 
     public GuildOnboardingModifyAction setEnabled(boolean enabled) {
-        jsonObject.put("enabled", enabled);
+        setProperty("enabled", enabled);
         return this;
     }
 
     public GuildOnboardingModifyAction setMode(OnboardingMode mode) {
-        jsonObject.put("mode", mode.getValue());
+        setProperty("mode", mode.getValue());
         return this;
     }
 
@@ -77,6 +79,6 @@ public class GuildOnboardingModifyAction {
             ApiClient.put(jsonObject, "/guilds/" + guildId + "/onboarding");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

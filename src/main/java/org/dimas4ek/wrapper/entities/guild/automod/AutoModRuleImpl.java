@@ -1,34 +1,46 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.AutoModRuleModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.types.AutoModEventType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class AutoModRuleImpl implements AutoModRule {
-    private final JSONObject autoMod;
+    private final JsonNode rule;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private User creator;
+    private AutoModTriggerType triggerType;
+    private AutoModTriggerMetadata triggerMetadata;
+    private List<AutoModAction> actions;
+    private Boolean isEnabled;
+    private List<String> exemptRoles;
+    private List<String> exemptChannels;
 
-    public AutoModRuleImpl(JSONObject autoMod) {
-        this.autoMod = autoMod;
+    public AutoModRuleImpl(JsonNode rule, Guild guild) {
+        this.rule = rule;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return autoMod.getString("id");
+        if (id == null) {
+            id = rule.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -38,17 +50,18 @@ public class AutoModRuleImpl implements AutoModRule {
 
     @Override
     public String getName() {
-        return autoMod.getString("name");
-    }
-
-    @Override
-    public Guild getGuild() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + autoMod.getString("guild_id")));
+        if (name == null) {
+            name = rule.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public User getCreator() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + autoMod.getString("creator_id")));
+        if (creator == null) {
+            creator = new UserImpl(JsonUtils.fetchEntity("/users/" + rule.get("creator_id").asText()));
+        }
+        return creator;
     }
 
     @Override
@@ -58,50 +71,67 @@ public class AutoModRuleImpl implements AutoModRule {
 
     @Override
     public AutoModTriggerType getTriggerType() {
-        return EnumUtils.getEnumObject(autoMod, "trigger_type", AutoModTriggerType.class);
+        if (triggerType == null) {
+            triggerType = EnumUtils.getEnumObject(rule, "trigger_type", AutoModTriggerType.class);
+        }
+        return triggerType;
     }
 
     @Override
     public AutoModTriggerMetadata getTriggerMetadata() {
-        return new AutoModTriggerMetadataImpl(autoMod.getJSONObject("trigger_metadata"));
+        if (triggerMetadata == null) {
+            triggerMetadata = new AutoModTriggerMetadataImpl(rule.get("trigger_metadata"));
+        }
+        return triggerMetadata;
     }
 
     @Override
     public List<AutoModAction> getActions() {
-        return JsonUtils.getEntityList(autoMod.getJSONArray("actions"), AutoModAction::new);
+        if (actions == null) {
+            actions = JsonUtils.getEntityList(rule.get("actions"), action -> new AutoModAction(action, guild));
+        }
+        return actions;
     }
 
     @Override
     public boolean isEnabled() {
-        return autoMod.getBoolean("enabled");
+        if (isEnabled == null) {
+            isEnabled = rule.get("enabled").asBoolean();
+        }
+        return isEnabled;
     }
 
     @Override
     public List<String> getExemptRoles() {
-        return getStringList("exempt_roles");
+        if (exemptRoles == null) {
+            exemptRoles = getStringList(rule, "exempt_roles");
+        }
+        return exemptRoles;
     }
 
     @Override
     public List<String> getExemptChannels() {
-        return getStringList("exempt_channels");
+        if (exemptChannels == null) {
+            exemptChannels = getStringList(rule, "exempt_channels");
+        }
+        return exemptChannels;
     }
 
     @Override
     public void modify(Consumer<AutoModRuleModifyAction> handler) {
-        ActionExecutor.modifyAutoModRule(handler, getGuild().getId(), getTriggerType());
+        ActionExecutor.modifyAutoModRule(handler, guild.getId(), getTriggerType());
     }
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/auto-moderation/rules/" + getId());
+        ApiClient.delete("/guilds/" + guild.getId() + "/auto-moderation/rules/" + getId());
     }
 
     @NotNull
-    private List<String> getStringList(String key) {
+    private List<String> getStringList(JsonNode autoMod, String key) {
         List<String> list = new ArrayList<>();
-        JSONArray array = autoMod.getJSONArray(key);
-        for (int i = 0; i < array.length(); i++) {
-            list.add(array.getString(i));
+        for (JsonNode node : autoMod.get(key)) {
+            list.add(node.asText());
         }
         return list;
     }

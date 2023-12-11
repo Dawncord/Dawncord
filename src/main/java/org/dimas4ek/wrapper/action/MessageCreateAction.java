@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.message.Message;
@@ -11,15 +13,14 @@ import org.dimas4ek.wrapper.types.AllowedMention;
 import org.dimas4ek.wrapper.types.InteractionCallbackType;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.utils.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageCreateAction {
-    private final JSONObject jsonObject;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String channelId;
     private List<File> attachments;
     private int flags;
@@ -28,11 +29,11 @@ public class MessageCreateAction {
 
     public MessageCreateAction(String content, String channelId, InteractionData interactionData) {
         this.interactionData = interactionData;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("type", InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE.getValue());
-        this.jsonObject.put("data", new JSONObject());
+        this.jsonObject.set("data", mapper.createObjectNode());
         if (content != null) {
-            this.jsonObject.getJSONObject("data").put("content", content);
+            ((ObjectNode) this.jsonObject.get("data")).put("content", content);
             hasChanges = true;
         }
         this.channelId = channelId;
@@ -41,7 +42,7 @@ public class MessageCreateAction {
 
     public MessageCreateAction(String content, String channelId) {
         this.interactionData = null;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         if (content != null) {
             this.jsonObject.put("content", content);
             hasChanges = true;
@@ -51,11 +52,11 @@ public class MessageCreateAction {
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
     }
 
     private void setReplyProperty(String key, Object value) {
-        jsonObject.getJSONObject("data").put(key, value);
+        ((ObjectNode) jsonObject.get("data")).set(key, mapper.valueToTree(value));
     }
 
     public MessageCreateAction setContent(String content) {
@@ -107,7 +108,7 @@ public class MessageCreateAction {
 
     public MessageCreateAction setAllowedMentions(AllowedMention... allowedMentions) {
         if (interactionData != null) {
-            MessageUtils.setAllowedMentions(jsonObject.getJSONObject("data"), allowedMentions);
+            MessageUtils.setAllowedMentions(jsonObject.get("data"), allowedMentions);
         } else {
             MessageUtils.setAllowedMentions(jsonObject, allowedMentions);
         }
@@ -116,7 +117,7 @@ public class MessageCreateAction {
 
     public MessageCreateAction mentionUsers(String... userIds) {
         if (interactionData != null) {
-            MessageUtils.updateMentions(jsonObject.getJSONObject("data"), userIds, "users");
+            MessageUtils.updateMentions(jsonObject.get("data"), userIds, "users");
         } else {
             MessageUtils.updateMentions(jsonObject, userIds, "users");
         }
@@ -125,7 +126,7 @@ public class MessageCreateAction {
 
     public MessageCreateAction mentionRoles(String... roleIds) {
         if (interactionData != null) {
-            MessageUtils.updateMentions(jsonObject.getJSONObject("data"), roleIds, "roles");
+            MessageUtils.updateMentions(jsonObject.get("data"), roleIds, "roles");
         } else {
             MessageUtils.updateMentions(jsonObject, roleIds, "roles");
         }
@@ -134,7 +135,7 @@ public class MessageCreateAction {
 
     public MessageCreateAction setMessageReference(Message message) {
         if (interactionData == null) {
-            setProperty("message_reference", new JSONObject()
+            setProperty("message_reference", mapper.createObjectNode()
                     .put("message_id", message.getId())
                     .put("channel_id", message.getChannel().getId())
                     .put("guild_id", message.getGuild().getId())
@@ -147,7 +148,7 @@ public class MessageCreateAction {
     public MessageCreateAction setStickers(Sticker... stickers) {
         if (stickers != null && stickers.length > 0) {
             if (interactionData == null) {
-                setProperty("sticker_ids", new JSONArray().put(stickers));
+                setProperty("sticker_ids", mapper.createArrayNode().add(mapper.valueToTree(stickers)));
             }
         }
         return this;
@@ -190,18 +191,18 @@ public class MessageCreateAction {
     private void submit() {
         if (hasChanges) {
             if (interactionData != null) {
-                postMessage(jsonObject, "/interactions/" + interactionData.getResponse().getInteractionId() + "/" + interactionData.getResponse().getInteractionToken() + "/callback");
+                postMessage(jsonObject, "/interactions/" + interactionData.getInteraction().getInteractionId() + "/" + interactionData.getInteraction().getInteractionToken() + "/callback");
             } else {
                 postMessage(jsonObject, "/channels/" + channelId + "/messages");
             }
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 
-    void postMessage(JSONObject jsonObject, String url) {
+    void postMessage(ObjectNode jsonObject, String url) {
         if (attachments != null && !attachments.isEmpty()) {
-            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, attachments);
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, attachments);
             ApiClient.postAttachments(multipartBuilder, url);
         } else {
             ApiClient.post(jsonObject, url);

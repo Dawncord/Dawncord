@@ -1,5 +1,9 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
@@ -8,24 +12,22 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.types.*;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
-import java.util.Objects;
 
 public class GuildChannelModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final GuildChannel channel;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildChannelModifyAction(GuildChannel channel) {
         this.channel = channel;
-        jsonObject = new JSONObject();
+        jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -121,9 +123,9 @@ public class GuildChannelModifyAction {
     public GuildChannelModifyAction setPermissionOverrides(PermissionOverride... overrides) {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
-            JSONArray overridesArray = new JSONArray();
+            ArrayNode overridesArray = mapper.createArrayNode();
             for (PermissionOverride override : overrides) {
-                JSONObject overrideJson = new JSONObject();
+                ObjectNode overrideJson = mapper.createObjectNode();
                 overrideJson.put("id", override.getId());
                 overrideJson.put("type", override.getType().getValue());
                 overrideJson.put("deny", override.getDenied() != null && !override.getDenied().isEmpty()
@@ -136,7 +138,7 @@ public class GuildChannelModifyAction {
                         .mapToLong(PermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
-                overridesArray.put(overrideJson);
+                overridesArray.add(overrideJson);
             }
             setProperty("permission_overwrites", overridesArray);
         }
@@ -146,7 +148,7 @@ public class GuildChannelModifyAction {
     public GuildChannelModifyAction clearPermissionOverrides() {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
-            setProperty("permission_overwrites", new JSONArray());
+            setProperty("permission_overwrites", mapper.createArrayNode());
         }
         return this;
     }
@@ -166,14 +168,13 @@ public class GuildChannelModifyAction {
         return this;
     }
 
-    public GuildChannelModifyAction setOptimalVoiceRegion(VoiceRegion voiceRegion) {
+    public GuildChannelModifyAction setOptimalVoiceRegion() {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             String optimalVoiceRegion = null;
-            JSONArray voiceRegions = JsonUtils.fetchArray("/voice/regions");
-            for (int i = 0; i < Objects.requireNonNull(voiceRegions).length(); i++) {
-                JSONObject region = voiceRegions.getJSONObject(i);
-                if (region.getBoolean("optimal")) {
-                    optimalVoiceRegion = region.getString("id");
+            JsonNode voiceRegions = JsonUtils.fetchArray("/voice/regions");
+            for (JsonNode region : voiceRegions) {
+                if (region.get("optimal").asBoolean()) {
+                    optimalVoiceRegion = region.get("id").asText();
                     break;
                 }
             }
@@ -202,29 +203,28 @@ public class GuildChannelModifyAction {
 
     public GuildChannelModifyAction setTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            JSONArray array = new JSONArray();
-            setForumTags(tags, array);
+            setForumTags(tags, mapper.createArrayNode());
         }
         return this;
     }
 
     public GuildChannelModifyAction updateTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            setForumTags(tags, JsonUtils.fetchEntity("/channels/" + channel.getId()).getJSONArray("available_tags"));
+            setForumTags(tags, (ArrayNode) JsonUtils.fetchEntity("/channels/" + channel.getId()).get("available_tags"));
         }
         return this;
     }
 
     public GuildChannelModifyAction clearTags() {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            setProperty("available_tags", new JSONArray());
+            setProperty("available_tags", mapper.createArrayNode());
         }
         return this;
     }
 
     public GuildChannelModifyAction setDefaultReaction(String emojiIdOrName) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            JSONObject defaultEmoji = new JSONObject();
+            ObjectNode defaultEmoji = mapper.createObjectNode();
             defaultEmoji.put("emoji_id", MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
             defaultEmoji.put("emoji_name", !MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
             setProperty("default_reaction_emoji", defaultEmoji);
@@ -234,7 +234,7 @@ public class GuildChannelModifyAction {
 
     public GuildChannelModifyAction clearDefaultReaction() {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            setProperty("default_reaction_emoji", new JSONObject());
+            setProperty("default_reaction_emoji", mapper.createObjectNode());
         }
         return this;
     }
@@ -268,14 +268,14 @@ public class GuildChannelModifyAction {
         return value;
     }
 
-    private void setForumTags(List<ForumTag> tags, JSONArray array) {
+    private void setForumTags(List<ForumTag> tags, ArrayNode array) {
         for (ForumTag tag : tags) {
-            JSONObject tagJson = new JSONObject();
+            ObjectNode tagJson = mapper.createObjectNode();
             tagJson.put("name", tag.getName());
             tagJson.put("moderated", tag.isModerated());
             tagJson.put("emoji_id", MessageUtils.isEmojiLong(tag.getEmojiIdOrName()) ? tag.getEmojiIdOrName() : null);
             tagJson.put("emoji_name", !MessageUtils.isEmojiLong(tag.getEmojiIdOrName()) ? tag.getEmojiIdOrName() : null);
-            array.put(tagJson);
+            array.add(tagJson);
         }
         setProperty("available_tags", array);
     }
@@ -285,6 +285,6 @@ public class GuildChannelModifyAction {
             ApiClient.patch(jsonObject, "/channels/" + channel.getId());
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

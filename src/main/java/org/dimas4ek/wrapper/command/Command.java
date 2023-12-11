@@ -1,6 +1,6 @@
-package org.dimas4ek.wrapper.slashcommand;
+package org.dimas4ek.wrapper.command;
 
-import org.dimas4ek.wrapper.slashcommand.option.Option;
+import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.types.CommandType;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.PermissionType;
@@ -14,6 +14,8 @@ public interface Command {
     String getDescription();
 
     String getApplicationId();
+
+    long getApplicationIdLong();
 
     List<PermissionType> getMemberPermissions();
 

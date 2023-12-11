@@ -1,27 +1,41 @@
 package org.dimas4ek.wrapper.entities.message.sticker;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildStickerModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
+import org.dimas4ek.wrapper.types.StickerFormatType;
+import org.dimas4ek.wrapper.types.StickerType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
+import org.dimas4ek.wrapper.utils.EnumUtils;
 
 import java.util.function.Consumer;
 
 public class StickerImpl implements Sticker {
-    private final JSONObject sticker;
+    private final JsonNode sticker;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private String description;
+    private String emoji;
+    private StickerType type;
+    private StickerFormatType formatType;
+    private Boolean isAvailable;
+    private User author;
 
-    public StickerImpl(JSONObject sticker) {
+    public StickerImpl(JsonNode sticker, Guild guild) {
         this.sticker = sticker;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return sticker.getString("id");
+        if (id == null) {
+            id = sticker.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -31,52 +45,65 @@ public class StickerImpl implements Sticker {
 
     @Override
     public String getName() {
-        return sticker.getString("name");
+        if (name == null) {
+            name = sticker.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return sticker.getString("description");
+        if (description == null) {
+            description = sticker.get("description").asText();
+        }
+        return description;
     }
 
     @Override
     public String getEmoji() {
-        return sticker.getString("tags");
+        if (emoji == null) {
+            emoji = sticker.get("tags").asText();
+        }
+        return emoji;
     }
 
     @Override
     public StickerType getType() {
-        for (StickerType type : StickerType.values()) {
-            if (type.getValue() == sticker.getInt("type")) {
-                return type;
-            }
+        if (type == null) {
+            type = EnumUtils.getEnumObject(sticker, "type", StickerType.class);
         }
-        return null;
+        return type;
     }
 
     @Override
     public StickerFormatType getFormatType() {
-        for (StickerFormatType type : StickerFormatType.values()) {
-            if (type.getValue() == sticker.getInt("format_type")) {
-                return type;
-            }
+        if (formatType == null) {
+            formatType = EnumUtils.getEnumObject(sticker, "format_type", StickerFormatType.class);
         }
-        return null;
+        return formatType;
     }
 
     @Override
     public boolean isAvailable() {
-        return sticker.getBoolean("available");
+        if (isAvailable == null) {
+            isAvailable = sticker.get("available").asBoolean();
+        }
+        return isAvailable;
     }
 
     @Override
     public Guild getGuild() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + sticker.getString("guild_id")));
+        return guild;
     }
 
     @Override
     public User getAuthor() {
-        return new UserImpl(sticker.getJSONObject("user"));
+        if (author == null) {
+            author = sticker.has("user")
+                    ? new UserImpl(sticker.get("user"))
+                    : null;
+        }
+        return author;
     }
 
     @Override

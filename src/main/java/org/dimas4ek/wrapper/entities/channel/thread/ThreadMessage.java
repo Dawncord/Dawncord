@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities.thread;
+package org.dimas4ek.wrapper.entities.channel.thread;
 
 import lombok.Getter;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;

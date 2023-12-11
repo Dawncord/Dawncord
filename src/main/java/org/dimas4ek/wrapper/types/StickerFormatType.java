@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.entities.message.sticker;
+package org.dimas4ek.wrapper.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

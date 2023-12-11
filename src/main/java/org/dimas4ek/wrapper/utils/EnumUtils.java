@@ -1,7 +1,6 @@
 package org.dimas4ek.wrapper.utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,8 +17,8 @@ public class EnumUtils {
         return null;
     }
 
-    public static <T extends Enum<T>> T getEnumObject(JSONObject json, String key, Class<T> enumClass) {
-        int intValue = json.optInt(key, -1);
+    public static <T extends Enum<T>> T getEnumObject(JsonNode json, String key, Class<T> enumClass) {
+        int intValue = json.get(key).asInt(-1);
         for (T obj : enumClass.getEnumConstants()) {
             try {
                 Method m = enumClass.getMethod("getValue");
@@ -33,10 +32,10 @@ public class EnumUtils {
         return null;
     }
 
-    public static <T extends Enum<T>> List<T> getEnumList(JSONArray jsonArray, Class<T> enumClass) {
+    public static <T extends Enum<T>> List<T> getEnumList(JsonNode jsonArray, Class<T> enumClass) {
         List<T> enumObjects = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            int intValue = jsonArray.optInt(i, -1);
+        for (int i = 0; i < jsonArray.size(); i++) {
+            int intValue = jsonArray.get(i).asInt(-1);
             for (T obj : enumClass.getEnumConstants()) {
                 try {
                     Method m = enumClass.getMethod("getValue");
@@ -51,8 +50,8 @@ public class EnumUtils {
         return enumObjects;
     }
 
-    public static <T extends Enum<T>> List<T> getEnumListFromLong(JSONObject json, String key, Class<T> enumClass) {
-        long flagsFromJson = json.optLong(key, 0);
+    public static <T extends Enum<T>> List<T> getEnumListFromLong(JsonNode json, String key, Class<T> enumClass) {
+        long flagsFromJson = json.get(key).asLong(0);
         List<T> flags = new ArrayList<>();
 
         for (T flag : enumClass.getEnumConstants()) {

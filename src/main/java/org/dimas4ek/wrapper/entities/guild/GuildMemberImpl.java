@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.guild;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildMemberModifyAction;
 import org.dimas4ek.wrapper.entities.User;
@@ -11,8 +12,6 @@ import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -22,72 +21,97 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class GuildMemberImpl implements GuildMember {
-    private final JSONObject guild;
-    private final JSONObject guildMember;
+    private final JsonNode member;
+    private final Guild guild;
+    private User user;
+    private String nick;
+    private Avatar avatar;
+    private List<GuildMemberFlag> flags;
+    private ZonedDateTime joinedAt;
+    private Boolean isOwner;
+    private List<GuildRole> roles = new ArrayList<>();
+    private Set<PermissionType> permissions = new HashSet<>();
+    private Boolean isPending;
+    private Boolean isBoosting;
+    private Boolean isMuted;
+    private Boolean isDeafened;
 
-    public GuildMemberImpl(JSONObject guild, JSONObject guildMember) {
+    public GuildMemberImpl(JsonNode member, Guild guild) {
+        this.member = member;
         this.guild = guild;
-        this.guildMember = guildMember;
+    }
+
+    @Override
+    public User getUser() {
+        if (user == null) {
+            user = new UserImpl(member.get("user"));
+        }
+        return user;
     }
 
     @Override
     public String getNickname() {
-        return !guildMember.isNull("nick")
-                ? guildMember.getString("nick")
-                : getUser().getUsername();
+        if (nick == null) {
+            nick = member.has("nick") && member.hasNonNull("nick")
+                    ? member.get("nick").asText()
+                    : null;
+        }
+        return nick;
     }
 
     @Override
     public Avatar getAvatar() {
-        return !guildMember.isNull("avatar")
-                ? new Avatar(getGuild().getId(), getUser().getId(), guildMember.getString("avatar"))
-                : getUser().getAvatar();
+        if (avatar == null) {
+            avatar = member.has("avatar") && member.hasNonNull("avatar")
+                    ? new Avatar(guild.getId(), getUser().getId(), member.get("avatar").asText())
+                    : null;
+        }
+        return avatar;
     }
 
     @Override
     public List<GuildMemberFlag> getFlags() {
-        return EnumUtils.getEnumListFromLong(guildMember, "flags", GuildMemberFlag.class);
-        /*if (guildMember.has("flags") || guildMember.getInt("flags") != 0) {
-            List<String> flags = new ArrayList<>();
-            long flagsFromJson = Long.parseLong(String.valueOf(guildMember.getInt("flags")));
-            for (GuildMemberFlag flag : GuildMemberFlag.values()) {
-                if ((flagsFromJson & flag.getValue()) != 0) {
-                    flags.add(flag.name());
-                }
-            }
-            return flags;
+        if (flags == null) {
+            flags = EnumUtils.getEnumListFromLong(member, "flags", GuildMemberFlag.class);
         }
-        return Collections.emptyList();*/
+        return flags;
     }
 
     @Override
     public ZonedDateTime getTimeJoined() {
-        return MessageUtils.getZonedDateTime(guildMember, "joined_at");
+        if (joinedAt == null) {
+            joinedAt = MessageUtils.getZonedDateTime(member, "joined_at");
+        }
+        return joinedAt;
     }
 
     @Override
     public Set<PermissionType> getPermissions() {
-        Set<PermissionType> permissions = new HashSet<>();
-        if (isOwner()) {
-            permissions.addAll(List.of(PermissionType.values()));
+        if (permissions == null) {
+            permissions = new HashSet<>();
+            if (isOwner()) {
+                permissions.addAll(List.of(PermissionType.values()));
+            } else {
+                permissions.addAll(guild.getPublicRole().getPermissions());
+                getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
+            }
         }
-        permissions.addAll(getGuild().getPublicRole().getPermissions());
-        getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
         return permissions;
     }
 
     @Override
     public List<GuildRole> getRoles() {
-        List<GuildRole> memberRoles = new ArrayList<>();
-        List<String> rolesString = getGuild().getRoles().stream().map(GuildRole::getId).toList();
-        JSONArray rolesJson = guildMember.getJSONArray("roles");
-        for (int i = 0; i < rolesJson.length(); i++) {
-            String roleId = rolesJson.getString(i);
-            if (rolesString.contains(roleId)) {
-                memberRoles.add(getGuild().getRoleById(roleId));
+        if (roles == null && !member.get("roles").isEmpty()) {
+            roles = new ArrayList<>();
+            for (String guildRole : guild.getRoles().stream().map(GuildRole::getId).toList()) {
+                for (JsonNode memberRole : member.get("roles")) {
+                    if (memberRole.asText().equals(guildRole)) {
+                        roles.add(guild.getRoleById(guildRole));
+                    }
+                }
             }
         }
-        return memberRoles;
+        return roles;
     }
 
     @Override
@@ -107,32 +131,47 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public boolean isPending() {
-        return guildMember.getBoolean("pending");
+        if (isPending == null && member.has("pending")) {
+            isPending = member.get("pending").asBoolean();
+        }
+        return isPending != null && isPending;
     }
 
     @Override
     public boolean isOwner() {
-        return getUser().getId().equals(getGuild().getOwner().getId());
+        if (isOwner == null) {
+            isOwner = getUser().getId().equals(guild.getOwner().getId());
+        }
+        return isOwner;
     }
 
     @Override
     public boolean isBoosting() {
-        return !guildMember.isNull("premium_since");
+        if (isBoosting == null && member.has("premium_since")) {
+            isBoosting = !member.hasNonNull("premium_since");
+        }
+        return isBoosting != null && isBoosting;
     }
 
     @Override
     public boolean isMuted() {
-        return guildMember.getBoolean("mute");
+        if (isMuted == null && member.has("mute")) {
+            isMuted = member.get("mute").asBoolean();
+        }
+        return isMuted != null && isMuted;
     }
 
     @Override
     public boolean isDeafened() {
-        return guildMember.getBoolean("deaf");
+        if (isDeafened == null && member.has("deaf")) {
+            isDeafened = member.get("deaf").asBoolean();
+        }
+        return isDeafened != null && isDeafened;
     }
 
     @Override
     public Guild getGuild() {
-        return new GuildImpl(guild);
+        return guild;
     }
 
     @Override
@@ -143,11 +182,6 @@ public class GuildMemberImpl implements GuildMember {
     @Override
     public void addToGuild(long guildId) {
         addToGuild(String.valueOf(guildId));
-    }
-
-    @Override
-    public User getUser() {
-        return new UserImpl(guildMember.getJSONObject("user"));
     }
 
     @Override

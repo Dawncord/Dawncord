@@ -1,26 +1,41 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
 import org.dimas4ek.wrapper.types.StagePrivacyLevel;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.Map;
 
 public class StageImpl implements Stage {
-    private final JSONObject stage;
+    private final JsonNode stage;
+    private final Guild guild;
+    private String id;
+    private GuildChannel channel;
+    private String topic;
+    private Boolean isDiscoverable;
+    private GuildEvent guildEvent;
 
-    public StageImpl(JSONObject stage) {
+    public StageImpl(JsonNode stage, Guild guild) {
         this.stage = stage;
+        this.guild = guild;
+    }
+
+    @Override
+    public Guild getGuild() {
+        return guild;
     }
 
     @Override
     public String getId() {
-        return stage.getString("id");
+        if (id == null) {
+            id = stage.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -29,18 +44,19 @@ public class StageImpl implements Stage {
     }
 
     @Override
-    public Guild getGuild() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + stage.getString("guild_id")));
-    }
-
-    @Override
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + stage.getString("guild_id")));
+        if (channel == null) {
+            channel = new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + stage.get("channel_id").asText()), guild);
+        }
+        return channel;
     }
 
     @Override
     public String getTopic() {
-        return stage.getString("topic");
+        if (topic == null) {
+            topic = stage.get("topic").asText();
+        }
+        return topic;
     }
 
     @Override
@@ -50,15 +66,22 @@ public class StageImpl implements Stage {
 
     @Override
     public boolean isDiscoverable() {
-        return !stage.getBoolean("discoverable_disabled");
+        if (isDiscoverable == null) {
+            isDiscoverable = !stage.get("discoverable_disabled").asBoolean();
+        }
+        return isDiscoverable;
     }
 
     @Override
-    public GuildEvent getEvent() {
-        return new GuildEventImpl(JsonUtils.fetchEntityParams(
-                "/guilds/" + getGuild().getId() + "/scheduled-events/" + stage.getString("guild_scheduled_event_id"),
-                Map.of("with_user_count", "true"))
-        );
+    public GuildEvent getGuildEvent() {
+        if (guildEvent == null) {
+            guildEvent = new GuildEventImpl(
+                    JsonUtils.fetchEntityParams(
+                            "/guilds/" + getGuild().getId() + "/scheduled-events/" + stage.get("guild_scheduled_event_id").asText(),
+                            Map.of("with_user_count", "true")
+                    ), guild);
+        }
+        return guildEvent;
     }
 
     @Override
@@ -68,6 +91,6 @@ public class StageImpl implements Stage {
 
     @Override
     public void modify(String topic) {
-        ApiClient.patch(new JSONObject().put("topic", topic), "/stage-instances/" + getId());
+        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("topic", topic), "/stage-instances/" + getId());
     }
 }

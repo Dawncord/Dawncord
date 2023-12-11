@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.guild;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.EmojiImpl;
 import org.dimas4ek.wrapper.entities.ISnowflake;
@@ -7,25 +8,36 @@ import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
 import org.dimas4ek.wrapper.entities.image.Splash;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.message.sticker.StickerImpl;
-import org.dimas4ek.wrapper.types.GuildFeature;
-import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildPreview implements ISnowflake {
+    private final JsonNode preview;
     private final Guild guild;
-    private final JSONObject preview;
+    private String id;
+    private String name;
+    private String description;
+    private Splash splash;
+    private DiscoverySplash discoverySplash;
+    private List<Emoji> emojis;
+    private List<String> features;
+    private List<Sticker> stickers;
+    private Integer memberCount;
+    private Integer onlineMemberCount;
 
-    public GuildPreview(Guild guild, JSONObject preview) {
-        this.guild = guild;
+    public GuildPreview(JsonNode preview, Guild guild) {
         this.preview = preview;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return preview.getString("id");
+        if (id == null) {
+            id = preview.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -34,25 +46,42 @@ public class GuildPreview implements ISnowflake {
     }
 
     public String getName() {
-        return preview.getString("name");
+        if (name == null) {
+            name = preview.get("name").asText();
+        }
+        return name;
     }
 
     public String getDescription() {
-        return preview.getString("description");
+        if (description == null) {
+            description = preview.get("description").asText();
+        }
+        return description;
     }
 
     public Splash getSplash() {
-        String splash = preview.optString("splash", null);
-        return splash != null ? new Splash(getId(), splash) : null;
+        if (splash == null) {
+            splash = preview.has("splash")
+                    ? new Splash(getId(), preview.get("splash").asText())
+                    : null;
+        }
+        return splash;
     }
 
     public DiscoverySplash getDiscoverySplash() {
-        String splash = preview.optString("discovery_splash", null);
-        return splash != null ? new DiscoverySplash(getId(), splash) : null;
+        if (discoverySplash == null) {
+            discoverySplash = preview.has("discovery_splash")
+                    ? new DiscoverySplash(getId(), preview.get("discovery_splash").asText())
+                    : null;
+        }
+        return discoverySplash;
     }
 
     public List<Emoji> getEmojis() {
-        return JsonUtils.getEntityList(preview.getJSONArray("emojis"), (JSONObject t) -> new EmojiImpl(guild, t));
+        if (emojis == null) {
+            emojis = JsonUtils.getEntityList(preview.get("emojis"), emoji -> new EmojiImpl(emoji, guild));
+        }
+        return emojis;
     }
 
     public Emoji getEmojiById(String emojiId) {
@@ -75,12 +104,21 @@ public class GuildPreview implements ISnowflake {
         return getEmojisByCreatorId(String.valueOf(userId));
     }
 
-    public List<GuildFeature> getFeatures() {
-        return EnumUtils.getEnumList(preview.getJSONArray("features"), GuildFeature.class);
+    public List<String> getFeatures() {
+        if (features == null) {
+            features = new ArrayList<>();
+            for (JsonNode feature : preview.get("features")) {
+                features.add(feature.asText());
+            }
+        }
+        return features;
     }
 
     public List<Sticker> getStickers() {
-        return JsonUtils.getEntityList(preview.getJSONArray("stickers"), StickerImpl::new);
+        if (stickers == null) {
+            stickers = JsonUtils.getEntityList(preview.get("stickers"), sticker -> new StickerImpl(sticker, guild));
+        }
+        return stickers;
     }
 
     public Sticker getStickerById(String stickerId) {
@@ -104,10 +142,16 @@ public class GuildPreview implements ISnowflake {
     }
 
     public int getMemberCount() {
-        return preview.getInt("approximate_member_count");
+        if (memberCount == null) {
+            memberCount = preview.get("approximate_member_count").asInt();
+        }
+        return memberCount;
     }
 
     public int getOnlineMemberCount() {
-        return preview.getInt("approximate_presence_count");
+        if (onlineMemberCount == null) {
+            onlineMemberCount = preview.get("approximate_presence_count").asInt();
+        }
+        return onlineMemberCount;
     }
 }

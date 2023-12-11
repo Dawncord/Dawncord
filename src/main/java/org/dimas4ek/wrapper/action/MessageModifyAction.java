@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.message.Message;
@@ -8,26 +10,26 @@ import org.dimas4ek.wrapper.types.AllowedMention;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MessageModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final Message message;
-    private final JSONObject jsonObject;
     private final Map<String, String> actions;
     private boolean hasChanges = false;
 
     public MessageModifyAction(Message message) {
         this.message = message;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         this.actions = new HashMap<>();
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -115,6 +117,6 @@ public class MessageModifyAction {
             ApiClient.patch(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId());
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

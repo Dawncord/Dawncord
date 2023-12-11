@@ -1,46 +1,50 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.channel.Channel;
 import org.dimas4ek.wrapper.entities.channel.GuildForum;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadMessage;
 import org.dimas4ek.wrapper.entities.message.Message;
-import org.dimas4ek.wrapper.entities.thread.ThreadMessage;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import java.util.Arrays;
 
 public class ThreadCreateAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private Channel channel;
     private Message message;
-    private final JSONObject jsonObject;
 
     public ThreadCreateAction(Message message, String name) {
         this.message = message;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("name", name);
     }
 
     public ThreadCreateAction(Channel channel) {
         this.channel = channel;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     public ThreadCreateAction(GuildForum forum, String name) {
         this.channel = forum;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("name", name);
     }
 
     public ThreadCreateAction(Message message, Channel channel) {
         this.message = message;
         this.channel = channel;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
     }
 
     public ThreadCreateAction setName(String name) {
@@ -74,10 +78,8 @@ public class ThreadCreateAction {
 
     public ThreadCreateAction setTags(ForumTag... tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM) {
-            JSONArray tagsArray = new JSONArray();
-            for (ForumTag tag : tags) {
-                tagsArray.put(tag.getId());
-            }
+            ArrayNode tagsArray = mapper.createArrayNode();
+            tagsArray.add(mapper.valueToTree(Arrays.stream(tags).map(ForumTag::getId).toArray()));
             setProperty("applied_tags", tagsArray);
         }
         return this;
@@ -89,6 +91,6 @@ public class ThreadCreateAction {
         } else {
             ApiClient.post(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/threads");
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

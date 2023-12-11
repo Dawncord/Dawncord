@@ -1,46 +1,62 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.ForumTag;
-import org.dimas4ek.wrapper.entities.thread.Thread;
-import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.ForumLayoutType;
 import org.dimas4ek.wrapper.types.OrderType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class GuildForumImpl extends ChannelImpl implements GuildForum {
-    private final JSONObject forum;
+    private final JsonNode forum;
+    private final Guild guild;
+    private String topic;
+    private List<ForumTag> tags;
+    private String defaultReactionEmoji;
+    private OrderType sortOrder;
+    private ForumLayoutType forumLayout;
+    private Thread lastThread;
+    private GuildCategory category;
 
-    public GuildForumImpl(JSONObject forum) {
-        super(forum);
+    public GuildForumImpl(JsonNode forum, Guild guild) {
+        super(forum, guild);
         this.forum = forum;
+        this.guild = guild;
     }
 
     @Override
     public String getTopic() {
-        return forum.getString("topic");
+        if (topic == null) {
+            topic = forum.get("topic").asText();
+        }
+        return topic;
     }
 
     @Override
     public List<ForumTag> getTags() {
-        return forum.has("available_tags") ?
-                JsonUtils.getEntityList(forum.getJSONArray("available_tags"), (JSONObject t) -> {
-                    String emojiId = !t.isNull("emoji_id") ? t.getString("emoji_id") : t.getString("emoji_name");
+        if (tags == null) {
+            if (forum.has("available_tags")) {
+                tags = JsonUtils.getEntityList(forum.get("available_tags"), tag -> {
+                    String emojiId = tag.hasNonNull("emoji_id") ? tag.get("emoji_id").asText() : tag.get("emoji_name").asText();
                     return new ForumTag(
-                            t.getString("id"),
-                            t.getString("name"),
-                            t.getBoolean("moderated"),
+                            tag.get("id").asText(),
+                            tag.get("name").asText(),
+                            tag.get("moderated").asBoolean(),
                             emojiId
                     );
-                }) : Collections.emptyList();
+                });
+            }
+        }
+        return tags;
     }
 
     @Override
@@ -66,35 +82,49 @@ public class GuildForumImpl extends ChannelImpl implements GuildForum {
 
     @Override
     public String getDefaultReactionEmoji() {
-        JSONObject defaultReactionEmoji = forum.optJSONObject("default_reaction_emoji");
-        if (defaultReactionEmoji != null) {
-            String emojiId = defaultReactionEmoji.optString("emoji_id");
-            String emojiName = defaultReactionEmoji.optString("emoji_name");
-            return emojiId != null ? emojiId : emojiName;
+        if (defaultReactionEmoji == null) {
+            if (forum.has("default_reaction_emoji")) {
+                JsonNode emojiNode = forum.get("default_reaction_emoji");
+                defaultReactionEmoji = emojiNode.hasNonNull("emoji_id") ? emojiNode.get("emoji_id").asText() : emojiNode.get("emoji_name").asText();
+            }
         }
-        return null;
+        return defaultReactionEmoji;
     }
 
     @Override
     public OrderType getSortOrder() {
-        return EnumUtils.getEnumObject(forum, "default_sort_order", OrderType.class);
+        if (sortOrder == null) {
+            sortOrder = EnumUtils.getEnumObject(forum, "default_sort_order", OrderType.class);
+        }
+        return sortOrder;
     }
 
     @Override
     public ForumLayoutType getForumLayout() {
-        return EnumUtils.getEnumObject(forum, "default_forum_layout", ForumLayoutType.class);
+        if (forumLayout == null) {
+            forumLayout = EnumUtils.getEnumObject(forum, "default_forum_layout", ForumLayoutType.class);
+        }
+        return forumLayout;
     }
 
     @Override
     public Thread getLastThread() {
-        return forum.has("last_message_id")
-                ? new ThreadImpl(JsonUtils.fetchEntity("/channels/" + forum.getString("last_message_id")))
-                : null;
+        if (lastThread == null) {
+            if (forum.has("last_message_id")) {
+                lastThread = new ThreadImpl(JsonUtils.fetchEntity("/channels/" + forum.get("last_message_id").asText()), guild);
+            }
+        }
+        return lastThread;
     }
 
     @Override
     public GuildCategory getCategory() {
-        return new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + forum.getString("parent_id")));
+        if (category == null) {
+            if (forum.has("parent_id")) {
+                category = guild.getCategoryById(forum.get("parent_id").asText());
+            }
+        }
+        return category;
     }
 
     @Override

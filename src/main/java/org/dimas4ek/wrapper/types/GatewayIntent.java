@@ -28,5 +28,4 @@ public enum GatewayIntent {
     ALL(0);
 
     private final long value;
-
 }

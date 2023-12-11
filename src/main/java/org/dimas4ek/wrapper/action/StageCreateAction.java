@@ -1,20 +1,22 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.StagePrivacyLevel;
-import org.json.JSONObject;
 
 public class StageCreateAction {
-    private final JSONObject jsonObject;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private boolean hasChanges = false;
 
     public StageCreateAction() {
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("privacy_level", StagePrivacyLevel.GUILD_ONLY.getValue());
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -43,6 +45,6 @@ public class StageCreateAction {
             ApiClient.post(jsonObject, "/stage-instances");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

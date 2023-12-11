@@ -1,12 +1,13 @@
-package org.dimas4ek.wrapper.slashcommand;
+package org.dimas4ek.wrapper.command;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.dimas4ek.wrapper.slashcommand.option.Option;
+import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.*;
 
@@ -61,32 +62,32 @@ public class SlashCommandBuilder {
     }
 
     public SlashCommand build() {
-        JSONObject slashCommand = new JSONObject()
+        ObjectNode slashCommand = JsonNodeFactory.instance.objectNode()
                 .put("name", name)
                 .put("description", description);
         if (!optionList.isEmpty()) {
-            JSONArray optionsArray = new JSONArray();
+            ArrayNode optionsArray = JsonNodeFactory.instance.arrayNode();
             optionList.forEach(option -> {
-                JSONObject optionJson = new JSONObject();
+                ObjectNode optionJson = JsonNodeFactory.instance.objectNode();
                 optionJson.put("type", option.getType().getValue())
                         .put("name", option.getName())
                         .put("description", option.getDescription());
                 if (option.isRequired()) optionJson.put("required", true);
                 if (option.isAutocomplete()) optionJson.put("autocomplete", true);
                 if (!option.getChoices().isEmpty()) {
-                    JSONArray choicesArray = new JSONArray();
+                    ArrayNode choicesArray = JsonNodeFactory.instance.arrayNode();
                     option.getChoices().forEach(choice -> {
-                        JSONObject choiceJson = new JSONObject()
+                        ObjectNode choiceJson = JsonNodeFactory.instance.objectNode()
                                 .put("name", choice.getName())
                                 .put("value", choice.getValue());
-                        choicesArray.put(choiceJson);
+                        choicesArray.add(choiceJson);
                     });
-                    optionJson.put("choices", choicesArray);
+                    optionJson.set("choices", choicesArray);
                 }
 
-                optionsArray.put(optionJson);
+                optionsArray.add(optionJson);
             });
-            slashCommand.put("options", optionsArray);
+            slashCommand.set("options", optionsArray);
         }
 
         return new SlashCommand(slashCommand);

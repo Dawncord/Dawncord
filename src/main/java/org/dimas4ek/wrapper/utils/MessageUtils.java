@@ -1,13 +1,15 @@
 package org.dimas4ek.wrapper.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadMessage;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.entities.message.sticker.StickerImpl;
-import org.dimas4ek.wrapper.entities.thread.ThreadMessage;
 import org.dimas4ek.wrapper.types.AllowedMention;
 import org.dimas4ek.wrapper.types.MessageFlag;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,114 +19,116 @@ import java.util.List;
 import java.util.Set;
 
 public class MessageUtils {
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     public static boolean isEmojiLong(String input) {
         return input.chars().allMatch(Character::isDigit);
     }
 
-    public static void setAllowedMentions(JSONObject message, AllowedMention[] allowedMentions) {
+    public static void setAllowedMentions(JsonNode message, AllowedMention[] allowedMentions) {
         if (allowedMentions == null || allowedMentions.length == 0) {
             return;
         }
 
-        JSONObject allowedMentionsJson = new JSONObject();
+        ObjectNode allowedMentionsJson = mapper.createObjectNode();
         if (allowedMentions.length == 1 && allowedMentions[0] == AllowedMention.EMPTY) {
-            allowedMentionsJson.put("parse", new JSONArray());
+            allowedMentionsJson.set("parse", mapper.createArrayNode());
         } else {
-            JSONArray allowedMentionsArray = new JSONArray();
+            ArrayNode allowedMentionsArray = mapper.createArrayNode();
             for (AllowedMention allowedMention : allowedMentions) {
-                allowedMentionsArray.put(allowedMention.getValue());
+                allowedMentionsArray.add(allowedMention.getValue());
             }
-            allowedMentionsJson.put("parse", allowedMentionsArray);
+            allowedMentionsJson.set("parse", allowedMentionsArray);
         }
 
         if (!message.has("allowed_mentions")) {
-            message.put("allowed_mentions", allowedMentionsJson);
+            ((ObjectNode) message).set("allowed_mentions", allowedMentionsJson);
             return;
         }
 
-        JSONObject allowedMentionsObj = message.getJSONObject("allowed_mentions");
+        ObjectNode allowedMentionsObj = (ObjectNode) message.get("allowed_mentions");
         boolean noUsers = !allowedMentionsObj.has("users");
         boolean noRoles = !allowedMentionsObj.has("roles");
 
         for (AllowedMention allowedMention : allowedMentions) {
             if ((allowedMention != AllowedMention.USER && noUsers) || (allowedMention != AllowedMention.ROLE && noRoles)) {
-                allowedMentionsObj.put("parse", allowedMentionsJson.getJSONArray("parse"));
+                allowedMentionsObj.set("parse", allowedMentionsJson.get("parse"));
             } else {
                 return;
             }
         }
     }
 
-    public static void updateMentions(JSONObject message, String[] ids, String entities) {
+    public static void updateMentions(JsonNode message, String[] ids, String entities) {
         if (ids != null && ids.length > 0) {
-            JSONObject allowedMentions = message.optJSONObject("allowed_mentions");
+            ObjectNode allowedMentions = (ObjectNode) message.get("allowed_mentions");
             if (allowedMentions == null) {
-                message.put("allowed_mentions", new JSONObject().put(entities, ids));
+                ((ObjectNode) message).set("allowed_mentions", mapper.createObjectNode().set(entities, mapper.valueToTree(ids)));
             } else {
-                JSONArray parse = allowedMentions.optJSONArray("parse");
+                ArrayNode parse = allowedMentions.withArray("parse");
                 boolean noEntities = true;
                 if (parse != null) {
-                    for (int i = 0; i < parse.length(); i++) {
-                        if (parse.getString(i).equals(entities)) {
+                    for (int i = 0; i < parse.size(); i++) {
+                        if (parse.get(i).asText().equals(entities)) {
                             noEntities = false;
                             break;
                         }
                     }
                 }
                 if (noEntities) {
-                    allowedMentions.put(entities, new JSONArray().put(ids));
+                    allowedMentions.set(entities, mapper.valueToTree(ids));
                 }
             }
-            System.out.println(message.toString(4));
+            System.out.println(message.toPrettyString());
         }
     }
 
-    public static List<Sticker> retrieveStickersFromMessage(JSONObject message, Guild guild) {
+    public static List<Sticker> retrieveStickersFromMessage(JsonNode message, Guild guild) {
         List<Sticker> stickers = new ArrayList<>();
-        JSONArray stickerItems = message.getJSONArray("sticker_items");
-        JSONArray guildStickers = JsonUtils.fetchArray("/guilds/" + guild.getId() + "/stickers");
+        JsonNode stickerItems = message.has("sticker_items") ? message.get("sticker_items") : null;
+        JsonNode guildStickers = JsonUtils.fetchArray("/guilds/" + guild.getId() + "/stickers");
 
         if (stickerItems != null && guildStickers != null) {
             Set<String> guildStickerIds = new HashSet<>();
-            for (int j = 0; j < guildStickers.length(); j++) {
-                JSONObject guildStickerJson = guildStickers.getJSONObject(j);
-                guildStickerIds.add(guildStickerJson.getString("id"));
+            for (int j = 0; j < guildStickers.size(); j++) {
+                JsonNode guildStickerJson = guildStickers.get(j);
+                guildStickerIds.add(guildStickerJson.get("id").asText());
             }
 
-            for (int i = 0; i < stickerItems.length(); i++) {
-                JSONObject stickerJson = stickerItems.getJSONObject(i);
-                if (guildStickerIds.contains(stickerJson.getString("id"))) {
-                    stickers.add(new StickerImpl(stickerJson));
+            for (int i = 0; i < stickerItems.size(); i++) {
+                JsonNode stickerJson = stickerItems.get(i);
+                if (guildStickerIds.contains(stickerJson.get("id").asText())) {
+                    stickers.add(new StickerImpl(stickerJson, guild));
                 }
             }
         }
         return stickers;
     }
 
-    public static JSONObject createThreadMessage(ThreadMessage message) {
-        JSONObject messageJson = new JSONObject();
+    public static ObjectNode createThreadMessage(ThreadMessage message) {
+        ObjectNode messageJson = mapper.createObjectNode();
         messageJson.put("content", message.getContent());
-        messageJson.put("embeds", message.getEmbeds() != null
+        messageJson.set("embeds", message.getEmbeds() != null
                 ? EmbedUtils.createEmbedsArray(message.getEmbeds())
                 : null);
-        MessageUtils.setAllowedMentions(messageJson, message.getAllowedMentions() != null
+        setAllowedMentions(messageJson, message.getAllowedMentions() != null
                 ? message.getAllowedMentions()
                 : null);
-        messageJson.put("components", message.getComponents() != null
+        messageJson.set("components", message.getComponents() != null
                 ? ComponentUtils.createComponents(message.getComponents())
                 : null);
-        messageJson.put("sticker_ids", message.getStickers() != null
-                ? message.getStickers().stream().map(Sticker::getId).toList()
+        messageJson.set("sticker_ids", message.getStickers() != null
+                ? mapper.valueToTree(message.getStickers().stream().map(Sticker::getId).toList())
                 : null);
-        messageJson.put("attachments", message.getAttachments() != null
-                ? new JSONArray().put(message.getAttachments())
+        messageJson.set("attachments", message.getAttachments() != null
+                ? mapper.valueToTree(message.getAttachments())
                 : null);
         messageJson.put("flags", message.isSuppressEmbeds() ? MessageFlag.SUPPRESS_EMBEDS.getValue() : 0);
 
         return messageJson;
     }
 
-    public static ZonedDateTime getZonedDateTime(JSONObject object, String timestamp) {
-        return ZonedDateTime.parse(object.getString(timestamp), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    public static ZonedDateTime getZonedDateTime(JsonNode object, String timestamp) {
+        return ZonedDateTime.parse(object.get(timestamp).asText(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }

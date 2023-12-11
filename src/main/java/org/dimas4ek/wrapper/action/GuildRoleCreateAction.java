@@ -1,27 +1,30 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.IOUtils;
-import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.List;
 
 public class GuildRoleCreateAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
     private final boolean roleIcons;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildRoleCreateAction(String guildId, boolean roleIcons) {
         this.guildId = guildId;
         this.roleIcons = roleIcons;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -61,7 +64,7 @@ public class GuildRoleCreateAction {
         return this;
     }
 
-    private JSONObject getJsonObject() {
+    private JsonNode getJsonObject() {
         return jsonObject;
     }
 
@@ -70,6 +73,6 @@ public class GuildRoleCreateAction {
             ApiClient.post(jsonObject, "/guilds/" + guildId + "/roles");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

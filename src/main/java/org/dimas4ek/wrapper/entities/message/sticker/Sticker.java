@@ -4,6 +4,8 @@ import org.dimas4ek.wrapper.action.GuildStickerModifyAction;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.types.StickerFormatType;
+import org.dimas4ek.wrapper.types.StickerType;
 
 import java.util.function.Consumer;
 

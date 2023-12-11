@@ -1,30 +1,40 @@
 package org.dimas4ek.wrapper.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.WebhookModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.WebhookType;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.function.Consumer;
 
 public class WebhookImpl implements Webhook {
-    private final JSONObject webhook;
+    private final JsonNode webhook;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private GuildChannel channel;
+    private User user;
+    private Avatar avatar;
+    private String token;
+    private String applicationId;
+    private WebhookType type;
 
-    public WebhookImpl(JSONObject webhook) {
+    public WebhookImpl(JsonNode webhook, Guild guild) {
         this.webhook = webhook;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return webhook.getString("id");
+        if (id == null) {
+            id = webhook.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -34,43 +44,65 @@ public class WebhookImpl implements Webhook {
 
     @Override
     public String getName() {
-        return webhook.getString("name");
+        if (name == null) {
+            name = webhook.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public Guild getGuild() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + webhook.getString("guild_id")));
+        return guild;
     }
 
     @Override
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + webhook.getString("channel_id")));
+        if (channel == null) {
+            channel = guild.getChannelById(webhook.get("channel_id").asText());
+        }
+        return channel;
     }
 
     @Override
     public User getUser() {
-        return new UserImpl(webhook.getJSONObject("user"));
+        if (user == null) {
+            user = new UserImpl(webhook.get("user"));
+        }
+        return user;
     }
 
     @Override
     public Avatar getAvatar() {
-        String avatar = webhook.optString("avatar");
-        return avatar != null ? new Avatar(getId(), avatar) : null;
+        if (avatar == null) {
+            avatar = webhook.has("avatar") && webhook.hasNonNull("avatar")
+                    ? new Avatar(getId(), webhook.get("avatar").asText())
+                    : null;
+        }
+        return avatar;
     }
 
     @Override
     public String getToken() {
-        return webhook.optString("token", null);
+        if (token == null) {
+            token = webhook.has("token") ? webhook.get("token").asText() : null;
+        }
+        return token;
     }
 
     @Override
     public String getApplicationId() {
-        return webhook.optString("application_id", null);
+        if (applicationId == null) {
+            applicationId = webhook.has("application_id") ? webhook.get("application_id").asText() : null;
+        }
+        return applicationId;
     }
 
     @Override
     public WebhookType getType() {
-        return EnumUtils.getEnumObject(webhook, "type", WebhookType.class);
+        if (type == null) {
+            type = EnumUtils.getEnumObject(webhook, "type", WebhookType.class);
+        }
+        return type;
     }
 
     @Override

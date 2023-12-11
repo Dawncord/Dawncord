@@ -1,50 +1,53 @@
 package org.dimas4ek.wrapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import okhttp3.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class ApiClient {
     private static final OkHttpClient CLIENT = new OkHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static void sendResponse(String channelId, JSONObject jsonObject) {
-        RequestBody requestBody = RequestBody.create(jsonObject.toString(), Constants.MEDIA_TYPE_JSON);
-
+    public static JsonNode getJson(String url) {
         Request request = new Request.Builder()
-                .url(Constants.API_URL + "/channels/" + channelId + "/messages")
+                .url(Constants.API_URL + url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .post(requestBody)
+                .get()
                 .build();
 
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                System.out.println("true");
+        try (Response response = CLIENT.newCall(request).execute();
+             ResponseBody body = response.body()) {
+            if (response.isSuccessful() && body != null) {
+                return mapper.readTree(body.string());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
-    public static void post(JSONObject jsonObject, String url) {
+    public static void post(JsonNode jsonObject, String url) {
         doAction("post", jsonObject, url);
     }
 
-    public static void postArray(JSONArray jsonArray, String url) {
+    public static void postArray(ArrayNode jsonArray, String url) {
         doActionArray("post", jsonArray, url);
     }
 
-    public static void patch(JSONObject jsonObject, String url) {
+    public static void patch(JsonNode jsonObject, String url) {
         doAction("patch", jsonObject, url);
     }
 
-    public static void patchArray(JSONArray jsonArray, String url) {
+    public static void patchArray(ArrayNode jsonArray, String url) {
         doActionArray("patch", jsonArray, url);
     }
 
-    public static void put(JSONObject jsonObject, String url) {
+    public static void put(JsonNode jsonObject, String url) {
         doAction("put", jsonObject, url);
     }
 
@@ -52,44 +55,50 @@ public class ApiClient {
         doAction("delete", null, url);
     }
 
-    private static void doAction(String action, JSONObject jsonObject, String url) {
-        RequestBody requestBody = null;
-        if (jsonObject != null) {
-            requestBody = RequestBody.create(jsonObject.toString(), Constants.MEDIA_TYPE_JSON);
-        }
-
+    private static void doAction(String action, JsonNode jsonNode, String url) {
         Request.Builder request = new Request.Builder()
                 .url(Constants.API_URL + url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
+        RequestBody requestBody = null;
+        if (jsonNode != null) {
+            try {
+                requestBody = RequestBody.create(mapper.writeValueAsString(jsonNode), Constants.MEDIA_TYPE_JSON);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         switch (action) {
-            case "post" -> {
+            case "post":
                 if (requestBody != null) {
                     request.post(requestBody);
                 } else {
                     request.post(RequestBody.create(new byte[0]));
                 }
-            }
-            case "patch" -> {
+                break;
+            case "patch":
                 if (requestBody != null) {
                     request.patch(requestBody);
                 }
-            }
-            case "put" -> {
+                break;
+            case "put":
                 if (requestBody != null) {
                     request.put(requestBody);
                 } else {
                     request.put(RequestBody.create(new byte[0]));
                 }
-            }
-            case "delete" -> request.delete();
+                break;
+            case "delete":
+                request.delete();
+                break;
         }
 
         try (Response response = CLIENT.newCall(request.build()).execute()) {
             if (!response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
-                        System.out.println(new JSONObject(body.string()).toString(4));
+                        System.out.println(mapper.readTree(body.string()).toPrettyString());
                     }
                 }
             }
@@ -98,7 +107,7 @@ public class ApiClient {
         }
     }
 
-    private static void doActionArray(String action, JSONArray jsonArray, String url) {
+    private static void doActionArray(String action, ArrayNode jsonArray, String url) {
         RequestBody requestBody = null;
         if (jsonArray != null) {
             requestBody = RequestBody.create(jsonArray.toString(), Constants.MEDIA_TYPE_JSON);
@@ -135,13 +144,93 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
-                        System.out.println(new JSONObject(body.string()).toString(4));
+                        System.out.println(mapper.readTree(body.string()).toPrettyString());
                     }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ArrayNode getJsonArrayParams(String url, Map<String, String> params) {
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
+        if (params != null) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
+                httpBuilder.addQueryParameter(param.getKey(), param.getValue());
+            }
+        }
+
+        Request request = new Request.Builder()
+                .url(httpBuilder.build().toString())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .get()
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        return (ArrayNode) mapper.readTree(body.string());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    public static JsonNode getJsonArray(String url) {
+        Request request = new Request.Builder()
+                .url(Constants.API_URL + url)
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .get()
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        return mapper.readTree(body.string());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
+    public static JsonNode getJsonParams(String url, Map<String, String> params) {
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
+        if (params != null) {
+            for (Map.Entry<String, String> param : params.entrySet()) {
+                httpBuilder.addQueryParameter(param.getKey(), param.getValue());
+            }
+        }
+
+        Request request = new Request.Builder()
+                .url(httpBuilder.build().toString())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .get()
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        return mapper.readTree(body.string());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
     public static void postAttachments(MultipartBody.Builder multipartBuilder, String url) {
@@ -155,114 +244,13 @@ public class ApiClient {
             if (!response.isSuccessful()) {
                 try (ResponseBody body = response.body()) {
                     if (body != null) {
-                        System.out.println(new JSONObject(body.string()).toString(4));
+                        System.out.println(mapper.readTree(body.string()).toPrettyString());
                     }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static JSONArray getJsonArray(String url) {
-        Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .get()
-                .build();
-
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        return new JSONArray(body.string());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
-
-    public static JSONObject getJsonObjectParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
-        if (params != null) {
-            for (Map.Entry<String, String> param : params.entrySet()) {
-                httpBuilder.addQueryParameter(param.getKey(), param.getValue());
-            }
-        }
-
-        Request request = new Request.Builder()
-                .url(httpBuilder.build().toString())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .get()
-                .build();
-
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        return new JSONObject(body.string());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
-
-    public static JSONArray getJsonArrayParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
-        if (params != null) {
-            for (Map.Entry<String, String> param : params.entrySet()) {
-                httpBuilder.addQueryParameter(param.getKey(), param.getValue());
-            }
-        }
-
-        Request request = new Request.Builder()
-                .url(httpBuilder.build().toString())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .get()
-                .build();
-
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        return new JSONArray(body.string());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
-
-    public static JSONObject getJsonObject(String url) {
-        Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .get()
-                .build();
-
-        try (Response response = CLIENT.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        return new JSONObject(body.string());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
     }
 }
+

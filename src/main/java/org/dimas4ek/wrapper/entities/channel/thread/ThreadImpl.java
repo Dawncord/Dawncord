@@ -1,49 +1,69 @@
-package org.dimas4ek.wrapper.entities.thread;
+package org.dimas4ek.wrapper.entities.channel.thread;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
 import org.dimas4ek.wrapper.entities.channel.MessageChannelImpl;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
 
 public class ThreadImpl extends MessageChannelImpl implements Thread {
-    private final JSONObject thread;
+    private final JsonNode thread;
+    private final Guild guild;
+    private GuildChannel channel;
+    private User creator;
+    private ThreadMetadata metaData;
+    private List<ThreadMember> threadMembers;
 
-    public ThreadImpl(JSONObject thread) {
-        super(thread);
+    public ThreadImpl(JsonNode thread, Guild guild) {
+        super(thread, guild);
         this.thread = thread;
+        this.guild = guild;
     }
 
     @Override
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + thread.getString("parent_id")));
+        if (channel == null) {
+            channel = guild.getChannelById(thread.get("parent_id").asText());
+        }
+        return channel;
     }
 
     @Override
     public User getCreator() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + thread.getString("owner_id")));
+        if (creator == null) {
+            creator = new UserImpl(JsonUtils.fetchEntity("/users/" + thread.get("owner_id").asText()));
+        }
+        return creator;
     }
 
     @Override
-    public ThreadMetaData getMetaData() {
-        return new ThreadMetaData(thread.getJSONObject("thread_metadata"));
+    public ThreadMetadata getMetaData() {
+        if (metaData == null) {
+            metaData = new ThreadMetadata(thread.get("thread_metadata"));
+        }
+        return metaData;
     }
 
     @Override
     public List<ThreadMember> getThreadMembers() {
-        JSONArray members = ApiClient.getJsonArrayParams(
-                "/channels/" + getId() + "/thread-members",
-                Map.of("with_members", "true"));
-        //todo add after and limit
-        return JsonUtils.getEntityList(members, threadMember -> new ThreadMember(threadMember, this));
+        if (threadMembers == null) {
+            threadMembers = JsonUtils.getEntityList(
+                    JsonUtils.fetchArrayParams(
+                            "/channels/" + getId() + "/thread-members",
+                            Map.of("with_members", "true")
+                    ),
+                    threadMember -> new ThreadMember(threadMember, this)
+            );
+        }
+        return threadMembers;
     }
+
 
     @Override
     public ThreadMember getThreadMemberById(String userId) {

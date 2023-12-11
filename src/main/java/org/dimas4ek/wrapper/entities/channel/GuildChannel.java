@@ -6,7 +6,7 @@ import org.dimas4ek.wrapper.action.InviteCreateAction;
 import org.dimas4ek.wrapper.action.WebhookCreateAction;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.Webhook;
-import org.dimas4ek.wrapper.entities.thread.Thread;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
 

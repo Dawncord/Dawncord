@@ -1,39 +1,54 @@
 package org.dimas4ek.wrapper.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
-    private final JSONObject channel;
+    private final JsonNode channel;
+    private List<Message> messages;
+    private Message lastMessage;
+    private Integer rateLimit;
+    private Boolean isNsfw;
+    private List<Message> pinnedMessages;
 
-    public MessageChannelImpl(JSONObject channel) {
-        super(channel);
+    public MessageChannelImpl(JsonNode channel, Guild guild) {
+        super(channel, guild);
         this.channel = channel;
     }
 
     @Override
     public List<Message> getMessages() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/messages"), MessageImpl::new);
+        if (messages == null) {
+            messages = JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/messages"), message -> new MessageImpl(message, getGuild()));
+        }
+        return messages;
     }
 
     @Override
     public Message getLastMessage() {
-        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + channel.getString("last_message_id")));
+        if (lastMessage == null) {
+            lastMessage = channel.has("last_message_id")
+                    ? new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + channel.get("last_message_id").asText()), getGuild())
+                    : null;
+        }
+        return lastMessage;
     }
 
     @Override
     public Message getMessageById(String messageId) {
-        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + messageId));
+        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + messageId), getGuild());
     }
 
     @Override
@@ -43,19 +58,28 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
 
     @Override
     public int getRateLimit() {
-        return channel.getInt("rate_limit_per_user");
+        if (rateLimit == null && channel.has("rate_limit_per_user")) {
+            rateLimit = channel.get("rate_limit_per_user").asInt();
+        }
+        return rateLimit != null ? rateLimit : 0;
     }
 
     @Override
     public boolean isNsfw() {
-        return channel.getBoolean("nsfw");
+        if (isNsfw == null && channel.has("nsfw")) {
+            isNsfw = channel.get("nsfw").asBoolean();
+        }
+        return isNsfw != null && isNsfw;
     }
 
     @Override
     public void deleteMessages(int count) {
-        List<Message> messagesToDelete = getMessages().subList(0, count);
+        List<String> messagesToDelete = getMessages().stream()
+                .limit(count)
+                .map(Message::getId)
+                .collect(Collectors.toList());
 
-        ApiClient.postArray(new JSONArray(messagesToDelete.stream().map(Message::getId)), "/channels/" + getId() + "/messages/bulk-delete");
+        ApiClient.postArray(new ObjectMapper().valueToTree(messagesToDelete), "/channels/" + getId() + "/messages/bulk-delete");
     }
 
     @Override
@@ -65,7 +89,10 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
 
     @Override
     public List<Message> getPinnedMessages() {
-        return JsonUtils.getEntityList(ApiClient.getJsonArray("/channels/" + getId() + "/pins"), MessageImpl::new);
+        if (pinnedMessages == null) {
+            pinnedMessages = JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/pins"), message -> new MessageImpl(message, getGuild()));
+        }
+        return pinnedMessages;
     }
 
     @Override

@@ -1,37 +1,32 @@
 package org.dimas4ek.wrapper.entities;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Mentionable implements IMentionable {
     private final String value;
-    private final JSONObject resolved;
+    private final JsonNode resolved;
 
-    public Mentionable(String value, JSONObject resolved) {
+    public Mentionable(String value, JsonNode resolved) {
         this.value = value;
         this.resolved = resolved;
     }
 
     @Override
     public String getAsMention() {
-        if (resolved.has("roles")) {
-            for (String key : resolved.getJSONObject("roles").keySet()) {
-                if (key.equals(value)) {
-                    return "<@&" + value + ">";
-                }
+        if (resolved != null) {
+            JsonNode roles = resolved.get("roles");
+            if (roles != null && roles.has(value)) {
+                return "<@&" + value + ">";
             }
-        }
-        if (resolved.has("members")) {
-            for (String key : resolved.getJSONObject("members").keySet()) {
-                if (key.equals(value)) {
-                    return "<@" + value + ">";
-                }
+
+            JsonNode members = resolved.get("members");
+            if (members != null && members.has(value)) {
+                return "<@" + value + ">";
             }
-        }
-        if (resolved.has("channels")) {
-            for (String key : resolved.getJSONObject("channels").keySet()) {
-                if (key.equals(value)) {
-                    return "<#" + value + ">";
-                }
+
+            JsonNode channels = resolved.get("channels");
+            if (channels != null && channels.has(value)) {
+                return "<#" + value + ">";
             }
         }
         return null;

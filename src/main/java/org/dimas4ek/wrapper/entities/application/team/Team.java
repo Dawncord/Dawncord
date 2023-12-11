@@ -9,9 +9,9 @@ import java.util.List;
 public interface Team extends ISnowflake {
     String getName();
 
-    List<TeamMember> getMembers();
-
     TeamIcon getIcon();
 
     User getOwner();
+
+    List<TeamMember> getMembers();
 }

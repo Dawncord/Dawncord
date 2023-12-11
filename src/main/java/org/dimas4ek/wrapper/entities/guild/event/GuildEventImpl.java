@@ -1,23 +1,22 @@
 package org.dimas4ek.wrapper.entities.guild.event;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.GuildEventModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.entities.guild.GuildMemberImpl;
 import org.dimas4ek.wrapper.entities.image.GuildEventImage;
 import org.dimas4ek.wrapper.types.GuildEventEntityType;
 import org.dimas4ek.wrapper.types.GuildEventPrivacyLevel;
 import org.dimas4ek.wrapper.types.GuildEventStatus;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,15 +25,33 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class GuildEventImpl implements GuildEvent {
-    private final JSONObject event;
+    private final JsonNode event;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private String description;
+    private GuildChannel channel;
+    private User creator;
+    private ZonedDateTime startTimestamp;
+    private ZonedDateTime endTimestamp;
+    private GuildEventStatus status;
+    private GuildEventEntityType entityType;
+    private String entityId;
+    private String location;
+    private Integer memberCount;
+    private GuildEventImage image;
 
-    public GuildEventImpl(JSONObject event) {
+    public GuildEventImpl(JsonNode event, Guild guild) {
         this.event = event;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return event.getString("id");
+        if (id == null) {
+            id = event.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -44,37 +61,55 @@ public class GuildEventImpl implements GuildEvent {
 
     @Override
     public String getName() {
-        return event.getString("name");
+        if (name == null) {
+            name = event.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return event.getString("description");
+        if (description == null) {
+            description = event.get("description").asText();
+        }
+        return description;
     }
 
     @Override
     public Guild getGuild() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + event.getString("guild_id")));
+        return guild;
     }
 
     @Override
     public GuildChannel getChannel() {
-        return getGuild().getChannelById(event.getString("channel_id"));
+        if (channel == null) {
+            channel = guild.getChannelById(event.get("channel_id").asText());
+        }
+        return channel;
     }
 
     @Override
     public User getCreator() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + event.getString("creator_id")));
+        if (creator == null) {
+            creator = new UserImpl(event.get("creator"));
+        }
+        return creator;
     }
 
     @Override
     public ZonedDateTime getStartTimestamp() {
-        return MessageUtils.getZonedDateTime(event, "scheduled_start_time");
+        if (startTimestamp == null) {
+            startTimestamp = MessageUtils.getZonedDateTime(event, "scheduled_start_time");
+        }
+        return startTimestamp;
     }
 
     @Override
     public ZonedDateTime getEndTimestamp() {
-        return MessageUtils.getZonedDateTime(event, "scheduled_end_time");
+        if (endTimestamp == null) {
+            endTimestamp = MessageUtils.getZonedDateTime(event, "scheduled_end_time");
+        }
+        return endTimestamp;
     }
 
     @Override
@@ -84,50 +119,57 @@ public class GuildEventImpl implements GuildEvent {
 
     @Override
     public GuildEventStatus getStatus() {
-        return EnumUtils.getEnumObject(event, "status", GuildEventStatus.class);
-        /*for (GuildScheduledEventStatus status : GuildScheduledEventStatus.values()) {
-            if (status.getValue() == event.getInt("status")) {
-                return status;
-            }
+        if (status == null) {
+            status = EnumUtils.getEnumObject(event, "status", GuildEventStatus.class);
         }
-        return null;*/
+        return status;
     }
 
     @Override
     public GuildEventEntityType getEntityType() {
-        return EnumUtils.getEnumObject(event, "entity_type", GuildEventEntityType.class);
-        /*for (GuildScheduledEventEntityType type : GuildScheduledEventEntityType.values()) {
-            if (type.getValue() == event.getInt("entity_type")) {
-                return type;
-            }
+        if (entityType == null) {
+            entityType = EnumUtils.getEnumObject(event, "entity_type", GuildEventEntityType.class);
         }
-        return null;*/
+        return entityType;
     }
 
     @Override
     public boolean inChannel() {
-        return getEntityType() != GuildEventEntityType.EXTERNAL;
+        return entityType != GuildEventEntityType.EXTERNAL;
     }
 
     @Override
-    public int getEntityId() {
-        return event.optInt("entity_id", 0);
+    public String getEntityId() {
+        if (entityId == null) {
+            entityId = event.get("entity_id").asText();
+        }
+        return entityId;
+    }
+
+    @Override
+    public long getEntityIdLong() {
+        return Long.parseLong(getEntityId());
     }
 
     @Override
     public String getLocation() {
-        JSONObject entityMetadata = event.optJSONObject("entity_metadata");
-        return entityMetadata != null
-                ? entityMetadata.getString("location")
-                : null;
+        if (location == null) {
+            if (event.has("entity_metadata") && event.hasNonNull("entity_metadata")) {
+                JsonNode metadata = event.get("entity_metadata");
+                if (metadata.has("location") && metadata.hasNonNull("location")) {
+                    location = metadata.get("location").asText();
+                }
+            }
+        }
+        return location;
     }
 
     @Override
     public int getMemberCount() {
-        return JsonUtils.fetchEntityParams(
-                "/guilds/" + getGuild().getId() + "/scheduled-events/" + getId(),
-                Map.of("with_user_count", "true")
-        ).getInt("user_count");
+        if (memberCount == null) {
+            memberCount = event.get("user_count").asInt();
+        }
+        return memberCount;
     }
 
     @Override
@@ -137,7 +179,7 @@ public class GuildEventImpl implements GuildEvent {
 
     @Override
     public List<GuildMember> getGuildEventMembers(int limit) {
-        JSONArray eventMembers = JsonUtils.fetchArrayParams(
+        JsonNode eventMembers = JsonUtils.fetchArrayParams(
                 "/guilds/" + getGuild().getId() + "/scheduled-events/" + getId() + "/users",
                 Map.of(
                         "with_member", "true",
@@ -145,24 +187,23 @@ public class GuildEventImpl implements GuildEvent {
                 )
         );
         List<GuildMember> members = new ArrayList<>();
-        for (int i = 0; i < eventMembers.length(); i++) {
-            members.add(new GuildMemberImpl(
-                            JsonUtils.fetchEntity("/guilds/" + getGuild().getId()),
-                            eventMembers.getJSONObject(i).getJSONObject("member")
-                    )
-            );
+        for (JsonNode member : eventMembers) {
+            members.add(new GuildMemberImpl(member.get("member"), guild));
         }
         return members;
     }
 
     @Override
     public GuildEventImage getImage() {
-        return new GuildEventImage(getId(), event.getString("image"));
+        if (image == null) {
+            image = new GuildEventImage(getId(), event.get("image").asText());
+        }
+        return image;
     }
 
     @Override
     public void modify(Consumer<GuildEventModifyAction> handler) {
-
+        ActionExecutor.modifyGuildEvent(handler, guild.getId(), getId());
     }
 
     @Override

@@ -2,13 +2,13 @@ package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
+import org.dimas4ek.wrapper.command.option.OptionData;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.Webhook;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
-import org.dimas4ek.wrapper.slashcommand.option.OptionData;
 
 import java.util.List;
 import java.util.function.Consumer;

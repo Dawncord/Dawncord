@@ -1,21 +1,29 @@
 package org.dimas4ek.wrapper.entities.guild.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.IApplication;
 import org.dimas4ek.wrapper.entities.image.ApplicationIcon;
-import org.json.JSONObject;
 
 public class IntegrationApplication implements IApplication {
-    private final JSONObject application;
+    private final JsonNode application;
+    private String id;
+    private String name;
+    private String description;
+    private ApplicationIcon icon;
+    private User bot;
 
-    public IntegrationApplication(JSONObject application) {
+    public IntegrationApplication(JsonNode application) {
         this.application = application;
     }
 
     @Override
     public String getId() {
-        return application.getString("id");
+        if (id == null) {
+            id = application.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -25,21 +33,35 @@ public class IntegrationApplication implements IApplication {
 
     @Override
     public String getName() {
-        return application.getString("name");
+        if (name == null) {
+            name = application.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return application.getString("description");
+        if (description == null) {
+            description = application.get("description").asText();
+        }
+        return description;
     }
 
     @Override
     public ApplicationIcon getIcon() {
-        return application.optString("icon") != null ? new ApplicationIcon(getId(), application.optString("icon")) : null;
+        if (icon == null) {
+            icon = application.has("icon") && application.hasNonNull("icon")
+                    ? new ApplicationIcon(getId(), application.get("icon").asText())
+                    : null;
+        }
+        return icon;
     }
 
     @Override
     public User getBot() {
-        return application.optJSONObject("bot") != null ? new UserImpl(application.getJSONObject("bot")) : null;
+        if (bot == null) {
+            bot = application.has("bot") ? new UserImpl(application.get("bot")) : null;
+        }
+        return bot;
     }
 }

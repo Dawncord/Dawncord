@@ -1,33 +1,57 @@
 package org.dimas4ek.wrapper.entities.application;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.team.Team;
 import org.dimas4ek.wrapper.entities.application.team.TeamImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.image.ApplicationIcon;
 import org.dimas4ek.wrapper.types.ActivityType;
 import org.dimas4ek.wrapper.types.ApplicationFlag;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ApplicationImpl implements Application {
-    private final JSONObject application;
+    private final JsonNode application;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private String description;
+    private Integer guildCount;
+    private List<String> redirectURIs;
+    private String interactionEndpointUrl;
+    private String verificationUrl;
+    private String customInstallUrl;
+    private ApplicationIcon icon;
+    private ApplicationIcon coverImage;
+    private ActivityType type;
+    private User bot;
+    private User owner;
+    private Team team;
+    private Boolean publicBot;
+    private Boolean requiresOAuth;
+    private String tosUrl;
+    private String ppUrl;
+    private String verifyKey;
+    private List<ApplicationFlag> flags;
+    private List<String> tags;
+    private Boolean monetized;
+    private InstallParams installParams;
 
-    public ApplicationImpl(JSONObject application) {
+    public ApplicationImpl(JsonNode application, Guild guild) {
         this.application = application;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return application.getString("id");
+        if (id == null) {
+            id = application.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -37,138 +61,182 @@ public class ApplicationImpl implements Application {
 
     @Override
     public String getName() {
-        return application.getString("name");
+        if (name == null) {
+            name = application.get("name").asText();
+        }
+        return name;
     }
 
     @Override
     public String getDescription() {
-        return application.getString("description");
+        if (description == null) {
+            description = application.get("description").asText();
+        }
+        return description;
     }
 
     @Override
     public Guild getGuild() {
-        JSONObject guildJson = application.optJSONObject("guild");
-        return guildJson != null ? new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildJson.getString("id"))) : null;
+        return guild;
     }
 
     @Override
     public int getGuildCount() {
-        return application.optInt("approximate_guild_count", 0);
+        if (guildCount == null && application.has("guild_count")) {
+            guildCount = application.get("guild_count").asInt();
+        }
+        return guildCount != null ? guildCount : 0;
     }
 
     @Override
     public List<String> getRedirectURIs() {
-        List<String> uris = new ArrayList<>();
-        if (application.has("redirect_uris")) {
-            JSONArray array = application.getJSONArray("redirect_uris");
-            for (int i = 0; i < array.length(); i++) {
-                uris.add(array.getString(i));
-            }
+        if (redirectURIs == null) {
+            redirectURIs = JsonUtils.fetchStringList(application, "redirect_uris");
         }
-        return uris;
+        return redirectURIs;
     }
 
     @Override
     public String getInteractionEndpointUrl() {
-        return application.optString("interactions_endpoint_url", null);
+        if (interactionEndpointUrl == null) {
+            interactionEndpointUrl = application.get("interaction_endpoint_url").asText();
+        }
+        return interactionEndpointUrl;
     }
 
     @Override
     public String getVerificationUrl() {
-        return application.optString("role_connections_verification_url", null);
+        if (verificationUrl == null) {
+            verificationUrl = application.get("verification_url").asText();
+        }
+        return verificationUrl;
     }
 
     @Override
     public String getCustomInstallUrl() {
-        return application.optString("custom_install_url", null);
+        if (customInstallUrl == null) {
+            customInstallUrl = application.get("custom_install_url").asText();
+        }
+        return customInstallUrl;
     }
 
     @Override
     public ApplicationIcon getIcon() {
-        return new ApplicationIcon(getId(), application.getString("icon"));
+        if (icon == null) {
+            icon = application.has("icon") ? new ApplicationIcon(getId(), application.get("icon").asText()) : null;
+        }
+        return icon;
     }
 
     @Override
     public ApplicationIcon getCoverImage() {
-        String coverImage = application.optString("cover_image", null);
-        return coverImage != null ? new ApplicationIcon(getId(), coverImage) : null;
+        if (coverImage == null) {
+            coverImage = application.has("cover_image") ? new ApplicationIcon(getId(), application.get("cover_image").asText()) : null;
+        }
+        return coverImage;
     }
 
     @Override
     public ActivityType getType() {
-        return EnumUtils.getEnumObject(application, "type", ActivityType.class);
+        if (type == null) {
+            type = EnumUtils.getEnumObject(application, "type", ActivityType.class);
+        }
+        return type;
     }
 
     @Override
     public User getBot() {
-        JSONObject botJson = application.optJSONObject("bot");
-        return botJson != null ? new UserImpl(botJson) : null;
+        if (bot == null) {
+            bot = application.has("bot") ? new UserImpl(application.get("bot")) : null;
+        }
+        return bot;
     }
 
     @Override
     public User getOwner() {
-        JSONObject ownerJson = application.optJSONObject("owner");
-        return ownerJson != null ? new UserImpl(JsonUtils.fetchEntity("/users/" + ownerJson.getString("id"))) : null;
+        if (owner == null) {
+            owner = application.has("owner") ? new UserImpl(application.get("owner")) : null;
+        }
+        return owner;
     }
 
     @Override
     public Team getTeam() {
-        JSONObject teamJson = application.optJSONObject("team");
-        return teamJson != null ? new TeamImpl(teamJson) : null;
+        if (team == null) {
+            team = application.has("team") ? new TeamImpl(application.get("team")) : null;
+        }
+        return team;
     }
 
     @Override
     public boolean isPublicBot() {
-        return application.optBoolean("bot_public", false);
+        if (publicBot == null && application.has("public_bot")) {
+            publicBot = application.get("public_bot").asBoolean(false);
+        }
+        return publicBot != null && publicBot;
     }
 
     @Override
     public boolean isBotRequiresOAuth() {
-        return application.optBoolean("bot_require_code_grant", false);
+        if (requiresOAuth == null && application.has("require_oauth")) {
+            requiresOAuth = application.get("require_oauth").asBoolean();
+        }
+        return requiresOAuth != null && requiresOAuth;
     }
 
     @Override
     public String getTOSUrl() {
-        return application.optString("terms_of_service_url", null);
+        if (tosUrl == null) {
+            tosUrl = application.get("tos_url").asText(null);
+        }
+        return tosUrl;
     }
 
     @Override
     public String getPPUrl() {
-        return application.optString("privacy_policy_url", null);
+        if (ppUrl == null) {
+            ppUrl = application.get("privacy_policy_url").asText(null);
+        }
+        return ppUrl;
     }
 
     @Override
     public String getVerifyKey() {
-        return application.optString("verify_key", null);
+        if (verifyKey == null) {
+            verifyKey = application.get("verify_key").asText(null);
+        }
+        return verifyKey;
     }
 
     @Override
     public List<ApplicationFlag> getFlags() {
-        return application.has("flags")
-                ? EnumUtils.getEnumListFromLong(application, "flags", ApplicationFlag.class)
-                : Collections.emptyList();
+        if (flags == null) {
+            flags = EnumUtils.getEnumListFromLong(application, "flags", ApplicationFlag.class);
+        }
+        return flags;
     }
 
     @Override
     public List<String> getTags() {
-        List<String> tags = new ArrayList<>();
-        if (application.has("tags")) {
-            JSONArray array = application.getJSONArray("tags");
-            for (int i = 0; i < array.length(); i++) {
-                tags.add(array.getString(i));
-            }
+        if (tags == null) {
+            tags = JsonUtils.fetchStringList(application, "tags");
         }
         return tags;
     }
 
     @Override
     public boolean isMonetized() {
-        return application.optBoolean("is_monetized", false);
+        if (monetized == null && application.has("monetized")) {
+            monetized = application.get("monetized").asBoolean(false);
+        }
+        return monetized != null && monetized;
     }
 
     @Override
     public InstallParams getInstallParams() {
-        JSONObject installParams = application.optJSONObject("install_params");
-        return installParams != null ? new InstallParams(installParams) : null;
+        if (installParams == null) {
+            installParams = application.has("install_params") ? new InstallParams(application.get("install_params")) : null;
+        }
+        return installParams;
     }
 }

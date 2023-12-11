@@ -9,9 +9,9 @@ import org.dimas4ek.wrapper.types.TargetType;
 import java.time.ZonedDateTime;
 
 public interface Invite {
-    String getCode();
-
     Guild getGuild();
+
+    String getCode();
 
     GuildChannel getChannel();
 
@@ -31,7 +31,7 @@ public interface Invite {
 
     ZonedDateTime getExpirationTimestamp();
 
-    GuildEvent getGuildScheduledEvent();
+    GuildEvent getGuildEvent();
 
     int getMaxAge();
 

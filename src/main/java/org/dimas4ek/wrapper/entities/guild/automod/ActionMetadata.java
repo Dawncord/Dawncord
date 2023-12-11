@@ -1,26 +1,41 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 
 public class ActionMetadata {
-    private final JSONObject metadata;
+    private final JsonNode metadata;
+    private final Guild guild;
+    private GuildChannel channel;
+    private Integer duration;
+    private String customMessage;
 
-    public ActionMetadata(JSONObject metadata) {
+    public ActionMetadata(JsonNode metadata, Guild guild) {
         this.metadata = metadata;
+        this.guild = guild;
     }
 
     public GuildChannel getChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + metadata.getString("channel_id")));
+        if (channel == null) {
+            channel = guild.getChannelById(metadata.get("channel_id").asText());
+        }
+        return channel;
     }
 
     public int getDuration() {
-        return metadata.getInt("duration_seconds");
+        if (duration == null) {
+            duration = metadata.get("duration_seconds").asInt();
+        }
+        return duration;
     }
 
     public String getCustomMessage() {
-        return metadata.optString("custom_message", null);
+        if (customMessage == null) {
+            customMessage = metadata.has("custom_message") && metadata.hasNonNull("custom_message")
+                    ? metadata.get("custom_message").asText()
+                    : null;
+        }
+        return customMessage;
     }
 }

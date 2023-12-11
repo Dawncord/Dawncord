@@ -1,24 +1,28 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.ApplicationFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.types.Scope;
 import org.dimas4ek.wrapper.utils.IOUtils;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ApplicationModifyAction {
-    private final JSONObject jsonObject;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
+    private boolean hasChanges = false;
 
     public ApplicationModifyAction() {
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
     }
 
     public ApplicationModifyAction setDescription(String description) {
@@ -37,7 +41,7 @@ public class ApplicationModifyAction {
     }
 
     public ApplicationModifyAction setInteractionEndpointUrl(String url) {
-        setProperty("interactions_endpoint_url ", url);
+        setProperty("interactions_endpoint_url", url);
         return this;
     }
 
@@ -46,9 +50,14 @@ public class ApplicationModifyAction {
                 .mapToLong(PermissionType::getValue)
                 .reduce(0L, (a, b) -> a | b);
 
-        setProperty("install_params", new JSONObject()
-                .put("scopes", scopes.stream().map(Scope::getValue).toList())
-                .put("permissions", String.valueOf(value)));
+        ArrayNode scopesNode = mapper.createArrayNode();
+        scopes.stream().map(Scope::getValue).forEach(scopesNode::add);
+
+        ObjectNode installParamsNode = mapper.createObjectNode();
+        installParamsNode.set("scopes", scopesNode);
+        installParamsNode.put("permissions", String.valueOf(value));
+
+        setProperty("install_params", installParamsNode);
 
         return this;
     }
@@ -78,6 +87,10 @@ public class ApplicationModifyAction {
     }
 
     private void submit() {
-        ApiClient.post(jsonObject, "/applications/@me");
+        if (hasChanges) {
+            ApiClient.post(jsonObject, "/applications/@me");
+            hasChanges = false;
+        }
+        jsonObject.removeAll();
     }
 }

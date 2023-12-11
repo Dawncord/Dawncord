@@ -1,29 +1,32 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.types.*;
 import org.dimas4ek.wrapper.utils.MessageUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 
 public class GuildChannelCreateAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
     private final ChannelType channelType;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildChannelCreateAction(String guildId, ChannelType channelType) {
         this.guildId = guildId;
         this.channelType = channelType;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -67,9 +70,9 @@ public class GuildChannelCreateAction {
 
     public GuildChannelCreateAction setPermissionOverrides(PermissionOverride... permissionOverrides) {
         if (permissionOverrides != null && permissionOverrides.length > 0) {
-            JSONArray jsonArray = new JSONArray();
+            ArrayNode jsonArray = mapper.createArrayNode();
             for (PermissionOverride permissionOverride : permissionOverrides) {
-                JSONObject override = new JSONObject();
+                ObjectNode override = mapper.createObjectNode();
                 override.put("id", permissionOverride.getId());
                 override.put("type", permissionOverride.getType().getValue());
                 override.put("deny", permissionOverride.getDenied() != null && !permissionOverride.getDenied().isEmpty()
@@ -82,9 +85,9 @@ public class GuildChannelCreateAction {
                         .mapToLong(PermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
-                jsonArray.put(override);
+                jsonArray.add(override);
             }
-            jsonObject.put("permission_overwrites", jsonArray);
+            jsonObject.set("permission_overwrites", jsonArray);
         }
         return this;
     }
@@ -124,7 +127,7 @@ public class GuildChannelCreateAction {
 
     public GuildChannelCreateAction setDefaultReaction(String emojiIdOrName) {
         if (isForumMediaChannelType()) {
-            JSONObject reaction = new JSONObject();
+            ObjectNode reaction = mapper.createObjectNode();
             reaction.put("emoji_id", MessageUtils.isEmojiLong(emojiIdOrName) ? emojiIdOrName : null);
             reaction.put("emoji_name", MessageUtils.isEmojiLong(emojiIdOrName) ? null : emojiIdOrName);
             setProperty("default_reaction_emoji", reaction);
@@ -161,14 +164,14 @@ public class GuildChannelCreateAction {
     }
 
     private void setForumTags(List<ForumTag> tags) {
-        JSONArray array = new JSONArray();
+        ArrayNode array = mapper.createArrayNode();
         for (ForumTag tag : tags) {
-            JSONObject tagJson = new JSONObject();
+            ObjectNode tagJson = mapper.createObjectNode();
             tagJson.put("name", tag.getName());
             tagJson.put("moderated", tag.isModerated());
             tagJson.put("emoji_id", MessageUtils.isEmojiLong(tag.getEmojiIdOrName()) ? tag.getEmojiIdOrName() : null);
             tagJson.put("emoji_name", !MessageUtils.isEmojiLong(tag.getEmojiIdOrName()) ? tag.getEmojiIdOrName() : null);
-            array.put(tagJson);
+            array.add(tagJson);
         }
         setProperty("available_tags", array);
     }
@@ -189,7 +192,7 @@ public class GuildChannelCreateAction {
         return channelType == ChannelType.GUILD_VOICE || channelType == ChannelType.GUILD_STAGE_VOICE;
     }
 
-    private JSONObject getJsonObject() {
+    private JsonNode getJsonObject() {
         return jsonObject;
     }
 
@@ -198,6 +201,6 @@ public class GuildChannelCreateAction {
             ApiClient.post(jsonObject, "/guilds/" + guildId + "/channels");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

@@ -1,4 +1,4 @@
-package org.dimas4ek.wrapper.slashcommand.option;
+package org.dimas4ek.wrapper.command.option;
 
 import lombok.Getter;
 import org.dimas4ek.wrapper.types.OptionType;

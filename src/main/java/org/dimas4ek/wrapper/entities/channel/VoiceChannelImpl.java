@@ -1,28 +1,44 @@
 package org.dimas4ek.wrapper.entities.channel;
 
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 
 public class VoiceChannelImpl extends MessageChannelImpl implements VoiceChannel {
-    private final JSONObject channel;
+    private final JsonNode channel;
+    private final Guild guild;
+    private Integer userLimit;
+    private Integer bitrate;
+    private GuildCategory category;
 
-    public VoiceChannelImpl(JSONObject channel) {
-        super(channel);
+    public VoiceChannelImpl(JsonNode channel, Guild guild) {
+        super(channel, guild);
         this.channel = channel;
+        this.guild = guild;
     }
 
     @Override
     public int getUserLimit() {
-        return channel.getInt("user_limit");
+        if (userLimit != null && channel.has("user_limit")) {
+            userLimit = channel.get("user_limit").asInt();
+        }
+        return userLimit != null ? userLimit : 0;
     }
 
     @Override
     public int getBitrate() {
-        return channel.getInt("bitrate");
+        if (bitrate != null && channel.has("bitrate")) {
+            bitrate = channel.get("bitrate").asInt();
+        }
+        return bitrate != null ? bitrate : 0;
     }
 
     @Override
     public GuildCategory getCategory() {
-        return (GuildCategory) new ChannelImpl(JsonUtils.fetchEntity("/channels/" + channel.getString("parent_id")));
+        if (category == null) {
+            if (channel.has("parent_id")) {
+                category = guild.getCategoryById(channel.get("parent_id").asText());
+            }
+        }
+        return category;
     }
 }

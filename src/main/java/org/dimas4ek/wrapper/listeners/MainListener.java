@@ -1,34 +1,29 @@
 package org.dimas4ek.wrapper.listeners;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class MainListener extends WebSocketAdapter {
+    private final ObjectMapper mapper = new ObjectMapper();
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
-        JSONObject json;
-        try {
-            json = new JSONObject(text);
-        } catch (JSONException e) {
-            System.err.println("Error parsing JSON: " + e.getMessage());
-            return;
-        }
-
-        int op = json.getInt("op");
+        JsonNode json = mapper.readTree(text);
+        System.out.println(json.toPrettyString());
+        int op = json.get("op").asInt();
         if (op == 10) {
-            JSONObject d = json.getJSONObject("d");
-            int heartbeatInterval = d.getInt("heartbeat_interval");
+            JsonNode d = json.get("d");
+            int heartbeatInterval = d.get("heartbeat_interval").asInt();
 
-            JSONObject payload = new JSONObject()
+            JsonNode payload = mapper.createObjectNode()
                     .put("op", 1)
-                    .put("d", JSONObject.NULL);
+                    .putNull("d");
 
             websocket.sendText(payload.toString());
             System.out.println("Sending heartbeat every " + heartbeatInterval + " ms...");

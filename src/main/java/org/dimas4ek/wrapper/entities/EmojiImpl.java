@@ -1,29 +1,39 @@
 package org.dimas4ek.wrapper.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class EmojiImpl implements Emoji {
+    private final JsonNode emoji;
     private final Guild guild;
-    private final JSONObject emoji;
+    private String id;
+    private String name;
+    private List<GuildRole> roles = new ArrayList<>();
+    private User creator;
+    private Boolean isRequireColons;
+    private Boolean isManaged;
+    private Boolean isAnimated;
+    private Boolean isAvailable;
 
-    public EmojiImpl(Guild guild, JSONObject emoji) {
-        this.guild = guild;
+    public EmojiImpl(JsonNode emoji, Guild guild) {
         this.emoji = emoji;
+        this.guild = guild;
     }
 
     @Override
     public String getId() {
-        return emoji.getString("id");
+        if (id == null) {
+            id = emoji.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -33,7 +43,10 @@ public class EmojiImpl implements Emoji {
 
     @Override
     public String getName() {
-        return emoji.getString("name");
+        if (name == null) {
+            name = emoji.get("name").asText();
+        }
+        return name;
     }
 
     @Override
@@ -43,11 +56,10 @@ public class EmojiImpl implements Emoji {
 
     @Override
     public List<GuildRole> getRoles() {
-        List<GuildRole> roles = new ArrayList<>();
-        JSONArray rolesArray = emoji.optJSONArray("roles");
-        if (rolesArray != null) {
-            for (int i = 0; i < rolesArray.length(); i++) {
-                roles.add(getGuild().getRoleById(rolesArray.getString(i)));
+        if (roles == null) {
+            roles = new ArrayList<>();
+            for (JsonNode role : emoji.get("roles")) {
+                roles.add(guild.getRoleById(role.get("id").asText()));
             }
         }
         return roles;
@@ -55,29 +67,44 @@ public class EmojiImpl implements Emoji {
 
     @Override
     public User getCreator() {
-        return emoji.optJSONObject("user") != null
-                ? new UserImpl(emoji.getJSONObject("user"))
-                : null;
+        if (creator == null) {
+            if (emoji.has("user") && emoji.hasNonNull("user")) {
+                creator = new UserImpl(emoji.get("user"));
+            }
+        }
+        return creator;
     }
 
     @Override
     public boolean isRequiredColons() {
-        return emoji.optBoolean("require_colons", false);
+        if (isRequireColons == null) {
+            isRequireColons = emoji.get("require_colons").asBoolean();
+        }
+        return isRequireColons;
     }
 
     @Override
     public boolean isManaged() {
-        return emoji.optBoolean("managed", false);
+        if (isManaged == null) {
+            isManaged = emoji.get("managed").asBoolean();
+        }
+        return isManaged;
     }
 
     @Override
     public boolean isAnimated() {
-        return emoji.optBoolean("animated", false);
+        if (isAnimated == null) {
+            isAnimated = emoji.get("animated").asBoolean();
+        }
+        return isAnimated;
     }
 
     @Override
     public boolean isAvailable() {
-        return emoji.optBoolean("available", false);
+        if (isAvailable == null) {
+            isAvailable = emoji.get("available").asBoolean();
+        }
+        return isAvailable;
     }
 
     @Override

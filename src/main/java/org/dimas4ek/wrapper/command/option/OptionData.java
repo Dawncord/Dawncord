@@ -1,24 +1,30 @@
-package org.dimas4ek.wrapper.slashcommand.option;
+package org.dimas4ek.wrapper.command.option;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.Mentionable;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
-import org.dimas4ek.wrapper.entities.channel.GuildChannelImpl;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
-import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
+import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.message.Attachment;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 import java.util.Map;
 
-@AllArgsConstructor
-@Getter
+//todo add getters
 public class OptionData {
-    private Map<String, Object> data;
+    private final Map<String, Object> data;
+    private final Guild guild;
+
+    public OptionData(Map<String, Object> data, Guild guild) {
+        this.data = data;
+        this.guild = guild;
+    }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
 
     public String getAsString() {
         return String.valueOf(data.get("value"));
@@ -37,21 +43,23 @@ public class OptionData {
     }
 
     public GuildChannel getAsChannel() {
-        return new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + getAsString()));
+        return guild.getChannelById(getAsString());
     }
 
-    public GuildRole getAsRole() {
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + data.get("guildId"))).getRoleById(getAsString());
+    public GuildRoleImpl getAsRole() {
+        return guild.getRoleById(getAsString());
     }
 
     public Mentionable getAsMentionable() {
-        return new Mentionable(getAsString(), (JSONObject) data.get("resolved"));
+        return data.get("resolved") != null
+                ? new Mentionable(getAsString(), (JsonNode) data.get("resolved"))
+                : null;
     }
 
     public Attachment getAsAttachment() {
         if (data.get("resolved") != null) {
-            JSONObject resolved = (JSONObject) data.get("resolved");
-            JSONObject attachment = resolved.getJSONObject("attachments").getJSONObject(getAsString());
+            JsonNode resolved = (JsonNode) data.get("resolved");
+            JsonNode attachment = resolved.get("attachments").get(getAsString());
             return new Attachment(attachment);
         }
         return null;

@@ -1,18 +1,27 @@
 package org.dimas4ek.wrapper.entities.message;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.ISnowflake;
-import org.json.JSONObject;
 
 public class Attachment implements ISnowflake {
-    private final JSONObject attachment;
+    private final JsonNode attachment;
+    private String id;
+    private String filename;
+    private Integer size;
+    private String url;
+    private String proxyUrl;
+    private String contentType;
 
-    public Attachment(JSONObject attachment) {
+    public Attachment(JsonNode attachment) {
         this.attachment = attachment;
     }
 
     @Override
     public String getId() {
-        return attachment.getString("id");
+        if (id == null) {
+            id = attachment.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -21,22 +30,37 @@ public class Attachment implements ISnowflake {
     }
 
     public String getFilename() {
-        return attachment.getString("filename");
+        if (filename == null) {
+            filename = attachment.get("filename").asText();
+        }
+        return filename;
     }
 
     public int getSize() {
-        return attachment.getInt("size");
+        if (size == null) {
+            size = attachment.get("size").asInt();
+        }
+        return size;
     }
 
     public String getUrl() {
-        return attachment.getString("url");
+        if (url == null) {
+            url = attachment.get("url").asText();
+        }
+        return url;
     }
 
     public String getProxyUrl() {
-        return attachment.getString("proxy_url");
+        if (proxyUrl == null) {
+            proxyUrl = attachment.get("proxy_url").asText();
+        }
+        return proxyUrl;
     }
 
     public String getContentType() {
-        return attachment.getString("content_type");
+        if (contentType == null) {
+            contentType = attachment.get("content_type").asText();
+        }
+        return contentType;
     }
 }

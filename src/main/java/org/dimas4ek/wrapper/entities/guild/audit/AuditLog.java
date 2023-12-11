@@ -1,7 +1,11 @@
 package org.dimas4ek.wrapper.entities.guild.audit;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.command.SlashCommand;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.application.CommandPermission;
+import org.dimas4ek.wrapper.entities.channel.thread.Thread;
+import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRuleImpl;
@@ -9,34 +13,43 @@ import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
 import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
 import org.dimas4ek.wrapper.entities.guild.integration.IntegrationImpl;
-import org.dimas4ek.wrapper.entities.thread.Thread;
-import org.dimas4ek.wrapper.entities.thread.ThreadImpl;
-import org.dimas4ek.wrapper.slashcommand.SlashCommand;
 import org.dimas4ek.wrapper.types.AuditLogEvent;
 import org.dimas4ek.wrapper.types.PermissionOverrideType;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.dimas4ek.wrapper.types.AuditLogEvent.*;
 
 public class AuditLog {
+    private final JsonNode audit;
     private final Guild guild;
-    private final JSONObject audit;
+    private List<Entry> entries;
+    private List<User> auditors;
+    private List<Integration> integrations = new ArrayList<>();
+    private List<Webhook> webhooks;
+    private List<GuildEvent> guildEvents;
+    private List<Thread> threads;
+    private List<SlashCommand> slashCommands;
+    private List<AutoModRule> autoModRules;
 
-    public AuditLog(Guild guild, JSONObject audit) {
-        this.guild = guild;
+    public AuditLog(JsonNode audit, Guild guild) {
         this.audit = audit;
+        this.guild = guild;
     }
 
     public List<Entry> getEntries() {
-        return JsonUtils.getEntityList(audit.getJSONArray("audit_log_entries"), Entry::new);
+        if (entries == null) {
+            entries = JsonUtils.getEntityList(audit.get("audit_log_entries"), entry -> new Entry(entry, guild));
+        }
+        return entries;
     }
 
     public List<Entry> getEntriesByUserId(String userId) {
@@ -56,7 +69,10 @@ public class AuditLog {
     }
 
     public List<User> getAuditors() {
-        return JsonUtils.getEntityList(audit.getJSONArray("users"), UserImpl::new);
+        if (auditors == null) {
+            auditors = JsonUtils.getEntityList(audit.get("users"), UserImpl::new);
+        }
+        return auditors;
     }
 
     public User getAuditorById(String userId) {
@@ -64,22 +80,18 @@ public class AuditLog {
     }
 
     public List<Integration> getIntegrations() {
-        List<Integration> integrations = new ArrayList<>();
-        JSONArray guildIntegrations = JsonUtils.fetchArray("/guilds/" + guild.getId() + "/integrations");
-
-        Set<String> auditIntegrationIds = new HashSet<>();
-        JSONArray integrationsArray = audit.getJSONArray("integrations");
-        for (int i = 0; i < integrationsArray.length(); i++) {
-            auditIntegrationIds.add(integrationsArray.getJSONObject(i).getString("id"));
-        }
-
-        for (int j = 0; j < guildIntegrations.length(); j++) {
-            JSONObject guildIntegration = guildIntegrations.getJSONObject(j);
-            if (auditIntegrationIds.contains(guildIntegration.getString("id"))) {
-                integrations.add(new IntegrationImpl(guild, guildIntegration));
+        if (integrations == null) {
+            integrations = new ArrayList<>();
+            Set<String> auditIntegrationIds = new HashSet<>();
+            for (JsonNode auditIntegration : audit.get("integrations")) {
+                auditIntegrationIds.add(auditIntegration.get("id").asText());
+            }
+            for (JsonNode guildIntegration : JsonUtils.fetchArray("/guilds/" + guild.getId() + "/integrations")) {
+                if (auditIntegrationIds.contains(guildIntegration.get("id").asText())) {
+                    integrations.add(new IntegrationImpl(guildIntegration, guild));
+                }
             }
         }
-
         return integrations;
     }
 
@@ -92,7 +104,10 @@ public class AuditLog {
     }
 
     public List<Webhook> getWebhooks() {
-        return JsonUtils.getEntityList(audit.getJSONArray("webhooks"), WebhookImpl::new);
+        if (webhooks == null) {
+            webhooks = JsonUtils.getEntityList(audit.get("webhooks"), webhook -> new WebhookImpl(webhook, guild));
+        }
+        return webhooks;
     }
 
     public Webhook getWebhookById(String webhookId) {
@@ -104,7 +119,10 @@ public class AuditLog {
     }
 
     public List<GuildEvent> getGuildEvents() {
-        return JsonUtils.getEntityList(audit.getJSONArray("guild_scheduled_events"), GuildEventImpl::new);
+        if (guildEvents == null) {
+            guildEvents = JsonUtils.getEntityList(audit.get("guild_scheduled_events"), event -> new GuildEventImpl(event, guild));
+        }
+        return guildEvents;
     }
 
     public GuildEvent getGuildEventById(String eventId) {
@@ -116,7 +134,10 @@ public class AuditLog {
     }
 
     public List<Thread> getThreads() {
-        return JsonUtils.getEntityList(audit.getJSONArray("threads"), ThreadImpl::new);
+        if (threads == null) {
+            threads = JsonUtils.getEntityList(audit.get("threads"), thread -> new ThreadImpl(thread, guild));
+        }
+        return threads;
     }
 
     public Thread getThreadById(String threadId) {
@@ -128,34 +149,67 @@ public class AuditLog {
     }
 
     public List<SlashCommand> getSlashCommands() {
-        return JsonUtils.getEntityList(audit.getJSONArray("application_commands"), SlashCommand::new);
+        if (slashCommands == null) {
+            slashCommands = JsonUtils.getEntityList(audit.get("application_commands"), SlashCommand::new);
+        }
+        return slashCommands;
     }
 
     public List<AutoModRule> getAutoModRules() {
-        return JsonUtils.getEntityList(audit.getJSONArray("auto_moderation_rules"), AutoModRuleImpl::new);
+        if (autoModRules == null) {
+            autoModRules = JsonUtils.getEntityList(audit.get("auto_moderation_rules"), rule -> new AutoModRuleImpl(rule, guild));
+        }
+        return autoModRules;
     }
 
-    public class Entry {
-        private final JSONObject entry;
+    public class Entry implements ISnowflake {
+        private final JsonNode entry;
+        private final Guild guild;
+        private String id;
+        private AuditLogEvent actionType;
+        private User user;
+        private String targetId;
+        private List<Change> changes;
 
-        public Entry(JSONObject entry) {
+        public Entry(JsonNode entry, Guild guild) {
             this.entry = entry;
+            this.guild = guild;
         }
 
+        @Override
         public String getId() {
-            return entry.getString("id");
+            if (id == null) {
+                id = entry.get("id").asText();
+            }
+            return id;
+        }
+
+        @Override
+        public long getIdLong() {
+            return Long.parseLong(getId());
         }
 
         public AuditLogEvent getActionType() {
-            return EnumUtils.getEnumObject(entry, "action_type", AuditLogEvent.class);
+            if (actionType == null) {
+                actionType = EnumUtils.getEnumObject(entry, "action_type", AuditLogEvent.class);
+            }
+            return actionType;
         }
 
         public User getUser() {
-            return new UserImpl(JsonUtils.fetchEntity("/users/" + entry.getString("user_id")));
+            if (user == null) {
+                user = entry.has("user_id")
+                        ? new UserImpl(JsonUtils.fetchEntity("/users/" + entry.get("user_id").asText()))
+                        : null;
+            }
+            return user;
         }
 
         public String getTargetId() {
-            return entry.optString("target_id");
+            if (targetId == null) {
+                targetId = entry.has("target_id") ? entry.get("target_id").asText() : null;
+            }
+            return targetId;
         }
 
         public long getTargetIdLong() {
@@ -163,84 +217,96 @@ public class AuditLog {
         }
 
         public List<Change> getChanges() {
-            JSONArray changes = entry.optJSONArray("changes");
-            return changes != null
-                    ? JsonUtils.getEntityList(changes, Change::new)
-                    : Collections.emptyList();
+            if (changes == null) {
+                changes = entry.has("changes") && entry.hasNonNull("changes")
+                        ? JsonUtils.getEntityList(entry.get("changes"), change -> new Change(change, guild))
+                        : null;
+            }
+            return changes;
         }
 
         public class Change {
-            private final JSONObject change;
+            private final JsonNode change;
+            private final Guild guild;
+            private String key;
+            private Object newValue;
+            private Object oldValue;
 
-            public Change(JSONObject change) {
+            public Change(JsonNode change, Guild guild) {
                 this.change = change;
+                this.guild = guild;
             }
 
             public String getKey() {
-                return change.getString("key");
+                if (key == null) {
+                    key = change.get("key").asText();
+                }
+                return key;
             }
 
             public Object getNewValue() {
-                return change.optString("new_value", null) != null
-                        ? getValue("new_value")
-                        : null;
+                if (newValue == null) {
+                    newValue = change.has("new_value") && change.hasNonNull("new_value")
+                            ? getValue(change, guild, "new_value")
+                            : null;
+                }
+                return newValue;
             }
 
             public Object getOldValue() {
-                return change.optString("old_value", null) != null
-                        ? getValue("old_value")
-                        : null;
+                if (oldValue == null) {
+                    oldValue = change.has("old_value") && change.hasNonNull("old_value")
+                            ? getValue(change, guild, "old_value")
+                            : null;
+                }
+                return oldValue;
             }
 
-            private Object getValue(String key) {
-                if (getActionType() == APPLICATION_COMMAND_PERMISSION_UPDATE) {
-                    return new CommandPermission(change.getJSONObject(key));
+            //todo fix this
+            private Object getValue(JsonNode change, Guild guild, String key) {
+                if (actionType == APPLICATION_COMMAND_PERMISSION_UPDATE) {
+                    return new CommandPermission(change.get(key));
                 }
                 if (isAutoModActionType()) {
-                    return new AutoModRuleImpl(JsonUtils.fetchEntity("/guilds/" + guild.getId() + "/auto-moderation/rules/" + getTargetId()));
+                    return guild.getAutoModRuleById(getTargetId());
                 }
-                if (change.get(key) instanceof JSONArray valueArray) {
-                    switch (getKey()) {
-                        case "permission_overwrites" -> {
-                            return IntStream.range(0, valueArray.length())
-                                    .mapToObj(valueArray::getJSONObject)
-                                    .map(value -> new PermissionOverride(
-                                            value.getString("id"),
-                                            EnumUtils.getEnumObject(value, "type", PermissionOverrideType.class),
-                                            EnumUtils.getEnumListFromLong(value, "allow", PermissionType.class),
-                                            EnumUtils.getEnumListFromLong(value, "deny", PermissionType.class)
-                                    ))
-                                    .collect(Collectors.toList());
-                        }
-                        case "applied_tags" -> {
-                            return IntStream.range(0, valueArray.length())
-                                    .mapToObj(valueArray::getString)
-                                    .collect(Collectors.toList());
-                        }
-                        case "available_tags" -> {
-                            return IntStream.range(0, valueArray.length())
-                                    .mapToObj(valueArray::getJSONObject)
-                                    .map(value -> new ForumTag(
-                                            value.getString("id"),
-                                            value.getString("name"),
-                                            value.getBoolean("moderated"),
-                                            !value.isNull("emoji_id") ? value.getString("emoji_id") : value.getString("emoji_name")
-                                    ))
-                                    .collect(Collectors.toList());
-                        }
-                        case "$add", "$remove" -> {
-                            return IntStream.range(0, valueArray.length())
-                                    .mapToObj(valueArray::getString)
-                                    .map(guild::getRoleById)
-                                    .collect(Collectors.toList());
-                        }
-                        default -> {
-                            //todo add more keys support if needed
-                            return null;
-                        }
-                    }
+                JsonNode valueArray = change.get(key);
+                if (valueArray != null && valueArray.isArray()) {
+                    return switch (key) {
+                        case "permission_overwrites" -> IntStream.range(0, valueArray.size())
+                                .mapToObj(index -> {
+                                    JsonNode value = valueArray.get(index);
+                                    String id = value.get("id").asText();
+                                    PermissionOverrideType type = EnumUtils.getEnumObject(value, "type", PermissionOverrideType.class);
+                                    List<PermissionType> allow = EnumUtils.getEnumListFromLong(value, "allow", PermissionType.class);
+                                    List<PermissionType> deny = EnumUtils.getEnumListFromLong(value, "deny", PermissionType.class);
+                                    return new PermissionOverride(id, type, allow, deny);
+                                })
+                                .collect(Collectors.toList());
+
+                        case "applied_tags" -> IntStream.range(0, valueArray.size())
+                                .mapToObj(index -> valueArray.get(index).asText())
+                                .collect(Collectors.toList());
+
+                        case "available_tags" -> IntStream.range(0, valueArray.size())
+                                .mapToObj(index -> {
+                                    JsonNode value = valueArray.get(index);
+                                    String id = value.get("id").asText();
+                                    String name = value.get("name").asText();
+                                    boolean moderated = value.get("moderated").asBoolean();
+                                    String emojiId = value.hasNonNull("emoji_id") ? value.get("emoji_id").asText() : value.get("emoji_name").asText();
+                                    return new ForumTag(id, name, moderated, emojiId);
+                                })
+                                .collect(Collectors.toList());
+
+                        case "$add", "$remove" -> IntStream.range(0, valueArray.size())
+                                .mapToObj(index -> guild.getRoleById(valueArray.get(index).asText()))
+                                .collect(Collectors.toList());
+
+                        default -> null; //todo add more keys support if needed
+                    };
                 } else {
-                    return change.get(key);
+                    return change.get(key).asText();
                 }
             }
 

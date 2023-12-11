@@ -1,27 +1,29 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.utils.AttachmentUtils;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
 
 public class GuildStickerCreateAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final Guild guild;
-    private final JSONObject jsonObject;
-    private boolean hasChanges = false;
     private File file;
+    private boolean hasChanges = false;
 
     public GuildStickerCreateAction(Guild guild) {
         this.guild = guild;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -61,10 +63,10 @@ public class GuildStickerCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            MultipartBody.Builder multipartBuilder = AttachmentUtils.creteMultipartBuilder(jsonObject, List.of(file));
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, List.of(file));
             ApiClient.postAttachments(multipartBuilder, "/guilds/" + guild.getId() + "/stickers");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

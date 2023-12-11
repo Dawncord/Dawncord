@@ -1,16 +1,22 @@
 package org.dimas4ek.wrapper.entities.guild.role;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Tags {
-    private final JSONObject tags;
+    private final JsonNode tags;
+    private String botId;
+    private String integrationId;
+    private String subscriptionId;
 
-    public Tags(JSONObject tags) {
+    public Tags(JsonNode tags) {
         this.tags = tags;
     }
 
     public String getBotId() {
-        return tags.getString("bot_id");
+        if (botId == null) {
+            botId = tags.has("bot_id") ? tags.get("bot_id").asText() : null;
+        }
+        return botId;
     }
 
     public long getBotIdLong() {
@@ -18,7 +24,10 @@ public class Tags {
     }
 
     public String getIntegrationId() {
-        return tags.getString("integration_id");
+        if (integrationId == null) {
+            integrationId = tags.has("integration_id") ? tags.get("integration_id").asText() : null;
+        }
+        return integrationId;
     }
 
     public long getIntegrationIdLong() {
@@ -26,7 +35,10 @@ public class Tags {
     }
 
     public String getSubscriptionId() {
-        return tags.getString("subscription_listing_id");
+        if (subscriptionId == null) {
+            subscriptionId = tags.has("subscription_listing_id") ? tags.get("subscription_listing_id").asText() : null;
+        }
+        return subscriptionId;
     }
 
     public long getSubscriptionIdLong() {

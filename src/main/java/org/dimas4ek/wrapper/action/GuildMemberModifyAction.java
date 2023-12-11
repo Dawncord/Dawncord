@@ -1,27 +1,30 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
-import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class GuildMemberModifyAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String guildId;
     private final String userId;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public GuildMemberModifyAction(String guildId, String userId) {
         this.guildId = guildId;
         this.userId = userId;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -61,7 +64,7 @@ public class GuildMemberModifyAction {
     }
 
     public GuildMemberModifyAction removeTimeout() {
-        setProperty("communication_disabled_until", JSONObject.NULL);
+        setProperty("communication_disabled_until", NullNode.instance);
         return this;
     }
 
@@ -79,6 +82,6 @@ public class GuildMemberModifyAction {
             ApiClient.patch(jsonObject, "/guilds/" + guildId + "/members/" + userId);
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

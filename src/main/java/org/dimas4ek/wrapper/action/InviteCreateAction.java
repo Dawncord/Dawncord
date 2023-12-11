@@ -1,23 +1,25 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.TargetType;
-import org.json.JSONObject;
 
 public class InviteCreateAction {
-    private final JSONObject jsonObject;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final GuildChannel channel;
     private boolean hasChanges = false;
 
     public InviteCreateAction(GuildChannel channel) {
         this.channel = channel;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -65,6 +67,6 @@ public class InviteCreateAction {
             ApiClient.post(jsonObject, "/channels/" + channel.getId() + "/invites");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

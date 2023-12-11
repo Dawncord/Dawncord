@@ -1,28 +1,30 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.types.*;
 import org.dimas4ek.wrapper.utils.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 public class GuildCreateAction {
-    private final JSONObject jsonObject;
-    private boolean hasChanges = false;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private int roleId = 1;
     private int channelId = 1;
+    private boolean hasChanges = false;
 
     public GuildCreateAction() {
-        this.jsonObject = new JSONObject();
-        this.jsonObject.put("roles", new JSONArray());
-        this.jsonObject.put("channels", new JSONArray());
+        this.jsonObject = mapper.createObjectNode();
+        this.jsonObject.set("roles", mapper.createArrayNode());
+        this.jsonObject.set("channels", mapper.createArrayNode());
     }
 
     private void setProperty(String name, Object value) {
-        jsonObject.put(name, value);
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -59,7 +61,7 @@ public class GuildCreateAction {
         try {
             Method executeMethod = GuildRoleCreateAction.class.getDeclaredMethod("getJsonObject");
             executeMethod.setAccessible(true);
-            jsonObject.getJSONArray("roles").put(((JSONObject) executeMethod.invoke(action)).put("id", roleId++));
+            ((ArrayNode) jsonObject.get("roles")).add(((ObjectNode) executeMethod.invoke(action)).put("id", roleId++));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,8 +106,8 @@ public class GuildCreateAction {
     }
 
     private void createGuildChannel(ChannelType type, String name) {
-        jsonObject.getJSONArray("channels").put(
-                new JSONObject()
+        ((ArrayNode) jsonObject.get("channels")).add(
+                mapper.createObjectNode()
                         .put("id", channelId++)
                         .put("type", type.getValue())
                         .put("name", name)
@@ -117,7 +119,7 @@ public class GuildCreateAction {
             ApiClient.post(jsonObject, "/guilds");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 
     public class CategoryCreateAction {
@@ -145,8 +147,8 @@ public class GuildCreateAction {
         }
 
         private void createGuildChannelUnderCategory(ChannelType type, String name) {
-            jsonObject.getJSONArray("channels").put(
-                    new JSONObject()
+            ((ArrayNode) jsonObject.get("channels")).add(
+                    mapper.createObjectNode()
                             .put("id", channelId++)
                             .put("type", type.getValue())
                             .put("name", name)

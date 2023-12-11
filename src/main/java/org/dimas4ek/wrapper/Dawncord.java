@@ -1,5 +1,9 @@
 package org.dimas4ek.wrapper;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -7,31 +11,20 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.dimas4ek.wrapper.action.GuildCreateAction;
-import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.event.MessageEvent;
 import org.dimas4ek.wrapper.event.SlashCommandEvent;
+import org.dimas4ek.wrapper.listeners.InteractionListener;
 import org.dimas4ek.wrapper.listeners.MainListener;
 import org.dimas4ek.wrapper.listeners.MessageListener;
-import org.dimas4ek.wrapper.listeners.SlashCommandListener;
-import org.dimas4ek.wrapper.slashcommand.SlashCommand;
-import org.dimas4ek.wrapper.slashcommand.option.Option;
 import org.dimas4ek.wrapper.types.GatewayIntent;
-import org.dimas4ek.wrapper.types.Locale;
-import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class Dawncord {
+    private final ObjectMapper mapper = new ObjectMapper();
     private final WebSocket webSocket;
     private static Consumer<MessageEvent> defaultMessageHandler;
     private static Map<String, Consumer<SlashCommandEvent>> slashCommandHandlers = new HashMap<>();
@@ -48,7 +41,7 @@ public class Dawncord {
 
         webSocket.addListener(new MainListener());
         webSocket.addListener(new MessageListener());
-        webSocket.addListener(new SlashCommandListener());
+        webSocket.addListener(new InteractionListener());
         //todo add GuildListener
 
         assignConstants(token);
@@ -74,15 +67,13 @@ public class Dawncord {
                 .url(Constants.API_URL + "/applications/@me")
                 .addHeader("Authorization", "Bot " + token)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        JSONObject jsonObject = new JSONObject(body.string());
-                        Constants.APPLICATION_ID = jsonObject.getString("id");
-                        Constants.CLIENT_KEY = jsonObject.getString("verify_key");
-                    }
-                }
+
+        try (Response response = client.newCall(request).execute();
+             ResponseBody body = response.body()) {
+            if (response.isSuccessful() && body != null) {
+                JsonNode node = mapper.readTree(body.string());
+                Constants.APPLICATION_ID = node.get("id").asText();
+                Constants.CLIENT_KEY = node.get("verify_key").asText();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -124,127 +115,18 @@ public class Dawncord {
             throw new RuntimeException(e);
         }
 
-        JSONObject identify = new JSONObject()
+        ObjectNode identify = mapper.createObjectNode()
                 .put("op", 2)
-                .put("d", new JSONObject()
+                .set("d", mapper.createObjectNode()
                         .put("token", Constants.BOT_TOKEN)
                         .put("intents", intentsValue)
-                        .put("properties", new JSONObject()
+                        .set("properties", mapper.createObjectNode()
                                 .put("os", "linux")
                                 .put("browser", "discord-java-gateway")
-                                .put("device", "discord-java-gateway"))
+                                .put("device", "discord-java-gateway")
+                        )
                 );
 
         webSocket.sendText(identify.toString());
-    }
-
-    public void registerSlashCommands(SlashCommand... slashCommands) {
-        for (SlashCommand slashCommand : slashCommands) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", 1);
-            jsonObject.put("name", slashCommand.getName());
-            jsonObject.put("description", slashCommand.getDescription());
-
-            try {
-                setOptions(slashCommand, jsonObject);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-
-            setLocalizations(slashCommand, jsonObject);
-
-            String url = "/applications/" + Constants.APPLICATION_ID + "/commands";
-
-            ApiClient.post(jsonObject, url);
-        }
-    }
-
-    public List<SlashCommand> getSlashCommands() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/applications/" + Constants.APPLICATION_ID + "/commands"), SlashCommand::new);
-    }
-
-    private static void setLocalizations(SlashCommand slashCommand, JSONObject jsonObject) {
-        if (!slashCommand.getNameLocalizations().isEmpty()) {
-            JSONObject nameLocalizations = new JSONObject();
-            for (Map.Entry<Locale, String> name : slashCommand.getNameLocalizations().entrySet()) {
-                nameLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
-            }
-            jsonObject.put("name_localizations", nameLocalizations);
-        }
-        if (!slashCommand.getDescriptionLocalizations().isEmpty()) {
-            JSONObject descriptionLocalizations = new JSONObject();
-            for (Map.Entry<Locale, String> name : slashCommand.getDescriptionLocalizations().entrySet()) {
-                descriptionLocalizations.put(name.getKey().getLocaleCode(), name.getValue());
-            }
-            jsonObject.put("description_localizations", descriptionLocalizations);
-        }
-    }
-
-    private static void setOptions(SlashCommand slashCommand, JSONObject jsonObject) {
-        List<Option> options = slashCommand.getOptions();
-        if (!options.isEmpty()) {
-            JSONArray optionsJson = new JSONArray();
-            boolean foundFalse = false;
-            for (Option option : options) {
-                if (option.isRequired()) {
-                    if (foundFalse) {
-                        throw new IllegalArgumentException("Required options must be placed before non-required options");
-                    }
-                } else {
-                    foundFalse = true;
-                }
-                optionsJson.put(setOption(option));
-            }
-            jsonObject.put("options", optionsJson);
-        }
-    }
-
-    private static JSONObject setOption(Option option) {
-        JSONObject optionJson = new JSONObject();
-        optionJson.put("type", option.getType().getValue());
-        optionJson.put("name", option.getName());
-        optionJson.put("description", option.getDescription());
-        if (option.isRequired()) {
-            optionJson.put("required", true);
-        }
-        if (option.isAutocomplete()) {
-            optionJson.put("autocomplete", true);
-        }
-        if (!option.getChoices().isEmpty()) {
-            setChoices(option, optionJson);
-        }
-        return optionJson;
-    }
-
-    private static void setChoices(Option option, JSONObject optionJson) {
-        JSONArray choicesJson = new JSONArray();
-        for (Option.Choice choice : option.getChoices()) {
-            JSONObject choiceJson = new JSONObject();
-            choiceJson.put("name", choice.getName());
-            choiceJson.put("value", choice.getValue());
-            choicesJson.put(choiceJson);
-        }
-        optionJson.put("choices", choicesJson);
-    }
-
-    public List<Guild> getGuilds() {
-        List<Guild> guilds = new ArrayList<>();
-        JSONArray array = JsonUtils.fetchArray("/users/@me/guilds");
-        for (int i = 0; i < array.length(); i++) {
-            guilds.add(new GuildImpl(JsonUtils.fetchEntity("/guilds/" + array.getJSONObject(i).getString("id"))));
-        }
-        return guilds;
-    }
-
-    public void createGuild(Consumer<GuildCreateAction> handler) {
-        GuildCreateAction action = new GuildCreateAction();
-        handler.accept(action);
-        try {
-            Method executeMethod = GuildCreateAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

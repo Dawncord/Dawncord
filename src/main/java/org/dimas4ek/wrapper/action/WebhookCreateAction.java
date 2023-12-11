@@ -1,21 +1,23 @@
 package org.dimas4ek.wrapper.action;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.utils.IOUtils;
-import org.json.JSONObject;
 
 public class WebhookCreateAction {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectNode jsonObject;
     private final String channelId;
-    private final JSONObject jsonObject;
     private boolean hasChanges = false;
 
     public WebhookCreateAction(String channelId) {
         this.channelId = channelId;
-        this.jsonObject = new JSONObject();
+        this.jsonObject = mapper.createObjectNode();
     }
 
     private void setProperty(String key, Object value) {
-        jsonObject.put(key, value);
+        jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
     }
 
@@ -34,6 +36,6 @@ public class WebhookCreateAction {
             ApiClient.post(jsonObject, "/channels/" + channelId + "/webhooks");
             hasChanges = false;
         }
-        jsonObject.clear();
+        jsonObject.removeAll();
     }
 }

@@ -1,27 +1,37 @@
 package org.dimas4ek.wrapper.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.entities.image.Avatar;
 import org.dimas4ek.wrapper.types.NitroType;
 import org.dimas4ek.wrapper.types.UserFlag;
 import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class UserImpl implements User {
-    private final JSONObject user;
+    private final JsonNode user;
+    private String id;
+    private String globalName;
+    private String username;
+    private Avatar avatar;
+    private List<UserFlag> flags;
+    private List<UserFlag> publicFlags;
+    private Boolean hasNitro;
+    private NitroType nitroType;
+    private Boolean isBot;
 
-    public UserImpl(JSONObject user) {
+    public UserImpl(JsonNode user) {
         this.user = user;
+        this.id = user.get("id").asText();
     }
 
     @Override
     public String getId() {
-        return user.getString("id");
+        if (id == null) {
+            id = user.get("id").asText();
+        }
+        return id;
     }
 
     @Override
@@ -31,67 +41,68 @@ public class UserImpl implements User {
 
     @Override
     public String getGlobalName() {
-        return user.getString("global_name");
+        if (globalName == null) {
+            globalName = user.get("global_name").asText();
+        }
+        return globalName;
     }
 
     @Override
     public String getUsername() {
-        return user.getString("username");
+        if (username == null) {
+            username = user.get("username").asText();
+        }
+        return username;
     }
 
     @Override
     public Avatar getAvatar() {
-        return !user.isNull("avatar")
-                ? new Avatar(getId(), user.getString("avatar"))
-                : null;
+        if (avatar == null) {
+            avatar = user.has("avatar") && user.hasNonNull("avatar")
+                    ? new Avatar(getId(), user.get("avatar").asText())
+                    : null;
+        }
+        return avatar;
     }
 
     @Override
     public List<UserFlag> getFlags() {
-        return EnumUtils.getEnumListFromLong(user, "flags", UserFlag.class);
-        /*return getUserFlags("flags");*/
+        if (flags == null) {
+            flags = EnumUtils.getEnumListFromLong(user, "flags", UserFlag.class);
+        }
+        return flags;
     }
 
     @Override
     public List<UserFlag> getPublicFlags() {
-        return EnumUtils.getEnumListFromLong(user, "public_flags", UserFlag.class);
-        /*return getUserFlags("public_flags");*/
+        if (publicFlags == null) {
+            publicFlags = EnumUtils.getEnumListFromLong(user, "public_flags", UserFlag.class);
+        }
+        return publicFlags;
     }
 
     @Override
     public boolean hasNitro() {
-        return user.has("premium_type") || user.get("premium_type") != null;
+        if (hasNitro == null) {
+            hasNitro = user.has("premium_type") || user.get("premium_type") != null;
+        }
+        return hasNitro;
     }
 
     @Override
     public NitroType getNitroType() {
-        return EnumUtils.getEnumObject(user, "premium_type", NitroType.class);
-        /*for (NitroType type : NitroType.values()) {
-            if (user.getInt("premium_type") == type.getValue()) {
-                return type;
-            }
+        if (nitroType == null) {
+            nitroType = EnumUtils.getEnumObject(user, "premium_type", NitroType.class);
         }
-        return null;*/
-    }
-
-    @NotNull
-    private List<String> getUserFlags(String flagsJson) {
-        if (user.has(flagsJson) || user.getInt(flagsJson) != 0) {
-            List<String> flags = new ArrayList<>();
-            long flagsFromJson = Long.parseLong(String.valueOf(user.getInt(flagsJson)));
-            for (UserFlag flag : UserFlag.values()) {
-                if ((flagsFromJson & flag.getValue()) != 0) {
-                    flags.add(flag.name());
-                }
-            }
-            return flags;
-        }
-        return Collections.emptyList();
+        return nitroType;
     }
 
     @Override
     public boolean isBot() {
-        return Constants.APPLICATION_ID.equals(user.getString("id"));
+        if (isBot == null) {
+            isBot = Constants.APPLICATION_ID.equals(user.get("id").asText());
+        }
+        return isBot;
     }
 
     @Override

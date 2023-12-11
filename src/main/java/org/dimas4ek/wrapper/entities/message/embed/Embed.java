@@ -15,10 +15,10 @@ public class Embed {
     private String url;
     private ZonedDateTime timestamp;
     private int color;
-    private Embed.Footer footer;
-    private Embed.EmbedImage image;
-    private Embed.EmbedImage thumbnail;
-    private Embed.Author author;
+    private Footer footer;
+    private EmbedImage image;
+    private EmbedImage thumbnail;
+    private Author author;
     private List<Field> fields;
 
     @Getter
@@ -57,7 +57,6 @@ public class Embed {
             this.iconUrl = iconUrl;
         }
     }
-
 
     @Getter
     public static class EmbedImage {

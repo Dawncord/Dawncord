@@ -1,47 +1,50 @@
 package org.dimas4ek.wrapper.entities.application.team;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.types.MembershipState;
 import org.dimas4ek.wrapper.types.TeamMemberRole;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
-import org.json.JSONObject;
 
 public class TeamMemberImpl implements TeamMember {
+    private final JsonNode member;
     private final Team team;
-    private final JSONObject member;
+    private User user;
+    private TeamMemberRole role;
+    private MembershipState membershipState;
 
-    public TeamMemberImpl(Team team, JSONObject member) {
-        this.team = team;
+    public TeamMemberImpl(JsonNode member, Team team) {
         this.member = member;
+        this.team = team;
     }
 
     @Override
     public User getUser() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + member.getJSONObject("user").getString("id")));
+        if (user == null) {
+            user = new UserImpl(JsonUtils.fetchEntity("/users/" + member.get("user").get("id").asText()));
+        }
+        return user;
     }
 
     @Override
     public TeamMemberRole getRole() {
-        for (TeamMemberRole role : TeamMemberRole.values()) {
+        if (role == null) {
             if (getUser().getId().equals(team.getOwner().getId())) {
-                return TeamMemberRole.OWNER;
-            } else if (role.getValue().equals(member.getString("role"))) {
-                return role;
+                role = TeamMemberRole.OWNER;
+            } else {
+                role = EnumUtils.getEnumObject(member, "role", TeamMemberRole.class);
             }
         }
-        return null;
+        return role;
     }
 
     @Override
     public MembershipState getMembershipState() {
-        return EnumUtils.getEnumObject(member, "membership_state", MembershipState.class);
-        /*for (MembershipState state : MembershipState.values()) {
-            if (state.getValue() == member.getInt("membership_state")) {
-                return state;
-            }
+        if (membershipState == null) {
+            membershipState = EnumUtils.getEnumObject(member, "membership_state", MembershipState.class);
         }
-        return null;*/
+        return membershipState;
     }
 }

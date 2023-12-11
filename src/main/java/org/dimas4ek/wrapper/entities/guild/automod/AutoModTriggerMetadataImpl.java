@@ -1,61 +1,89 @@
 package org.dimas4ek.wrapper.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.types.KeywordPreset;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AutoModTriggerMetadataImpl implements AutoModTriggerMetadata {
-    private final JSONObject metadata;
+    private final JsonNode metadata;
+    private List<String> keywordFilters;
+    private List<KeywordPreset> presets;
+    private List<String> allows;
+    private Integer mentionLimit;
+    private Boolean isRaidProtected;
 
-    public AutoModTriggerMetadataImpl(JSONObject metadata) {
+    public AutoModTriggerMetadataImpl(JsonNode metadata) {
         this.metadata = metadata;
+    }
+
+    protected AutoModTriggerMetadataImpl(List<String> keywordFilter, List<KeywordPreset> presets, List<String> allows, int mentionLimit, boolean raidProtected) {
+        this.metadata = null;
+        this.keywordFilters = keywordFilter;
+        this.presets = presets;
+        this.allows = allows;
+        this.mentionLimit = mentionLimit;
+        this.isRaidProtected = raidProtected;
     }
 
     @Override
     public List<String> getKeywordFilters() {
-        return getStringList("keyword_filter");
+        if (keywordFilters == null) {
+            assert metadata != null;
+            keywordFilters = getStringList(metadata, "keyword_filter");
+        }
+        return keywordFilters;
     }
 
     @Override
     public List<KeywordPreset> getPresets() {
-        JSONArray presetsArray = metadata.optJSONArray("presets");
-        if (presetsArray != null) {
-            return EnumUtils.getEnumList(metadata.getJSONArray("presets"), KeywordPreset.class);
+        if (presets == null) {
+            assert metadata != null;
+            presets = metadata.has("presets") && metadata.hasNonNull("presets")
+                    ? EnumUtils.getEnumList(metadata.get("presets"), KeywordPreset.class)
+                    : null;
         }
-        return Collections.emptyList();
+        return presets;
     }
 
     @Override
     public List<String> getAllows() {
-        return getStringList("allow_list");
+        if (allows == null) {
+            assert metadata != null;
+            allows = getStringList(metadata, "allow_list");
+        }
+        return allows;
     }
 
     @Override
     public int getMentionLimit() {
-        return metadata.getInt("mention_total_limit");
+        if (mentionLimit == null) {
+            assert metadata != null;
+            mentionLimit = metadata.get("mention_total_limit").asInt();
+        }
+        return mentionLimit;
     }
 
     @Override
     public boolean isRaidProtected() {
-        return metadata.getBoolean("mention_raid_protection_enabled");
+        if (isRaidProtected == null) {
+            assert metadata != null;
+            isRaidProtected = metadata.get("mention_raid_protection_enabled").asBoolean();
+        }
+        return isRaidProtected;
     }
 
     @NotNull
-    private List<String> getStringList(String key) {
-        JSONArray array = metadata.optJSONArray(key);
-        if (array != null) {
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < array.length(); i++) {
-                list.add(array.getString(i));
+    private List<String> getStringList(JsonNode metadata, String key) {
+        List<String> list = new ArrayList<>();
+        for (JsonNode node : metadata) {
+            if (node.has(key)) {
+                list.add(node.asText());
             }
-            return list;
         }
-        return Collections.emptyList();
+        return list;
     }
 }
