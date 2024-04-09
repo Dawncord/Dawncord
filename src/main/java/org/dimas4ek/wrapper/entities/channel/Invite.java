@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.entities.channel;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
 import org.dimas4ek.wrapper.types.TargetType;
 
 import java.time.ZonedDateTime;
@@ -31,7 +31,7 @@ public interface Invite {
 
     ZonedDateTime getExpirationTimestamp();
 
-    GuildEvent getGuildEvent();
+    GuildScheduledEvent getGuildEvent();
 
     int getMaxAge();
 

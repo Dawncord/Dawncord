@@ -7,8 +7,8 @@ import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEventImpl;
 import org.dimas4ek.wrapper.types.TargetType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
 import org.dimas4ek.wrapper.utils.JsonUtils;
@@ -30,7 +30,7 @@ public class InviteImpl implements Invite {
     private Integer totalMembersCount;
     private ZonedDateTime creationTimestamp;
     private ZonedDateTime expirationTimestamp;
-    private GuildEvent guildEvent;
+    private GuildScheduledEvent guildEvent;
     private Integer maxAge;
     private Integer uses;
     private Boolean isTemporary;
@@ -134,9 +134,9 @@ public class InviteImpl implements Invite {
     }
 
     @Override
-    public GuildEvent getGuildEvent() {
+    public GuildScheduledEvent getGuildEvent() {
         if (guildEvent == null) {
-            guildEvent = invite.has("guild_scheduled_event") ? new GuildEventImpl(invite.get("guild_scheduled_event"), guild) : null;
+            guildEvent = invite.has("guild_scheduled_event") ? new GuildScheduledEventImpl(invite.get("guild_scheduled_event"), guild) : null;
         }
         return guildEvent;
     }

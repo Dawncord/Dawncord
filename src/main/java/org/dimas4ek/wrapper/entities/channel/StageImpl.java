@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.entities.guild.Guild;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEventImpl;
 import org.dimas4ek.wrapper.types.StagePrivacyLevel;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
@@ -18,7 +18,7 @@ public class StageImpl implements Stage {
     private GuildChannel channel;
     private String topic;
     private Boolean isDiscoverable;
-    private GuildEvent guildEvent;
+    private GuildScheduledEvent guildEvent;
 
     public StageImpl(JsonNode stage, Guild guild) {
         this.stage = stage;
@@ -73,9 +73,9 @@ public class StageImpl implements Stage {
     }
 
     @Override
-    public GuildEvent getGuildEvent() {
+    public GuildScheduledEvent getGuildEvent() {
         if (guildEvent == null) {
-            guildEvent = new GuildEventImpl(
+            guildEvent = new GuildScheduledEventImpl(
                     JsonUtils.fetchEntityParams(
                             "/guilds/" + getGuild().getId() + "/scheduled-events/" + stage.get("guild_scheduled_event_id").asText(),
                             Map.of("with_user_count", "true")

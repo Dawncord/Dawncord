@@ -12,7 +12,7 @@ import org.dimas4ek.wrapper.entities.channel.Stage;
 import org.dimas4ek.wrapper.entities.channel.thread.Thread;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRoleImpl;
 import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeScreen;
@@ -188,13 +188,13 @@ public interface Guild extends ISnowflake {
 
     List<Thread> getActiveThreadsByName(String threadName);
 
-    List<GuildEvent> getGuildEvents();
+    List<GuildScheduledEvent> getGuildEvents();
 
-    GuildEvent getGuildEventById(String eventId);
+    GuildScheduledEvent getGuildEventById(String eventId);
 
-    GuildEvent getGuildEventById(long eventId);
+    GuildScheduledEvent getGuildEventById(long eventId);
 
-    List<GuildEvent> getGuildEventsByName(String eventName);
+    List<GuildScheduledEvent> getGuildEventsByName(String eventName);
 
     void modifyGuildEvent(String eventId, Consumer<GuildEventModifyAction> handler);
 

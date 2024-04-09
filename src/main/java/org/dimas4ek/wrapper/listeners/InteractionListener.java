@@ -16,11 +16,12 @@ import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.event.SlashCommandEvent;
-import org.dimas4ek.wrapper.event.SlashCommandEventImpl;
 import org.dimas4ek.wrapper.interaction.Interaction;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,9 +77,16 @@ public class InteractionListener extends WebSocketAdapter {
                 Interaction interaction = new Interaction(interactionId, interactionToken);
                 InteractionData interactionData = new InteractionData(options, slashCommand, interaction, guild, guildMember, guildChannel);
 
-                SlashCommandEvent slashCommandEvent = new SlashCommandEventImpl(interactionData);
+                SlashCommandEvent slashCommandEvent = new SlashCommandEvent(interactionData);
 
-                Dawncord.processSlashCommand(slashCommandEvent);
+                try {
+                    Method method = Dawncord.class.getDeclaredMethod("processSlashCommand", SlashCommandEvent.class);
+                    method.setAccessible(true);
+                    method.invoke(null, slashCommandEvent);
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                         InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

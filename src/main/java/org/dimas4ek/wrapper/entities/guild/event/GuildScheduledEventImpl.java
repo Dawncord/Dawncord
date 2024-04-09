@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class GuildEventImpl implements GuildEvent {
+public class GuildScheduledEventImpl implements GuildScheduledEvent {
     private final JsonNode event;
     private final Guild guild;
     private String id;
@@ -41,7 +41,7 @@ public class GuildEventImpl implements GuildEvent {
     private Integer memberCount;
     private GuildEventImage image;
 
-    public GuildEventImpl(JsonNode event, Guild guild) {
+    public GuildScheduledEventImpl(JsonNode event, Guild guild) {
         this.event = event;
         this.guild = guild;
     }

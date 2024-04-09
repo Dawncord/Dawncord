@@ -4,7 +4,6 @@ import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
-import org.dimas4ek.wrapper.entities.application.Activity;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.thread.Thread;
@@ -54,8 +53,6 @@ public interface Message extends ISnowflake {
     void deleteReactions(String emojiIdOrName);
 
     void deleteReactions();
-
-    Activity getActivity();
 
     Application getApplication();
 

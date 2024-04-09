@@ -1,50 +1,78 @@
 package org.dimas4ek.wrapper.event;
 
-import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.command.option.OptionData;
 import org.dimas4ek.wrapper.entities.User;
-import org.dimas4ek.wrapper.entities.Webhook;
-import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
+import org.dimas4ek.wrapper.interaction.InteractionData;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-public interface SlashCommandEvent {
-    String getCommandName();
+public class SlashCommandEvent implements Event {
+    private final InteractionData data;
 
-    void reply(String message, Consumer<MessageCreateAction> handler);
+    public SlashCommandEvent(InteractionData data) {
+        this.data = data;
+    }
 
-    void reply(String message);
+    @Override
+    public Guild getGuild() {
+        return data.getGuild();
+    }
 
-    void reply(Consumer<MessageCreateAction> handler);
+    public String getCommandName() {
+        return data.getSlashCommand().getName();
+    }
 
-    GuildMember getMember();
+    public void reply(String message, Consumer<MessageCreateAction> handler) {
+        ActionExecutor.createMessage(handler, message, data.getGuildChannel().getId(), data);
+    }
 
-    User getUser();
+    public void reply(String message) {
+        reply(message, null);
+    }
 
-    Guild getGuild();
+    public void reply(Consumer<MessageCreateAction> handler) {
+        reply(null, handler);
+    }
 
-    GuildChannel getChannel();
+    public GuildMember getMember() {
+        return data.getGuildMember();
+    }
 
-    GuildChannel getChannelById(String channelId);
+    public User getUser() {
+        return getMember().getUser();
+    }
 
-    GuildChannel getChannelById(long channelId);
+    public GuildChannel getChannel() {
+        return data.getGuildChannel();
+    }
 
-    List<OptionData> getOptions();
+    public GuildChannel getChannelById(String channelId) {
+        return getGuild().getChannelById(channelId);
+    }
 
-    OptionData getOption(String name);
+    public GuildChannel getChannelById(long channelId) {
+        return getChannelById(String.valueOf(channelId));
+    }
 
-    Application getApplication();
+    public List<OptionData> getOptions() {
+        List<OptionData> optionDataList = new ArrayList<>();
+        for (Map<String, Object> map : data.getOptions()) {
+            OptionData optionData = new OptionData(map, getGuild());
+            optionDataList.add(optionData);
+        }
 
-    void editApplication(Consumer<ApplicationModifyAction> handler);
+        return optionDataList;
+    }
 
-    Webhook getWebhookById(String webhookId);
-
-    Webhook getWebhookById(long webhookId);
-
-    Webhook getWebhookByToken(String webhookId, String webhookToken);
+    public OptionData getOption(String name) {
+        return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
+    }
 }

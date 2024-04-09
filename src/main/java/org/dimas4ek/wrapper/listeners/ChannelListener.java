@@ -10,16 +10,14 @@ import org.dimas4ek.wrapper.Dawncord;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
-import org.dimas4ek.wrapper.entities.message.Message;
-import org.dimas4ek.wrapper.entities.message.MessageImpl;
-import org.dimas4ek.wrapper.event.MessageEvent;
+import org.dimas4ek.wrapper.event.ChannelEvent;
 import org.dimas4ek.wrapper.types.GatewayEvent;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class MessageListener extends WebSocketAdapter {
+public class ChannelListener extends WebSocketAdapter {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -30,27 +28,26 @@ public class MessageListener extends WebSocketAdapter {
 
         if (op == 0) {
             JsonNode d = json.get("d");
-
             GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());
 
             String guildId = d.has("guild_id") ? d.get("guild_id").asText() : null;
-            String channelId = d.has("channel_id") ? d.get("channel_id").asText() : null;
-            String messageId = d.get("id").asText();
-
             Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId)) : null;
 
             if (guild != null) {
-                GuildChannel channel = guild.getChannelById(channelId);
-                Message message = new MessageImpl(JsonUtils.fetchEntity("/channels/" + channelId + "/messages/" + messageId), guild);
+                GuildChannel channel = guild.getChannelById(d.get("id").asText());
 
-                MessageEvent messageEvent = new MessageEvent(message, channel, guild);
-                try {
-                    Method method = Dawncord.class.getDeclaredMethod("processMessageEvent", GatewayEvent.class, MessageEvent.class);
-                    method.setAccessible(true);
-                    method.invoke(null, type, messageEvent);
-                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
-                         InvocationTargetException e) {
-                    throw new RuntimeException(e);
+                if (channel != null) {
+                    ChannelEvent channelEvent = new ChannelEvent(guild, channel);
+
+                    try {
+                        Method method = Dawncord.class.getDeclaredMethod("processChannelEvent", GatewayEvent.class, ChannelEvent.class);
+                        method.setAccessible(true);
+                        method.invoke(null, type, channelEvent);
+                    } catch (NoSuchMethodException | SecurityException | IllegalAccessException |
+                             IllegalArgumentException |
+                             InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

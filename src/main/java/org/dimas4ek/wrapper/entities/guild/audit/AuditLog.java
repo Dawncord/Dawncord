@@ -9,8 +9,8 @@ import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRuleImpl;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEventImpl;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
 import org.dimas4ek.wrapper.entities.guild.integration.IntegrationImpl;
 import org.dimas4ek.wrapper.types.AuditLogEvent;
@@ -35,7 +35,7 @@ public class AuditLog {
     private List<User> auditors;
     private List<Integration> integrations = new ArrayList<>();
     private List<Webhook> webhooks;
-    private List<GuildEvent> guildEvents;
+    private List<GuildScheduledEvent> guildEvents;
     private List<Thread> threads;
     private List<SlashCommand> slashCommands;
     private List<AutoModRule> autoModRules;
@@ -50,6 +50,14 @@ public class AuditLog {
             entries = JsonUtils.getEntityList(audit.get("audit_log_entries"), entry -> new Entry(entry, guild));
         }
         return entries;
+    }
+
+    public Entry getEntryById(String entryId) {
+        return getEntries().stream().filter(entry -> entry.getId().equals(entryId)).findFirst().orElse(null);
+    }
+
+    public Entry getEntryById(long entryId) {
+        return getEntryById(String.valueOf(entryId));
     }
 
     public List<Entry> getEntriesByUserId(String userId) {
@@ -118,18 +126,18 @@ public class AuditLog {
         return getWebhookById(String.valueOf(webhookId));
     }
 
-    public List<GuildEvent> getGuildEvents() {
+    public List<GuildScheduledEvent> getGuildEvents() {
         if (guildEvents == null) {
-            guildEvents = JsonUtils.getEntityList(audit.get("guild_scheduled_events"), event -> new GuildEventImpl(event, guild));
+            guildEvents = JsonUtils.getEntityList(audit.get("guild_scheduled_events"), event -> new GuildScheduledEventImpl(event, guild));
         }
         return guildEvents;
     }
 
-    public GuildEvent getGuildEventById(String eventId) {
+    public GuildScheduledEvent getGuildEventById(String eventId) {
         return getGuildEvents().stream().filter(event -> event.getId().equals(eventId)).findFirst().orElse(null);
     }
 
-    public GuildEvent getGuildEventById(long eventId) {
+    public GuildScheduledEvent getGuildEventById(long eventId) {
         return getGuildEventById(String.valueOf(eventId));
     }
 

@@ -11,9 +11,8 @@ import java.util.Properties;
 public class App {
     public static void main(String[] args) throws IOException {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
-        bot.setIntents(GatewayIntent.GUILDS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
-
-        //todo add guildcontainer for something
+        bot.setIntents(GatewayIntent.ALL);
+        //bot.setIntents(GatewayIntent.GUILDS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
 
         bot.start();
     }

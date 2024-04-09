@@ -23,29 +23,17 @@ public class AttachmentUtils {
         for (int i = 0; i < files.size(); i++) {
             String fileName = files.get(i).getName().toLowerCase();
             String extension = getExtension(fileName);
-            String mediaType = null;
+            String mediaType;
 
             switch (extension) {
-                case "jpg":
-                case "jpeg":
-                    mediaType = "image/jpeg";
-                    break;
-                case "png":
-                    mediaType = "image/png";
-                    break;
-                case "webp":
-                    mediaType = "image/webp";
-                    break;
-                case "gif":
-                    mediaType = "image/gif";
-                    break;
-                default:
-                    break;
+                case "jpg", "jpeg" -> mediaType = "image/jpeg";
+                case "png" -> mediaType = "image/png";
+                case "webp" -> mediaType = "image/webp";
+                case "gif" -> mediaType = "image/gif";
+                default -> mediaType = "unknown";
             }
 
-            if (mediaType != null) {
-                multipartBuilder.addFormDataPart("files[" + i + "]", fileName, RequestBody.create(MediaType.parse(mediaType), files.get(i)));
-            }
+            multipartBuilder.addFormDataPart("files[" + i + "]", fileName, RequestBody.create(MediaType.parse(mediaType), files.get(i)));
         }
         return multipartBuilder;
     }

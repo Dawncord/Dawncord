@@ -6,8 +6,6 @@ import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
-import org.dimas4ek.wrapper.entities.application.Activity;
-import org.dimas4ek.wrapper.entities.application.ActivityImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.application.ApplicationImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -41,7 +39,6 @@ public class MessageImpl implements Message {
     private List<User> mentions;
     private List<GuildRole> mentionRoles;
     private List<Reaction> reactions;
-    private Activity activity;
     private Application application;
     private Message referencedMessage;
     private Thread thread;
@@ -187,14 +184,6 @@ public class MessageImpl implements Message {
     @Override
     public void deleteReactions() {
         ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId() + "/reactions");
-    }
-
-    @Override
-    public Activity getActivity() {
-        if (activity == null) {
-            activity = message.has("activity") ? new ActivityImpl(message.get("activity")) : null;
-        }
-        return activity;
     }
 
     @Override

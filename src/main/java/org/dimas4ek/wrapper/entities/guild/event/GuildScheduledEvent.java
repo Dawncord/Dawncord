@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface GuildEvent extends ISnowflake {
+public interface GuildScheduledEvent extends ISnowflake {
     String getName();
 
     String getDescription();

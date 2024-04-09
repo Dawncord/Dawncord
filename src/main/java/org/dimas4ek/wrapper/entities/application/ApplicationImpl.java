@@ -6,6 +6,7 @@ import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.team.Team;
 import org.dimas4ek.wrapper.entities.application.team.TeamImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.image.ApplicationIcon;
 import org.dimas4ek.wrapper.types.ActivityType;
 import org.dimas4ek.wrapper.types.ApplicationFlag;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class ApplicationImpl implements Application {
     private final JsonNode application;
-    private final Guild guild;
+    private Guild guild;
     private String id;
     private String name;
     private String description;
@@ -44,6 +45,10 @@ public class ApplicationImpl implements Application {
     public ApplicationImpl(JsonNode application, Guild guild) {
         this.application = application;
         this.guild = guild;
+    }
+
+    public ApplicationImpl(JsonNode application) {
+        this.application = application;
     }
 
     @Override
@@ -77,6 +82,9 @@ public class ApplicationImpl implements Application {
 
     @Override
     public Guild getGuild() {
+        if (guild == null) {
+            guild = new GuildImpl(JsonUtils.fetchEntity("/guilds/" + application.get("guild_id").asText()));
+        }
         return guild;
     }
 

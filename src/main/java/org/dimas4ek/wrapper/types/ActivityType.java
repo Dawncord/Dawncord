@@ -6,10 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ActivityType {
-    JOIN(1),
-    SPECTATE(2),
-    LISTEN(3),
-    JOIN_REQUEST(5);
+    GAME(0),
+    STREAMING(1),
+    LISTENING(2),
+    WATCHING(3),
+    CUSTOM(4),
+    COMPETING(5);
 
     private final int value;
 }

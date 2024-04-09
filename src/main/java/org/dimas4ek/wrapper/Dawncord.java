@@ -11,11 +11,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.dimas4ek.wrapper.event.MessageEvent;
-import org.dimas4ek.wrapper.event.SlashCommandEvent;
+import org.dimas4ek.wrapper.event.*;
+import org.dimas4ek.wrapper.event.handler.*;
+import org.dimas4ek.wrapper.listeners.EventListener;
 import org.dimas4ek.wrapper.listeners.InteractionListener;
 import org.dimas4ek.wrapper.listeners.MainListener;
-import org.dimas4ek.wrapper.listeners.MessageListener;
 import org.dimas4ek.wrapper.types.GatewayIntent;
 
 import java.io.IOException;
@@ -23,12 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static org.dimas4ek.wrapper.utils.EventHandler.*;
+
 public class Dawncord {
     private final ObjectMapper mapper = new ObjectMapper();
     private final WebSocket webSocket;
-    private static Consumer<MessageEvent> defaultMessageHandler;
-    private static Map<String, Consumer<SlashCommandEvent>> slashCommandHandlers = new HashMap<>();
-    private static Consumer<SlashCommandEvent> defaultSlashCommandHandler;
+    //private static Map<GatewayEvent, Consumer<GatewayEvent>> eventHandlers = new HashMap<>();
+    private final Map<Class<? extends Event>, Consumer<Event>> eventHandlers = new HashMap<>();
     private long intentsValue = 0;
 
     public Dawncord(String token) {
@@ -40,9 +41,11 @@ public class Dawncord {
         }
 
         webSocket.addListener(new MainListener());
-        webSocket.addListener(new MessageListener());
         webSocket.addListener(new InteractionListener());
-        //todo add GuildListener
+        webSocket.addListener(new EventListener(this));
+        //webSocket.addListener(new MessageListener());
+        //webSocket.addListener(new GuildListener());
+        //webSocket.addListener(new ChannelListener());
 
         assignConstants(token);
     }
@@ -80,13 +83,15 @@ public class Dawncord {
         }
     }
 
-    public void onMessage(Consumer<MessageEvent> handler) {
-        defaultMessageHandler = handler;
+    public <T extends Event> void on(Class<T> type, Consumer<T> handler) {
+        eventHandlers.put(type, event -> handler.accept(type.cast(event)));
     }
 
-    public static void processMessage(MessageEvent messageEvent) {
-        if (defaultMessageHandler != null) {
-            defaultMessageHandler.accept(messageEvent);
+    private void processEvent(Event event) {
+        Consumer<Event> handler = eventHandlers.get(event.getClass());
+
+        if (handler != null) {
+            handler.accept(event);
         }
     }
 
@@ -98,7 +103,7 @@ public class Dawncord {
         defaultSlashCommandHandler = handler;
     }
 
-    public static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
+    private static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
         String commandName = slashCommandEvent.getCommandName();
         Consumer<SlashCommandEvent> handler = slashCommandHandlers.get(commandName);
         if (handler != null) {
@@ -107,6 +112,139 @@ public class Dawncord {
             defaultSlashCommandHandler.accept(slashCommandEvent);
         }
     }
+
+    public void onReady(Consumer<ReadyEvent> handler) {
+        readyEventHandler = handler;
+    }
+
+    public AutoModEventHandler onAutoMod() {
+        return autoModEventHandler;
+    }
+
+    public MessageEventHandler onMessage() {
+        return messageEventHandler;
+    }
+
+    public GuildEventHandler onGuild() {
+        return guildEventHandler;
+    }
+
+    public ChannelEventHandler onChannel() {
+        return channelEventHandler;
+    }
+
+    public ThreadEventHandler onThread() {
+        return threadEventHandler;
+    }
+
+    public IntegrationEventHandler onIntegration() {
+        return integrationEventHandler;
+    }
+
+    public InviteEventHandler onInvite() {
+        return inviteEventHandler;
+    }
+
+    public StageEventHandler onStage() {
+        return stageEventHandler;
+    }
+
+    public void onPresenceUpdate(Consumer<PresenceEvent> handler) {
+        presenceEventHandler = handler;
+    }
+
+    public void onTyping(Consumer<TypingEvent> handler) {
+        typingEventHandler = handler;
+    }
+
+    public void onBotUpdate(Consumer<BotUpdateEvent> handler) {
+        botUpdateEventHandler = handler;
+    }
+
+    public void onVoiceStateUpdate(Consumer<VoiceStateUpdateEvent> handler) {
+        voiceStateEventHandler = handler;
+    }
+
+    public void onWebhookUpdate(Consumer<WebhookUpdateEvent> handler) {
+        webhookUpdateEventHandler = handler;
+    }
+
+    /*private void processReadyEvent(ReadyEvent readyEvent) {
+        processSingleEvent(readyEvent, readyEventHandler);
+    }
+
+    private void processAutoModEvent(GatewayEvent type, AutoModEvent autoModEvent) {
+        processEvent(type, autoModEvent, AutoModEventHandler.class);
+    }
+
+    private void processMessageEvent(GatewayEvent type, MessageEvent messageEvent) {
+        processEvent(type, messageEvent, MessageEventHandler.class);
+    }
+
+    private void processGuildEvent(GatewayEvent type, GuildDefaultEvent guildEvent) {
+        processEvent(type, guildEvent, GuildEventHandler.class);
+    }
+
+    private void processChannelEvent(GatewayEvent type, ChannelEvent channelEvent) {
+        processEvent(type, channelEvent, ChannelEventHandler.class);
+    }
+
+    private void processThreadEvent(GatewayEvent type, ThreadEvent threadEvent) {
+        processEvent(type, threadEvent, ThreadEventHandler.class);
+    }
+
+    private void processIntegrationEvent(GatewayEvent type, IntegrationEvent integrationEvent) {
+        processEvent(type, integrationEvent, IntegrationEventHandler.class);
+    }
+
+    private void processInviteEvent(GatewayEvent type, InviteEvent inviteEvent) {
+        processEvent(type, inviteEvent, InviteEventHandler.class);
+    }
+
+    private void processStageEvent(GatewayEvent type, StageEvent stageEvent) {
+        processEvent(type, stageEvent, StageEventHandler.class);
+    }
+
+    private void processPresenceEvent(PresenceEvent presenceEvent) {
+        processSingleEvent(presenceEvent, presenceEventHandler);
+    }
+
+    private void processTypingEvent(TypingEvent typingEvent) {
+        processSingleEvent(typingEvent, typingEventHandler);
+    }
+
+    private void processBotUpdateEvent(BotUpdateEvent botUpdateEvent) {
+        processSingleEvent(botUpdateEvent, botUpdateEventHandler);
+    }
+
+    private void processVoiceStateUpdateEvent(VoiceStateUpdateEvent voiceStateEvent) {
+        processSingleEvent(voiceStateEvent, voiceStateEventHandler);
+    }
+
+    private void processWebhookUpdateEvent(WebhookUpdateEvent webhookUpdateEvent) {
+        processSingleEvent(webhookUpdateEvent, webhookUpdateEventHandler);
+    }*/
+
+    /*private <T> void processEvent(GatewayEvent type, T event, Class<?> handlerClass) {
+        if (event != null) {
+            try {
+                Method method = handlerClass.getDeclaredMethod("getEventHandlers");
+                method.setAccessible(true);
+                Map<GatewayEvent, Consumer<T>> eventHandlers = (Map<GatewayEvent, Consumer<T>>) method.invoke(null);
+                if (eventHandlers.get(type) != null) {
+                    eventHandlers.get(type).accept(event);
+                }
+            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private <T> void processSingleEvent(T event, Consumer<T> handler) {
+        if (event != null) {
+            handler.accept(event);
+        }
+    }*/
 
     public void start() {
         try {

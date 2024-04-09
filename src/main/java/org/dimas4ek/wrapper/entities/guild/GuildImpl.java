@@ -11,8 +11,8 @@ import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
 import org.dimas4ek.wrapper.entities.guild.audit.AuditLog;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRule;
 import org.dimas4ek.wrapper.entities.guild.automod.AutoModRuleImpl;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEvent;
-import org.dimas4ek.wrapper.entities.guild.event.GuildEventImpl;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
+import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEventImpl;
 import org.dimas4ek.wrapper.entities.guild.integration.Integration;
 import org.dimas4ek.wrapper.entities.guild.integration.IntegrationImpl;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRoleImpl;
@@ -53,7 +53,7 @@ public class GuildImpl implements Guild {
     private List<GuildRoleImpl> roles;
     private List<GuildCategory> categories;
     private List<Thread> threads;
-    private List<GuildEvent> events;
+    private List<GuildScheduledEvent> events;
     private AuditLog auditLog;
     private List<Emoji> emojis;
     private List<AutoModRule> autoModRules;
@@ -542,25 +542,25 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<GuildEvent> getGuildEvents() {
+    public List<GuildScheduledEvent> getGuildEvents() {
         if (events == null) {
-            events = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/scheduled-events"), event -> new GuildEventImpl(event, this));
+            events = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/scheduled-events"), event -> new GuildScheduledEventImpl(event, this));
         }
         return events;
     }
 
     @Override
-    public GuildEvent getGuildEventById(String eventId) {
+    public GuildScheduledEvent getGuildEventById(String eventId) {
         return getGuildEvents().stream().filter(event -> event.getId().equals(eventId)).findFirst().orElse(null);
     }
 
     @Override
-    public GuildEvent getGuildEventById(long eventId) {
+    public GuildScheduledEvent getGuildEventById(long eventId) {
         return getGuildEventById(String.valueOf(eventId));
     }
 
     @Override
-    public List<GuildEvent> getGuildEventsByName(String eventName) {
+    public List<GuildScheduledEvent> getGuildEventsByName(String eventName) {
         return getGuildEvents().stream().filter(event -> event.getName().equals(eventName)).toList();
     }
 
