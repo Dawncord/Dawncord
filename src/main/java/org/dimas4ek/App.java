@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+
 public class App {
+
     public static void main(String[] args) throws IOException {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
         bot.setIntents(GatewayIntent.ALL);
-        //bot.setIntents(GatewayIntent.GUILDS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
 
         bot.start();
     }

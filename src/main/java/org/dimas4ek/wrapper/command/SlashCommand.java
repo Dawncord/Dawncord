@@ -1,18 +1,26 @@
 package org.dimas4ek.wrapper.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.action.SlashCommandModifyAction;
 import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.types.CommandType;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
 import org.dimas4ek.wrapper.types.PermissionType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.EnumUtils;
-import org.jetbrains.annotations.NotNull;
+import org.dimas4ek.wrapper.utils.SlashCommandUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
-public class SlashCommand implements Command {
+public class SlashCommand implements ISlashCommand {
     private final JsonNode command;
+    private String id;
     private String name;
     private String description;
     private String applicationId;
@@ -20,12 +28,27 @@ public class SlashCommand implements Command {
     private CommandType type;
     private Boolean nsfw;
     private String version;
-    private List<Option> options = new ArrayList<>();
+    private List<Option> options;
+    private List<SubCommand> subCommands;
+    private List<SubCommandGroup> subCommandGroups;
     private Map<Locale, String> nameLocalizations;
     private Map<Locale, String> descriptionLocalizations;
 
     public SlashCommand(JsonNode command) {
         this.command = command;
+    }
+
+    @Override
+    public String getId() {
+        if (id == null) {
+            id = command.get("id").asText();
+        }
+        return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
     }
 
     @Override
@@ -90,30 +113,39 @@ public class SlashCommand implements Command {
     }
 
     @Override
-    public List<Option> getOptions() {
-        if (options == null) {
-            options = new ArrayList<>();
+    public List<SubCommand> getSubCommands() {
+        if (subCommands == null) {
+            subCommands = new ArrayList<>();
             if (command.has("options") && command.hasNonNull("options")) {
                 for (JsonNode option : command.get("options")) {
-                    Option optionData = new Option(
-                            EnumUtils.getEnumObjectFromInt(option.get("type").asInt(), OptionType.class),
-                            option.get("name").asText(),
-                            option.get("description").asText()
-                    );
-                    if (option.has("required")) optionData.setRequired(option.get("required").asBoolean());
-                    if (option.has("autocomplete")) optionData.setRequired(option.get("autocomplete").asBoolean());
-                    if (option.has("choices")) {
-                        for (JsonNode choice : option.get("choices")) {
-                            Option.Choice choiceData = new Option.Choice(
-                                    choice.get("name").asText(),
-                                    choice.get("value").asText()
-                            );
-                            optionData.addChoice(choiceData);
-                        }
+                    if (option.get("type").asInt() == OptionType.SUB_COMMAND.getValue()) {
+                        subCommands.add(new SubCommand(option));
                     }
-                    options.add(optionData);
                 }
             }
+        }
+        return subCommands;
+    }
+
+    @Override
+    public List<SubCommandGroup> getSubCommandGroups() {
+        if (subCommandGroups == null) {
+            subCommandGroups = new ArrayList<>();
+            if (command.has("options") && command.hasNonNull("options")) {
+                for (JsonNode option : command.get("options")) {
+                    if (option.get("type").asInt() == OptionType.SUB_COMMAND_GROUP.getValue()) {
+                        subCommandGroups.add(new SubCommandGroup(option));
+                    }
+                }
+            }
+        }
+        return subCommandGroups;
+    }
+
+    @Override
+    public List<Option> getOptions() {
+        if (options == null) {
+            options = SlashCommandUtils.createOptions(command);
         }
         return options;
     }
@@ -121,7 +153,7 @@ public class SlashCommand implements Command {
     @Override
     public Map<Locale, String> getNameLocalizations() {
         if (nameLocalizations == null) {
-            nameLocalizations = getLocaleStringMap(command, "name_localizations");
+            nameLocalizations = SlashCommandUtils.getLocaleStringMap(command, "name_localizations");
         }
         return nameLocalizations;
     }
@@ -129,22 +161,18 @@ public class SlashCommand implements Command {
     @Override
     public Map<Locale, String> getDescriptionLocalizations() {
         if (descriptionLocalizations == null) {
-            descriptionLocalizations = getLocaleStringMap(command, "description_localizations");
+            descriptionLocalizations = SlashCommandUtils.getLocaleStringMap(command, "description_localizations");
         }
         return descriptionLocalizations;
     }
 
-    @NotNull
-    private Map<Locale, String> getLocaleStringMap(JsonNode command, String localizations) {
-        if (command.has(localizations) && command.hasNonNull(localizations)) {
-            Map<Locale, String> map = new EnumMap<>(Locale.class);
-            for (JsonNode nameLocalizations : command.get(localizations)) {
-                String key = nameLocalizations.fieldNames().next();
-                String value = nameLocalizations.get(key).asText();
-                map.put(Locale.valueOf(key), value);
-            }
-            return map;
-        }
-        return Collections.emptyMap();
+    @Override
+    public void modify(Consumer<SlashCommandModifyAction> handler) {
+        ActionExecutor.modifySlashCommand(handler, getId());
+    }
+
+    @Override
+    public void delete() {
+        ApiClient.delete("/applications/" + Constants.APPLICATION_ID + "/commands/" + getId());
     }
 }

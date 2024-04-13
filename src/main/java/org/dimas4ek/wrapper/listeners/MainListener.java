@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainListener extends WebSocketAdapter {
     private final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         JsonNode json = mapper.readTree(text);

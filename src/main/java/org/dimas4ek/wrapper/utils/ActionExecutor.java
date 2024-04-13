@@ -3,6 +3,8 @@ package org.dimas4ek.wrapper.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.annotation.Nullable;
 import org.dimas4ek.wrapper.action.*;
+import org.dimas4ek.wrapper.command.SubCommand;
+import org.dimas4ek.wrapper.command.SubCommandGroup;
 import org.dimas4ek.wrapper.entities.channel.Channel;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.GuildForum;
@@ -30,14 +32,14 @@ public class ActionExecutor {
     public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<String> guildFeatures) {
         GuildModifyAction action = new GuildModifyAction(guildId, guildFeatures);
         handler.accept(action);
-        try {
+        /*try {
             Method executeMethod = GuildModifyAction.class.getDeclaredMethod("submit");
             executeMethod.setAccessible(true);
             executeMethod.invoke(action);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        //invokeSubmit(action, GuildModifyAction.class);
+        }*/
+        invokeSubmit(action, GuildModifyAction.class);
     }
 
     public static void modifyAutoModRule(Consumer<AutoModRuleModifyAction> handler, String guildId, AutoModTriggerType triggerType) {
@@ -177,6 +179,34 @@ public class ActionExecutor {
         StageCreateAction action = new StageCreateAction();
         handler.accept(action);
         invokeSubmit(action, StageCreateAction.class);
+    }
+
+    public static void createSlashCommand(Consumer<SlashCommandCreateAction> handler, String name, String description) {
+        SlashCommandCreateAction action = new SlashCommandCreateAction(name, description);
+        handler.accept(action);
+        try {
+            invokeSubmit(action, SlashCommandCreateAction.class);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String id) {
+        SlashCommandModifyAction action = new SlashCommandModifyAction(id);
+        handler.accept(action);
+        invokeSubmit(action, SlashCommandModifyAction.class);
+    }
+
+    public static void createSubCommand(Consumer<SubCommandCreateAction> handler, String name, String description, List<SubCommand> subCommandList) {
+        SubCommandCreateAction action = new SubCommandCreateAction(name, description, subCommandList);
+        handler.accept(action);
+        invokeSubmit(action, SubCommandCreateAction.class);
+    }
+
+    public static void createSubCommandGroup(Consumer<SubCommandGroupCreateAction> handler, String name, String description, List<SubCommandGroup> subCommandGroupList) {
+        SubCommandGroupCreateAction action = new SubCommandGroupCreateAction(name, description, subCommandGroupList);
+        handler.accept(action);
+        invokeSubmit(action, SubCommandGroupCreateAction.class);
     }
 
     private static void invokeSubmit(Object action, Class<?> clazz) {

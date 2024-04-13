@@ -182,6 +182,7 @@ public class ApiClient {
         return null;
     }
 
+    //todo multithreading
     public static JsonNode getJsonArray(String url) {
         Request request = new Request.Builder()
                 .url(Constants.API_URL + url)

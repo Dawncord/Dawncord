@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -11,15 +12,28 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dimas4ek.wrapper.action.SlashCommandCreateAction;
+import org.dimas4ek.wrapper.action.SlashCommandModifyAction;
+import org.dimas4ek.wrapper.command.Command;
+import org.dimas4ek.wrapper.command.SlashCommand;
+import org.dimas4ek.wrapper.command.SubCommand;
+import org.dimas4ek.wrapper.command.SubCommandGroup;
+import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.event.*;
 import org.dimas4ek.wrapper.event.handler.*;
 import org.dimas4ek.wrapper.listeners.EventListener;
 import org.dimas4ek.wrapper.listeners.InteractionListener;
 import org.dimas4ek.wrapper.listeners.MainListener;
 import org.dimas4ek.wrapper.types.GatewayIntent;
+import org.dimas4ek.wrapper.types.Locale;
+import org.dimas4ek.wrapper.types.OptionType;
+import org.dimas4ek.wrapper.utils.ActionExecutor;
+import org.dimas4ek.wrapper.utils.JsonUtils;
+import org.dimas4ek.wrapper.utils.SlashCommandUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -169,82 +183,229 @@ public class Dawncord {
         webhookUpdateEventHandler = handler;
     }
 
-    /*private void processReadyEvent(ReadyEvent readyEvent) {
-        processSingleEvent(readyEvent, readyEventHandler);
+    public void registerSlashCommand(String name, String description, Consumer<SlashCommandCreateAction> handler) {
+        ActionExecutor.createSlashCommand(handler, name, description);
     }
 
-    private void processAutoModEvent(GatewayEvent type, AutoModEvent autoModEvent) {
-        processEvent(type, autoModEvent, AutoModEventHandler.class);
-    }
+    public void registerSlashCommands(SlashCommand... slashCommands) {
+        for (SlashCommand slashCommand : slashCommands) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("type", 1);
+            node.put("name", slashCommand.getName());
+            node.put("description", slashCommand.getDescription());
 
-    private void processMessageEvent(GatewayEvent type, MessageEvent messageEvent) {
-        processEvent(type, messageEvent, MessageEventHandler.class);
-    }
-
-    private void processGuildEvent(GatewayEvent type, GuildDefaultEvent guildEvent) {
-        processEvent(type, guildEvent, GuildEventHandler.class);
-    }
-
-    private void processChannelEvent(GatewayEvent type, ChannelEvent channelEvent) {
-        processEvent(type, channelEvent, ChannelEventHandler.class);
-    }
-
-    private void processThreadEvent(GatewayEvent type, ThreadEvent threadEvent) {
-        processEvent(type, threadEvent, ThreadEventHandler.class);
-    }
-
-    private void processIntegrationEvent(GatewayEvent type, IntegrationEvent integrationEvent) {
-        processEvent(type, integrationEvent, IntegrationEventHandler.class);
-    }
-
-    private void processInviteEvent(GatewayEvent type, InviteEvent inviteEvent) {
-        processEvent(type, inviteEvent, InviteEventHandler.class);
-    }
-
-    private void processStageEvent(GatewayEvent type, StageEvent stageEvent) {
-        processEvent(type, stageEvent, StageEventHandler.class);
-    }
-
-    private void processPresenceEvent(PresenceEvent presenceEvent) {
-        processSingleEvent(presenceEvent, presenceEventHandler);
-    }
-
-    private void processTypingEvent(TypingEvent typingEvent) {
-        processSingleEvent(typingEvent, typingEventHandler);
-    }
-
-    private void processBotUpdateEvent(BotUpdateEvent botUpdateEvent) {
-        processSingleEvent(botUpdateEvent, botUpdateEventHandler);
-    }
-
-    private void processVoiceStateUpdateEvent(VoiceStateUpdateEvent voiceStateEvent) {
-        processSingleEvent(voiceStateEvent, voiceStateEventHandler);
-    }
-
-    private void processWebhookUpdateEvent(WebhookUpdateEvent webhookUpdateEvent) {
-        processSingleEvent(webhookUpdateEvent, webhookUpdateEventHandler);
-    }*/
-
-    /*private <T> void processEvent(GatewayEvent type, T event, Class<?> handlerClass) {
-        if (event != null) {
             try {
-                Method method = handlerClass.getDeclaredMethod("getEventHandlers");
-                method.setAccessible(true);
-                Map<GatewayEvent, Consumer<T>> eventHandlers = (Map<GatewayEvent, Consumer<T>>) method.invoke(null);
-                if (eventHandlers.get(type) != null) {
-                    eventHandlers.get(type).accept(event);
+                setOptions(slashCommand, node);
+                setSubCommands(slashCommand, node);
+                setSubCommandGroups(slashCommand, node);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+
+            setLocalizations(slashCommand, node);
+
+            String url = "/applications/" + Constants.APPLICATION_ID + "/commands";
+
+            ApiClient.post(node, url);
+        }
+    }
+
+    public SlashCommand getSlashCommand(String name) {
+        return new SlashCommand(JsonUtils.fetchEntity("/applications/" + Constants.APPLICATION_ID + "/commands/" + getSlashCommandId(name)));
+    }
+
+    public List<SlashCommand> getSlashCommands() {
+        return JsonUtils.getEntityList(JsonUtils.fetchArray("/applications/" + Constants.APPLICATION_ID + "/commands"), SlashCommand::new);
+    }
+
+    public void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String name) {
+        ActionExecutor.modifySlashCommand(handler, getSlashCommandId(name));
+    }
+
+    public void deleteSlashCommand(String name) {
+        ApiClient.delete("/applications/" + Constants.APPLICATION_ID + "/commands/" + getSlashCommandId(name));
+    }
+
+    public void deleteSlashCommands(String... names) {
+        for (String name : names) {
+            deleteSlashCommand(name);
+        }
+    }
+
+    private String getSlashCommandId(String name) {
+        return getSlashCommands().stream()
+                .filter(slashCommand -> slashCommand.getName().equals(name))
+                .findFirst().orElseThrow(() -> new RuntimeException("Command not found"))
+                .getId();
+    }
+
+    private void setOptions(SlashCommand slashCommand, ObjectNode node) {
+        List<Option> options = slashCommand.getOptions();
+        if (options != null && !options.isEmpty()) {
+            if (node.has("options")) {
+                if (!hasSubCommands(node)) {
+                    ArrayNode optionsJson = createOptionsArray(options);
+                    ((ArrayNode) node.get("options")).addAll(optionsJson);
                 }
-            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+            } else {
+                ArrayNode optionsJson = createOptionsArray(options);
+                node.set("options", optionsJson);
             }
         }
     }
 
-    private <T> void processSingleEvent(T event, Consumer<T> handler) {
-        if (event != null) {
-            handler.accept(event);
+    private void setSubCommands(SlashCommand slashCommand, ObjectNode node) {
+        List<SubCommand> subCommands = slashCommand.getSubCommands();
+        if (subCommands != null && !subCommands.isEmpty()) {
+            if (node.has("options")) {
+                if (hasNonSubCommands(node)) {
+                    ArrayNode subCommandsJson = createSubCommandsArray(subCommands);
+                    ((ArrayNode) node.get("options")).addAll(subCommandsJson);
+                } else {
+                    throw new IllegalArgumentException("Cannot have options and subcommands in the same command");
+                }
+            } else {
+                ArrayNode subCommandsJson = createSubCommandsArray(subCommands);
+                node.set("options", subCommandsJson);
+            }
         }
-    }*/
+    }
+
+    private void setSubCommandGroups(SlashCommand slashCommand, ObjectNode node) {
+        List<SubCommandGroup> subCommandGroups = slashCommand.getSubCommandGroups();
+        if (subCommandGroups != null && !subCommandGroups.isEmpty()) {
+            if (node.has("options")) {
+                if (hasNonSubCommands(node)) {
+                    ArrayNode subCommandGroupsJson = createSubCommandGroupsArray(subCommandGroups);
+                    ((ArrayNode) node.get("options")).addAll(subCommandGroupsJson);
+
+                } else {
+                    throw new IllegalArgumentException("Cannot have options and subcommands in the same command");
+                }
+            } else {
+                ArrayNode subCommandGroupsJson = createSubCommandGroupsArray(subCommandGroups);
+                node.set("options", subCommandGroupsJson);
+            }
+        }
+    }
+
+    private void setLocalizations(Command command, ObjectNode node) {
+        Map<Locale, String> nameLocalizations = command.getNameLocalizations();
+        if (nameLocalizations != null && !nameLocalizations.isEmpty()) {
+            ObjectNode nameLocalizationsJson = mapper.createObjectNode();
+            for (Map.Entry<Locale, String> name : nameLocalizations.entrySet()) {
+                nameLocalizationsJson.put(name.getKey().getLocaleCode(), name.getValue());
+            }
+            node.set("name_localizations", nameLocalizationsJson);
+        }
+        Map<Locale, String> descriptionLocalizations = command.getDescriptionLocalizations();
+        if (descriptionLocalizations != null && !descriptionLocalizations.isEmpty()) {
+            ObjectNode descriptionLocalizationsJson = mapper.createObjectNode();
+            for (Map.Entry<Locale, String> name : descriptionLocalizations.entrySet()) {
+                descriptionLocalizationsJson.put(name.getKey().getLocaleCode(), name.getValue());
+            }
+            node.set("description_localizations", descriptionLocalizationsJson);
+        }
+    }
+
+    private boolean hasNonSubCommands(ObjectNode node) {
+        boolean hasNonSubCommands = false;
+        for (JsonNode nodeOption : node.get("options")) {
+            if (nodeOption.get("type").asInt() != OptionType.SUB_COMMAND.getValue() ||
+                    nodeOption.get("type").asInt() != OptionType.SUB_COMMAND_GROUP.getValue()) {
+                hasNonSubCommands = true;
+                break;
+            }
+        }
+        return hasNonSubCommands;
+    }
+
+    private boolean hasSubCommands(ObjectNode node) {
+        boolean hasNonSubCommands = false;
+        for (JsonNode nodeOption : node.get("options")) {
+            if (nodeOption.get("type").asInt() == OptionType.SUB_COMMAND.getValue() ||
+                    nodeOption.get("type").asInt() == OptionType.SUB_COMMAND_GROUP.getValue()) {
+                hasNonSubCommands = true;
+                break;
+            }
+        }
+        return hasNonSubCommands;
+    }
+
+    private ArrayNode createSubCommandGroupsArray(List<SubCommandGroup> subCommandGroups) {
+        ArrayNode subCommandGroupsJson = mapper.createArrayNode();
+        for (SubCommandGroup subCommandGroup : subCommandGroups) {
+            ObjectNode subCommandGroupJson = mapper.createObjectNode()
+                    .put("type", OptionType.SUB_COMMAND_GROUP.getValue())
+                    .put("name", subCommandGroup.getName())
+                    .put("description", subCommandGroup.getDescription());
+            List<SubCommand> subCommands = subCommandGroup.getSubCommands();
+            if (subCommands != null && !subCommands.isEmpty()) {
+                ArrayNode subCommandsJson = createSubCommandsArray(subCommands);
+                subCommandGroupJson.set("options", subCommandsJson);
+            }
+            setLocalizations(subCommandGroup, subCommandGroupJson);
+            subCommandGroupsJson.add(subCommandGroupJson);
+        }
+        return subCommandGroupsJson;
+    }
+
+    private ArrayNode createSubCommandsArray(List<SubCommand> subCommands) {
+        ArrayNode subCommandsJson = mapper.createArrayNode();
+        for (SubCommand subCommand : subCommands) {
+            ObjectNode subCommandJson = mapper.createObjectNode()
+                    .put("type", OptionType.SUB_COMMAND.getValue())
+                    .put("name", subCommand.getName())
+                    .put("description", subCommand.getDescription());
+            SlashCommandUtils.createDefaults(subCommandJson, subCommand.getNameLocalizations(), subCommand.getDescriptionLocalizations(), subCommand.getOptions());
+            subCommandsJson.add(subCommandJson);
+        }
+        return subCommandsJson;
+    }
+
+    private ArrayNode createOptionsArray(List<Option> options) {
+        ArrayNode optionsJson = mapper.createArrayNode();
+        boolean foundFalse = false;
+        for (Option option : options) {
+            if (option.isRequired()) {
+                if (foundFalse) {
+                    throw new IllegalArgumentException("Required options must be placed before non-required options");
+                }
+            } else {
+                foundFalse = true;
+            }
+            optionsJson.add(createOption(option));
+        }
+        return optionsJson;
+    }
+
+    private ObjectNode createOption(Option option) {
+        ObjectNode optionJson = mapper.createObjectNode();
+        optionJson.put("type", option.getType().getValue());
+        optionJson.put("name", option.getName());
+        optionJson.put("description", option.getDescription());
+        if (option.isRequired()) {
+            optionJson.put("required", true);
+        }
+        if (option.isAutocomplete()) {
+            optionJson.put("autocomplete", true);
+        }
+        if (!option.getChoices().isEmpty()) {
+            optionJson.set("choices", createChoices(option));
+        }
+        return optionJson;
+    }
+
+    private ArrayNode createChoices(Option option) {
+        ArrayNode choicesJson = mapper.createArrayNode();
+        for (Option.Choice choice : option.getChoices()) {
+            ObjectNode choiceJson = mapper.createObjectNode();
+            choiceJson.put("name", choice.getName());
+            choiceJson.put("value", choice.getValue());
+            choicesJson.add(choiceJson);
+        }
+        return choicesJson;
+    }
 
     public void start() {
         try {
