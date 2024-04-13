@@ -22,34 +22,30 @@ public class GuildEventModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private GuildEventModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildEventModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildEventModifyAction setDescription(String description) {
-        setProperty("description", description);
-        return this;
+        return setProperty("description", description);
     }
 
     public GuildEventModifyAction setLocation(String location) {
-        setProperty("location", location);
-        return this;
+        return setProperty("location", location);
     }
 
     public GuildEventModifyAction setImage(String path) {
-        setProperty("image", IOUtils.setImageData(path));
-        return this;
+        return setProperty("image", IOUtils.setImageData(path));
     }
 
     public GuildEventModifyAction setStatus(GuildEventStatus status) {
-        setProperty("status", status.getValue());
-        return this;
+        return setProperty("status", status.getValue());
     }
 
     public GuildEventModifyAction setChannelEntityType(GuildEventEntityType entityType, String channelId) {

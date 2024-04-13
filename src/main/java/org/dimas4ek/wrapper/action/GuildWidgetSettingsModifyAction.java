@@ -15,24 +15,22 @@ public class GuildWidgetSettingsModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildWidgetSettingsModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildWidgetSettingsModifyAction setEnabled(boolean enabled) {
-        setProperty("enabled", enabled);
-        return this;
+        return setProperty("enabled", enabled);
     }
 
     public GuildWidgetSettingsModifyAction setChannel(String channelId) {
-        setProperty("channel_id", channelId);
-        return this;
+        return setProperty("channel_id", channelId);
     }
 
     public GuildWidgetSettingsModifyAction setChannel(long channelId) {
-        setChannel(String.valueOf(channelId));
-        return this;
+        return setChannel(String.valueOf(channelId));
     }
 
     private void submit() {

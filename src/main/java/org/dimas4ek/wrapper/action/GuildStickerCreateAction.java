@@ -22,29 +22,26 @@ public class GuildStickerCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildStickerCreateAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildStickerCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildStickerCreateAction setDescription(String description) {
-        setProperty("description", description);
-        return this;
+        return setProperty("description", description);
     }
 
     public GuildStickerCreateAction setEmoji(String emojiId) {
-        setProperty("tags", emojiId);
-        return this;
+        return setProperty("tags", emojiId);
     }
 
     public GuildStickerCreateAction setEmoji(long emojiId) {
-        setProperty("tags", emojiId);
-        return this;
+        return setProperty("tags", emojiId);
     }
 
     public GuildStickerCreateAction setImage(File file) {

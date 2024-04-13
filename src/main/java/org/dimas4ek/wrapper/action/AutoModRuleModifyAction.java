@@ -24,14 +24,14 @@ public class AutoModRuleModifyAction {
         this.jsonObject.set("actions", mapper.createArrayNode());
     }
 
-    private void setProperty(String name, Object value) {
+    private AutoModRuleModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public AutoModRuleModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public AutoModRuleModifyAction setKeywordTrigger(List<String> keywordFilter, List<String> allows) {
@@ -54,7 +54,7 @@ public class AutoModRuleModifyAction {
 
     public AutoModRuleModifyAction setKeywordPresetTrigger(List<KeywordPreset> presets, List<String> allows) {
         if (triggerType == AutoModTriggerType.KEYWORD_PRESET) {
-            setProperty("trigger_metadata",
+            return setProperty("trigger_metadata",
                     mapper.createObjectNode()
                             .<ObjectNode>set("presets", mapper.valueToTree(presets.stream().map(KeywordPreset::getValue).toList()))
                             .set("allow_list", mapper.valueToTree(allows))
@@ -83,8 +83,7 @@ public class AutoModRuleModifyAction {
                                 .put("duration_seconds", duration)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleModifyAction setAlertMessageAction(String channelId) {
@@ -96,8 +95,7 @@ public class AutoModRuleModifyAction {
                                 .put("channel_id", channelId)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleModifyAction setBlockMessageAction(String message) {
@@ -109,8 +107,7 @@ public class AutoModRuleModifyAction {
                                 .put("custom_message", message)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleModifyAction setBlockMessageAction() {
@@ -120,23 +117,19 @@ public class AutoModRuleModifyAction {
                         .put("type", AutoModActionType.BLOCK_MESSAGE.getValue())
                         .set("metadata", mapper.createObjectNode())
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleModifyAction setEnabled(boolean enabled) {
-        setProperty("enabled", enabled);
-        return this;
+        return setProperty("enabled", enabled);
     }
 
     public AutoModRuleModifyAction setExemptRoles(String... exemptRoles) {
-        setProperty("exempt_roles", exemptRoles);
-        return this;
+        return setProperty("exempt_roles", exemptRoles);
     }
 
     public AutoModRuleModifyAction setExemptChannels(String... exemptChannels) {
-        setProperty("exempt_channels", exemptChannels);
-        return this;
+        return setProperty("exempt_channels", exemptChannels);
     }
 
     private void submit() {

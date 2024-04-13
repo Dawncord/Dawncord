@@ -21,28 +21,26 @@ public class ApplicationModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private ApplicationModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
+        hasChanges = true;
+        return this;
     }
 
     public ApplicationModifyAction setDescription(String description) {
-        setProperty("description", description);
-        return this;
+        return setProperty("description", description);
     }
 
     public ApplicationModifyAction setCustomInstallUrl(String url) {
-        setProperty("custom_install_url", url);
-        return this;
+        return setProperty("custom_install_url", url);
     }
 
     public ApplicationModifyAction setVerificationUrl(String url) {
-        setProperty("role_connections_verification_url", url);
-        return this;
+        return setProperty("role_connections_verification_url", url);
     }
 
     public ApplicationModifyAction setInteractionEndpointUrl(String url) {
-        setProperty("interactions_endpoint_url", url);
-        return this;
+        return setProperty("interactions_endpoint_url", url);
     }
 
     public ApplicationModifyAction setInstallParams(List<Scope> scopes, List<PermissionType> permissions) {
@@ -57,9 +55,7 @@ public class ApplicationModifyAction {
         installParamsNode.set("scopes", scopesNode);
         installParamsNode.put("permissions", String.valueOf(value));
 
-        setProperty("install_params", installParamsNode);
-
-        return this;
+        return setProperty("install_params", installParamsNode);
     }
 
     public ApplicationModifyAction setFlags(ApplicationFlag... flags) {
@@ -67,23 +63,19 @@ public class ApplicationModifyAction {
                 .mapToLong(ApplicationFlag::getValue)
                 .reduce(0L, (a, b) -> a | b);
 
-        setProperty("flags", value);
-        return this;
+        return setProperty("flags", value);
     }
 
     public ApplicationModifyAction setIcon(String path) {
-        setProperty("icon", IOUtils.setImageData(path));
-        return this;
+        return setProperty("icon", IOUtils.setImageData(path));
     }
 
     public ApplicationModifyAction setCoverImage(String path) {
-        setProperty("cover_image", IOUtils.setImageData(path));
-        return this;
+        return setProperty("cover_image", IOUtils.setImageData(path));
     }
 
     public ApplicationModifyAction setTags(String... tags) {
-        setProperty("tags", tags);
-        return this;
+        return setProperty("tags", tags);
     }
 
     private void submit() {

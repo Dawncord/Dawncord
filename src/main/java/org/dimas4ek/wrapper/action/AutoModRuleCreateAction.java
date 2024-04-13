@@ -27,14 +27,14 @@ public class AutoModRuleCreateAction {
         this.jsonObject.set("actions", mapper.createArrayNode());
     }
 
-    private void setProperty(String name, Object value) {
+    private AutoModRuleCreateAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public AutoModRuleCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public AutoModRuleCreateAction setKeywordTrigger(List<String> keywordFilter, List<String> allows) {
@@ -82,8 +82,7 @@ public class AutoModRuleCreateAction {
                                 .put("duration_seconds", duration)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleCreateAction setAlertMessageAction(String channelId) {
@@ -95,8 +94,7 @@ public class AutoModRuleCreateAction {
                                 .put("channel_id", channelId)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleCreateAction setBlockMessageAction(String message) {
@@ -108,8 +106,7 @@ public class AutoModRuleCreateAction {
                                 .put("custom_message", message)
                         )
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleCreateAction setBlockMessageAction() {
@@ -119,23 +116,19 @@ public class AutoModRuleCreateAction {
                         .put("type", AutoModActionType.BLOCK_MESSAGE.getValue())
                         .set("metadata", mapper.createObjectNode())
         );
-        setProperty("actions", actionsArray);
-        return this;
+        return setProperty("actions", actionsArray);
     }
 
     public AutoModRuleCreateAction setEnabled(boolean enabled) {
-        setProperty("enabled", enabled);
-        return this;
+        return setProperty("enabled", enabled);
     }
 
     public AutoModRuleCreateAction setExemptRoles(String... exemptRoles) {
-        setProperty("exempt_roles", exemptRoles);
-        return this;
+        return setProperty("exempt_roles", exemptRoles);
     }
 
     public AutoModRuleCreateAction setExemptChannels(String... exemptChannels) {
-        setProperty("exempt_channels", exemptChannels);
-        return this;
+        return setProperty("exempt_channels", exemptChannels);
     }
 
     private void submit() {

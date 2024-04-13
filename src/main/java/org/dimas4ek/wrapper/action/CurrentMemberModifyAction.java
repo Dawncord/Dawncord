@@ -15,10 +15,14 @@ public class CurrentMemberModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    public CurrentMemberModifyAction setNickname(String nickname) {
-        jsonObject.put("nick", nickname);
+    public CurrentMemberModifyAction setProperty(String name, Object value) {
+        jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
         return this;
+    }
+
+    public CurrentMemberModifyAction setNickname(String nickname) {
+        return setProperty("nick", nickname);
     }
 
     private void submit() {

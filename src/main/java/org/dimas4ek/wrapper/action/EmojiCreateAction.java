@@ -17,24 +17,22 @@ public class EmojiCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, JsonNode value) {
+    private EmojiCreateAction setProperty(String key, JsonNode value) {
         jsonObject.set(key, value);
         hasChanges = true;
+        return this;
     }
 
     public EmojiCreateAction setName(String name) {
-        setProperty("name", mapper.createObjectNode().textNode(name));
-        return this;
+        return setProperty("name", mapper.createObjectNode().textNode(name));
     }
 
     public EmojiCreateAction setRoles(String... roleIds) {
-        setProperty("roles", mapper.valueToTree(roleIds));
-        return this;
+        return setProperty("roles", mapper.valueToTree(roleIds));
     }
 
     public EmojiCreateAction setImage(String path) {
-        setProperty("image", mapper.createObjectNode().textNode(IOUtils.setImageData(path)));
-        return this;
+        return setProperty("image", mapper.createObjectNode().textNode(IOUtils.setImageData(path)));
     }
 
     private void submit() {

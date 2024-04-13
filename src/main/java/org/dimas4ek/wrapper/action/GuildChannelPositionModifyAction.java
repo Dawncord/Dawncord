@@ -16,29 +16,26 @@ public class GuildChannelPositionModifyAction {
         this.jsonObject.put("id", channelId);
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildChannelPositionModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildChannelPositionModifyAction setPosition(int position) {
-        setProperty("position", position);
-        return this;
+        return setProperty("position", position);
     }
 
     public GuildChannelPositionModifyAction lockPermissions(boolean lockPermissions) {
-        setProperty("lock_permissions", lockPermissions);
-        return this;
+        return setProperty("lock_permissions", lockPermissions);
     }
 
     public GuildChannelPositionModifyAction setParent(String parentId) {
-        setProperty("parent_id", parentId);
-        return this;
+        return setProperty("parent_id", parentId);
     }
 
     public GuildChannelPositionModifyAction setParent(long parentId) {
-        setParent(String.valueOf(parentId));
-        return this;
+        return setParent(String.valueOf(parentId));
     }
 
     public void submit() {

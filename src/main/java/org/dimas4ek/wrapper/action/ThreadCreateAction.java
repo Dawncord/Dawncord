@@ -43,23 +43,24 @@ public class ThreadCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private ThreadCreateAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
+        return this;
     }
 
     public ThreadCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
+
     }
 
     public ThreadCreateAction setDuration(int minutes) {
-        setProperty("auto_archive_duration", minutes);
-        return this;
+        return setProperty("auto_archive_duration", minutes);
+
     }
 
     public ThreadCreateAction setRateLimit(int rateLimit) {
-        setProperty("rate_limit_per_user", rateLimit);
-        return this;
+        return setProperty("rate_limit_per_user", rateLimit);
+
     }
 
     public ThreadCreateAction setInvitable(boolean invitable) {

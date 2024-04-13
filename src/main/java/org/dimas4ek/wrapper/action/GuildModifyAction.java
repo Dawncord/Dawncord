@@ -23,39 +23,34 @@ public class GuildModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private GuildModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildModifyAction setDescription(String description) {
-        setProperty("description", description);
-        return this;
+        return setProperty("description", description);
     }
 
     public GuildModifyAction setOwner(User user) {
-        setProperty("owner_id", user.getId());
-        return this;
+        return setProperty("owner_id", user.getId());
     }
 
     public GuildModifyAction setAfkChannel(GuildChannel channel) {
-        setProperty("afk_channel_id", channel.getId());
-        return this;
+        return setProperty("afk_channel_id", channel.getId());
     }
 
     public GuildModifyAction setAfkTimeout(int seconds) {
-        setProperty("afk_timeout", seconds);
-        return this;
+        return setProperty("afk_timeout", seconds);
     }
 
     public GuildModifyAction setSystemChannel(GuildChannel channel) {
-        setProperty("system_channel_id", channel.getId());
-        return this;
+        return setProperty("system_channel_id", channel.getId());
     }
 
     public GuildModifyAction setSystemChannelFlags(SystemChannelFlag flag, SystemChannelFlag... flags) {
@@ -63,48 +58,39 @@ public class GuildModifyAction {
         for (SystemChannelFlag f : flags) {
             value |= f.getValue();
         }
-        setProperty("system_channel_flags", value);
-        return this;
+        return setProperty("system_channel_flags", value);
     }
 
     public GuildModifyAction setRulesChannel(GuildChannel channel) {
-        setProperty("rules_channel_id", channel.getId());
-        return this;
+        return setProperty("rules_channel_id", channel.getId());
     }
 
     public GuildModifyAction setModChannel(GuildChannel channel) {
-        setProperty("public_updates_channel_id", channel.getId());
-        return this;
+        return setProperty("public_updates_channel_id", channel.getId());
     }
 
     public GuildModifyAction setAlertsChannel(GuildChannel channel) {
-        setProperty("safety_alerts_channel_id", channel.getId());
-        return this;
+        return setProperty("safety_alerts_channel_id", channel.getId());
     }
 
     public GuildModifyAction setLocale(Locale locale) {
-        setProperty("preferred_locale", locale.getLocaleCode());
-        return this;
+        return setProperty("preferred_locale", locale.getLocaleCode());
     }
 
     public GuildModifyAction setBoostProgressBar(boolean enabled) {
-        setProperty("premium_progress_bar_enabled", enabled);
-        return this;
+        return setProperty("premium_progress_bar_enabled", enabled);
     }
 
     public GuildModifyAction setVerificationLevel(VerificationLevel level) {
-        setProperty("verification_level", level.getValue());
-        return this;
+        return setProperty("verification_level", level.getValue());
     }
 
     public GuildModifyAction setNotificationLevel(NotificationLevel level) {
-        setProperty("default_message_notifications", level.getValue());
-        return this;
+        return setProperty("default_message_notifications", level.getValue());
     }
 
     public GuildModifyAction setContentFilterLevel(ContentFilterLevel level) {
-        setProperty("explicit_content_filter", level.getValue());
-        return this;
+        return setProperty("explicit_content_filter", level.getValue());
     }
 
     public GuildModifyAction setIcon(String path) {

@@ -16,19 +16,18 @@ public class WebhookCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private WebhookCreateAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public WebhookCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public WebhookCreateAction setAvatar(String path) {
-        setProperty("avatar", IOUtils.setImageData(path));
-        return this;
+        return setProperty("avatar", IOUtils.setImageData(path));
     }
 
     private void submit() {

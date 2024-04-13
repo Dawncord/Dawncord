@@ -24,14 +24,15 @@ public class GuildRoleModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildRoleModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildRoleModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
+
     }
 
     public GuildRoleModifyAction setIcon(String path) {
@@ -46,23 +47,19 @@ public class GuildRoleModifyAction {
         for (PermissionType permission : permissions) {
             value |= permission.getValue();
         }
-        setProperty("permissions", value);
-        return this;
+        return setProperty("permissions", value);
     }
 
     public GuildRoleModifyAction setColor(Color color) {
-        setProperty("color", color.getRGB());
-        return this;
+        return setProperty("color", color.getRGB());
     }
 
     public GuildRoleModifyAction setHoist(boolean hoist) {
-        setProperty("hoist", hoist);
-        return this;
+        return setProperty("hoist", hoist);
     }
 
     public GuildRoleModifyAction setMentionable(boolean mentionable) {
-        setProperty("mentionable", mentionable);
-        return this;
+        return setProperty("mentionable", mentionable);
     }
 
     private void submit() {

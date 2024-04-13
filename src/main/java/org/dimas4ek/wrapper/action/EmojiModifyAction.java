@@ -19,19 +19,18 @@ public class EmojiModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private EmojiModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public EmojiModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public EmojiModifyAction setRoles(List<String> roleIds) {
-        setProperty("roles", roleIds);
-        return this;
+        return setProperty("roles", roleIds);
     }
 
     private void submit() {

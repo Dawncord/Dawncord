@@ -23,49 +23,42 @@ public class GuildMemberModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildMemberModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildMemberModifyAction setNick(String nickName) {
-        setProperty("nick", nickName);
-        return this;
+        return setProperty("nick", nickName);
     }
 
     public GuildMemberModifyAction setRoles(List<String> roleIds) {
-        setProperty("roles", roleIds);
-        return this;
+        return setProperty("roles", roleIds);
     }
 
     public GuildMemberModifyAction mute(boolean isMuted) {
-        setProperty("mute", isMuted);
-        return this;
+        return setProperty("mute", isMuted);
     }
 
     public GuildMemberModifyAction deafen(boolean isDeafened) {
-        setProperty("deaf", isDeafened);
-        return this;
+        return setProperty("deaf", isDeafened);
     }
 
     public GuildMemberModifyAction moveToChannel(String channelId) {
-        setProperty("channel_id", channelId);
-        return this;
+        return setProperty("channel_id", channelId);
     }
 
     public GuildMemberModifyAction moveToChannel(long channelId) {
-        moveToChannel(String.valueOf(channelId));
-        return this;
+        return moveToChannel(String.valueOf(channelId));
     }
 
     public GuildMemberModifyAction setTimeoutUntil(ZonedDateTime timeout) {
-        setProperty("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        return this;
+        return setProperty("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     }
 
     public GuildMemberModifyAction removeTimeout() {
-        setProperty("communication_disabled_until", NullNode.instance);
-        return this;
+        return setProperty("communication_disabled_until", NullNode.instance);
     }
 
     public GuildMemberModifyAction setFlags(GuildMemberFlag... flags) {
@@ -73,8 +66,7 @@ public class GuildMemberModifyAction {
         for (GuildMemberFlag flag : flags) {
             value |= flag.getValue();
         }
-        setProperty("flags", value);
-        return this;
+        return setProperty("flags", value);
     }
 
     private void submit() {

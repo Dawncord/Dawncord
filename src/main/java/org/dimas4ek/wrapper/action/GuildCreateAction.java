@@ -10,6 +10,7 @@ import org.dimas4ek.wrapper.utils.IOUtils;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
+//todo add create guild
 public class GuildCreateAction {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final ObjectNode jsonObject;
@@ -23,14 +24,14 @@ public class GuildCreateAction {
         this.jsonObject.set("channels", mapper.createArrayNode());
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildCreateAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildCreateAction setIcon(String path) {
@@ -41,18 +42,15 @@ public class GuildCreateAction {
     }
 
     public GuildCreateAction setVerificationLevel(VerificationLevel level) {
-        setProperty("verification_level", level.getValue());
-        return this;
+        return setProperty("verification_level", level.getValue());
     }
 
     public GuildCreateAction setNotificationLevel(NotificationLevel level) {
-        setProperty("default_message_notifications", level.getValue());
-        return this;
+        return setProperty("default_message_notifications", level.getValue());
     }
 
     public GuildCreateAction setContentFilterLevel(ContentFilterLevel level) {
-        setProperty("explicit_content_filter", level.getValue());
-        return this;
+        return setProperty("explicit_content_filter", level.getValue());
     }
 
     public GuildCreateAction createRole(Consumer<GuildRoleCreateAction> handler) {
@@ -81,19 +79,16 @@ public class GuildCreateAction {
 
     public GuildCreateAction createAfkChannel(ChannelType type, String name) {
         createGuildChannel(type, name);
-        setProperty("afk_channel_id", channelId - 1);
-        return this;
+        return setProperty("afk_channel_id", channelId - 1);
     }
 
     public GuildCreateAction setAfkTimeout(int seconds) {
-        setProperty("afk_timeout", seconds);
-        return this;
+        return setProperty("afk_timeout", seconds);
     }
 
     public GuildCreateAction createSystemChannel(ChannelType type, String name) {
         createGuildChannel(type, name);
-        setProperty("system_channel_id", channelId - 1);
-        return this;
+        return setProperty("system_channel_id", channelId - 1);
     }
 
     public GuildCreateAction setSystemChannelFlags(SystemChannelFlag... flags) {
@@ -101,17 +96,19 @@ public class GuildCreateAction {
         for (SystemChannelFlag flag : flags) {
             value |= flag.getValue();
         }
-        setProperty("system_channel_flags", value);
-        return this;
+        return setProperty("system_channel_flags", value);
     }
 
     private void createGuildChannel(ChannelType type, String name) {
-        ((ArrayNode) jsonObject.get("channels")).add(
-                mapper.createObjectNode()
-                        .put("id", channelId++)
-                        .put("type", type.getValue())
-                        .put("name", name)
-        );
+        ObjectNode channel = mapper.createObjectNode()
+                .put("id", channelId++)
+                .put("type", type.getValue())
+                .put("name", name);
+        if (jsonObject.has("channels") && jsonObject.hasNonNull("channels")) {
+            ((ArrayNode) jsonObject.get("channels")).add(channel);
+        } else {
+            jsonObject.set("channels", mapper.createArrayNode().add(channel));
+        }
     }
 
     private void submit() {
@@ -129,6 +126,12 @@ public class GuildCreateAction {
             this.parentId = parentId;
         }
 
+        private CategoryCreateAction setProperty(String name, Object value) {
+            jsonObject.set(name, mapper.valueToTree(value));
+            hasChanges = true;
+            return this;
+        }
+
         public CategoryCreateAction addChannel(ChannelType type, String name) {
             createGuildChannelUnderCategory(type, name);
             return this;
@@ -136,24 +139,25 @@ public class GuildCreateAction {
 
         public CategoryCreateAction addAfkChannel(ChannelType type, String name) {
             createGuildChannelUnderCategory(type, name);
-            setProperty("afk_channel_id", channelId - 1);
-            return this;
+            return setProperty("afk_channel_id", channelId - 1);
         }
 
         public CategoryCreateAction addSystemChannel(ChannelType type, String name) {
             createGuildChannelUnderCategory(type, name);
-            setProperty("system_channel_id", channelId - 1);
-            return this;
+            return setProperty("system_channel_id", channelId - 1);
         }
 
         private void createGuildChannelUnderCategory(ChannelType type, String name) {
-            ((ArrayNode) jsonObject.get("channels")).add(
-                    mapper.createObjectNode()
-                            .put("id", channelId++)
-                            .put("type", type.getValue())
-                            .put("name", name)
-                            .put("parent_id", parentId)
-            );
+            ObjectNode channel = mapper.createObjectNode()
+                    .put("id", channelId++)
+                    .put("type", type.getValue())
+                    .put("name", name)
+                    .put("parent_id", parentId);
+            if (jsonObject.has("channels") && jsonObject.hasNonNull("channels")) {
+                ((ArrayNode) jsonObject.get("channels")).add(channel);
+            } else {
+                jsonObject.set("channels", mapper.createArrayNode().add(channel));
+            }
         }
     }
 }

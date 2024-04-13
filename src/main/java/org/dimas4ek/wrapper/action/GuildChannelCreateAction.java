@@ -25,14 +25,14 @@ public class GuildChannelCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildChannelCreateAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildChannelCreateAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildChannelCreateAction setTopic(String topic) {
@@ -64,8 +64,7 @@ public class GuildChannelCreateAction {
     }
 
     public GuildChannelCreateAction setPosition(int position) {
-        setProperty("position", position);
-        return this;
+        return setProperty("position", position);
     }
 
     public GuildChannelCreateAction setPermissionOverrides(PermissionOverride... permissionOverrides) {
@@ -100,8 +99,7 @@ public class GuildChannelCreateAction {
     }
 
     public GuildChannelCreateAction setParentId(long parentId) {
-        setParentId(String.valueOf(parentId));
-        return this;
+        return setParentId(String.valueOf(parentId));
     }
 
     public GuildChannelCreateAction setNsfw(boolean nsfw) {

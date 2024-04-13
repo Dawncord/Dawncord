@@ -15,29 +15,26 @@ public class StageCreateAction {
         this.jsonObject.put("privacy_level", StagePrivacyLevel.GUILD_ONLY.getValue());
     }
 
-    private void setProperty(String name, Object value) {
+    private StageCreateAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public StageCreateAction setTopic(String topic) {
-        setProperty("topic", topic);
-        return this;
+        return setProperty("topic", topic);
     }
 
     public StageCreateAction setChannelId(String channelId) {
-        setProperty("channel_id", channelId);
-        return this;
+        return setProperty("channel_id", channelId);
     }
 
     private StageCreateAction sendStartNotification(boolean enabled) {
-        jsonObject.put("send_start_notification", enabled);
-        return this;
+        return setProperty("send_start_notification", enabled);
     }
 
     public StageCreateAction setGuildEventId(String guildEventId) {
-        setProperty("guild_scheduled_event_id", guildEventId);
-        return this;
+        return setProperty("guild_scheduled_event_id", guildEventId);
     }
 
     private void submit() {

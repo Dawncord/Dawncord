@@ -20,9 +20,10 @@ public class GuildOnboardingModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildOnboardingModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildOnboardingModifyAction setPrompts(GuildOnboarding.Prompt... prompts) {
@@ -60,18 +61,15 @@ public class GuildOnboardingModifyAction {
     }
 
     public GuildOnboardingModifyAction setChannelIds(String... channelIds) {
-        setProperty("default_channel_ids", channelIds);
-        return this;
+        return setProperty("default_channel_ids", channelIds);
     }
 
     public GuildOnboardingModifyAction setEnabled(boolean enabled) {
-        setProperty("enabled", enabled);
-        return this;
+        return setProperty("enabled", enabled);
     }
 
     public GuildOnboardingModifyAction setMode(OnboardingMode mode) {
-        setProperty("mode", mode.getValue());
-        return this;
+        return setProperty("mode", mode.getValue());
     }
 
     private void submit() {

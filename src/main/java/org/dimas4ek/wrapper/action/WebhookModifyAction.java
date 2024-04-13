@@ -16,29 +16,26 @@ public class WebhookModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private WebhookModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public WebhookModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public WebhookModifyAction setAvatar(String path) {
-        setProperty("avatar", IOUtils.setImageData(path));
-        return this;
+        return setProperty("avatar", IOUtils.setImageData(path));
     }
 
     public WebhookModifyAction setChannel(String channelId) {
-        setProperty("channel_id", channelId);
-        return this;
+        return setProperty("channel_id", channelId);
     }
 
     public WebhookModifyAction setChannel(long channelId) {
-        setChannel(String.valueOf(channelId));
-        return this;
+        return setChannel(String.valueOf(channelId));
     }
 
     private void submit() {

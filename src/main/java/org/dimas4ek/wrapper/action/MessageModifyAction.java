@@ -28,49 +28,44 @@ public class MessageModifyAction {
         this.actions = new HashMap<>();
     }
 
-    private void setProperty(String key, Object value) {
+    private MessageModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
-    private void setAction(String method, String url) {
+    private MessageModifyAction setAction(String method, String url) {
         actions.put(method, url);
         hasChanges = true;
+        return this;
     }
 
     public MessageModifyAction addReaction(String emojiIdOrName) {
-        setAction("put", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
-        return this;
+        return setAction("put", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
     }
 
     public MessageModifyAction removeReaction(String emojiIdOrName) {
-        setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
-        return this;
+        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
     }
 
     public MessageModifyAction removeReaction(String emojiIdOrName, User user) {
-        setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/" + user.getId());
-        return this;
+        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/" + user.getId());
     }
 
     public MessageModifyAction clearReactions() {
-        setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions");
-        return this;
+        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions");
     }
 
     public MessageModifyAction clearReactions(String emojiIrOrName) {
-        setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIrOrName);
-        return this;
+        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIrOrName);
     }
 
     public MessageModifyAction setContent(String content) {
-        setProperty("content", content);
-        return this;
+        return setProperty("content", content);
     }
 
     public MessageModifyAction setEmbeds(Embed... embeds) {
-        setProperty("embeds", EmbedUtils.createEmbedsArray(List.of(embeds)));
-        return this;
+        return setProperty("embeds", EmbedUtils.createEmbedsArray(List.of(embeds)));
     }
 
     public MessageModifyAction setSuppressEmbeds(boolean enabled) {

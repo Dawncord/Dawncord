@@ -26,9 +26,10 @@ public class GuildChannelModifyAction {
         jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private GuildChannelModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     //region Threads
@@ -65,8 +66,7 @@ public class GuildChannelModifyAction {
     //endregion
 
     public GuildChannelModifyAction setName(String name) {
-        setProperty("name", name);
-        return this;
+        return setProperty("name", name);
     }
 
     public GuildChannelModifyAction setType(ChannelType type) {
@@ -78,8 +78,7 @@ public class GuildChannelModifyAction {
     }
 
     public GuildChannelModifyAction setPosition(int position) {
-        setProperty("position", position);
-        return this;
+        return setProperty("position", position);
     }
 
     public GuildChannelModifyAction setTopic(String topic) {
@@ -196,9 +195,7 @@ public class GuildChannelModifyAction {
         for (ChannelFlag f : flags) {
             value = setFlagValue(value, f);
         }
-
-        setProperty("channel_flags", value);
-        return this;
+        return setProperty("channel_flags", value);
     }
 
     public GuildChannelModifyAction setTags(List<ForumTag> tags) {

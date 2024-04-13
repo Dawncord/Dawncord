@@ -18,14 +18,14 @@ public class GuildWelcomeScreenModifyAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String name, Object value) {
+    private GuildWelcomeScreenModifyAction setProperty(String name, Object value) {
         jsonObject.set(name, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public GuildWelcomeScreenModifyAction setEnabled(boolean enabled) {
-        setProperty("enabled", enabled);
-        return this;
+        return setProperty("enabled", enabled);
     }
 
     public GuildWelcomeScreenModifyAction setChannels(GuildWelcomeChannel... channels) {
@@ -44,8 +44,7 @@ public class GuildWelcomeScreenModifyAction {
     }
 
     public GuildWelcomeScreenModifyAction setDescription(String description) {
-        setProperty("description", description);
-        return this;
+        return setProperty("description", description);
     }
 
     private void submit() {

@@ -18,29 +18,30 @@ public class InviteCreateAction {
         this.jsonObject = mapper.createObjectNode();
     }
 
-    private void setProperty(String key, Object value) {
+    private InviteCreateAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
+        return this;
     }
 
     public InviteCreateAction setMaxAge(int age) {
-        setProperty("max_age", age);
-        return this;
+        return setProperty("max_age", age);
+
     }
 
     public InviteCreateAction setMaxUses(int uses) {
-        setProperty("max_uses", uses);
-        return this;
+        return setProperty("max_uses", uses);
+        
     }
 
     public InviteCreateAction setTemporary(boolean temporary) {
-        setProperty("temporary", temporary);
-        return this;
+        return setProperty("temporary", temporary);
+        
     }
 
     public InviteCreateAction setUnique(boolean unique) {
-        setProperty("unique", unique);
-        return this;
+        return setProperty("unique", unique);
+        
     }
 
     public InviteCreateAction setTargetType(TargetType targetType) {
