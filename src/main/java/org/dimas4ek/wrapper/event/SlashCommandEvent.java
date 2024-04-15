@@ -42,6 +42,14 @@ public class SlashCommandEvent implements Event {
         reply(null, handler);
     }
 
+    public CallbackEvent deferReply() {
+        return deferReply(false);
+    }
+
+    public CallbackEvent deferReply(boolean ephemeral) {
+        return new CallbackEvent(data, ephemeral);
+    }
+
     public GuildMember getMember() {
         return data.getGuildMember();
     }

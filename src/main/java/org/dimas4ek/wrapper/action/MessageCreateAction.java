@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
@@ -51,12 +52,22 @@ public class MessageCreateAction {
         flags = 0;
     }
 
+    public MessageCreateAction(InteractionData interactionData) {
+        this.interactionData = interactionData;
+        this.jsonObject = mapper.createObjectNode();
+        this.channelId = null;
+    }
+
     private void setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
     }
 
     private void setReplyProperty(String key, Object value) {
-        ((ObjectNode) jsonObject.get("data")).set(key, mapper.valueToTree(value));
+        if (jsonObject.has("data")) {
+            ((ObjectNode) jsonObject.get("data")).set(key, mapper.valueToTree(value));
+        } else {
+            jsonObject.set(key, mapper.valueToTree(value));
+        }
     }
 
     public MessageCreateAction setContent(String content) {
@@ -188,6 +199,24 @@ public class MessageCreateAction {
         return this;
     }
 
+    private void postMessage(ObjectNode jsonObject, String url) {
+        if (attachments != null && !attachments.isEmpty()) {
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, attachments);
+            ApiClient.postAttachments(multipartBuilder, url);
+        } else {
+            ApiClient.post(jsonObject, url);
+        }
+    }
+
+    private void patchMessage(ObjectNode jsonObject, String url) {
+        if (attachments != null && !attachments.isEmpty()) {
+            MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, attachments);
+            ApiClient.postAttachments(multipartBuilder, url);
+        } else {
+            ApiClient.patch(jsonObject, url);
+        }
+    }
+
     private void submit() {
         if (hasChanges) {
             if (interactionData != null) {
@@ -200,12 +229,13 @@ public class MessageCreateAction {
         jsonObject.removeAll();
     }
 
-    void postMessage(ObjectNode jsonObject, String url) {
-        if (attachments != null && !attachments.isEmpty()) {
-            MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, attachments);
-            ApiClient.postAttachments(multipartBuilder, url);
-        } else {
-            ApiClient.post(jsonObject, url);
+    private void submitDefer() {
+        if (hasChanges) {
+            if (interactionData != null) {
+                patchMessage(jsonObject, "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionData.getInteraction().getInteractionToken() + "/messages/@original");
+            }
+            hasChanges = false;
         }
+        jsonObject.removeAll();
     }
 }

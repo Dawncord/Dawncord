@@ -1,7 +1,10 @@
 package org.dimas4ek.wrapper.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.Nullable;
+import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.command.SubCommand;
 import org.dimas4ek.wrapper.command.SubCommandGroup;
@@ -12,6 +15,8 @@ import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.types.ChannelType;
+import org.dimas4ek.wrapper.types.InteractionCallbackType;
+import org.dimas4ek.wrapper.types.MessageFlag;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -122,6 +127,26 @@ public class ActionExecutor {
         return null;
     }
 
+    public static void deferReply(InteractionData data, boolean ephemeral, Consumer<MessageCreateAction> handler) {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.put("type", InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE.getValue());
+        if (ephemeral) {
+            jsonObject.put("flags", MessageFlag.EPHEMERAL.getValue());
+        }
+        ApiClient.post(jsonObject, "/interactions/" + data.getInteraction().getInteractionId() + "/" + data.getInteraction().getInteractionToken() + "/callback");
+        if (handler != null) {
+            MessageCreateAction action = new MessageCreateAction(data);
+            handler.accept(action);
+            try {
+                Method executeMethod = MessageCreateAction.class.getDeclaredMethod("submitDefer");
+                executeMethod.setAccessible(true);
+                executeMethod.invoke(action);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {
         MessageModifyAction action = new MessageModifyAction(message);
         handler.accept(action);
@@ -184,11 +209,7 @@ public class ActionExecutor {
     public static void createSlashCommand(Consumer<SlashCommandCreateAction> handler, String name, String description) {
         SlashCommandCreateAction action = new SlashCommandCreateAction(name, description);
         handler.accept(action);
-        try {
-            invokeSubmit(action, SlashCommandCreateAction.class);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        invokeSubmit(action, SlashCommandCreateAction.class);
     }
 
     public static void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String id) {
