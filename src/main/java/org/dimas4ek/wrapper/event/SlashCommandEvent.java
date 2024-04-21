@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.action.MessageCreateAction;
+import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.command.option.OptionData;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -30,24 +31,25 @@ public class SlashCommandEvent implements Event {
         return data.getSlashCommand().getName();
     }
 
-    public void reply(String message, Consumer<MessageCreateAction> handler) {
+    public CallbackEvent<MessageModifyAction> reply(String message, Consumer<MessageCreateAction> handler) {
         ActionExecutor.createMessage(handler, message, data.getGuildChannel().getId(), data);
+        return new CallbackEvent<>(data, false);
     }
 
-    public void reply(String message) {
-        reply(message, null);
+    public CallbackEvent<MessageModifyAction> reply(String message) {
+        return reply(message, null);
     }
 
-    public void reply(Consumer<MessageCreateAction> handler) {
-        reply(null, handler);
+    public CallbackEvent<MessageModifyAction> reply(Consumer<MessageCreateAction> handler) {
+        return reply(null, handler);
     }
 
-    public CallbackEvent deferReply() {
+    public CallbackEvent<MessageCreateAction> deferReply(boolean ephemeral) {
+        return new CallbackEvent<>(data, ephemeral, true);
+    }
+
+    public CallbackEvent<MessageCreateAction> deferReply() {
         return deferReply(false);
-    }
-
-    public CallbackEvent deferReply(boolean ephemeral) {
-        return new CallbackEvent(data, ephemeral);
     }
 
     public GuildMember getMember() {

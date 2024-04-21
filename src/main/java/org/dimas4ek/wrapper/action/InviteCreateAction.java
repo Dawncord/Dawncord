@@ -31,17 +31,17 @@ public class InviteCreateAction {
 
     public InviteCreateAction setMaxUses(int uses) {
         return setProperty("max_uses", uses);
-        
+
     }
 
     public InviteCreateAction setTemporary(boolean temporary) {
         return setProperty("temporary", temporary);
-        
+
     }
 
     public InviteCreateAction setUnique(boolean unique) {
         return setProperty("unique", unique);
-        
+
     }
 
     public InviteCreateAction setTargetType(TargetType targetType) {

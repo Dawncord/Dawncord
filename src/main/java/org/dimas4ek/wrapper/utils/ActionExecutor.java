@@ -127,7 +127,7 @@ public class ActionExecutor {
         return null;
     }
 
-    public static void deferReply(InteractionData data, boolean ephemeral, Consumer<MessageCreateAction> handler) {
+    public static void deferReply(Consumer<MessageCreateAction> handler, InteractionData data, boolean ephemeral) {
         ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
         jsonObject.put("type", InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE.getValue());
         if (ephemeral) {
@@ -145,6 +145,12 @@ public class ActionExecutor {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message, InteractionData data) {
+        MessageModifyAction action = new MessageModifyAction(message, data);
+        handler.accept(action);
+        invokeSubmit(action, MessageModifyAction.class);
     }
 
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {

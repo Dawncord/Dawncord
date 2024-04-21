@@ -3,9 +3,11 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AllowedMention;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.utils.EmbedUtils;
@@ -19,11 +21,20 @@ public class MessageModifyAction {
     private static final ObjectMapper mapper = new ObjectMapper();
     private final ObjectNode jsonObject;
     private final Message message;
+    private final InteractionData interactionData;
     private final Map<String, String> actions;
     private boolean hasChanges = false;
 
     public MessageModifyAction(Message message) {
         this.message = message;
+        this.interactionData = null;
+        this.jsonObject = mapper.createObjectNode();
+        this.actions = new HashMap<>();
+    }
+
+    public MessageModifyAction(Message message, InteractionData interactionData) {
+        this.message = message;
+        this.interactionData = interactionData;
         this.jsonObject = mapper.createObjectNode();
         this.actions = new HashMap<>();
     }
@@ -109,7 +120,11 @@ public class MessageModifyAction {
                     }
                 }
             }
-            ApiClient.patch(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId());
+            if (interactionData != null) {
+                ApiClient.patch(jsonObject, "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionData.getInteraction().getInteractionToken() + "/messages/@original");
+            } else {
+                ApiClient.patch(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId());
+            }
             hasChanges = false;
         }
         jsonObject.removeAll();
