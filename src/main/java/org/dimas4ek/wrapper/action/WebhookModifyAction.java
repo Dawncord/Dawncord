@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.utils.IOUtils;
 
 public class WebhookModifyAction {
@@ -40,7 +41,7 @@ public class WebhookModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/webhooks/" + webhookId);
+            ApiClient.patch(jsonObject, Routes.Webhook.ById(webhookId));
             hasChanges = false;
         }
         jsonObject.removeAll();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.*;
 import org.dimas4ek.wrapper.utils.IOUtils;
 
@@ -113,7 +114,7 @@ public class GuildCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/guilds");
+            ApiClient.post(jsonObject, Routes.Guild.All());
             hasChanges = false;
         }
         jsonObject.removeAll();

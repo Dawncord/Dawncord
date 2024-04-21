@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.GuildChannelModifyAction;
 import org.dimas4ek.wrapper.action.GuildChannelPositionModifyAction;
 import org.dimas4ek.wrapper.action.InviteCreateAction;
@@ -106,20 +107,20 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
                 .put("deny", String.valueOf(denyValue))
                 .put("allow", String.valueOf(allowValue));
 
-        ApiClient.put(jsonObject, "/channels/" + getId() + "/permissions/" + permissionId);
+        ApiClient.put(jsonObject, Routes.Channel.Permission(getId(), permissionId));
         jsonObject.removeAll();
     }
 
     @Override
-    public void deletePermission(int permissionId) {
-        ApiClient.delete("/channels/" + getId() + "/permissions/" + permissionId);
+    public void deletePermission(long permissionId) {
+        ApiClient.delete(Routes.Channel.Permission(getId(), String.valueOf(permissionId)));
     }
 
     @Override
     public List<Invite> getInvites() {
         if (invites == null) {
             invites = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
-                    ? JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/invites"), invite -> new InviteImpl(invite, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Channel.Invite.All(getId())), invite -> new InviteImpl(invite, guild))
                     : null;
         }
         return invites;
@@ -154,7 +155,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getPublicArchiveThreads() {
         if (publicArchiveThreads == null) {
             publicArchiveThreads = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/public").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.Public(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return publicArchiveThreads;
@@ -164,7 +165,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getPrivateArchiveThreads() {
         if (privateArchiveThreads == null) {
             privateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/threads/archived/private").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.Private(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return privateArchiveThreads;
@@ -174,7 +175,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getJoinedPrivateArchiveThreads() {
         if (joinedPrivateArchiveThreads == null) {
             joinedPrivateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/users/@me/threads/archived/private").get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.JoinedPrivate(getId(), "@me")).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return joinedPrivateArchiveThreads;
@@ -189,7 +190,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Webhook> getWebhooks() {
         if (webhooks == null) {
             webhooks = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity("/channels/" + getId() + "/webhooks").get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
                     : null;
         }
         return webhooks;

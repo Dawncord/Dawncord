@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.ApplicationFlag;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.types.Scope;
@@ -80,7 +81,7 @@ public class ApplicationModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/applications/@me");
+            ApiClient.post(jsonObject, Routes.Application());
             hasChanges = false;
         }
         jsonObject.removeAll();

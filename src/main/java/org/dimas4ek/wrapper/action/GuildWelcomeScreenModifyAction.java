@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.guild.welcomescreen.GuildWelcomeChannel;
 import org.dimas4ek.wrapper.utils.MessageUtils;
 
@@ -49,7 +50,7 @@ public class GuildWelcomeScreenModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/welcome-screen");
+            ApiClient.patch(jsonObject, Routes.Guild.WelcomeScreen(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

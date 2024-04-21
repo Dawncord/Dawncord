@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.team.Team;
@@ -83,7 +84,7 @@ public class ApplicationImpl implements Application {
     @Override
     public Guild getGuild() {
         if (guild == null) {
-            guild = new GuildImpl(JsonUtils.fetchEntity("/guilds/" + application.get("guild_id").asText()));
+            guild = new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(application.get("guild_id").asText())));
         }
         return guild;
     }

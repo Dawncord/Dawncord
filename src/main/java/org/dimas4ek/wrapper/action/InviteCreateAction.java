@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.TargetType;
@@ -65,7 +66,7 @@ public class InviteCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/channels/" + channel.getId() + "/invites");
+            ApiClient.post(jsonObject, Routes.Channel.Invite.All(channel.getId()));
             hasChanges = false;
         }
         jsonObject.removeAll();

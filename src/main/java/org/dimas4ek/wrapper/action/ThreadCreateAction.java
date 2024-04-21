@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.channel.Channel;
 import org.dimas4ek.wrapper.entities.channel.GuildForum;
@@ -88,9 +89,9 @@ public class ThreadCreateAction {
 
     private void submit() {
         if (message == null) {
-            ApiClient.post(jsonObject, "/channels/" + channel.getId() + "/threads");
+            ApiClient.post(jsonObject, Routes.Channel.Thread.All(channel.getId()));
         } else {
-            ApiClient.post(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/threads");
+            ApiClient.post(jsonObject, Routes.Channel.Message.Threads(message.getChannel().getId(), message.getId()));
         }
         jsonObject.removeAll();
     }

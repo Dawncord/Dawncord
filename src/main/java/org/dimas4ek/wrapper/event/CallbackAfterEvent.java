@@ -1,7 +1,7 @@
 package org.dimas4ek.wrapper.event;
 
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.entities.message.Message;
@@ -25,7 +25,7 @@ public class CallbackAfterEvent<T> {
 
     public Message get() {
         return new MessageImpl(
-                JsonUtils.fetchEntity("/webhooks/" + Constants.APPLICATION_ID + "/" + data.getInteraction().getInteractionToken() + "/messages/@original"),
+                JsonUtils.fetchEntity(Routes.OriginalMessage(data.getInteraction().getInteractionToken())),
                 data.getGuild()
         );
     }
@@ -42,6 +42,6 @@ public class CallbackAfterEvent<T> {
         if (defer) {
             edit(null);
         }
-        ApiClient.delete("/webhooks/" + Constants.APPLICATION_ID + "/" + data.getInteraction().getInteractionToken() + "/messages/@original");
+        ApiClient.delete(Routes.OriginalMessage(data.getInteraction().getInteractionToken()));
     }
 }

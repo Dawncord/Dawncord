@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.GuildOnboarding;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
@@ -74,7 +75,7 @@ public class GuildOnboardingModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.put(jsonObject, "/guilds/" + guildId + "/onboarding");
+            ApiClient.put(jsonObject, Routes.Guild.Onboarding(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

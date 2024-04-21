@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.entities.image;
 
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
 public class RoleIcon implements Icon {
@@ -14,6 +14,6 @@ public class RoleIcon implements Icon {
 
     @Override
     public String getUrl(ImageFormat format) {
-        return Constants.CDN_URL + "/role-icons/" + roleId + "/" + hash + format.getFormat();
+        return Routes.Icon.RoleIcon(roleId, hash, format.toString());
     }
 }

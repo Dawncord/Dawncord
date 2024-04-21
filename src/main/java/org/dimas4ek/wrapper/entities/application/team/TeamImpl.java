@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.application.team;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.image.TeamIcon;
@@ -52,7 +53,7 @@ public class TeamImpl implements Team {
     @Override
     public User getOwner() {
         if (owner == null) {
-            owner = new UserImpl(JsonUtils.fetchEntity("/users/" + team.get("owner_user_id").asText()));
+            owner = new UserImpl(JsonUtils.fetchEntity(Routes.User(team.get("owner_user_id").asText())));
         }
         return owner;
     }

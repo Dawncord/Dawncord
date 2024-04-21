@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.guild;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.channel.*;
@@ -104,7 +105,7 @@ public class GuildImpl implements Guild {
     @Override
     public User getOwner() {
         if (owner == null) {
-            owner = new UserImpl(JsonUtils.fetchEntity("/users/" + guild.get("owner_id").asText()));
+            owner = new UserImpl(JsonUtils.fetchEntity(Routes.User(guild.get("owner_id").asText())));
         }
         return owner;
     }
@@ -147,14 +148,14 @@ public class GuildImpl implements Guild {
     @Override
     public List<Sticker> getStickers() {
         if (stickers == null) {
-            stickers = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/stickers"), sticker -> new StickerImpl(sticker, this));
+            stickers = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Sticker.All(getId())), sticker -> new StickerImpl(sticker, this));
         }
         return stickers;
     }
 
     @Override
     public Sticker getStickerById(String stickerId) {
-        return new StickerImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/stickers/" + stickerId), this);
+        return new StickerImpl(JsonUtils.fetchEntity(Routes.Guild.Sticker.Get(getId(), stickerId)), this);
     }
 
     @Override
@@ -190,14 +191,14 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildChannel> getChannels() {
         if (channels == null) {
-            channels = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + id + "/channels"), channel -> new GuildChannelImpl(channel, this));
+            channels = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Channels(getId())), channel -> new GuildChannelImpl(channel, this));
         }
         return channels;
     }
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        JsonNode channelNode = JsonUtils.fetchEntity("/channels/" + channelId);
+        JsonNode channelNode = JsonUtils.fetchEntity(Routes.Channel.Get(channelId));
         return channelNode != null ? new GuildChannelImpl(channelNode, this) : null;
     }
 
@@ -238,7 +239,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void deleteChannelById(String channelId) {
-        ApiClient.delete("/channels/" + channelId);
+        ApiClient.delete(Routes.Channel.Get(channelId));
     }
 
     @Override
@@ -248,7 +249,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public Stage getStageByChannelId(String channelId) {
-        return new StageImpl(JsonUtils.fetchEntity("/stage_instances/" + channelId), this);
+        return new StageImpl(JsonUtils.fetchEntity(Routes.StageInstance(channelId)), this);
     }
 
     @Override
@@ -263,12 +264,12 @@ public class GuildImpl implements Guild {
 
     @Override
     public void modifyStageByChannelId(String channelId, String topic) {
-        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("topic", topic), "/stage_instances/" + channelId);
+        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("topic", topic), Routes.StageInstance(channelId));
     }
 
     @Override
     public void deleteStage(String channelId) {
-        ApiClient.delete("/stage_instances/" + channelId);
+        ApiClient.delete(Routes.StageInstance(channelId));
     }
 
     @Override
@@ -276,7 +277,7 @@ public class GuildImpl implements Guild {
         if (members == null) {
             members = JsonUtils.getEntityList(
                     JsonUtils.fetchArrayParams(
-                            "/guilds/" + getId() + "/members",
+                            Routes.Guild.Member.All(getId()),
                             Map.of("limit", "100")
                     ),
                     member -> new GuildMemberImpl(member, this)
@@ -287,7 +288,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public GuildMember getMemberById(String memberId) {
-        return new GuildMemberImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/members/" + memberId), this);
+        return new GuildMemberImpl(JsonUtils.fetchEntity(Routes.Guild.Member.Get(getId(), memberId)), this);
     }
 
     @Override
@@ -299,7 +300,7 @@ public class GuildImpl implements Guild {
     public List<GuildMember> searchMembers(String username, int limit) {
         return JsonUtils.getEntityList(
                 JsonUtils.fetchArrayParams(
-                        "/guilds/" + getId() + "/members/search",
+                        Routes.Guild.Member.Search(getId()),
                         Map.of(
                                 "query", username,
                                 "limit", String.valueOf(limit)
@@ -331,7 +332,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void kickMember(String memberId) {
-        ApiClient.delete("/guilds/" + getId() + "/members/" + memberId);
+        ApiClient.delete(Routes.Guild.Member.Get(getId(), memberId));
     }
 
     @Override
@@ -341,7 +342,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void banMember(String memberId) {
-        ApiClient.put(null, "/guilds/" + getId() + "/bans/" + memberId);
+        ApiClient.put(null, Routes.Guild.Ban.Get(getId(), memberId));
     }
 
     @Override
@@ -351,7 +352,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void unbanMember(String memberId) {
-        ApiClient.delete("/guilds/" + getId() + "/bans/" + memberId);
+        ApiClient.delete(Routes.Guild.Ban.Get(getId(), memberId));
     }
 
     @Override
@@ -361,7 +362,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void addMember(String userId) {
-        ApiClient.put(null, "/guilds/" + getId() + "/members/" + userId);
+        ApiClient.put(null, Routes.Guild.Member.Get(getId(), userId));
     }
 
     @Override
@@ -372,7 +373,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildBan> getBans() {
         if (bans == null) {
-            bans = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/bans"), GuildBan::new);
+            bans = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Ban.All(getId())), GuildBan::new);
         }
         return bans;
     }
@@ -432,7 +433,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void deleteRole(String roleId) {
-        ApiClient.delete("/guilds/" + getId() + "/roles/" + roleId);
+        ApiClient.delete(Routes.Guild.Role.Get(getId(), roleId));
     }
 
     @Override
@@ -446,7 +447,7 @@ public class GuildImpl implements Guild {
             categories = new ArrayList<>();
             for (Channel channel : getChannels()) {
                 if (channel.getType() == ChannelType.GUILD_CATEGORY) {
-                    categories.add(new GuildCategoryImpl(JsonUtils.fetchEntity("/channels/" + channel.getId()), this));
+                    categories.add(new GuildCategoryImpl(JsonUtils.fetchEntity(Routes.Channel.Get(channel.getId())), this));
                 }
             }
         }
@@ -475,7 +476,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + getId());
+        ApiClient.delete(Routes.Guild.Get(getId()));
     }
 
     @Override
@@ -491,7 +492,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<Thread> getActiveThreads() {
         if (threads == null) {
-            threads = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/threads/active").get("threads"), thread -> new ThreadImpl(thread, this));
+            threads = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.ActiveThreads(getId())).get("threads"), thread -> new ThreadImpl(thread, this));
         }
         return threads;
     }
@@ -544,7 +545,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<GuildScheduledEvent> getGuildEvents() {
         if (events == null) {
-            events = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/scheduled-events"), event -> new GuildScheduledEventImpl(event, this));
+            events = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.ScheduledEvent.All(getId())), event -> new GuildScheduledEventImpl(event, this));
         }
         return events;
     }
@@ -578,7 +579,7 @@ public class GuildImpl implements Guild {
     public AuditLog getAuditLog() {
         if (auditLog == null) {
             //todo fix audit log nulls
-            auditLog = new AuditLog(JsonUtils.fetchEntity("/guilds/" + getId() + "/audit-logs"), this);
+            auditLog = new AuditLog(JsonUtils.fetchEntity(Routes.Guild.AuditLog(getId())), this);
         }
         return auditLog;
     }
@@ -586,14 +587,14 @@ public class GuildImpl implements Guild {
     @Override
     public List<Emoji> getEmojis() {
         if (emojis == null) {
-            emojis = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/emojis"), emoji -> new EmojiImpl(emoji, this));
+            emojis = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Emoji.All(getId())), emoji -> new EmojiImpl(emoji, this));
         }
         return emojis;
     }
 
     @Override
     public Emoji getEmojiById(String emojiId) {
-        return new EmojiImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/emojis/" + emojiId), this);
+        return new EmojiImpl(JsonUtils.fetchEntity(Routes.Guild.Emoji.Get(getId(), emojiId)), this);
     }
 
     @Override
@@ -633,7 +634,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void deleteEmoji(String emojiId) {
-        ApiClient.delete("/guilds/" + getId() + "/emojis/" + emojiId);
+        ApiClient.delete(Routes.Guild.Emoji.Get(getId(), emojiId));
     }
 
     @Override
@@ -644,14 +645,14 @@ public class GuildImpl implements Guild {
     @Override
     public List<AutoModRule> getAutoModRules() {
         if (autoModRules == null) {
-            autoModRules = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/auto-moderation/rules"), rule -> new AutoModRuleImpl(rule, this));
+            autoModRules = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.AutoMod.All(getId())), rule -> new AutoModRuleImpl(rule, this));
         }
         return autoModRules;
     }
 
     @Override
     public AutoModRule getAutoModRuleById(String ruleId) {
-        return new AutoModRuleImpl(JsonUtils.fetchEntity("/guilds/" + getId() + "/auto-moderation/rules/" + ruleId), this);
+        return new AutoModRuleImpl(JsonUtils.fetchEntity(Routes.Guild.AutoMod.Get(getId(), ruleId)), this);
     }
 
     @Override
@@ -691,7 +692,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void deleteAutoModRule(String ruleId) {
-        ApiClient.delete("/guilds/" + getId() + "/auto-moderation/rules/" + ruleId);
+        ApiClient.delete(Routes.Guild.AutoMod.Get(getId(), ruleId));
     }
 
     @Override
@@ -702,7 +703,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildPreview getPreview() {
         if (preview == null) {
-            preview = new GuildPreview(JsonUtils.fetchEntity("/guilds/" + getId() + "/preview"), this);
+            preview = new GuildPreview(JsonUtils.fetchEntity(Routes.Guild.Preview(getId())), this);
         }
         return preview;
     }
@@ -712,7 +713,7 @@ public class GuildImpl implements Guild {
         ApiClient.post(
                 JsonNodeFactory.instance.objectNode()
                         .put("level", mfaLevel.getValue()),
-                "/guilds/" + getId() + "/mfa"
+                Routes.Guild.Mfa(getId())
         );
     }
 
@@ -720,7 +721,7 @@ public class GuildImpl implements Guild {
     public List<VoiceRegion> getVoiceRegions() {
         if (regions == null) {
             regions = new ArrayList<>();
-            for (JsonNode region : JsonUtils.fetchArray("/guilds/" + getId() + "/regions")) {
+            for (JsonNode region : JsonUtils.fetchArray(Routes.Guild.VoiceRegions(getId()))) {
                 regions.add(EnumUtils.getEnumObject(region, "id", VoiceRegion.class));
             }
         }
@@ -730,7 +731,7 @@ public class GuildImpl implements Guild {
     @Override
     public VoiceRegion getOptimalVoiceRegion() {
         if (optimalRegion == null) {
-            for (JsonNode region : JsonUtils.fetchArray("/guilds/" + getId() + "/regions")) {
+            for (JsonNode region : JsonUtils.fetchArray(Routes.Guild.VoiceRegions(getId()))) {
                 if (region.get("optimal").asBoolean()) {
                     optimalRegion = EnumUtils.getEnumObject(region, "id", VoiceRegion.class);
                     break;
@@ -743,7 +744,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<Invite> getInvites() {
         if (invites == null) {
-            invites = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/invites"), invite -> new InviteImpl(invite, this));
+            invites = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Invites(getId())), invite -> new InviteImpl(invite, this));
         }
         return invites;
     }
@@ -756,7 +757,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<Integration> getIntegrations() {
         if (integrations == null) {
-            integrations = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/integrations"), integration -> new IntegrationImpl(integration, this));
+            integrations = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Integration.All(getId())), integration -> new IntegrationImpl(integration, this));
         }
         return integrations;
     }
@@ -773,7 +774,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public void deleteIntegration(String integrationId) {
-        ApiClient.delete("/guilds/" + getId() + "/integrations/" + integrationId);
+        ApiClient.delete(Routes.Guild.Integration.Get(getId(), integrationId));
     }
 
     @Override
@@ -784,7 +785,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildWidget getWidget() {
         if (widget == null) {
-            widget = new GuildWidget(JsonUtils.fetchEntity("/guilds/" + getId() + "/widget.json"), this);
+            widget = new GuildWidget(JsonUtils.fetchEntity(Routes.Guild.Widget.Get(getId())), this);
         }
         return widget;
     }
@@ -792,7 +793,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildWidgetSettings getWidgetSettings() {
         if (widgetSettings == null) {
-            widgetSettings = new GuildWidgetSettings(JsonUtils.fetchEntity("/guilds/" + getId() + "/widget"), this);
+            widgetSettings = new GuildWidgetSettings(JsonUtils.fetchEntity(Routes.Guild.Widget.Settings(getId())), this);
         }
         return widgetSettings;
     }
@@ -805,7 +806,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildWelcomeScreen getWelcomeScreen() {
         if (welcomeScreen == null) {
-            JsonNode welcomeScreenNode = JsonUtils.fetchEntity("/guilds/" + getId() + "/welcome-screen");
+            JsonNode welcomeScreenNode = JsonUtils.fetchEntity(Routes.Guild.WelcomeScreen(getId()));
             welcomeScreen = welcomeScreenNode != null ? new GuildWelcomeScreen(welcomeScreenNode, this) : null;
         }
         return welcomeScreen;
@@ -819,7 +820,7 @@ public class GuildImpl implements Guild {
     @Override
     public GuildOnboarding getOnboarding() {
         if (onboarding == null) {
-            onboarding = new GuildOnboarding(JsonUtils.fetchEntity("/guilds/" + getId() + "/onboarding"), this);
+            onboarding = new GuildOnboarding(JsonUtils.fetchEntity(Routes.Guild.Onboarding(getId())), this);
         }
         return onboarding;
     }
@@ -832,7 +833,7 @@ public class GuildImpl implements Guild {
     @Override
     public List<Webhook> getWebhooks() {
         if (webhooks == null) {
-            webhooks = JsonUtils.getEntityList(JsonUtils.fetchArray("/guilds/" + getId() + "/webhooks"), webhook -> new WebhookImpl(webhook, this));
+            webhooks = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Webhooks(getId())), webhook -> new WebhookImpl(webhook, this));
         }
         return webhooks;
     }

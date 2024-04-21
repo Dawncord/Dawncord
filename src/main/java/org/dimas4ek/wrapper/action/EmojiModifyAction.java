@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class EmojiModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/emojis/" + emojiId);
+            ApiClient.patch(jsonObject, Routes.Guild.Emoji.Get(guildId, emojiId));
             hasChanges = false;
         }
         jsonObject.removeAll();

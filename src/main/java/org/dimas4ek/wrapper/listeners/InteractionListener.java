@@ -8,8 +8,8 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import org.dimas4ek.wrapper.Constants;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.command.SlashCommand;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -46,12 +46,12 @@ public class InteractionListener extends WebSocketAdapter {
             if (type.equals("INTERACTION_CREATE")) {
                 JsonNode data = d.get("data");
 
-                JsonNode slashCommandJson = JsonUtils.fetchEntity("/applications/" + Constants.APPLICATION_ID + "/commands/" + data.get("id").asText());
+                JsonNode slashCommandJson = JsonUtils.fetchEntity(Routes.SlashCommand.Get(data.get("id").asText()));
                 SlashCommand slashCommand = new SlashCommand(slashCommandJson);
 
                 String interactionId = d.get("id").asText();
                 String interactionToken = d.get("token").asText();
-                Guild guild = new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId));
+                Guild guild = new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId)));
                 GuildMember guildMember = guild.getMemberById(d.get("member").get("user").get("id").asText());
                 GuildChannel guildChannel = guild.getChannelById(channelId);
 

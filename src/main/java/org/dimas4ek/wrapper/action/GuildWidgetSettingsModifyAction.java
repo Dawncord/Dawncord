@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 
 public class GuildWidgetSettingsModifyAction {
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -35,7 +36,7 @@ public class GuildWidgetSettingsModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/widget");
+            ApiClient.patch(jsonObject, Routes.Guild.Widget.Settings(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

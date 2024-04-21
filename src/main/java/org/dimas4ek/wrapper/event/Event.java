@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.event;
 
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.ApplicationModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -17,7 +18,7 @@ public interface Event {
     Guild getGuild();
 
     default Application getApplication() {
-        return new ApplicationImpl(JsonUtils.fetchEntity("/applications/@me"), getGuild());
+        return new ApplicationImpl(JsonUtils.fetchEntity(Routes.Application()), getGuild());
     }
 
     default void editApplication(Consumer<ApplicationModifyAction> handler) {
@@ -25,7 +26,7 @@ public interface Event {
     }
 
     default Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId), getGuild());
+        return new WebhookImpl(JsonUtils.fetchEntity(Routes.Webhook.ById(webhookId)), getGuild());
     }
 
     default Webhook getWebhookById(long webhookId) {
@@ -33,10 +34,10 @@ public interface Event {
     }
 
     default Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetchEntity("/webhooks/" + webhookId + "/" + webhookToken), getGuild());
+        return new WebhookImpl(JsonUtils.fetchEntity(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
     }
 
     default User getBot() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/@me"));
+        return new UserImpl(JsonUtils.fetchEntity(Routes.User("@me")));
     }
 }

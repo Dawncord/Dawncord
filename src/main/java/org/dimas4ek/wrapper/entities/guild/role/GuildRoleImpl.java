@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.guild.role;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.GuildRoleModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.image.RoleIcon;
@@ -126,7 +127,7 @@ public class GuildRoleImpl implements GuildRole {
                 JsonNodeFactory.instance.objectNode()
                         .put("id", getId())
                         .put("position", position),
-                "/guilds/" + getId() + "/roles"
+                Routes.Guild.Role.All(guild.getId())
         );
     }
 
@@ -137,7 +138,7 @@ public class GuildRoleImpl implements GuildRole {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + guild.getId() + "/roles/" + getId());
+        ApiClient.delete(Routes.Guild.Role.Get(guild.getId(), getId()));
     }
 
     @Override

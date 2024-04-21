@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -194,6 +195,6 @@ public class IntegrationImpl implements Integration {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/integrations/" + getId());
+        ApiClient.delete(Routes.Guild.Integration.Get(guild.getId(), getId()));
     }
 }

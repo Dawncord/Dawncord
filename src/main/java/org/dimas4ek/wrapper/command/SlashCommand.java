@@ -2,7 +2,7 @@ package org.dimas4ek.wrapper.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.SlashCommandModifyAction;
 import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.types.CommandType;
@@ -173,6 +173,6 @@ public class SlashCommand implements ISlashCommand {
 
     @Override
     public void delete() {
-        ApiClient.delete("/applications/" + Constants.APPLICATION_ID + "/commands/" + getId());
+        ApiClient.delete(Routes.SlashCommand.Get(getId()));
     }
 }

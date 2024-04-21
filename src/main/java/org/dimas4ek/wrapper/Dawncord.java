@@ -81,7 +81,7 @@ public class Dawncord {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(Constants.API_URL + "/applications/@me")
+                .url(Routes.Application())
                 .addHeader("Authorization", "Bot " + token)
                 .build();
 
@@ -204,18 +204,16 @@ public class Dawncord {
 
             setLocalizations(slashCommand, node);
 
-            String url = "/applications/" + Constants.APPLICATION_ID + "/commands";
-
-            ApiClient.post(node, url);
+            ApiClient.post(node, Routes.SlashCommand.All());
         }
     }
 
     public SlashCommand getSlashCommand(String name) {
-        return new SlashCommand(JsonUtils.fetchEntity("/applications/" + Constants.APPLICATION_ID + "/commands/" + getSlashCommandId(name)));
+        return new SlashCommand(JsonUtils.fetchEntity(Routes.SlashCommand.Get(getSlashCommandId(name))));
     }
 
     public List<SlashCommand> getSlashCommands() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray("/applications/" + Constants.APPLICATION_ID + "/commands"), SlashCommand::new);
+        return JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.SlashCommand.All()), SlashCommand::new);
     }
 
     public void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String name) {
@@ -223,7 +221,7 @@ public class Dawncord {
     }
 
     public void deleteSlashCommand(String name) {
-        ApiClient.delete("/applications/" + Constants.APPLICATION_ID + "/commands/" + getSlashCommandId(name));
+        ApiClient.delete(Routes.SlashCommand.Get(getSlashCommandId(name)));
     }
 
     public void deleteSlashCommands(String... names) {

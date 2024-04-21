@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.utils.IOUtils;
 
 public class EmojiCreateAction {
@@ -37,7 +38,7 @@ public class EmojiCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/guilds/" + guildId + "/emojis");
+            ApiClient.post(jsonObject, Routes.Guild.Emoji.All(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

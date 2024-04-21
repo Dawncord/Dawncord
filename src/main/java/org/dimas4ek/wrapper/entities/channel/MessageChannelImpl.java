@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.channel;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -31,7 +32,7 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     @Override
     public List<Message> getMessages() {
         if (messages == null) {
-            messages = JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/messages"), message -> new MessageImpl(message, getGuild()));
+            messages = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Channel.Message.All(getId())), message -> new MessageImpl(message, getGuild()));
         }
         return messages;
     }
@@ -40,7 +41,7 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     public Message getLastMessage() {
         if (lastMessage == null) {
             lastMessage = channel.has("last_message_id")
-                    ? new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + channel.get("last_message_id").asText()), getGuild())
+                    ? new MessageImpl(JsonUtils.fetchEntity(Routes.Channel.Message.Get(getId(), channel.get("last_message_id").asText())), getGuild())
                     : null;
         }
         return lastMessage;
@@ -48,7 +49,7 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
 
     @Override
     public Message getMessageById(String messageId) {
-        return new MessageImpl(JsonUtils.fetchEntity("/channels/" + getId() + "/messages/" + messageId), getGuild());
+        return new MessageImpl(JsonUtils.fetchEntity(Routes.Channel.Message.Get(getId(), messageId)), getGuild());
     }
 
     @Override
@@ -79,25 +80,25 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
                 .map(Message::getId)
                 .collect(Collectors.toList());
 
-        ApiClient.postArray(new ObjectMapper().valueToTree(messagesToDelete), "/channels/" + getId() + "/messages/bulk-delete");
+        ApiClient.postArray(new ObjectMapper().valueToTree(messagesToDelete), Routes.Channel.Message.ToDelete(getId()));
     }
 
     @Override
     public void setTyping() {
-        ApiClient.post(null, "/channels/" + getId() + "/typing");
+        ApiClient.post(null, Routes.Typing(getId()));
     }
 
     @Override
     public List<Message> getPinnedMessages() {
         if (pinnedMessages == null) {
-            pinnedMessages = JsonUtils.getEntityList(JsonUtils.fetchArray("/channels/" + getId() + "/pins"), message -> new MessageImpl(message, getGuild()));
+            pinnedMessages = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Channel.Message.Pin.All(getId())), message -> new MessageImpl(message, getGuild()));
         }
         return pinnedMessages;
     }
 
     @Override
     public void pinMessage(String messageId) {
-        ApiClient.put(null, "/channels/" + getId() + "/pins/" + messageId);
+        ApiClient.put(null, Routes.Channel.Message.Pin.Get(getId(), messageId));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
 
     @Override
     public void unpinMessage(String messageId) {
-        ApiClient.delete("/channels/" + getId() + "/pins/" + messageId);
+        ApiClient.delete(Routes.Channel.Message.Pin.Get(getId(), messageId));
     }
 
     @Override

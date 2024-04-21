@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.entities.image;
 
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
 public class Avatar implements Icon {
@@ -23,7 +23,7 @@ public class Avatar implements Icon {
     @Override
     public String getUrl(ImageFormat format) {
         return guildId != null
-                ? Constants.CDN_URL + "/guilds/" + guildId + "/users/" + userId + "/avatars/" + hash + format.getFormat()
-                : Constants.CDN_URL + "/avatars/" + userId + "/" + hash + format.getFormat();
+                ? Routes.Icon.GuildUserAvatar(guildId, userId, hash, format.getExtension())
+                : Routes.Icon.UserAvatar(userId, hash, format.getExtension());
     }
 }

@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.entities.channel;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEvent;
 import org.dimas4ek.wrapper.entities.guild.event.GuildScheduledEventImpl;
@@ -46,7 +47,7 @@ public class StageImpl implements Stage {
     @Override
     public GuildChannel getChannel() {
         if (channel == null) {
-            channel = new GuildChannelImpl(JsonUtils.fetchEntity("/channels/" + stage.get("channel_id").asText()), guild);
+            channel = new GuildChannelImpl(JsonUtils.fetchEntity(Routes.Channel.Get(stage.get("channel_id").asText())), guild);
         }
         return channel;
     }
@@ -77,7 +78,7 @@ public class StageImpl implements Stage {
         if (guildEvent == null) {
             guildEvent = new GuildScheduledEventImpl(
                     JsonUtils.fetchEntityParams(
-                            "/guilds/" + getGuild().getId() + "/scheduled-events/" + stage.get("guild_scheduled_event_id").asText(),
+                            Routes.Guild.ScheduledEvent.Get(guild.getId(), stage.get("guild_scheduled_event_id").asText()),
                             Map.of("with_user_count", "true")
                     ), guild);
         }
@@ -86,11 +87,11 @@ public class StageImpl implements Stage {
 
     @Override
     public void delete() {
-        ApiClient.delete("/stage-instances/" + getId());
+        ApiClient.delete(Routes.StageInstance(getId()));
     }
 
     @Override
     public void modify(String topic) {
-        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("topic", topic), "/stage-instances/" + getId());
+        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("topic", topic), Routes.StageInstance(getId()));
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.entities.channel.GuildCategory;
@@ -170,7 +171,7 @@ public class GuildChannelModifyAction {
     public GuildChannelModifyAction setOptimalVoiceRegion() {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             String optimalVoiceRegion = null;
-            JsonNode voiceRegions = JsonUtils.fetchArray("/voice/regions");
+            JsonNode voiceRegions = JsonUtils.fetchArray(Routes.VoiceRegions());
             for (JsonNode region : voiceRegions) {
                 if (region.get("optimal").asBoolean()) {
                     optimalVoiceRegion = region.get("id").asText();
@@ -207,7 +208,7 @@ public class GuildChannelModifyAction {
 
     public GuildChannelModifyAction updateTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            setForumTags(tags, (ArrayNode) JsonUtils.fetchEntity("/channels/" + channel.getId()).get("available_tags"));
+            setForumTags(tags, (ArrayNode) JsonUtils.fetchEntity(Routes.Channel.Get(channel.getId())).get("available_tags"));
         }
         return this;
     }
@@ -279,7 +280,7 @@ public class GuildChannelModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/channels/" + channel.getId());
+            ApiClient.patch(jsonObject, Routes.Channel.Get(channel.getId()));
             hasChanges = false;
         }
         jsonObject.removeAll();

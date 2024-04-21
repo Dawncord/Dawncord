@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.EmojiModifyAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
@@ -114,6 +115,6 @@ public class EmojiImpl implements Emoji {
 
     @Override
     public void delete() {
-        ApiClient.delete("guilds/" + getGuild().getId() + "/emojis/" + getId());
+        ApiClient.delete(Routes.Guild.Emoji.Get(guild.getId(), getId()));
     }
 }

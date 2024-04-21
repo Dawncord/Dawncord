@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.guild.audit;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.command.SlashCommand;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.application.CommandPermission;
@@ -94,7 +95,7 @@ public class AuditLog {
             for (JsonNode auditIntegration : audit.get("integrations")) {
                 auditIntegrationIds.add(auditIntegration.get("id").asText());
             }
-            for (JsonNode guildIntegration : JsonUtils.fetchArray("/guilds/" + guild.getId() + "/integrations")) {
+            for (JsonNode guildIntegration : JsonUtils.fetchArray(Routes.Guild.Integration.All(guild.getId()))) {
                 if (auditIntegrationIds.contains(guildIntegration.get("id").asText())) {
                     integrations.add(new IntegrationImpl(guildIntegration, guild));
                 }
@@ -207,7 +208,7 @@ public class AuditLog {
         public User getUser() {
             if (user == null) {
                 user = entry.has("user_id")
-                        ? new UserImpl(JsonUtils.fetchEntity("/users/" + entry.get("user_id").asText()))
+                        ? new UserImpl(JsonUtils.fetchEntity(Routes.User(entry.get("user_id").asText())))
                         : null;
             }
             return user;

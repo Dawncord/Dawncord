@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.PermissionType;
 import org.dimas4ek.wrapper.utils.IOUtils;
 
@@ -64,7 +65,7 @@ public class GuildRoleModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/roles/" + roleId);
+            ApiClient.patch(jsonObject, Routes.Guild.Role.Get(guildId, roleId));
             hasChanges = false;
         }
         jsonObject.removeAll();

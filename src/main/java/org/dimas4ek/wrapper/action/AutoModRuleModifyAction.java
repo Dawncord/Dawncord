@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.AutoModActionType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.types.KeywordPreset;
@@ -134,7 +135,7 @@ public class AutoModRuleModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/auto-moderation/rules");
+            ApiClient.patch(jsonObject, Routes.Guild.AutoMod.All(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

@@ -1,18 +1,17 @@
 package org.dimas4ek.wrapper.types;
 
+import lombok.Getter;
+
+@Getter
 public enum ImageFormat {
     JPEG(".jpeg"),
     PNG(".png"),
     WEBP(".webp"),
     GIF(".gif");
 
-    private final String format;
+    private final String extension;
 
-    ImageFormat(String format) {
-        this.format = format;
-    }
-
-    public String getFormat() {
-        return format;
+    ImageFormat(String extension) {
+        this.extension = extension;
     }
 }

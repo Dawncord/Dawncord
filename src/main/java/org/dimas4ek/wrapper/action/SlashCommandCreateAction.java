@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.command.SubCommand;
 import org.dimas4ek.wrapper.command.SubCommandGroup;
 import org.dimas4ek.wrapper.command.option.Option;
@@ -147,8 +147,7 @@ public class SlashCommandCreateAction {
                 throw new IllegalArgumentException("Cannot have options and subcommands in the same command");
             }
         }
-        System.out.println(jsonObject.toPrettyString());
-        ApiClient.post(jsonObject, "/applications/" + Constants.APPLICATION_ID + "/commands");
+        ApiClient.post(jsonObject, Routes.SlashCommand.All());
         jsonObject.removeAll();
     }
 }

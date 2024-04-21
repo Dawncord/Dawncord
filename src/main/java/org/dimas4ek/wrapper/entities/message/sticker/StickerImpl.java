@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.message.sticker;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.GuildStickerModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -113,6 +114,6 @@ public class StickerImpl implements Sticker {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/stickers/" + getId());
+        ApiClient.delete(Routes.Guild.Sticker.Get(getGuild().getId(), getId()));
     }
 }

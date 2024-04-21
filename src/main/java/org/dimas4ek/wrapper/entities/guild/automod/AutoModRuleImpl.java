@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild.automod;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.AutoModRuleModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -59,7 +60,7 @@ public class AutoModRuleImpl implements AutoModRule {
     @Override
     public User getCreator() {
         if (creator == null) {
-            creator = new UserImpl(JsonUtils.fetchEntity("/users/" + rule.get("creator_id").asText()));
+            creator = new UserImpl(JsonUtils.fetchEntity(Routes.User(rule.get("creator_id").asText())));
         }
         return creator;
     }
@@ -124,7 +125,7 @@ public class AutoModRuleImpl implements AutoModRule {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + guild.getId() + "/auto-moderation/rules/" + getId());
+        ApiClient.delete(Routes.Guild.AutoMod.Get(guild.getId(), getId()));
     }
 
     @NotNull

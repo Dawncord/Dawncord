@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.GuildEventEntityType;
 import org.dimas4ek.wrapper.types.GuildEventStatus;
 import org.dimas4ek.wrapper.utils.IOUtils;
@@ -70,7 +71,7 @@ public class GuildEventModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/scheduled-events/" + eventId);
+            ApiClient.patch(jsonObject, Routes.Guild.ScheduledEvent.Get(guildId, eventId));
             hasChanges = false;
         }
         jsonObject.removeAll();

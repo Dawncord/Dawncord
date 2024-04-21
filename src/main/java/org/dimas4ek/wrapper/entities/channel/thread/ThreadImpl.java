@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -37,7 +38,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     @Override
     public User getCreator() {
         if (creator == null) {
-            creator = new UserImpl(JsonUtils.fetchEntity("/users/" + thread.get("owner_id").asText()));
+            creator = new UserImpl(JsonUtils.fetchEntity(Routes.User(thread.get("owner_id").asText())));
         }
         return creator;
     }
@@ -55,7 +56,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
         if (threadMembers == null) {
             threadMembers = JsonUtils.getEntityList(
                     JsonUtils.fetchArrayParams(
-                            "/channels/" + getId() + "/thread-members",
+                            Routes.Channel.Thread.Member.All(getId()),
                             Map.of("with_members", "true")
                     ),
                     threadMember -> new ThreadMember(threadMember, this)
@@ -63,7 +64,6 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
         }
         return threadMembers;
     }
-
 
     @Override
     public ThreadMember getThreadMemberById(String userId) {
@@ -77,13 +77,12 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
 
     @Override
     public void join() {
-        ApiClient.put(null, "/channels/" + getId() + "/thread-members/@me");
+        ApiClient.put(null, Routes.Channel.Thread.Member.Get(getId(), "@me"));
     }
-
 
     @Override
     public void join(String userId) {
-        ApiClient.put(null, "/channels/" + getId() + "/thread-members/" + userId);
+        ApiClient.put(null, Routes.Channel.Thread.Member.Get(getId(), userId));
     }
 
     @Override
@@ -93,12 +92,12 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
 
     @Override
     public void leave() {
-        ApiClient.delete("/channels/" + getId() + "/thread-members/@me");
+        ApiClient.delete(Routes.Channel.Thread.Member.Get(getId(), "@me"));
     }
 
     @Override
     public void leave(String userId) {
-        ApiClient.delete("/channels/" + getId() + "/thread-members/" + userId);
+        ApiClient.delete(Routes.Channel.Thread.Member.Get(getId(), userId));
     }
 
     @Override

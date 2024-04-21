@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.User;
@@ -178,12 +179,12 @@ public class MessageImpl implements Message {
 
     @Override
     public void deleteReactions(String emojiIdOrName) {
-        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId() + "/reactions/" + emojiIdOrName);
+        ApiClient.delete(Routes.Channel.Message.Reaction.Get(channel.getId(), getId(), emojiIdOrName));
     }
 
     @Override
     public void deleteReactions() {
-        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId() + "/reactions");
+        ApiClient.delete(Routes.Channel.Message.Reaction.All(channel.getId(), getId()));
     }
 
     @Override
@@ -279,6 +280,6 @@ public class MessageImpl implements Message {
 
     @Override
     public void delete() {
-        ApiClient.delete("/channels/" + getChannel().getId() + "/messages/" + getId());
+        ApiClient.delete(Routes.Channel.Message.Get(channel.getId(), getId()));
     }
 }

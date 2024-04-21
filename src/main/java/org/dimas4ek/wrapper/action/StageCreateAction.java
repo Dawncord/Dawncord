@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.StagePrivacyLevel;
 
 public class StageCreateAction {
@@ -39,7 +40,7 @@ public class StageCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/stage-instances");
+            ApiClient.post(jsonObject, Routes.StageInstances());
             hasChanges = false;
         }
         jsonObject.removeAll();

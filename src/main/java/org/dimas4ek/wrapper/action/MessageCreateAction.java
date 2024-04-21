@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
@@ -150,7 +150,7 @@ public class MessageCreateAction {
                     .put("message_id", message.getId())
                     .put("channel_id", message.getChannel().getId())
                     .put("guild_id", message.getGuild().getId())
-                    .put("fail_if_not_exists", JsonUtils.fetchEntity("/channels/" + message.getChannel().getId() + "/messages/" + message.getId()) == null ? true : null)
+                    .put("fail_if_not_exists", JsonUtils.fetchEntity(Routes.Channel.Message.Get(message.getChannel().getId(), message.getId())) == null ? true : null)
             );
         }
         return this;
@@ -220,9 +220,9 @@ public class MessageCreateAction {
     private void submit() {
         if (hasChanges) {
             if (interactionData != null) {
-                postMessage(jsonObject, "/interactions/" + interactionData.getInteraction().getInteractionId() + "/" + interactionData.getInteraction().getInteractionToken() + "/callback");
+                postMessage(jsonObject, Routes.Reply(interactionData.getInteraction().getInteractionId(), interactionData.getInteraction().getInteractionToken()));
             } else {
-                postMessage(jsonObject, "/channels/" + channelId + "/messages");
+                postMessage(jsonObject, Routes.Channel.Message.All(channelId));
             }
             hasChanges = false;
         }
@@ -232,7 +232,7 @@ public class MessageCreateAction {
     private void submitDefer() {
         if (hasChanges) {
             if (interactionData != null) {
-                patchMessage(jsonObject, "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionData.getInteraction().getInteractionToken() + "/messages/@original");
+                patchMessage(jsonObject, Routes.OriginalMessage(interactionData.getInteraction().getInteractionToken()));
             }
             hasChanges = false;
         }

@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
 import org.dimas4ek.wrapper.entities.application.Application;
@@ -98,7 +99,7 @@ public class InviteImpl implements Invite {
         if (onlineMembersCount == null) {
             onlineMembersCount =
                     JsonUtils.fetchEntityParams(
-                            "/invites/" + getCode(),
+                            Routes.Channel.Invite.Get(code),
                             Map.of("with_counts", "true")
                     ).get("approximate_presence_count").asInt();
         }
@@ -110,7 +111,7 @@ public class InviteImpl implements Invite {
         if (totalMembersCount == null) {
             totalMembersCount =
                     JsonUtils.fetchEntityParams(
-                            "/invites/" + getCode(),
+                            Routes.Channel.Invite.Get(code),
                             Map.of("with_counts", "true")
                     ).get("approximate_member_count").asInt();
         }
@@ -167,6 +168,6 @@ public class InviteImpl implements Invite {
 
     @Override
     public void delete() {
-        ApiClient.delete("/invites/" + getCode());
+        ApiClient.delete(Routes.Channel.Invite.Get(getCode()));
     }
 }

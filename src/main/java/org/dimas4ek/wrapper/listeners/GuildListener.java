@@ -7,6 +7,7 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.event.GuildDefaultEvent;
@@ -30,7 +31,7 @@ public class GuildListener extends WebSocketAdapter {
             GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());
 
             String guildId = d.has("guild_id") ? d.get("guild_id").asText() : (d.has("id") ? d.get("id").asText() : null);
-            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId)) : null;
+            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId))) : null;
 
             if (guild != null) {
                 GuildDefaultEvent guildEvent = new GuildDefaultEvent(guild);

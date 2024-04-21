@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
@@ -66,7 +67,7 @@ public class ChannelImpl implements Channel {
 
     @Override
     public void delete() {
-        ApiClient.delete("/channels/" + getId());
+        ApiClient.delete(Routes.Channel.Get(getId()));
     }
 
     @Override

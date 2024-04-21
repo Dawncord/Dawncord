@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.AutoModActionType;
 import org.dimas4ek.wrapper.types.AutoModTriggerType;
 import org.dimas4ek.wrapper.types.KeywordPreset;
@@ -137,7 +138,7 @@ public class AutoModRuleCreateAction {
             int spamLimit = 0;
             int mentionSpamLimit = 0;
             int keywordPresetLimit = 0;
-            JsonNode rules = JsonUtils.fetchArray("/guilds/" + guildId + "/auto-moderation/rules");
+            JsonNode rules = JsonUtils.fetchArray(Routes.Guild.AutoMod.All(guildId));
             for (JsonNode rule : rules) {
                 switch (Objects.requireNonNull(EnumUtils.getEnumObject(rule, "trigger_type", AutoModTriggerType.class))) {
                     case KEYWORD -> keywordLimit++;
@@ -154,7 +155,7 @@ public class AutoModRuleCreateAction {
                 jsonObject.removeAll();
                 return;
             }
-            ApiClient.post(jsonObject, "/guilds/" + guildId + "/auto-moderation/rules");
+            ApiClient.post(jsonObject, Routes.Guild.AutoMod.All(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

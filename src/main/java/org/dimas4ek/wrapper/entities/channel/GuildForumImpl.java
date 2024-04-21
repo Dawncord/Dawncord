@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.channel.thread.Thread;
@@ -111,7 +112,7 @@ public class GuildForumImpl extends ChannelImpl implements GuildForum {
     public Thread getLastThread() {
         if (lastThread == null) {
             if (forum.has("last_message_id")) {
-                lastThread = new ThreadImpl(JsonUtils.fetchEntity("/channels/" + forum.get("last_message_id").asText()), guild);
+                lastThread = new ThreadImpl(JsonUtils.fetchEntity(Routes.Channel.Get(forum.get("last_message_id").asText())), guild);
             }
         }
         return lastThread;

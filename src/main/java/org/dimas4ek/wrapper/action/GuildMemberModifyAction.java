@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.GuildMemberFlag;
 
 import java.time.ZonedDateTime;
@@ -71,7 +72,7 @@ public class GuildMemberModifyAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, "/guilds/" + guildId + "/members/" + userId);
+            ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guildId, userId));
             hasChanges = false;
         }
         jsonObject.removeAll();

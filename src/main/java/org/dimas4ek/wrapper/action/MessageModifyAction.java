@@ -3,7 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
@@ -52,23 +52,23 @@ public class MessageModifyAction {
     }
 
     public MessageModifyAction addReaction(String emojiIdOrName) {
-        return setAction("put", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
+        return setAction("put", Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emojiIdOrName, "@me"));
     }
 
     public MessageModifyAction removeReaction(String emojiIdOrName) {
-        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/@me");
+        return setAction("delete", Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emojiIdOrName, "@me"));
     }
 
     public MessageModifyAction removeReaction(String emojiIdOrName, User user) {
-        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIdOrName + "/" + user.getId());
+        return setAction("delete", Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emojiIdOrName, user.getId()));
     }
 
     public MessageModifyAction clearReactions() {
-        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions");
+        return setAction("delete", Routes.Channel.Message.Reaction.All(message.getChannel().getId(), message.getId()));
     }
 
-    public MessageModifyAction clearReactions(String emojiIrOrName) {
-        return setAction("delete", "/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/reactions/" + emojiIrOrName);
+    public MessageModifyAction clearReactions(String emojiIdOrName) {
+        return setAction("delete", Routes.Channel.Message.Reaction.Get(message.getChannel().getId(), message.getId(), emojiIdOrName));
     }
 
     public MessageModifyAction setContent(String content) {
@@ -121,9 +121,9 @@ public class MessageModifyAction {
                 }
             }
             if (interactionData != null) {
-                ApiClient.patch(jsonObject, "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionData.getInteraction().getInteractionToken() + "/messages/@original");
+                ApiClient.patch(jsonObject, Routes.OriginalMessage(interactionData.getInteraction().getInteractionToken()));
             } else {
-                ApiClient.patch(jsonObject, "/channels/" + message.getChannel().getId() + "/messages/" + message.getId());
+                ApiClient.patch(jsonObject, Routes.Channel.Message.Get(message.getChannel().getId(), message.getId()));
             }
             hasChanges = false;
         }

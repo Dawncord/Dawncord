@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.ForumTag;
 import org.dimas4ek.wrapper.entities.PermissionOverride;
 import org.dimas4ek.wrapper.types.*;
@@ -196,7 +197,7 @@ public class GuildChannelCreateAction {
 
     private void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, "/guilds/" + guildId + "/channels");
+            ApiClient.post(jsonObject, Routes.Guild.Channels(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

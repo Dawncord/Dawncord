@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.command.option.Option;
 import org.dimas4ek.wrapper.types.Locale;
 import org.dimas4ek.wrapper.types.OptionType;
@@ -102,7 +102,7 @@ public class SlashCommandModifyAction {
                 }
             }
 
-            ApiClient.patch(jsonObject, "/applications/" + Constants.APPLICATION_ID + "/commands/" + commandId);
+            ApiClient.patch(jsonObject, Routes.SlashCommand.Get(commandId));
             hasChanges = false;
         }
         jsonObject.removeAll();

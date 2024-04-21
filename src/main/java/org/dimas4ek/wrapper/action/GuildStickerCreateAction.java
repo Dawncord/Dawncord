@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import okhttp3.MultipartBody;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.utils.AttachmentUtils;
 
@@ -61,7 +62,7 @@ public class GuildStickerCreateAction {
     private void submit() {
         if (hasChanges) {
             MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, List.of(file));
-            ApiClient.postAttachments(multipartBuilder, "/guilds/" + guild.getId() + "/stickers");
+            ApiClient.postAttachments(multipartBuilder, Routes.Guild.Sticker.All(guild.getId()));
             hasChanges = false;
         }
         jsonObject.removeAll();

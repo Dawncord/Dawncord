@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.GuildEventModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -180,7 +181,7 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
     @Override
     public List<GuildMember> getGuildEventMembers(int limit) {
         JsonNode eventMembers = JsonUtils.fetchArrayParams(
-                "/guilds/" + getGuild().getId() + "/scheduled-events/" + getId() + "/users",
+                Routes.Guild.ScheduledEvent.Members(guild.getId(), getId()),
                 Map.of(
                         "with_member", "true",
                         "limit", String.valueOf(limit)
@@ -208,6 +209,6 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
 
     @Override
     public void delete() {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/scheduled-events/" + getId());
+        ApiClient.delete(Routes.Guild.ScheduledEvent.Get(guild.getId(), getId()));
     }
 }

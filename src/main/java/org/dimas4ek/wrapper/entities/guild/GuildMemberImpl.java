@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.GuildMemberModifyAction;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -121,7 +122,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public void deleteRoleById(String roleId) {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+        ApiClient.delete(Routes.Guild.Member.Role(guild.getId(), getUser().getId(), roleId));
     }
 
     @Override
@@ -176,7 +177,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public void addToGuild(String guildId) {
-        ApiClient.put(null, "/guilds/" + guildId + "/members/" + getUser().getId());
+        ApiClient.put(null, Routes.Guild.Member.Get(guildId, getUser().getId()));
     }
 
     @Override
@@ -186,7 +187,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public void addRole(String roleId) {
-        ApiClient.put(null, "/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+        ApiClient.put(null, Routes.Guild.Member.Role(getGuild().getId(), getUser().getId(), roleId));
     }
 
     @Override
@@ -196,7 +197,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public void removeRole(String roleId) {
-        ApiClient.delete("/guilds/" + getGuild().getId() + "/members/" + getUser().getId() + "/roles/" + roleId);
+        ApiClient.delete(Routes.Guild.Member.Role(getGuild().getId(), getUser().getId(), roleId));
     }
 
     @Override

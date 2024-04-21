@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.WebhookModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -112,6 +113,6 @@ public class WebhookImpl implements Webhook {
 
     @Override
     public void delete() {
-        ApiClient.delete("/webhooks/" + getId());
+        ApiClient.delete(Routes.Webhook.ById(getId()));
     }
 }

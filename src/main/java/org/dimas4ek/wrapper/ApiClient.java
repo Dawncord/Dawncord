@@ -15,7 +15,7 @@ public class ApiClient {
 
     public static JsonNode getJson(String url) {
         Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
+                .url(url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .get()
                 .build();
@@ -57,7 +57,7 @@ public class ApiClient {
 
     private static void doAction(String action, JsonNode jsonNode, String url) {
         Request.Builder request = new Request.Builder()
-                .url(Constants.API_URL + url)
+                .url(url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
         RequestBody requestBody = null;
@@ -114,7 +114,7 @@ public class ApiClient {
         }
 
         Request.Builder request = new Request.Builder()
-                .url(Constants.API_URL + url)
+                .url(url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
         switch (action) {
@@ -154,7 +154,7 @@ public class ApiClient {
     }
 
     public static ArrayNode getJsonArrayParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
                 httpBuilder.addQueryParameter(param.getKey(), param.getValue());
@@ -185,7 +185,7 @@ public class ApiClient {
     //todo multithreading
     public static JsonNode getJsonArray(String url) {
         Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
+                .url(url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .get()
                 .build();
@@ -206,7 +206,7 @@ public class ApiClient {
     }
 
     public static JsonNode getJsonParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = HttpUrl.parse(Constants.API_URL + url).newBuilder();
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
                 httpBuilder.addQueryParameter(param.getKey(), param.getValue());
@@ -236,7 +236,7 @@ public class ApiClient {
 
     public static void postAttachments(MultipartBody.Builder multipartBuilder, String url) {
         Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
+                .url(url)
                 .post(multipartBuilder.build())
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();

@@ -7,6 +7,7 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.*;
 import org.dimas4ek.wrapper.entities.activity.Activity;
 import org.dimas4ek.wrapper.entities.activity.ActivityImpl;
@@ -99,13 +100,13 @@ public class EventListener extends WebSocketAdapter {
 
     private void processReadyEvent(JsonNode data) {
         String version = data.path("v").asText();
-        User user = new UserImpl(JsonUtils.fetchEntity("/users/" + data.path("user").path("id").asText()));
+        User user = new UserImpl(JsonUtils.fetchEntity(Routes.User(data.path("user").path("id").asText())));
         String sessionType = data.path("session_type").asText();
         String sessionId = data.path("session_id").asText();
         String resumeUrl = data.path("resume_gateway_url").asText();
         List<Guild> guilds = new ArrayList<>();
-        data.path("guilds").forEach(node -> guilds.add(new GuildImpl(JsonUtils.fetchEntity("/guilds/" + node.path("id").asText()))));
-        Application application = new ApplicationImpl(JsonUtils.fetchEntity("/applications/@me"));
+        data.path("guilds").forEach(node -> guilds.add(new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(node.path("id").asText())))));
+        Application application = new ApplicationImpl(JsonUtils.fetchEntity(Routes.Application()));
 
         ReadyEvent readyEvent = new ReadyEvent(version, user, sessionType, sessionId, resumeUrl, guilds, application);
         try {
@@ -161,7 +162,7 @@ public class EventListener extends WebSocketAdapter {
         String guildId = data.path("guild_id").asText();
         Guild guild = getGuildById(guildId);
         if (guild != null) {
-            User user = new UserImpl(JsonUtils.fetchEntity("/users/" + data.path("user").path("id").asText()));
+            User user = new UserImpl(JsonUtils.fetchEntity(Routes.User(data.path("user").path("id").asText())));
 
             GuildBanEvent guildEvent = new GuildBanEvent(guild, user);
             invokeProcessEvent("processGuildBanEvent", type, guildEvent, GuildBanEvent.class);
@@ -251,7 +252,7 @@ public class EventListener extends WebSocketAdapter {
         Guild guild = getGuildById(guildId);
         if (guild != null) {
             GuildChannel channel = guild.getChannelById(channelId);
-            Message message = new MessageImpl(JsonUtils.fetchEntity("/channels/" + channelId + "/messages/" + messageId), guild);
+            Message message = new MessageImpl(JsonUtils.fetchEntity(Routes.Channel.Message.Get(channelId, messageId)), guild);
 
             MessageEvent messageEvent = new MessageEvent(message, channel, guild);
             invokeProcessEvent("processMessageEvent", type, messageEvent, MessageEvent.class);
@@ -344,7 +345,7 @@ public class EventListener extends WebSocketAdapter {
 
     private void processBotUpdateEvent(JsonNode data) {
         String userId = data.path("id").asText();
-        User user = new UserImpl(JsonUtils.fetchEntity("/users/" + userId));
+        User user = new UserImpl(JsonUtils.fetchEntity(Routes.User(userId)));
         BotUpdateEvent botUpdateEvent = new BotUpdateEvent(user);
         try {
             Method method = EventHandler.class.getDeclaredMethod("processBotUpdateEvent", BotUpdateEvent.class);
@@ -386,7 +387,7 @@ public class EventListener extends WebSocketAdapter {
         if (guildId.isEmpty()) {
             return null;
         }
-        return new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId));
+        return new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId)));
     }
 
     private void invokeProcessEvent(String methodName, GatewayEvent type, Event event, Class<? extends Event> clazz) {

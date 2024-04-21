@@ -2,6 +2,7 @@ package org.dimas4ek.wrapper.entities.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.EmojiImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
@@ -101,8 +102,8 @@ public class ReactionImpl implements Reaction {
 
     @Override
     public void delete(String userId) {
-        ApiClient.delete("/channels/" + message.getChannel().getId() + "/messages/" + message.getId() + "/" +
-                (isGuildEmoji() ? getGuildEmoji().getName() : getEmoji()) + "/" + userId);
+        String emoji = (isGuildEmoji() ? getGuildEmoji().getName() : getEmoji());
+        ApiClient.delete(Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emoji, userId));
     }
 
     @Override

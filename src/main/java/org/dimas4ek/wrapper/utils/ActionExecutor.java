@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.Nullable;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.*;
 import org.dimas4ek.wrapper.command.SubCommand;
 import org.dimas4ek.wrapper.command.SubCommandGroup;
@@ -133,7 +134,7 @@ public class ActionExecutor {
         if (ephemeral) {
             jsonObject.put("flags", MessageFlag.EPHEMERAL.getValue());
         }
-        ApiClient.post(jsonObject, "/interactions/" + data.getInteraction().getInteractionId() + "/" + data.getInteraction().getInteractionToken() + "/callback");
+        ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
         if (handler != null) {
             MessageCreateAction action = new MessageCreateAction(data);
             handler.accept(action);

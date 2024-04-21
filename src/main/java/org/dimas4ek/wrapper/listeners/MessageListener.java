@@ -7,6 +7,7 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.Dawncord;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
@@ -37,11 +38,11 @@ public class MessageListener extends WebSocketAdapter {
             String channelId = d.has("channel_id") ? d.get("channel_id").asText() : null;
             String messageId = d.get("id").asText();
 
-            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity("/guilds/" + guildId)) : null;
+            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId))) : null;
 
             if (guild != null) {
                 GuildChannel channel = guild.getChannelById(channelId);
-                Message message = new MessageImpl(JsonUtils.fetchEntity("/channels/" + channelId + "/messages/" + messageId), guild);
+                Message message = new MessageImpl(JsonUtils.fetchEntity(Routes.Channel.Message.Get(channelId, messageId)), guild);
 
                 MessageEvent messageEvent = new MessageEvent(message, channel, guild);
                 try {

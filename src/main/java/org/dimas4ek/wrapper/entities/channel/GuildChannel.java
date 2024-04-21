@@ -32,7 +32,7 @@ public interface GuildChannel extends Channel {
 
     void editPermission(String permissionId, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed);
 
-    void deletePermission(int permissionId);
+    void deletePermission(long permissionId);
 
     List<Invite> getInvites();
 

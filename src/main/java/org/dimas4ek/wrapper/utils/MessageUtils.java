@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.channel.thread.ThreadMessage;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
@@ -86,7 +87,7 @@ public class MessageUtils {
     public static List<Sticker> retrieveStickersFromMessage(JsonNode message, Guild guild) {
         List<Sticker> stickers = new ArrayList<>();
         JsonNode stickerItems = message.has("sticker_items") ? message.get("sticker_items") : null;
-        JsonNode guildStickers = JsonUtils.fetchArray("/guilds/" + guild.getId() + "/stickers");
+        JsonNode guildStickers = JsonUtils.fetchArray(Routes.Guild.Sticker.All(guild.getId()));
 
         if (stickerItems != null && guildStickers != null) {
             Set<String> guildStickerIds = new HashSet<>();

@@ -23,7 +23,7 @@ public interface Icon {
         try {
             URL url = new URL(getUrl(format));
             InputStream is = url.openStream();
-            OutputStream os = new FileOutputStream(name + format.getFormat());
+            OutputStream os = new FileOutputStream(name + format.getExtension());
 
             byte[] b = new byte[2048];
             int length;

@@ -3,6 +3,7 @@ package org.dimas4ek.wrapper.action;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 
 public class GuildChannelPositionModifyAction {
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -40,7 +41,7 @@ public class GuildChannelPositionModifyAction {
 
     public void submit() {
         if (hasChanges) {
-            ApiClient.patchArray(mapper.createArrayNode().add(jsonObject), "/guilds/" + guildId + "/channels");
+            ApiClient.patchArray(mapper.createArrayNode().add(jsonObject), Routes.Guild.Channels(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();

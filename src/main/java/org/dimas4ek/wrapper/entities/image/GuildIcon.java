@@ -1,6 +1,6 @@
 package org.dimas4ek.wrapper.entities.image;
 
-import org.dimas4ek.wrapper.Constants;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.types.ImageFormat;
 
 public class GuildIcon implements Icon {
@@ -14,6 +14,6 @@ public class GuildIcon implements Icon {
 
     @Override
     public String getUrl(ImageFormat format) {
-        return Constants.CDN_URL + "/icons/" + guildId + "/" + hash + format.getFormat();
+        return Routes.Icon.GuildIcon(guildId, hash, format.getExtension());
     }
 }

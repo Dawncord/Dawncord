@@ -1,6 +1,7 @@
 package org.dimas4ek.wrapper.command.option;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.Mentionable;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.UserImpl;
@@ -39,7 +40,7 @@ public class OptionData {
     }
 
     public User getAsUser() {
-        return new UserImpl(JsonUtils.fetchEntity("/users/" + getAsString()));
+        return new UserImpl(JsonUtils.fetchEntity(Routes.User(getAsString())));
     }
 
     public GuildChannel getAsChannel() {
