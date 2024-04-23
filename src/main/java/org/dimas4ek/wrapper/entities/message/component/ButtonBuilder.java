@@ -1,5 +1,7 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
+import org.dimas4ek.wrapper.entities.DefaultEmoji;
+import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.types.ButtonStyle;
 
 public class ButtonBuilder implements ComponentBuilder {
@@ -8,7 +10,7 @@ public class ButtonBuilder implements ComponentBuilder {
     private final String url;
     private final String label;
     private boolean isDisabled;
-    private String emoji;
+    private Emoji emoji;
 
     public ButtonBuilder(int style, String customIdOrUrl, String label) {
         this.style = style;
@@ -42,12 +44,17 @@ public class ButtonBuilder implements ComponentBuilder {
         return isDisabled;
     }
 
-    public String getEmoji() {
+    public Emoji getEmoji() {
         return emoji;
     }
 
-    public ButtonBuilder withEmoji(String emojiIdOrName) {
-        this.emoji = emojiIdOrName;
+    public ButtonBuilder withEmoji(Emoji emoji) {
+        this.emoji = emoji;
+        return this;
+    }
+
+    public ButtonBuilder withEmoji(String name) {
+        this.emoji = new DefaultEmoji(name);
         return this;
     }
 

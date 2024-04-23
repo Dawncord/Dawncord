@@ -226,7 +226,7 @@ public class MessageImpl implements Message {
     @Override
     public List<ActionRow> getActionRows() {
         if (actionRows == null) {
-            actionRows = !message.get("components").isEmpty() ? JsonUtils.getEntityList(message.get("components"), ActionRow::new) : null;
+            actionRows = !message.get("components").isEmpty() ? JsonUtils.getEntityList(message.get("components"), actionRow -> new ActionRow(actionRow, getGuild())) : null;
         }
         return actionRows;
     }

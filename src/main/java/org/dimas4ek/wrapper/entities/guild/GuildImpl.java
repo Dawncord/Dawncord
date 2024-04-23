@@ -56,7 +56,7 @@ public class GuildImpl implements Guild {
     private List<Thread> threads;
     private List<GuildScheduledEvent> events;
     private AuditLog auditLog;
-    private List<Emoji> emojis;
+    private List<CustomEmoji> emojis;
     private List<AutoModRule> autoModRules;
     private GuildPreview preview;
     private List<VoiceRegion> regions;
@@ -585,35 +585,38 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<Emoji> getEmojis() {
+    public List<CustomEmoji> getEmojis() {
         if (emojis == null) {
-            emojis = JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Guild.Emoji.All(getId())), emoji -> new EmojiImpl(emoji, this));
+            emojis = JsonUtils.getEntityList(
+                    JsonUtils.fetchArray(Routes.Guild.Emoji.All(getId())),
+                    emoji -> new CustomEmojiImpl(emoji, this)
+            );
         }
         return emojis;
     }
 
     @Override
-    public Emoji getEmojiById(String emojiId) {
-        return new EmojiImpl(JsonUtils.fetchEntity(Routes.Guild.Emoji.Get(getId(), emojiId)), this);
+    public CustomEmoji getEmojiById(String emojiId) {
+        return new CustomEmojiImpl(JsonUtils.fetchEntity(Routes.Guild.Emoji.Get(getId(), emojiId)), this);
     }
 
     @Override
-    public Emoji getEmojiById(long emojiId) {
+    public CustomEmoji getEmojiById(long emojiId) {
         return getEmojiById(String.valueOf(emojiId));
     }
 
     @Override
-    public List<Emoji> getEmojisByName(String emojiName) {
+    public List<CustomEmoji> getEmojisByName(String emojiName) {
         return getEmojis().stream().filter(emoji -> emoji.getName().equals(emojiName)).toList();
     }
 
     @Override
-    public List<Emoji> getEmojisByCreatorId(String userId) {
+    public List<CustomEmoji> getEmojisByCreatorId(String userId) {
         return getEmojis().stream().filter(emoji -> emoji.getCreator().getId().equals(userId)).toList();
     }
 
     @Override
-    public List<Emoji> getEmojisByCreatorId(long userId) {
+    public List<CustomEmoji> getEmojisByCreatorId(long userId) {
         return getEmojisByCreatorId(String.valueOf(userId));
     }
 

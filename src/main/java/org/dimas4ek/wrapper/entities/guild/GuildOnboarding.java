@@ -2,7 +2,7 @@ package org.dimas4ek.wrapper.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.action.GuildOnboardingModifyAction;
-import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.CustomEmoji;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRoleImpl;
@@ -163,14 +163,14 @@ public class GuildOnboarding {
             private String description;
             private List<GuildChannel> channels;
             private List<GuildRoleImpl> roles;
-            private Emoji emoji;
+            private CustomEmoji emoji;
 
             public Option(JsonNode option, Guild guild) {
                 this.option = option;
                 this.guild = guild;
             }
 
-            private Option(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, Emoji emoji) {
+            private Option(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, CustomEmoji emoji) {
                 this.option = null;
                 this.guild = null;
                 this.id = id;
@@ -227,7 +227,7 @@ public class GuildOnboarding {
                 return roles;
             }
 
-            public Emoji getEmoji() {
+            public CustomEmoji getEmoji() {
                 if (emoji == null) {
                     assert option != null;
                     if (option.has("emoji")) {
@@ -240,7 +240,7 @@ public class GuildOnboarding {
                 return emoji;
             }
 
-            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, Emoji emoji) {
+            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, CustomEmoji emoji) {
                 return new Option(id, title, description, channels, roles, emoji);
             }
         }

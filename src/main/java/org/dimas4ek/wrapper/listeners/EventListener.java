@@ -173,7 +173,7 @@ public class EventListener extends WebSocketAdapter {
         String guildId = data.path("guild_id").asText();
         Guild guild = getGuildById(guildId);
         if (guild != null) {
-            List<Emoji> emojis = guild.getEmojis();
+            List<CustomEmoji> emojis = guild.getEmojis();
 
             GuildEmojiEvent guildEvent = new GuildEmojiEvent(guild, emojis);
             invokeSingleProcessEvent("processGuildEmojiEvent", guildEvent, GuildEmojiEvent.class);

@@ -45,6 +45,7 @@ public class Dawncord {
     //private static Map<GatewayEvent, Consumer<GatewayEvent>> eventHandlers = new HashMap<>();
     private final Map<Class<? extends Event>, Consumer<Event>> eventHandlers = new HashMap<>();
     private long intentsValue = 0;
+    private Map<String, String> commandIdMap = new HashMap<>();
 
     public Dawncord(String token) {
         WebSocketFactory factory = new WebSocketFactory();
@@ -54,6 +55,7 @@ public class Dawncord {
             throw new RuntimeException(e);
         }
 
+
         webSocket.addListener(new MainListener());
         webSocket.addListener(new InteractionListener());
         webSocket.addListener(new EventListener(this));
@@ -62,6 +64,14 @@ public class Dawncord {
         //webSocket.addListener(new ChannelListener());
 
         assignConstants(token);
+        initializeCommandIdMap();
+    }
+
+    private void initializeCommandIdMap() {
+        List<SlashCommand> commands = getSlashCommands();
+        for (SlashCommand command : commands) {
+            commandIdMap.put(command.getName(), command.getId());
+        }
     }
 
     public void setIntents(GatewayIntent... intents) {
@@ -231,10 +241,11 @@ public class Dawncord {
     }
 
     private String getSlashCommandId(String name) {
-        return getSlashCommands().stream()
-                .filter(slashCommand -> slashCommand.getName().equals(name))
-                .findFirst().orElseThrow(() -> new RuntimeException("Command not found"))
-                .getId();
+        String commandId = commandIdMap.get(name);
+        if (commandId == null) {
+            throw new RuntimeException("Command not found");
+        }
+        return commandId;
     }
 
     private void setOptions(SlashCommand slashCommand, ObjectNode node) {

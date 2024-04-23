@@ -1,8 +1,9 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.entities.CustomEmoji;
+import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
 import org.dimas4ek.wrapper.entities.Emoji;
-import org.dimas4ek.wrapper.entities.EmojiImpl;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.image.DiscoverySplash;
 import org.dimas4ek.wrapper.entities.image.Splash;
@@ -21,7 +22,7 @@ public class GuildPreview implements ISnowflake {
     private String description;
     private Splash splash;
     private DiscoverySplash discoverySplash;
-    private List<Emoji> emojis;
+    private List<CustomEmoji> emojis;
     private List<String> features;
     private List<Sticker> stickers;
     private Integer memberCount;
@@ -77,9 +78,9 @@ public class GuildPreview implements ISnowflake {
         return discoverySplash;
     }
 
-    public List<Emoji> getEmojis() {
+    public List<CustomEmoji> getEmojis() {
         if (emojis == null) {
-            emojis = JsonUtils.getEntityList(preview.get("emojis"), emoji -> new EmojiImpl(emoji, guild));
+            emojis = JsonUtils.getEntityList(preview.get("emojis"), emoji -> new CustomEmojiImpl(emoji, guild));
         }
         return emojis;
     }
@@ -92,15 +93,15 @@ public class GuildPreview implements ISnowflake {
         return getEmojiById(String.valueOf(emojiId));
     }
 
-    public List<Emoji> getEmojisByName(String emojiName) {
+    public List<CustomEmoji> getEmojisByName(String emojiName) {
         return getEmojis().stream().filter(emoji -> emoji.getName().equals(emojiName)).toList();
     }
 
-    public List<Emoji> getEmojisByCreatorId(String userId) {
+    public List<CustomEmoji> getEmojisByCreatorId(String userId) {
         return getEmojis().stream().filter(emoji -> emoji.getCreator().getId().equals(userId)).toList();
     }
 
-    public List<Emoji> getEmojisByCreatorId(long userId) {
+    public List<CustomEmoji> getEmojisByCreatorId(long userId) {
         return getEmojisByCreatorId(String.valueOf(userId));
     }
 

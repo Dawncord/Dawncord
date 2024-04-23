@@ -1,6 +1,10 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
+import org.dimas4ek.wrapper.entities.DefaultEmoji;
+import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.types.SelectMenuType;
@@ -13,22 +17,30 @@ public class ActionRow {
     private final List<ButtonBuilder> buttons = new ArrayList<>();
     private final List<SelectMenuBuilder> selectMenus = new ArrayList<>();
 
-    public ActionRow(JsonNode actionRow) {
+    public ActionRow(JsonNode actionRow, Guild guild) {
         JsonNode components = actionRow.get("components");
 
         for (JsonNode component : components) {
             int type = component.get("type").asInt();
 
             if (type == ComponentType.BUTTON.getValue()) {
-                buttons.add(
-                        new ButtonBuilder(
-                                component.get("style").asInt(),
-                                component.has("custom_id")
-                                        ? component.get("custom_id").asText()
-                                        : component.get("url").asText(),
-                                component.get("label").asText()
-                        )
+                ButtonBuilder button = new ButtonBuilder(
+                        component.get("style").asInt(),
+                        component.has("custom_id")
+                                ? component.get("custom_id").asText()
+                                : component.get("url").asText(),
+                        component.get("label").asText()
                 );
+                if (component.has("emoji")) {
+                    Emoji emoji = null;
+                    if (component.get("emoji").has("id") && component.get("emoji").get("id") != null) {
+                        emoji = new CustomEmojiImpl(component, guild);
+                    } else if (!component.get("emoji").has("id") || component.get("emoji").get("id") == null) {
+                        emoji = new DefaultEmoji(component.get("name").asText());
+                    }
+                    button.withEmoji(emoji);
+                }
+                buttons.add(button);
             }
             if (type != ComponentType.ACTION.getValue()
                     || type != ComponentType.BUTTON.getValue()

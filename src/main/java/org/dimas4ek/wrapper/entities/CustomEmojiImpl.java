@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class EmojiImpl implements Emoji {
+public class CustomEmojiImpl implements CustomEmoji {
     private final JsonNode emoji;
     private final Guild guild;
     private String id;
@@ -24,7 +24,7 @@ public class EmojiImpl implements Emoji {
     private Boolean isAnimated;
     private Boolean isAvailable;
 
-    public EmojiImpl(JsonNode emoji, Guild guild) {
+    public CustomEmojiImpl(JsonNode emoji, Guild guild) {
         this.emoji = emoji;
         this.guild = guild;
     }

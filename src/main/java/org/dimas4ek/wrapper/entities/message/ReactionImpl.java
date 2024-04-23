@@ -3,8 +3,8 @@ package org.dimas4ek.wrapper.entities.message;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Routes;
+import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
 import org.dimas4ek.wrapper.entities.Emoji;
-import org.dimas4ek.wrapper.entities.EmojiImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class ReactionImpl implements Reaction {
     @Override
     public Emoji getGuildEmoji() {
         if (guildEmoji == null) {
-            guildEmoji = new EmojiImpl(reaction.get("emoji"), guild);
+            guildEmoji = new CustomEmojiImpl(reaction.get("emoji"), guild);
         }
         return guildEmoji;
     }

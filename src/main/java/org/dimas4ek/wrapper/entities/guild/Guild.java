@@ -1,7 +1,7 @@
 package org.dimas4ek.wrapper.entities.guild;
 
 import org.dimas4ek.wrapper.action.*;
-import org.dimas4ek.wrapper.entities.Emoji;
+import org.dimas4ek.wrapper.entities.CustomEmoji;
 import org.dimas4ek.wrapper.entities.ISnowflake;
 import org.dimas4ek.wrapper.entities.User;
 import org.dimas4ek.wrapper.entities.Webhook;
@@ -202,17 +202,17 @@ public interface Guild extends ISnowflake {
 
     AuditLog getAuditLog();
 
-    List<Emoji> getEmojis();
+    List<CustomEmoji> getEmojis();
 
-    Emoji getEmojiById(String emojiId);
+    CustomEmoji getEmojiById(String emojiId);
 
-    Emoji getEmojiById(long emojiId);
+    CustomEmoji getEmojiById(long emojiId);
 
-    List<Emoji> getEmojisByName(String emojiName);
+    List<CustomEmoji> getEmojisByName(String emojiName);
 
-    List<Emoji> getEmojisByCreatorId(String userId);
+    List<CustomEmoji> getEmojisByCreatorId(String userId);
 
-    List<Emoji> getEmojisByCreatorId(long userId);
+    List<CustomEmoji> getEmojisByCreatorId(long userId);
 
     void createEmoji(Consumer<EmojiCreateAction> handler);
 

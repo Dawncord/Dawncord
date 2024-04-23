@@ -2,7 +2,11 @@ package org.dimas4ek.wrapper.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dimas4ek.wrapper.entities.CustomEmoji;
+import org.dimas4ek.wrapper.entities.DefaultEmoji;
+import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.message.component.ActionRowBuilder;
 import org.dimas4ek.wrapper.entities.message.component.ButtonBuilder;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
@@ -67,14 +71,30 @@ public class ComponentUtils {
                 .put("custom_id", button.getCustomId())
                 .put("url", button.getUrl())
                 .put("label", button.getLabel())
-                .put("disabled", button.isDisabled())
-                .set("emoji", createEmojiJson(button.getEmoji()));
+                .put("disabled", button.isDisabled());
+        if (button.getEmoji() != null) {
+            buttonJson.set("emoji", createEmojiJson(button.getEmoji()));
+        }
 
         return buttonJson;
     }
 
-    private static ObjectNode createEmojiJson(String emoji) {
+    private static ObjectNode createEmojiJson(Emoji emoji) {
         ObjectNode emojiJson = mapper.createObjectNode();
+        if (emoji instanceof CustomEmoji customEmoji) {
+            emojiJson.put("id", customEmoji.getId());
+            if (customEmoji.getName() != null) {
+                emojiJson.put("name", customEmoji.getName());
+            }
+            if (customEmoji.isAnimated()) {
+                emojiJson.put("animated", true);
+            }
+        } else if (emoji instanceof DefaultEmoji defaultEmoji) {
+            emojiJson.set("id", JsonNodeFactory.instance.nullNode());
+            emojiJson.put("name", defaultEmoji.getName());
+        }
+        return emojiJson;
+        /*ObjectNode emojiJson = mapper.createObjectNode();
         if (emoji != null) {
             if (MessageUtils.isEmojiLong(emoji)) {
                 emojiJson.put("id", emoji);
@@ -82,7 +102,7 @@ public class ComponentUtils {
                 emojiJson.put("name", emoji);
             }
         }
-        return emojiJson;
+        return emojiJson;*/
     }
 
     private static ArrayNode setSelectOptions(SelectMenuBuilder selectMenu) {
