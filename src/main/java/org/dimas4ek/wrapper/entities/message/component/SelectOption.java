@@ -1,5 +1,6 @@
 package org.dimas4ek.wrapper.entities.message.component;
 
+import org.dimas4ek.wrapper.entities.DefaultEmoji;
 import org.dimas4ek.wrapper.entities.Emoji;
 
 public class SelectOption {
@@ -21,6 +22,11 @@ public class SelectOption {
 
     public SelectOption withEmoji(Emoji emoji) {
         this.emoji = emoji;
+        return this;
+    }
+
+    public SelectOption withEmoji(String name) {
+        this.emoji = new DefaultEmoji(name);
         return this;
     }
 

@@ -115,7 +115,9 @@ public class ComponentUtils {
                         .put("value", option.getValue())
                         .put("description", option.getDescription())
                         .put("default", option.isDefault());
-                optionJson.set("emoji", createEmojiJson(option.getEmoji()));
+                if (option.getEmoji() != null) {
+                    optionJson.set("emoji", createEmojiJson(option.getEmoji()));
+                }
                 selectOptions.add(optionJson);
             });
         }

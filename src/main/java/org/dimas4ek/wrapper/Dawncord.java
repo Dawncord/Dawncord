@@ -120,20 +120,56 @@ public class Dawncord {
     }
 
     public void onSlashCommand(String commandName, Consumer<SlashCommandEvent> handler) {
-        slashCommandHandlers.put(commandName, handler);
+        slashCommandEventHandlers.put(commandName, handler);
     }
 
     public void onSlashCommand(Consumer<SlashCommandEvent> handler) {
-        defaultSlashCommandHandler = handler;
+        defaultSlashCommandEventHandler = handler;
+    }
+
+    public void onButton(String customId, Consumer<ButtonEvent> handler) {
+        buttonEventHandlers.put(customId, handler);
+    }
+
+    public void onButton(Consumer<ButtonEvent> handler) {
+        defaultButtonComponentEventHandler = handler;
+    }
+
+    public void onSelectMenu(String customId, Consumer<SelectMenuEvent> handler) {
+        selectMenuEventHandlers.put(customId, handler);
+    }
+
+    public void onSelectMenu(Consumer<SelectMenuEvent> handler) {
+        defaultSelectMenuEventHandler = handler;
     }
 
     private static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
         String commandName = slashCommandEvent.getCommandName();
-        Consumer<SlashCommandEvent> handler = slashCommandHandlers.get(commandName);
+        Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
         if (handler != null) {
             handler.accept(slashCommandEvent);
-        } else if (defaultSlashCommandHandler != null) {
-            defaultSlashCommandHandler.accept(slashCommandEvent);
+        } else if (defaultSlashCommandEventHandler != null) {
+            defaultSlashCommandEventHandler.accept(slashCommandEvent);
+        }
+    }
+
+    private static void processButtonEvent(ButtonEvent buttonEvent) {
+        String customId = buttonEvent.getCustomId();
+        Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(buttonEvent);
+        } else if (defaultButtonComponentEventHandler != null) {
+            defaultButtonComponentEventHandler.accept(buttonEvent);
+        }
+    }
+
+    private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
+        String customId = selectMenuEvent.getCustomId();
+        Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(selectMenuEvent);
+        } else if (defaultSelectMenuEventHandler != null) {
+            defaultSelectMenuEventHandler.accept(selectMenuEvent);
         }
     }
 

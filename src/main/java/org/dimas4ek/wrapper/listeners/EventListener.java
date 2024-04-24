@@ -383,6 +383,18 @@ public class EventListener extends WebSocketAdapter {
         }
     }
 
+    /*private void processButtonEvent(JsonNode data) {
+        String guildId = data.path("guild_id").asText();
+        Guild guild = getGuildById(guildId);
+        if (guild != null) {
+            String customId = data.path("custom_id").asText();
+            String componentType = data.path("component_type").asText();
+
+            ButtonEvent buttonEvent = new ButtonEvent(style, customId, label, guild, guildChannel);
+            invokeSingleProcessEvent("processButtonEvent", buttonEvent, ButtonEvent.class);
+        }
+    }*/
+
     private Guild getGuildById(String guildId) {
         if (guildId.isEmpty()) {
             return null;

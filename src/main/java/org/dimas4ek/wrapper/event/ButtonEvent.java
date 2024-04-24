@@ -1,33 +1,45 @@
 package org.dimas4ek.wrapper.event;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dimas4ek.wrapper.ApiClient;
+import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
-import org.dimas4ek.wrapper.command.option.OptionData;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
-import org.dimas4ek.wrapper.interaction.SlashCommandInteractionData;
+import org.dimas4ek.wrapper.interaction.MessageComponentInteractionData;
+import org.dimas4ek.wrapper.types.ButtonStyle;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-public class SlashCommandEvent implements ReplyEvent {
-    private final SlashCommandInteractionData data;
+public class ButtonEvent implements MessageComponentEvent {
+    private final MessageComponentInteractionData data;
+    private final ButtonStyle style;
+    private final String url;
+    private final String label;
 
-    public SlashCommandEvent(SlashCommandInteractionData data) {
-        this.data = data;
+    public ButtonEvent(MessageComponentInteractionData interactionData, ButtonStyle style, String url, String label) {
+        this.style = style;
+        this.data = interactionData;
+        this.url = url;
+        this.label = label;
+    }
+
+    public void edit() {
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+        objectNode.put("type", 7);
+        objectNode.set("data", JsonNodeFactory.instance.objectNode()
+                .put("content", "edited"));
+        System.out.println(objectNode);
+        ApiClient.patch(objectNode, Routes.OriginalMessage(data.getInteraction().getInteractionToken()));
     }
 
     @Override
     public Guild getGuild() {
         return data.getGuild();
-    }
-
-    public String getCommandName() {
-        return data.getSlashCommand().getName();
     }
 
     @Override
@@ -76,17 +88,21 @@ public class SlashCommandEvent implements ReplyEvent {
         return getChannelById(String.valueOf(channelId));
     }
 
-    public List<OptionData> getOptions() {
-        List<OptionData> optionDataList = new ArrayList<>();
-        for (Map<String, Object> map : data.getOptions()) {
-            OptionData optionData = new OptionData(map, getGuild());
-            optionDataList.add(optionData);
-        }
-
-        return optionDataList;
+    @Override
+    public String getCustomId() {
+        return data.getCustomId();
     }
 
-    public OptionData getOption(String name) {
-        return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
+    public ButtonStyle getStyle() {
+        return style;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
+

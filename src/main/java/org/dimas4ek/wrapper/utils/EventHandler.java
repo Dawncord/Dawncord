@@ -11,7 +11,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class EventHandler {
-    public static final Map<String, Consumer<SlashCommandEvent>> slashCommandHandlers = new HashMap<>();
+    public static final Map<String, Consumer<SlashCommandEvent>> slashCommandEventHandlers = new HashMap<>();
+    public static Consumer<SlashCommandEvent> defaultSlashCommandEventHandler;
+    public static final Map<String, Consumer<ButtonEvent>> buttonEventHandlers = new HashMap<>();
+    public static Consumer<ButtonEvent> defaultButtonComponentEventHandler;
+    public static final Map<String, Consumer<SelectMenuEvent>> selectMenuEventHandlers = new HashMap<>();
+    public static Consumer<SelectMenuEvent> defaultSelectMenuEventHandler;
 
     public static final AutoModEventHandler autoModEventHandler = new AutoModEventHandler();
     public static final MessageEventHandler messageEventHandler = new MessageEventHandler();
@@ -22,7 +27,6 @@ public class EventHandler {
     public static final InviteEventHandler inviteEventHandler = new InviteEventHandler();
     public static final StageEventHandler stageEventHandler = new StageEventHandler();
 
-    public static Consumer<SlashCommandEvent> defaultSlashCommandHandler;
     public static Consumer<ReadyEvent> readyEventHandler;
     public static Consumer<PresenceEvent> presenceEventHandler;
     public static Consumer<TypingEvent> typingEventHandler;
