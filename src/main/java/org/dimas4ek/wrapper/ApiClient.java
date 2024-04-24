@@ -253,5 +253,25 @@ public class ApiClient {
             throw new RuntimeException(e);
         }
     }
+
+    public static void patchAttachments(MultipartBody.Builder multipartBuilder, String url) {
+        Request request = new Request.Builder()
+                .url(url)
+                .patch(multipartBuilder.build())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .build();
+
+        try (Response response = CLIENT.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                try (ResponseBody body = response.body()) {
+                    if (body != null) {
+                        System.out.println(mapper.readTree(body.string()).toPrettyString());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

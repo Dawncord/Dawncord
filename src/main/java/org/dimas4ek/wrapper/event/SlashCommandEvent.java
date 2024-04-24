@@ -48,6 +48,7 @@ public class SlashCommandEvent implements ReplyEvent {
 
     @Override
     public CallbackEvent<MessageCreateAction> deferReply(boolean ephemeral) {
+        ActionExecutor.deferReply(null, data, ephemeral);
         return new CallbackEvent<>(data, ephemeral, true);
     }
 

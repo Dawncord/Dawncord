@@ -1,9 +1,5 @@
 package org.dimas4ek.wrapper.event;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.dimas4ek.wrapper.ApiClient;
-import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageCreateAction;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
@@ -28,13 +24,8 @@ public class ButtonEvent implements MessageComponentEvent {
         this.label = label;
     }
 
-    public void edit() {
-        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
-        objectNode.put("type", 7);
-        objectNode.set("data", JsonNodeFactory.instance.objectNode()
-                .put("content", "edited"));
-        System.out.println(objectNode);
-        ApiClient.patch(objectNode, Routes.OriginalMessage(data.getInteraction().getInteractionToken()));
+    public void edit(Consumer<MessageModifyAction> handler) {
+        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.getId()));
     }
 
     @Override
@@ -60,6 +51,7 @@ public class ButtonEvent implements MessageComponentEvent {
 
     @Override
     public CallbackEvent<MessageCreateAction> deferReply(boolean ephemeral) {
+        ActionExecutor.deferReply(null, data, ephemeral);
         return new CallbackEvent<>(data, ephemeral, true);
     }
 

@@ -128,14 +128,32 @@ public class ActionExecutor {
         return null;
     }
 
-    public static void deferReply(Consumer<MessageCreateAction> handler, InteractionData data, boolean ephemeral) {
+    public static void deferEdit(Consumer<MessageModifyAction> handler, InteractionData data, Message message) {
         ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
-        jsonObject.put("type", InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE.getValue());
-        if (ephemeral) {
-            jsonObject.put("flags", MessageFlag.EPHEMERAL.getValue());
+        jsonObject.put("type", InteractionCallbackType.UPDATE_MESSAGE.getValue());
+
+        MessageModifyAction action = new MessageModifyAction(message);
+        handler.accept(action);
+        try {
+            Method executeMethod = MessageModifyAction.class.getDeclaredMethod("submit");
+            executeMethod.setAccessible(true);
+            executeMethod.invoke(action);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
-        if (handler != null) {
+
+    }
+
+    public static void deferReply(Consumer<MessageCreateAction> handler, InteractionData data, boolean ephemeral) {
+        if (handler == null) {
+            ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+            jsonObject.put("type", InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE.getValue());
+            if (ephemeral) {
+                jsonObject.put("flags", MessageFlag.EPHEMERAL.getValue());
+            }
+            ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
+        } else {
             MessageCreateAction action = new MessageCreateAction(data);
             handler.accept(action);
             try {

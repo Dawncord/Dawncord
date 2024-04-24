@@ -115,7 +115,7 @@ public class InteractionListener extends WebSocketAdapter {
         String interactionId = d.get("id").asText();
         String interactionToken = d.get("token").asText();
         Interaction interaction = new Interaction(interactionId, interactionToken);
-        String id = d.get("id").asText();
+        String id = d.get("message").get("id").asText();
 
         MessageComponentInteractionData interactionData = new MessageComponentInteractionData(
                 interaction, guild, guildChannel, guildMember, customId, id

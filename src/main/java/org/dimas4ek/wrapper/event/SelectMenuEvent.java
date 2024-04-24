@@ -57,6 +57,7 @@ public class SelectMenuEvent implements MessageComponentEvent {
 
     @Override
     public CallbackEvent<MessageCreateAction> deferReply(boolean ephemeral) {
+        ActionExecutor.deferReply(null, data, ephemeral);
         return new CallbackEvent<>(data, ephemeral, true);
     }
 
