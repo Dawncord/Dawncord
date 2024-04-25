@@ -40,7 +40,7 @@ public interface Message extends ISnowflake {
 
     List<Embed> getEmbeds();
 
-    List<ActionRow> getActionRows();
+    List<ActionRow> getComponents();
 
     List<User> getMentions();
 

@@ -154,7 +154,7 @@ public class Dawncord {
     }
 
     private static void processButtonEvent(ButtonEvent buttonEvent) {
-        String customId = buttonEvent.getCustomId();
+        String customId = buttonEvent.getButton().getCustomId();
         Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
         if (handler != null) {
             handler.accept(buttonEvent);
@@ -164,7 +164,7 @@ public class Dawncord {
     }
 
     private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
-        String customId = selectMenuEvent.getCustomId();
+        String customId = selectMenuEvent.getSelectMenu().getCustomId();
         Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
         if (handler != null) {
             handler.accept(selectMenuEvent);

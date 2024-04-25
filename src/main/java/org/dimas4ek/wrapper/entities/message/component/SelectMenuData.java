@@ -5,23 +5,34 @@ import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
 import org.dimas4ek.wrapper.entities.DefaultEmoji;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.types.ChannelType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectMenuData {
+    private final String customId;
     private final String placeholder;
     private final int minValues;
     private final int maxValues;
     private final JsonNode options;
+    private final boolean disabled;
+    private final List<ChannelType> channelTypes;
     private final Guild guild;
 
-    public SelectMenuData(String placeholder, int minValues, int maxValues, JsonNode options, Guild guild) {
+    public SelectMenuData(String customId, String placeholder, int minValues, int maxValues, JsonNode options, boolean disabled, List<ChannelType> channelTypes, Guild guild) {
+        this.customId = customId;
         this.placeholder = placeholder;
         this.minValues = minValues;
         this.maxValues = maxValues;
         this.options = options;
+        this.disabled = disabled;
+        this.channelTypes = channelTypes;
         this.guild = guild;
+    }
+
+    public String getCustomId() {
+        return customId;
     }
 
     public String getPlaceholder() {
@@ -57,5 +68,13 @@ public class SelectMenuData {
             optionList.add(new SelectOption(option.get("label").asText(), option.get("value").asText()));
         }
         return optionList;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public List<ChannelType> getChannelTypes() {
+        return channelTypes;
     }
 }

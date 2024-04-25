@@ -5,6 +5,7 @@ import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
 import org.dimas4ek.wrapper.entities.DefaultEmoji;
 import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.types.ButtonStyle;
 import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.types.SelectMenuType;
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActionRow {
-    private final List<ButtonBuilder> buttons = new ArrayList<>();
-    private final List<SelectMenuBuilder> selectMenus = new ArrayList<>();
+    private final List<ButtonData> buttons = new ArrayList<>();
+    private final List<SelectMenuData> selectMenus = new ArrayList<>();
 
     public ActionRow(JsonNode actionRow, Guild guild) {
         JsonNode components = actionRow.get("components");
@@ -24,62 +25,48 @@ public class ActionRow {
             int type = component.get("type").asInt();
 
             if (type == ComponentType.BUTTON.getValue()) {
-                ButtonBuilder button = new ButtonBuilder(
-                        component.get("style").asInt(),
-                        component.has("custom_id")
-                                ? component.get("custom_id").asText()
-                                : component.get("url").asText(),
-                        component.get("label").asText()
-                );
+                Emoji emoji = null;
                 if (component.has("emoji")) {
-                    Emoji emoji = null;
                     if (component.get("emoji").has("id") && component.get("emoji").get("id") != null) {
                         emoji = new CustomEmojiImpl(component, guild);
                     } else if (!component.get("emoji").has("id") || component.get("emoji").get("id") == null) {
                         emoji = new DefaultEmoji(component.get("name").asText());
                     }
-                    button.withEmoji(emoji);
                 }
+                ButtonData button = new ButtonData(
+                        component.has("custom_id") ? component.get("custom_id").asText() : null,
+                        component.has("url") ? component.get("url").asText() : null,
+                        EnumUtils.getEnumObjectFromInt(component.get("style").asInt(), ButtonStyle.class),
+                        component.get("label").asText(),
+                        component.has("disabled") && component.get("disabled").asBoolean(),
+                        emoji
+                );
                 buttons.add(button);
             }
             if (type != ComponentType.ACTION.getValue()
                     || type != ComponentType.BUTTON.getValue()
                     || type != ComponentType.TEXT_INPUT.getValue()) {
-                SelectMenuBuilder selectMenu = new SelectMenuBuilder(
-                        EnumUtils.getEnumObjectFromInt(type, SelectMenuType.class), component.get("custom_id").asText()
+                SelectMenuData selectMenu = new SelectMenuData(
+                        component.get("custom_id").asText(),
+                        component.has("placeholder") ? component.get("placeholder").asText() : null,
+                        component.has("min_values") ? component.get("min_values").asInt() : 1,
+                        component.has("max_values") ? component.get("max_values").asInt() : 1,
+                        component.has("options") ? component.get("options") : null,
+                        component.has("disabled") && component.get("disabled").asBoolean(),
+                        EnumUtils.getEnumList(component.get("channel_types"), ChannelType.class),
+                        guild
                 );
-                if (component.has("options")) {
-                    selectMenu.addOptions(getSelectMenuOptions(component.get("options")));
-                }
-                if (component.has("channel_types")) {
-                    selectMenu.setChannelTypes(EnumUtils.getEnumList(component.get("channel_types"), ChannelType.class).toArray(new ChannelType[0]));
-                }
-                if (component.has("placeholder")) {
-                    selectMenu.addPlaceholder(component.get("placeholder").asText());
-                }
-                if (component.has("default_values")) {
-                    selectMenu.setDefaultValues(getDefaultValues(component.get("default_values")));
-                }
-                if (component.has("min_values")) {
-                    selectMenu.setMinValues(component.get("min_values").asInt());
-                }
-                if (component.has("max_values")) {
-                    selectMenu.setMaxValues(component.get("max_values").asInt());
-                }
-                if (component.has("disabled")) {
-                    selectMenu.disabled();
-                }
 
                 selectMenus.add(selectMenu);
             }
         }
     }
 
-    public List<ButtonBuilder> getButtons() {
+    public List<ButtonData> getButtons() {
         return buttons;
     }
 
-    public List<SelectMenuBuilder> getSelectMenus() {
+    public List<SelectMenuData> getSelectMenus() {
         return selectMenus;
     }
 
@@ -95,21 +82,5 @@ public class ActionRow {
         }
 
         return defaultValues;
-    }
-
-    private List<SelectOption> getSelectMenuOptions(JsonNode optionsArray) {
-        List<SelectOption> selectOptions = new ArrayList<>();
-        for (int i = 0; i < optionsArray.size(); i++) {
-            JsonNode optionJson = optionsArray.get(i);
-            SelectOption option = new SelectOption(optionJson.get("label").asText(), optionJson.get("value").asText());
-            if (optionJson.has("description")) {
-                option.setDescription(optionJson.get("description").asText());
-            }
-            if (optionJson.has("default")) {
-                option.setDefault(true);
-            }
-            selectOptions.add(option);
-        }
-        return selectOptions;
     }
 }

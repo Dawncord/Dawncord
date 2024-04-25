@@ -129,20 +129,13 @@ public class ActionExecutor {
     }
 
     public static void deferEdit(Consumer<MessageModifyAction> handler, InteractionData data, Message message) {
-        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
-        jsonObject.put("type", InteractionCallbackType.UPDATE_MESSAGE.getValue());
-
         MessageModifyAction action = new MessageModifyAction(message);
         handler.accept(action);
-        try {
-            Method executeMethod = MessageModifyAction.class.getDeclaredMethod("submit");
-            executeMethod.setAccessible(true);
-            executeMethod.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
+        invokeSubmit(action, MessageModifyAction.class);
 
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.put("type", InteractionCallbackType.UPDATE_MESSAGE.getValue());
+        ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
     }
 
     public static void deferReply(Consumer<MessageCreateAction> handler, InteractionData data, boolean ephemeral) {

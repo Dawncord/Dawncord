@@ -11,10 +11,14 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.wrapper.Dawncord;
 import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.command.SlashCommand;
+import org.dimas4ek.wrapper.entities.CustomEmojiImpl;
+import org.dimas4ek.wrapper.entities.DefaultEmoji;
+import org.dimas4ek.wrapper.entities.Emoji;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildImpl;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
+import org.dimas4ek.wrapper.entities.message.component.ButtonData;
 import org.dimas4ek.wrapper.entities.message.component.SelectMenuData;
 import org.dimas4ek.wrapper.event.ButtonEvent;
 import org.dimas4ek.wrapper.event.Event;
@@ -24,6 +28,7 @@ import org.dimas4ek.wrapper.interaction.Interaction;
 import org.dimas4ek.wrapper.interaction.MessageComponentInteractionData;
 import org.dimas4ek.wrapper.interaction.SlashCommandInteractionData;
 import org.dimas4ek.wrapper.types.ButtonStyle;
+import org.dimas4ek.wrapper.types.ChannelType;
 import org.dimas4ek.wrapper.types.ComponentType;
 import org.dimas4ek.wrapper.types.InteractionType;
 import org.dimas4ek.wrapper.utils.EnumUtils;
@@ -128,7 +133,7 @@ public class InteractionListener extends WebSocketAdapter {
                     if (subComponent.has("custom_id")) {
                         if (customId.equals(subComponent.get("custom_id").asText())) {
                             if (componentType == ComponentType.BUTTON.getValue()) {
-                                processButtonEvent(subComponent, interactionData);
+                                processButtonEvent(subComponent, interactionData, guild);
                             }
                             if (componentType != ComponentType.ACTION.getValue()
                                     || componentType != ComponentType.BUTTON.getValue()
@@ -144,10 +149,13 @@ public class InteractionListener extends WebSocketAdapter {
 
     private void processSelectMenuEvent(JsonNode subComponent, MessageComponentInteractionData interactionData, JsonNode data, Guild guild) {
         SelectMenuData selectMenuData = new SelectMenuData(
+                subComponent.get("custom_id").asText(),
                 subComponent.has("placeholder") ? subComponent.get("placeholder").asText() : null,
                 subComponent.has("min_values") ? subComponent.get("min_values").asInt() : 1,
                 subComponent.has("max_values") ? subComponent.get("max_values").asInt() : 1,
                 subComponent.has("options") ? subComponent.get("options") : null,
+                subComponent.has("disabled") && subComponent.get("disabled").asBoolean(),
+                EnumUtils.getEnumList(subComponent.get("channel_types"), ChannelType.class),
                 guild
         );
         JsonNode resolved = data.get("resolved");
@@ -160,10 +168,25 @@ public class InteractionListener extends WebSocketAdapter {
         invokeEvent("processSelectMenuEvent", SelectMenuEvent.class, selectMenuEvent);
     }
 
-    private void processButtonEvent(JsonNode subComponent, MessageComponentInteractionData interactionData) {
-        ButtonStyle style = EnumUtils.getEnumObject(subComponent, "style", ButtonStyle.class);
+    private void processButtonEvent(JsonNode subComponent, MessageComponentInteractionData interactionData, Guild guild) {
+        Emoji emoji = null;
+        if (subComponent.has("emoji")) {
+            if (subComponent.get("emoji").get("id") != null) {
+                emoji = new CustomEmojiImpl(subComponent, guild);
+            } else {
+                emoji = new DefaultEmoji(subComponent.get("emoji").get("name").asText());
+            }
+        }
+        ButtonData buttonData = new ButtonData(
+                subComponent.has("custom_id") ? subComponent.get("custom_id").asText() : null,
+                subComponent.has("url") ? subComponent.get("url").asText() : null,
+                EnumUtils.getEnumObject(subComponent, "style", ButtonStyle.class),
+                subComponent.get("label").asText(),
+                subComponent.has("disabled") && subComponent.get("disabled").asBoolean(),
+                emoji
+        );
         ButtonEvent buttonEvent = new ButtonEvent(
-                interactionData, style, null, subComponent.get("label").asText()
+                interactionData, buttonData
         );
 
         invokeEvent("processButtonEvent", ButtonEvent.class, buttonEvent);

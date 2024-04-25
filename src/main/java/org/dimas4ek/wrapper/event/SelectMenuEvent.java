@@ -35,8 +35,8 @@ public class SelectMenuEvent implements MessageComponentEvent {
     }
 
     @Override
-    public String getCustomId() {
-        return data.getCustomId();
+    public void edit(Consumer<MessageModifyAction> handler) {
+        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.getId()));
     }
 
     @Override

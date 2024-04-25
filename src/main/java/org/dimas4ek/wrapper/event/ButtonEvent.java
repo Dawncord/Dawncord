@@ -5,25 +5,22 @@ import org.dimas4ek.wrapper.action.MessageModifyAction;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.guild.Guild;
 import org.dimas4ek.wrapper.entities.guild.GuildMember;
+import org.dimas4ek.wrapper.entities.message.component.ButtonData;
 import org.dimas4ek.wrapper.interaction.MessageComponentInteractionData;
-import org.dimas4ek.wrapper.types.ButtonStyle;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 
 import java.util.function.Consumer;
 
 public class ButtonEvent implements MessageComponentEvent {
     private final MessageComponentInteractionData data;
-    private final ButtonStyle style;
-    private final String url;
-    private final String label;
+    private final ButtonData buttonData;
 
-    public ButtonEvent(MessageComponentInteractionData interactionData, ButtonStyle style, String url, String label) {
-        this.style = style;
+    public ButtonEvent(MessageComponentInteractionData interactionData, ButtonData buttonData) {
         this.data = interactionData;
-        this.url = url;
-        this.label = label;
+        this.buttonData = buttonData;
     }
 
+    @Override
     public void edit(Consumer<MessageModifyAction> handler) {
         ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.getId()));
     }
@@ -80,21 +77,8 @@ public class ButtonEvent implements MessageComponentEvent {
         return getChannelById(String.valueOf(channelId));
     }
 
-    @Override
-    public String getCustomId() {
-        return data.getCustomId();
-    }
-
-    public ButtonStyle getStyle() {
-        return style;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getLabel() {
-        return label;
+    public ButtonData getButton() {
+        return buttonData;
     }
 }
 
