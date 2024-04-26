@@ -60,7 +60,7 @@ public class AutoModRuleImpl implements AutoModRule {
     @Override
     public User getCreator() {
         if (creator == null) {
-            creator = new UserImpl(JsonUtils.fetchEntity(Routes.User(rule.get("creator_id").asText())));
+            creator = new UserImpl(JsonUtils.fetch(Routes.User(rule.get("creator_id").asText())));
         }
         return creator;
     }

@@ -24,7 +24,7 @@ public class TeamMemberImpl implements TeamMember {
     @Override
     public User getUser() {
         if (user == null) {
-            user = new UserImpl(JsonUtils.fetchEntity(Routes.User(member.get("user").get("id").asText())));
+            user = new UserImpl(JsonUtils.fetch(Routes.User(member.get("user").get("id").asText())));
         }
         return user;
     }

@@ -53,7 +53,7 @@ public class TeamImpl implements Team {
     @Override
     public User getOwner() {
         if (owner == null) {
-            owner = new UserImpl(JsonUtils.fetchEntity(Routes.User(team.get("owner_user_id").asText())));
+            owner = new UserImpl(JsonUtils.fetch(Routes.User(team.get("owner_user_id").asText())));
         }
         return owner;
     }

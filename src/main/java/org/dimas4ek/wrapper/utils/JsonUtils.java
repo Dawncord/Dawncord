@@ -1,7 +1,6 @@
 package org.dimas4ek.wrapper.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.dimas4ek.wrapper.ApiClient;
 
 import java.util.ArrayList;
@@ -11,8 +10,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class JsonUtils {
-    public static JsonNode fetchEntity(String url) {
+    public static JsonNode fetch(String url) {
         return ApiClient.getJson(url);
+    }
+
+    public static JsonNode fetchParams(String url, Map<String, String> params) {
+        return ApiClient.getJsonParams(url, params);
     }
 
     public static <T> List<T> getEntityList(JsonNode array, Function<JsonNode, T> constructor) {
@@ -27,19 +30,7 @@ public class JsonUtils {
         return list;
     }
 
-    public static JsonNode fetchEntityParams(String url, Map<String, String> params) {
-        return ApiClient.getJsonParams(url, params);
-    }
-
-    public static ArrayNode fetchArrayParams(String url, Map<String, String> params) {
-        return ApiClient.getJsonArrayParams(url, params);
-    }
-
-    public static JsonNode fetchArray(String url) {
-        return ApiClient.getJsonArray(url);
-    }
-
-    public static List<String> fetchStringList(JsonNode json, String object) {
+    public static List<String> getStringList(JsonNode json, String object) {
         if (json.has(object)) {
             List<String> list = new ArrayList<>();
             for (JsonNode node : json.get(object)) {
@@ -47,6 +38,7 @@ public class JsonUtils {
             }
             return list;
         }
+
         return Collections.emptyList();
     }
 }

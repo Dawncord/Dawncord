@@ -120,7 +120,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Invite> getInvites() {
         if (invites == null) {
             invites = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
-                    ? JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.Channel.Invite.All(getId())), invite -> new InviteImpl(invite, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Invite.All(getId())), invite -> new InviteImpl(invite, guild))
                     : null;
         }
         return invites;
@@ -155,7 +155,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getPublicArchiveThreads() {
         if (publicArchiveThreads == null) {
             publicArchiveThreads = (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.Public(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.Public(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return publicArchiveThreads;
@@ -165,7 +165,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getPrivateArchiveThreads() {
         if (privateArchiveThreads == null) {
             privateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.Private(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.Private(getId())).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return privateArchiveThreads;
@@ -175,7 +175,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Thread> getJoinedPrivateArchiveThreads() {
         if (joinedPrivateArchiveThreads == null) {
             joinedPrivateArchiveThreads = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Thread.Archive.JoinedPrivate(getId(), "@me")).get("threads"), thread -> new ThreadImpl(thread, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.JoinedPrivate(getId(), "@me")).get("threads"), thread -> new ThreadImpl(thread, guild))
                     : null;
         }
         return joinedPrivateArchiveThreads;
@@ -190,7 +190,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     public List<Webhook> getWebhooks() {
         if (webhooks == null) {
             webhooks = getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                    ? JsonUtils.getEntityList(JsonUtils.fetchEntity(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
+                    ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
                     : null;
         }
         return webhooks;

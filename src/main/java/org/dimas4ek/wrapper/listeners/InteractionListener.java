@@ -58,7 +58,7 @@ public class InteractionListener extends WebSocketAdapter {
             String channelId = d.get("channel_id").asText();
             String memberId = d.get("member").get("user").get("id").asText();
 
-            Guild guild = new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId)));
+            Guild guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId)));
             GuildChannel guildChannel = guild.getChannelById(channelId);
             GuildMember guildMember = guild.getMemberById(memberId);
 
@@ -79,7 +79,7 @@ public class InteractionListener extends WebSocketAdapter {
     private void processSlashCommands(JsonNode d, Guild guild, GuildChannel guildChannel, GuildMember guildMember) {
         JsonNode data = d.get("data");
 
-        JsonNode slashCommandJson = JsonUtils.fetchEntity(Routes.SlashCommand.Get(data.get("id").asText()));
+        JsonNode slashCommandJson = JsonUtils.fetch(Routes.SlashCommand.Get(data.get("id").asText()));
         SlashCommand slashCommand = new SlashCommand(slashCommandJson);
 
         String interactionId = d.get("id").asText();

@@ -150,7 +150,7 @@ public class MessageCreateAction {
                     .put("message_id", message.getId())
                     .put("channel_id", message.getChannel().getId())
                     .put("guild_id", message.getGuild().getId())
-                    .put("fail_if_not_exists", JsonUtils.fetchEntity(Routes.Channel.Message.Get(message.getChannel().getId(), message.getId())) == null ? true : null)
+                    .put("fail_if_not_exists", JsonUtils.fetch(Routes.Channel.Message.Get(message.getChannel().getId(), message.getId())) == null ? true : null)
             );
         }
         return this;

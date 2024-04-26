@@ -84,7 +84,7 @@ public class ApplicationImpl implements Application {
     @Override
     public Guild getGuild() {
         if (guild == null) {
-            guild = new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(application.get("guild_id").asText())));
+            guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(application.get("guild_id").asText())));
         }
         return guild;
     }
@@ -100,7 +100,7 @@ public class ApplicationImpl implements Application {
     @Override
     public List<String> getRedirectURIs() {
         if (redirectURIs == null) {
-            redirectURIs = JsonUtils.fetchStringList(application, "redirect_uris");
+            redirectURIs = JsonUtils.getStringList(application, "redirect_uris");
         }
         return redirectURIs;
     }
@@ -228,7 +228,7 @@ public class ApplicationImpl implements Application {
     @Override
     public List<String> getTags() {
         if (tags == null) {
-            tags = JsonUtils.fetchStringList(application, "tags");
+            tags = JsonUtils.getStringList(application, "tags");
         }
         return tags;
     }

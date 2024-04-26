@@ -255,11 +255,11 @@ public class Dawncord {
     }
 
     public SlashCommand getSlashCommand(String name) {
-        return new SlashCommand(JsonUtils.fetchEntity(Routes.SlashCommand.Get(getSlashCommandId(name))));
+        return new SlashCommand(JsonUtils.fetch(Routes.SlashCommand.Get(getSlashCommandId(name))));
     }
 
     public List<SlashCommand> getSlashCommands() {
-        return JsonUtils.getEntityList(JsonUtils.fetchArray(Routes.SlashCommand.All()), SlashCommand::new);
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.SlashCommand.All()), SlashCommand::new);
     }
 
     public void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String name) {

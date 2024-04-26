@@ -112,7 +112,7 @@ public class GuildForumImpl extends ChannelImpl implements GuildForum {
     public Thread getLastThread() {
         if (lastThread == null) {
             if (forum.has("last_message_id")) {
-                lastThread = new ThreadImpl(JsonUtils.fetchEntity(Routes.Channel.Get(forum.get("last_message_id").asText())), guild);
+                lastThread = new ThreadImpl(JsonUtils.fetch(Routes.Channel.Get(forum.get("last_message_id").asText())), guild);
             }
         }
         return lastThread;

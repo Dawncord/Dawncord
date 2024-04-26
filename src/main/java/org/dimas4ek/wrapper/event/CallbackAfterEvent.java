@@ -25,7 +25,7 @@ public class CallbackAfterEvent<T> {
 
     public Message get() {
         return new MessageImpl(
-                JsonUtils.fetchEntity(Routes.OriginalMessage(data.getInteraction().getInteractionToken())),
+                JsonUtils.fetch(Routes.OriginalMessage(data.getInteraction().getInteractionToken())),
                 data.getGuild()
         );
     }

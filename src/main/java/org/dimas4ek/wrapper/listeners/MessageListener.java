@@ -38,11 +38,11 @@ public class MessageListener extends WebSocketAdapter {
             String channelId = d.has("channel_id") ? d.get("channel_id").asText() : null;
             String messageId = d.get("id").asText();
 
-            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId))) : null;
+            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId))) : null;
 
             if (guild != null) {
                 GuildChannel channel = guild.getChannelById(channelId);
-                Message message = new MessageImpl(JsonUtils.fetchEntity(Routes.Channel.Message.Get(channelId, messageId)), guild);
+                Message message = new MessageImpl(JsonUtils.fetch(Routes.Channel.Message.Get(channelId, messageId)), guild);
 
                 MessageEvent messageEvent = new MessageEvent(message, channel, guild);
                 try {

@@ -180,7 +180,7 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
 
     @Override
     public List<GuildMember> getGuildEventMembers(int limit) {
-        JsonNode eventMembers = JsonUtils.fetchArrayParams(
+        JsonNode eventMembers = JsonUtils.fetchParams(
                 Routes.Guild.ScheduledEvent.Members(guild.getId(), getId()),
                 Map.of(
                         "with_member", "true",

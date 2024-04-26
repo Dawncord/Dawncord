@@ -18,7 +18,7 @@ public interface Event {
     Guild getGuild();
 
     default Application getApplication() {
-        return new ApplicationImpl(JsonUtils.fetchEntity(Routes.Application()), getGuild());
+        return new ApplicationImpl(JsonUtils.fetch(Routes.Application()), getGuild());
     }
 
     default void editApplication(Consumer<ApplicationModifyAction> handler) {
@@ -26,7 +26,7 @@ public interface Event {
     }
 
     default Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetchEntity(Routes.Webhook.ById(webhookId)), getGuild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), getGuild());
     }
 
     default Webhook getWebhookById(long webhookId) {
@@ -34,10 +34,10 @@ public interface Event {
     }
 
     default Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetchEntity(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
     }
 
     default User getBot() {
-        return new UserImpl(JsonUtils.fetchEntity(Routes.User("@me")));
+        return new UserImpl(JsonUtils.fetch(Routes.User("@me")));
     }
 }

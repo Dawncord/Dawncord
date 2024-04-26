@@ -138,7 +138,7 @@ public class AutoModRuleCreateAction {
             int spamLimit = 0;
             int mentionSpamLimit = 0;
             int keywordPresetLimit = 0;
-            JsonNode rules = JsonUtils.fetchArray(Routes.Guild.AutoMod.All(guildId));
+            JsonNode rules = JsonUtils.fetch(Routes.Guild.AutoMod.All(guildId));
             for (JsonNode rule : rules) {
                 switch (Objects.requireNonNull(EnumUtils.getEnumObject(rule, "trigger_type", AutoModTriggerType.class))) {
                     case KEYWORD -> keywordLimit++;

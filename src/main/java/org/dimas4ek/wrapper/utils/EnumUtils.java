@@ -53,13 +53,11 @@ public class EnumUtils {
     public static <T extends Enum<T>> List<T> getEnumListFromLong(JsonNode json, String key, Class<T> enumClass) {
         long flagsFromJson = json.get(key).asLong(0);
         List<T> flags = new ArrayList<>();
-
         for (T flag : enumClass.getEnumConstants()) {
             if ((flagsFromJson & (1L << flag.ordinal())) != 0) {
                 flags.add(flag);
             }
         }
-
         return flags;
     }
 }

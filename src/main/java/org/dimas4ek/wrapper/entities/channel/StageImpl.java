@@ -47,7 +47,7 @@ public class StageImpl implements Stage {
     @Override
     public GuildChannel getChannel() {
         if (channel == null) {
-            channel = new GuildChannelImpl(JsonUtils.fetchEntity(Routes.Channel.Get(stage.get("channel_id").asText())), guild);
+            channel = new GuildChannelImpl(JsonUtils.fetch(Routes.Channel.Get(stage.get("channel_id").asText())), guild);
         }
         return channel;
     }
@@ -77,7 +77,7 @@ public class StageImpl implements Stage {
     public GuildScheduledEvent getGuildEvent() {
         if (guildEvent == null) {
             guildEvent = new GuildScheduledEventImpl(
-                    JsonUtils.fetchEntityParams(
+                    JsonUtils.fetchParams(
                             Routes.Guild.ScheduledEvent.Get(guild.getId(), stage.get("guild_scheduled_event_id").asText()),
                             Map.of("with_user_count", "true")
                     ), guild);

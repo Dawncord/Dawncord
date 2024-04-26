@@ -40,7 +40,7 @@ public class OptionData {
     }
 
     public User getAsUser() {
-        return new UserImpl(JsonUtils.fetchEntity(Routes.User(getAsString())));
+        return new UserImpl(JsonUtils.fetch(Routes.User(getAsString())));
     }
 
     public GuildChannel getAsChannel() {

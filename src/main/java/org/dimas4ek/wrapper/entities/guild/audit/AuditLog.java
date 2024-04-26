@@ -95,7 +95,7 @@ public class AuditLog {
             for (JsonNode auditIntegration : audit.get("integrations")) {
                 auditIntegrationIds.add(auditIntegration.get("id").asText());
             }
-            for (JsonNode guildIntegration : JsonUtils.fetchArray(Routes.Guild.Integration.All(guild.getId()))) {
+            for (JsonNode guildIntegration : JsonUtils.fetch(Routes.Guild.Integration.All(guild.getId()))) {
                 if (auditIntegrationIds.contains(guildIntegration.get("id").asText())) {
                     integrations.add(new IntegrationImpl(guildIntegration, guild));
                 }
@@ -208,7 +208,7 @@ public class AuditLog {
         public User getUser() {
             if (user == null) {
                 user = entry.has("user_id")
-                        ? new UserImpl(JsonUtils.fetchEntity(Routes.User(entry.get("user_id").asText())))
+                        ? new UserImpl(JsonUtils.fetch(Routes.User(entry.get("user_id").asText())))
                         : null;
             }
             return user;

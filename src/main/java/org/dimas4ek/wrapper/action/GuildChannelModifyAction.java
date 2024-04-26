@@ -171,7 +171,7 @@ public class GuildChannelModifyAction {
     public GuildChannelModifyAction setOptimalVoiceRegion() {
         if (channel.getType() == ChannelType.GUILD_VOICE || channel.getType() == ChannelType.GUILD_STAGE_VOICE) {
             String optimalVoiceRegion = null;
-            JsonNode voiceRegions = JsonUtils.fetchArray(Routes.VoiceRegions());
+            JsonNode voiceRegions = JsonUtils.fetch(Routes.VoiceRegions());
             for (JsonNode region : voiceRegions) {
                 if (region.get("optimal").asBoolean()) {
                     optimalVoiceRegion = region.get("id").asText();
@@ -208,7 +208,7 @@ public class GuildChannelModifyAction {
 
     public GuildChannelModifyAction updateTags(List<ForumTag> tags) {
         if (channel.getType() == ChannelType.GUILD_FORUM || channel.getType() == ChannelType.GUILD_MEDIA) {
-            setForumTags(tags, (ArrayNode) JsonUtils.fetchEntity(Routes.Channel.Get(channel.getId())).get("available_tags"));
+            setForumTags(tags, (ArrayNode) JsonUtils.fetch(Routes.Channel.Get(channel.getId())).get("available_tags"));
         }
         return this;
     }

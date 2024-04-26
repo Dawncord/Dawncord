@@ -32,7 +32,7 @@ public class ChannelListener extends WebSocketAdapter {
             GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());
 
             String guildId = d.has("guild_id") ? d.get("guild_id").asText() : null;
-            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetchEntity(Routes.Guild.Get(guildId))) : null;
+            Guild guild = guildId != null ? new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId))) : null;
 
             if (guild != null) {
                 GuildChannel channel = guild.getChannelById(d.get("id").asText());

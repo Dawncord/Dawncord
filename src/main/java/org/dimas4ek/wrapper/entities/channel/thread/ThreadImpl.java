@@ -38,7 +38,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     @Override
     public User getCreator() {
         if (creator == null) {
-            creator = new UserImpl(JsonUtils.fetchEntity(Routes.User(thread.get("owner_id").asText())));
+            creator = new UserImpl(JsonUtils.fetch(Routes.User(thread.get("owner_id").asText())));
         }
         return creator;
     }
@@ -55,7 +55,7 @@ public class ThreadImpl extends MessageChannelImpl implements Thread {
     public List<ThreadMember> getThreadMembers() {
         if (threadMembers == null) {
             threadMembers = JsonUtils.getEntityList(
-                    JsonUtils.fetchArrayParams(
+                    JsonUtils.fetchParams(
                             Routes.Channel.Thread.Member.All(getId()),
                             Map.of("with_members", "true")
                     ),

@@ -98,7 +98,7 @@ public class InviteImpl implements Invite {
     public int getOnlineMembersCount() {
         if (onlineMembersCount == null) {
             onlineMembersCount =
-                    JsonUtils.fetchEntityParams(
+                    JsonUtils.fetchParams(
                             Routes.Channel.Invite.Get(code),
                             Map.of("with_counts", "true")
                     ).get("approximate_presence_count").asInt();
@@ -110,7 +110,7 @@ public class InviteImpl implements Invite {
     public int getTotalMembersCount() {
         if (totalMembersCount == null) {
             totalMembersCount =
-                    JsonUtils.fetchEntityParams(
+                    JsonUtils.fetchParams(
                             Routes.Channel.Invite.Get(code),
                             Map.of("with_counts", "true")
                     ).get("approximate_member_count").asInt();

@@ -87,7 +87,7 @@ public class MessageUtils {
     public static List<Sticker> retrieveStickersFromMessage(JsonNode message, Guild guild) {
         List<Sticker> stickers = new ArrayList<>();
         JsonNode stickerItems = message.has("sticker_items") ? message.get("sticker_items") : null;
-        JsonNode guildStickers = JsonUtils.fetchArray(Routes.Guild.Sticker.All(guild.getId()));
+        JsonNode guildStickers = JsonUtils.fetch(Routes.Guild.Sticker.All(guild.getId()));
 
         if (stickerItems != null && guildStickers != null) {
             Set<String> guildStickerIds = new HashSet<>();

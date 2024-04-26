@@ -41,7 +41,7 @@ public class GuildChannelPositionModifyAction {
 
     public void submit() {
         if (hasChanges) {
-            ApiClient.patchArray(mapper.createArrayNode().add(jsonObject), Routes.Guild.Channels(guildId));
+            ApiClient.patch(mapper.createArrayNode().add(jsonObject), Routes.Guild.Channels(guildId));
             hasChanges = false;
         }
         jsonObject.removeAll();
