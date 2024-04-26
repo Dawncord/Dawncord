@@ -29,6 +29,11 @@ public class TextChannelImpl extends MessageChannelImpl implements TextChannel {
     }
 
     @Override
+    public void sendMessage(Consumer<MessageCreateAction> handler) {
+        ActionExecutor.createMessage(handler, null, getId(), null);
+    }
+
+    @Override
     public GuildCategory getCategory() {
         if (category == null) {
             category = guild.getCategoryById(channel.get("parent_id").asText());

@@ -8,6 +8,7 @@ import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.component.ComponentBuilder;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.entities.message.poll.PollData;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.interaction.InteractionData;
 import org.dimas4ek.wrapper.types.AllowedMention;
@@ -77,6 +78,18 @@ public class MessageCreateAction {
             setProperty("content", content);
         }
         hasChanges = true;
+        return this;
+    }
+
+    public MessageCreateAction setPoll(PollData poll) {
+        if (poll != null) {
+            if (interactionData != null) {
+                setReplyProperty("poll", PollUtils.createPoll(poll));
+            } else {
+                setProperty("poll", PollUtils.createPoll(poll));
+            }
+            hasChanges = true;
+        }
         return this;
     }
 

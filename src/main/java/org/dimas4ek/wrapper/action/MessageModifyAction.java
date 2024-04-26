@@ -128,6 +128,23 @@ public class MessageModifyAction {
         return this;
     }
 
+    public MessageModifyAction endPoll() {
+        ApiClient.post(null, Routes.Channel.Message.Poll.End(message.getChannel().getId(), message.getId()));
+        return this;
+    }
+
+    public MessageModifyAction removeComponents() {
+        return setProperty("components", mapper.createArrayNode());
+    }
+
+    public MessageModifyAction removeAttachments() {
+        return setProperty("attachments", mapper.createArrayNode());
+    }
+
+    public MessageModifyAction removeEmbeds() {
+        return setProperty("embeds", mapper.createArrayNode());
+    }
+
     private void submit() {
         if (hasChanges) {
             if (!actions.isEmpty()) {

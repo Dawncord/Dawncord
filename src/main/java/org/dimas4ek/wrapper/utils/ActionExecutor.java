@@ -114,6 +114,12 @@ public class ActionExecutor {
         invokeSubmit(action, InviteCreateAction.class);
     }
 
+    public static void createPoll(Consumer<PollCreateAction> handler, String id) {
+        PollCreateAction action = new PollCreateAction(id);
+        handler.accept(action);
+        invokeSubmit(action, PollCreateAction.class);
+    }
+
     public static JsonNode createMessage(@Nullable Consumer<MessageCreateAction> handler, String message, String channelId, InteractionData interactionData) {
         MessageCreateAction action;
         if (interactionData != null) {

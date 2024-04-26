@@ -13,7 +13,6 @@ public class App {
         Dawncord bot = new Dawncord(getProperty("bot.token"));
         bot.setIntents(GatewayIntent.ALL);
 
-
         bot.start();
     }
 

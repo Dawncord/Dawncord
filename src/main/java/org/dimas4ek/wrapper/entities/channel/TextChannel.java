@@ -9,5 +9,7 @@ public interface TextChannel extends MessageChannel {
 
     void sendMessage(String message);
 
+    void sendMessage(Consumer<MessageCreateAction> handler);
+
     GuildCategory getCategory();
 }

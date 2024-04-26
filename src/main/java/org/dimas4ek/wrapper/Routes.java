@@ -169,6 +169,16 @@ public class Routes {
                 }
             }
 
+            public static class Poll {
+                public static String GetAnswerVoters(String channelId, String messageId, String answerId) {
+                    return Constants.API_URL + "/channels/" + channelId + "/polls/" + messageId + "/answers/" + answerId;
+                }
+
+                public static String End(String channelId, String messageId) {
+                    return Constants.API_URL + "/channels/" + channelId + "/polls/" + messageId + "/expire";
+                }
+            }
+
             public static String Get(String channelId, String messageId) {
                 return Constants.API_URL + "/channels/" + channelId + "/messages/" + messageId;
             }

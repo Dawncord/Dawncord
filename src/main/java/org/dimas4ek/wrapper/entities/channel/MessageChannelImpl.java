@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dimas4ek.wrapper.ApiClient;
 import org.dimas4ek.wrapper.Routes;
 import org.dimas4ek.wrapper.action.MessageModifyAction;
+import org.dimas4ek.wrapper.action.PollCreateAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.entities.message.Message;
 import org.dimas4ek.wrapper.entities.message.MessageImpl;
+import org.dimas4ek.wrapper.entities.message.poll.Poll;
 import org.dimas4ek.wrapper.utils.ActionExecutor;
 import org.dimas4ek.wrapper.utils.JsonUtils;
 
@@ -147,5 +150,35 @@ public class MessageChannelImpl extends ChannelImpl implements MessageChannel {
     @Override
     public void modifyMessageById(long messageId, Consumer<MessageModifyAction> handler) {
         modifyMessageById(String.valueOf(messageId), handler);
+    }
+
+    @Override
+    public void createPoll(Consumer<PollCreateAction> handler) {
+        ActionExecutor.createPoll(handler, getId());
+    }
+
+    @Override
+    public Poll getPoll(String messageId) {
+        return getMessageById(messageId).getPoll();
+    }
+
+    @Override
+    public Poll getPoll(long messageId) {
+        return getPoll(String.valueOf(messageId));
+    }
+
+    @Override
+    public List<Poll> getPolls() {
+        return getMessages().stream().map(Message::getPoll).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Poll> getPolls(String question) {
+        return getPolls().stream().filter(poll -> poll != null && poll.getQuestion().equals(question)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GuildMember> getPollVoters(String messageId, String answerId) {
+        return getMessageById(messageId).getPollVoters(answerId);
     }
 }

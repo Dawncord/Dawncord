@@ -13,9 +13,12 @@ import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.thread.Thread;
 import org.dimas4ek.wrapper.entities.channel.thread.ThreadImpl;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.entities.message.poll.Poll;
+import org.dimas4ek.wrapper.entities.message.poll.PollImpl;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.types.MessageType;
@@ -44,6 +47,7 @@ public class MessageImpl implements Message {
     private Message referencedMessage;
     private Thread thread;
     private List<Sticker> stickers;
+    private Poll poll;
     private List<ActionRow> actionRows;
     private Boolean isPinned;
     private Boolean isMentionEveryone;
@@ -221,6 +225,29 @@ public class MessageImpl implements Message {
             stickers = MessageUtils.retrieveStickersFromMessage(message, guild);
         }
         return stickers;
+    }
+
+    @Override
+    public Poll getPoll() {
+        if (poll == null) {
+            if (message.has("poll") && message.get("poll") != null) {
+                poll = new PollImpl(message.get("poll"), guild);
+            }
+        }
+        return poll;
+    }
+
+    @Override
+    public List<GuildMember> getPollVoters(String answerId) {
+        return JsonUtils.getEntityList(
+                JsonUtils.fetch(Routes.Channel.Message.Poll.GetAnswerVoters(getChannel().getId(), getId(), answerId)).get("users"),
+                guildMember -> guild.getMemberById(guildMember.get("id").asText())
+        );
+    }
+
+    @Override
+    public List<GuildMember> getPollVoters(long answerId) {
+        return getPollVoters(String.valueOf(answerId));
     }
 
     @Override

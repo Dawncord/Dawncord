@@ -1,8 +1,11 @@
 package org.dimas4ek.wrapper.entities.channel;
 
 import org.dimas4ek.wrapper.action.MessageModifyAction;
+import org.dimas4ek.wrapper.action.PollCreateAction;
 import org.dimas4ek.wrapper.action.ThreadCreateAction;
+import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.entities.message.Message;
+import org.dimas4ek.wrapper.entities.message.poll.Poll;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -45,4 +48,16 @@ public interface MessageChannel extends Channel {
     void modifyMessageById(String messageId, Consumer<MessageModifyAction> handler);
 
     void modifyMessageById(long messageId, Consumer<MessageModifyAction> handler);
+
+    void createPoll(Consumer<PollCreateAction> handler);
+
+    Poll getPoll(String messageId);
+
+    Poll getPoll(long messageId);
+
+    List<Poll> getPolls();
+
+    List<Poll> getPolls(String question);
+
+    List<GuildMember> getPollVoters(String messageId, String answerId);
 }

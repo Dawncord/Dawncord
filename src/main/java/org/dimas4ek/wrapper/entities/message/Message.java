@@ -8,9 +8,11 @@ import org.dimas4ek.wrapper.entities.application.Application;
 import org.dimas4ek.wrapper.entities.channel.GuildChannel;
 import org.dimas4ek.wrapper.entities.channel.thread.Thread;
 import org.dimas4ek.wrapper.entities.guild.Guild;
+import org.dimas4ek.wrapper.entities.guild.GuildMember;
 import org.dimas4ek.wrapper.entities.guild.role.GuildRole;
 import org.dimas4ek.wrapper.entities.message.component.ActionRow;
 import org.dimas4ek.wrapper.entities.message.embed.Embed;
+import org.dimas4ek.wrapper.entities.message.poll.Poll;
 import org.dimas4ek.wrapper.entities.message.sticker.Sticker;
 import org.dimas4ek.wrapper.types.MessageFlag;
 import org.dimas4ek.wrapper.types.MessageType;
@@ -61,6 +63,12 @@ public interface Message extends ISnowflake {
     Thread getThread();
 
     List<Sticker> getStickers();
+
+    Poll getPoll();
+
+    List<GuildMember> getPollVoters(String answerId);
+
+    List<GuildMember> getPollVoters(long answerId);
 
     boolean isPinned();
 
