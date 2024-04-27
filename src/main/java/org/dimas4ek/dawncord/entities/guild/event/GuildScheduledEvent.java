@@ -1,0 +1,59 @@
+package org.dimas4ek.dawncord.entities.guild.event;
+
+import org.dimas4ek.dawncord.action.GuildEventModifyAction;
+import org.dimas4ek.dawncord.entities.ISnowflake;
+import org.dimas4ek.dawncord.entities.User;
+import org.dimas4ek.dawncord.entities.channel.GuildChannel;
+import org.dimas4ek.dawncord.entities.guild.Guild;
+import org.dimas4ek.dawncord.entities.guild.GuildMember;
+import org.dimas4ek.dawncord.entities.image.GuildEventImage;
+import org.dimas4ek.dawncord.event.ModifyEvent;
+import org.dimas4ek.dawncord.types.GuildEventEntityType;
+import org.dimas4ek.dawncord.types.GuildEventPrivacyLevel;
+import org.dimas4ek.dawncord.types.GuildEventStatus;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.function.Consumer;
+
+public interface GuildScheduledEvent extends ISnowflake {
+    String getName();
+
+    String getDescription();
+
+    Guild getGuild();
+
+    GuildChannel getChannel();
+
+    User getCreator();
+
+    ZonedDateTime getStartTimestamp();
+
+    ZonedDateTime getEndTimestamp();
+
+    GuildEventPrivacyLevel getPrivacyLevel();
+
+    GuildEventStatus getStatus();
+
+    GuildEventEntityType getEntityType();
+
+    boolean inChannel();
+
+    String getEntityId();
+
+    long getEntityIdLong();
+
+    String getLocation();
+
+    int getMemberCount();
+
+    List<GuildMember> getGuildEventMembers();
+
+    List<GuildMember> getGuildEventMembers(int limit);
+
+    GuildEventImage getImage();
+
+    ModifyEvent<GuildScheduledEvent> modify(Consumer<GuildEventModifyAction> handler);
+
+    void delete();
+}
