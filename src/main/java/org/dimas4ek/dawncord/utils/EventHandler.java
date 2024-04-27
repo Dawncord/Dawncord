@@ -17,6 +17,8 @@ public class EventHandler {
     public static Consumer<ButtonEvent> defaultButtonComponentEventHandler;
     public static final Map<String, Consumer<SelectMenuEvent>> selectMenuEventHandlers = new HashMap<>();
     public static Consumer<SelectMenuEvent> defaultSelectMenuEventHandler;
+    public static final Map<String, Consumer<ModalSubmitEvent>> modalSubmitEventHandlers = new HashMap<>();
+    public static Consumer<ModalSubmitEvent> defaultModalSubmitEventHandler;
 
     public static final AutoModEventHandler autoModEventHandler = new AutoModEventHandler();
     public static final MessageEventHandler messageEventHandler = new MessageEventHandler();

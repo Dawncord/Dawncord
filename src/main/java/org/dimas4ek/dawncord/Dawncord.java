@@ -141,6 +141,14 @@ public class Dawncord {
         defaultSelectMenuEventHandler = handler;
     }
 
+    public void onModal(String customId, Consumer<ModalSubmitEvent> handler) {
+        modalSubmitEventHandlers.put(customId, handler);
+    }
+
+    public void onModal(Consumer<ModalSubmitEvent> handler) {
+        defaultModalSubmitEventHandler = handler;
+    }
+
     private static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
         String commandName = slashCommandEvent.getCommandName();
         Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
@@ -168,6 +176,16 @@ public class Dawncord {
             handler.accept(selectMenuEvent);
         } else if (defaultSelectMenuEventHandler != null) {
             defaultSelectMenuEventHandler.accept(selectMenuEvent);
+        }
+    }
+
+    private static void processModalSubmitEvent(ModalSubmitEvent modalSubmitEvent) {
+        String customId = modalSubmitEvent.getModal().getCustomId();
+        Consumer<ModalSubmitEvent> handler = modalSubmitEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(modalSubmitEvent);
+        } else if (defaultModalSubmitEventHandler != null) {
+            defaultModalSubmitEventHandler.accept(modalSubmitEvent);
         }
     }
 

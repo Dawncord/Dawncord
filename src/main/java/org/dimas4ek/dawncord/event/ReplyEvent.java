@@ -2,6 +2,7 @@ package org.dimas4ek.dawncord.event;
 
 import org.dimas4ek.dawncord.action.MessageCreateAction;
 import org.dimas4ek.dawncord.action.MessageModifyAction;
+import org.dimas4ek.dawncord.action.ModalCreateAction;
 import org.dimas4ek.dawncord.entities.channel.GuildChannel;
 import org.dimas4ek.dawncord.entities.guild.GuildMember;
 
@@ -17,6 +18,8 @@ public interface ReplyEvent extends Event {
     CallbackEvent<MessageCreateAction> deferReply(boolean ephemeral);
 
     CallbackEvent<MessageCreateAction> deferReply();
+
+    CallbackEvent<MessageModifyAction> replyModal(Consumer<ModalCreateAction> handler);
 
     GuildMember getMember();
 

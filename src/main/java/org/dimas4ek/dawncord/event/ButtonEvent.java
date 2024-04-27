@@ -3,6 +3,7 @@ package org.dimas4ek.dawncord.event;
 import org.dimas4ek.dawncord.Routes;
 import org.dimas4ek.dawncord.action.MessageCreateAction;
 import org.dimas4ek.dawncord.action.MessageModifyAction;
+import org.dimas4ek.dawncord.action.ModalCreateAction;
 import org.dimas4ek.dawncord.entities.channel.GuildChannel;
 import org.dimas4ek.dawncord.entities.guild.Guild;
 import org.dimas4ek.dawncord.entities.guild.GuildImpl;
@@ -76,6 +77,12 @@ public class ButtonEvent implements MessageComponentEvent {
     @Override
     public CallbackEvent<MessageCreateAction> deferReply() {
         return deferReply(false);
+    }
+
+    @Override
+    public CallbackEvent<MessageModifyAction> replyModal(Consumer<ModalCreateAction> handler) {
+        ActionExecutor.replyModal(handler, data);
+        return new CallbackEvent<>(data, false, false);
     }
 
     @Override

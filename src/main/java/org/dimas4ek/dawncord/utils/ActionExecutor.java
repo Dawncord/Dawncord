@@ -190,6 +190,12 @@ public class ActionExecutor {
         }
     }
 
+    public static void replyModal(Consumer<ModalCreateAction> handler, InteractionData data) {
+        ModalCreateAction action = new ModalCreateAction(data);
+        handler.accept(action);
+        invokeSubmit(action, ModalCreateAction.class);
+    }
+
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message, InteractionData data) {
         MessageModifyAction action = new MessageModifyAction(message, data);
         handler.accept(action);

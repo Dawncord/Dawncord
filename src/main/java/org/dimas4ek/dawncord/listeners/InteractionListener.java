@@ -18,12 +18,12 @@ import org.dimas4ek.dawncord.entities.guild.Guild;
 import org.dimas4ek.dawncord.entities.guild.GuildImpl;
 import org.dimas4ek.dawncord.entities.message.component.ButtonData;
 import org.dimas4ek.dawncord.entities.message.component.SelectMenuData;
-import org.dimas4ek.dawncord.event.ButtonEvent;
-import org.dimas4ek.dawncord.event.Event;
-import org.dimas4ek.dawncord.event.SelectMenuEvent;
-import org.dimas4ek.dawncord.event.SlashCommandEvent;
+import org.dimas4ek.dawncord.entities.message.modal.ElementData;
+import org.dimas4ek.dawncord.entities.message.modal.ModalData;
+import org.dimas4ek.dawncord.event.*;
 import org.dimas4ek.dawncord.interaction.Interaction;
 import org.dimas4ek.dawncord.interaction.MessageComponentInteractionData;
+import org.dimas4ek.dawncord.interaction.ModalInteractionData;
 import org.dimas4ek.dawncord.interaction.SlashCommandInteractionData;
 import org.dimas4ek.dawncord.types.ButtonStyle;
 import org.dimas4ek.dawncord.types.ChannelType;
@@ -66,8 +66,35 @@ public class InteractionListener extends WebSocketAdapter {
                 if (interactionType == InteractionType.MESSAGE_COMPONENT.getValue()) {
                     processMessageComponents(d, guildId, channelId, memberId);
                 }
+
+                if (interactionType == InteractionType.MODAL_SUBMIT.getValue()) {
+                    processModals(d, guildId, channelId, memberId);
+                }
             }
         }
+    }
+
+    private void processModals(JsonNode d, String guildId, String channelId, String memberId) {
+        JsonNode data = d.get("data");
+
+        String interactionId = d.get("id").asText();
+        String interactionToken = d.get("token").asText();
+        Interaction interaction = new Interaction(interactionId, interactionToken);
+
+        ModalInteractionData interactionData = new ModalInteractionData(interaction, guildId, channelId, memberId);
+
+        List<ElementData> elements = new ArrayList<>();
+        for (JsonNode elementNode : data.get("components")) {
+            ElementData elementData = new ElementData(
+                    elementNode.get("components").get(0).get("value").asText(),
+                    elementNode.get("components").get(0).get("custom_id").asText());
+            elements.add(elementData);
+        }
+        ModalData modalData = new ModalData(data.get("custom_id").asText(), elements);
+
+        ModalSubmitEvent modalSubmitEvent = new ModalSubmitEvent(interactionData, modalData);
+
+        invokeEvent("processModalSubmitEvent", ModalSubmitEvent.class, modalSubmitEvent);
     }
 
     private void processSlashCommands(JsonNode d, String guildId, String guildChannelId, String guildMemberId) {

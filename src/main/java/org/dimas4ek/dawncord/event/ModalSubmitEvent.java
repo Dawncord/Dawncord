@@ -4,28 +4,27 @@ import org.dimas4ek.dawncord.Routes;
 import org.dimas4ek.dawncord.action.MessageCreateAction;
 import org.dimas4ek.dawncord.action.MessageModifyAction;
 import org.dimas4ek.dawncord.action.ModalCreateAction;
-import org.dimas4ek.dawncord.command.option.OptionData;
 import org.dimas4ek.dawncord.entities.channel.GuildChannel;
 import org.dimas4ek.dawncord.entities.guild.Guild;
 import org.dimas4ek.dawncord.entities.guild.GuildImpl;
 import org.dimas4ek.dawncord.entities.guild.GuildMember;
+import org.dimas4ek.dawncord.entities.message.modal.ModalData;
 import org.dimas4ek.dawncord.interaction.InteractionData;
-import org.dimas4ek.dawncord.interaction.SlashCommandInteractionData;
+import org.dimas4ek.dawncord.interaction.ModalInteractionData;
 import org.dimas4ek.dawncord.utils.ActionExecutor;
 import org.dimas4ek.dawncord.utils.JsonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-public class SlashCommandEvent implements ReplyEvent {
-    private static SlashCommandInteractionData data;
+public class ModalSubmitEvent implements ReplyEvent {
+    private static ModalInteractionData data;
+    private final ModalData modalData;
     private static Guild guild;
     private static GuildChannel channel;
     private static GuildMember member;
 
-    public SlashCommandEvent(SlashCommandInteractionData interactionData) {
+    public ModalSubmitEvent(ModalInteractionData interactionData, ModalData modalData) {
+        this.modalData = modalData;
         data = interactionData;
         guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
         channel = guild.getChannelById(data.getChannelId());
@@ -45,10 +44,6 @@ public class SlashCommandEvent implements ReplyEvent {
     @Override
     public Guild getGuild() {
         return guild;
-    }
-
-    public String getCommandName() {
-        return data.getSlashCommand().getName();
     }
 
     @Override
@@ -104,17 +99,7 @@ public class SlashCommandEvent implements ReplyEvent {
         return getChannelById(String.valueOf(channelId));
     }
 
-    public List<OptionData> getOptions() {
-        List<OptionData> optionDataList = new ArrayList<>();
-        for (Map<String, Object> map : data.getOptions()) {
-            OptionData optionData = new OptionData(map, getGuild());
-            optionDataList.add(optionData);
-        }
-
-        return optionDataList;
-    }
-
-    public OptionData getOption(String name) {
-        return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
+    public ModalData getModal() {
+        return modalData;
     }
 }
