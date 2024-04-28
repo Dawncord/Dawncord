@@ -1,8 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.Getter;
-
-@Getter
 public enum ImageFormat {
     JPEG(".jpeg"),
     PNG(".png"),
@@ -13,5 +10,9 @@ public enum ImageFormat {
 
     ImageFormat(String extension) {
         this.extension = extension;
+    }
+
+    public String getExtension() {
+        return extension;
     }
 }

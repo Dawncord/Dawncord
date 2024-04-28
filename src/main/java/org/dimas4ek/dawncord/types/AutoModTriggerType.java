@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum AutoModTriggerType {
     KEYWORD(1, "check if content contains words from a user defined list of keywords", 6),
     SPAM(3, "check if content represents generic spam", 1),
@@ -14,4 +9,22 @@ public enum AutoModTriggerType {
     private final int value;
     private final String description;
     private final int maxPerGuild;
+
+    AutoModTriggerType(int value, String description, int maxPerGuild) {
+        this.value = value;
+        this.description = description;
+        this.maxPerGuild = maxPerGuild;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getMaxPerGuild() {
+        return maxPerGuild;
+    }
 }

@@ -38,5 +38,4 @@ public class GuildWidgetSettings {
         ActionExecutor.execute(handler, GuildWidgetSettingsModifyAction.class, guild.getId());
         return new ModifyEvent<>(guild.getWidgetSettings());
     }
-
 }

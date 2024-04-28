@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum OnlineStatus {
     OFFLINE("offline"),
     DND("dnd"),
@@ -12,4 +7,12 @@ public enum OnlineStatus {
     ONLINE("online");
 
     private final String value;
+
+    OnlineStatus(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

@@ -1,8 +1,5 @@
 package org.dimas4ek.dawncord.entities;
 
-import lombok.Getter;
-
-@Getter
 public class ForumTag {
     private String id;
     private final String name;
@@ -20,5 +17,21 @@ public class ForumTag {
         this.name = name;
         this.isModerated = isModerated;
         this.emojiIdOrName = emojiIdOrName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isModerated() {
+        return isModerated;
+    }
+
+    public String getEmojiIdOrName() {
+        return emojiIdOrName;
     }
 }

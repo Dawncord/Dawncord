@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum ActivityFlag {
     INSTANCE(1 << 0),
     JOIN(1 << 1),
@@ -17,4 +12,12 @@ public enum ActivityFlag {
     EMBEDDED(1 << 8);
 
     private final long value;
+
+    ActivityFlag(long value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return value;
+    }
 }

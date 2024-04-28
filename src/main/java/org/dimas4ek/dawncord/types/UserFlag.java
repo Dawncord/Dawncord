@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum UserFlag {
     STAFF(1L << 0),
     PARTNER(1L << 1),
@@ -23,4 +18,12 @@ public enum UserFlag {
     ACTIVE_DEVELOPER(1L << 22);
 
     private final long value;
+
+    UserFlag(long value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return value;
+    }
 }

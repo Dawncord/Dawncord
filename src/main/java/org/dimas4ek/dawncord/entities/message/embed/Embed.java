@@ -1,27 +1,75 @@
 package org.dimas4ek.dawncord.entities.message.embed;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
-public class Embed {
-    private String title;
-    private String description;
-    private String url;
-    private ZonedDateTime timestamp;
-    private int color;
-    private Footer footer;
-    private EmbedImage image;
-    private EmbedImage thumbnail;
-    private Author author;
-    private List<Field> fields;
 
-    @Getter
+public class Embed {
+    private final String title;
+    private final String description;
+    private final String url;
+    private final ZonedDateTime timestamp;
+    private final int color;
+    private final Footer footer;
+    private final EmbedImage image;
+    private final EmbedImage thumbnail;
+    private final Author author;
+    private final List<Field> fields;
+
+    public Embed(String title, String description, String url, ZonedDateTime timestamp, int color, Footer footer, EmbedImage image, EmbedImage thumbnail, Author author, List<Field> fields) {
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.timestamp = timestamp;
+        this.color = color;
+        this.footer = footer;
+        this.image = image;
+        this.thumbnail = thumbnail;
+        this.author = author;
+        this.fields = fields;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public Footer getFooter() {
+        return footer;
+    }
+
+    public EmbedImage getImage() {
+        return image;
+    }
+
+    public EmbedImage getThumbnail() {
+        return thumbnail;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public List<Field> getFields() {
+        return fields;
+    }
+
     public static class Footer {
         private final String text;
         private String iconUrl;
@@ -34,9 +82,16 @@ public class Embed {
             this.text = text;
             this.iconUrl = iconUrl;
         }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getIconUrl() {
+            return iconUrl;
+        }
     }
 
-    @Getter
     public static class Author {
         private final String name;
         private String url;
@@ -56,9 +111,20 @@ public class Embed {
             this.url = url;
             this.iconUrl = iconUrl;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getIconUrl() {
+            return iconUrl;
+        }
     }
 
-    @Getter
     public static class EmbedImage {
         private final String url;
         private String proxyUrl;
@@ -75,9 +141,24 @@ public class Embed {
             this.width = width;
             this.height = height;
         }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getProxyUrl() {
+            return proxyUrl;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
     }
 
-    @Getter
     public static class Field {
         private final String name;
         private final String value;
@@ -93,6 +174,18 @@ public class Embed {
             this.name = name;
             this.value = value;
             this.isInline = isInline;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean isInline() {
+            return isInline;
         }
     }
 }

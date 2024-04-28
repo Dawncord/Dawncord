@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum VoiceRegion {
     BRAZIL("brazil"),
     HONG_KONG("hongkong"),
@@ -21,4 +16,12 @@ public enum VoiceRegion {
     US_WEST("us-west");
 
     private final String value;
+
+    VoiceRegion(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

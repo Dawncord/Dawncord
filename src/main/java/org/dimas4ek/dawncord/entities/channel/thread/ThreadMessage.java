@@ -1,6 +1,5 @@
 package org.dimas4ek.dawncord.entities.channel.thread;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.entities.message.component.ComponentBuilder;
 import org.dimas4ek.dawncord.entities.message.embed.Embed;
 import org.dimas4ek.dawncord.entities.message.sticker.Sticker;
@@ -9,7 +8,6 @@ import org.dimas4ek.dawncord.types.AllowedMention;
 import java.util.List;
 import java.util.Map;
 
-@Getter
 public class ThreadMessage {
     private final String content;
     private List<Embed> embeds;
@@ -27,6 +25,30 @@ public class ThreadMessage {
         stickers = null;
         attachments = null;
         suppressEmbeds = false;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public List<Embed> getEmbeds() {
+        return embeds;
+    }
+
+    public List<ComponentBuilder> getComponents() {
+        return components;
+    }
+
+    public List<Sticker> getStickers() {
+        return stickers;
+    }
+
+    public Map<String, String> getAttachments() {
+        return attachments;
+    }
+
+    public boolean isSuppressEmbeds() {
+        return suppressEmbeds;
     }
 
     public ThreadMessage setEmbeds(List<Embed> embeds) {

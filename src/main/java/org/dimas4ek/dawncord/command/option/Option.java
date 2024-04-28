@@ -1,13 +1,11 @@
 package org.dimas4ek.dawncord.command.option;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.types.OptionType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
 public class Option {
     private final OptionType type;
     private final String name;
@@ -40,6 +38,30 @@ public class Option {
         this.isAutocomplete = isAutocomplete;
     }
 
+    public OptionType getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public boolean isAutocomplete() {
+        return isAutocomplete;
+    }
+
+    public List<Choice> getChoices() {
+        return choices;
+    }
+
     public void setRequired(boolean isRequired) {
         this.isRequired = isRequired;
     }
@@ -63,7 +85,6 @@ public class Option {
         return this;
     }
 
-    @Getter
     public static class Choice {
         private final String name;
         private final String value;
@@ -71,6 +92,14 @@ public class Option {
         public Choice(String name, String value) {
             this.name = name;
             this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 }

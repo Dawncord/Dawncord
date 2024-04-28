@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum GatewayEvent {
     HELLO("Defines the heartbeat interval"),
     READY("Contains the initial state information"),
@@ -75,4 +70,12 @@ public enum GatewayEvent {
     WEBHOOKS_UPDATE("Guild channel webhook was created, update, or deleted");
 
     private final String description;
+
+    GatewayEvent(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

@@ -1,6 +1,5 @@
 package org.dimas4ek.dawncord.event.handler;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.event.ThreadEvent;
 import org.dimas4ek.dawncord.types.GatewayEvent;
 
@@ -8,9 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ThreadEventHandler {
-    @Getter
+public class ThreadEventHandler implements EventHandler<ThreadEvent> {
     private static final Map<GatewayEvent, Consumer<ThreadEvent>> eventHandlers = new HashMap<>();
+
+    @Override
+    public Map<GatewayEvent, Consumer<ThreadEvent>> getEventHandlers() {
+        return eventHandlers;
+    }
 
     public void create(Consumer<ThreadEvent> handler) {
         eventHandlers.put(GatewayEvent.THREAD_CREATE, handler);

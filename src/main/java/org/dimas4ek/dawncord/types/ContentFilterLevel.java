@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum ContentFilterLevel {
     DISABLED(0, "media content will not be scanned"),
     MEMBERS_WITHOUT_ROLES(1, "media content sent by members without roles will be scanned"),
@@ -12,4 +7,17 @@ public enum ContentFilterLevel {
 
     private final int value;
     private final String description;
+
+    ContentFilterLevel(int value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

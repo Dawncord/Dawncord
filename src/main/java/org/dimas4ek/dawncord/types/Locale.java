@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum Locale {
     Indonesian("id"),
     Danish("da"),
@@ -39,5 +34,13 @@ public enum Locale {
     Korean("ko");
 
     private final String localeCode;
+
+    Locale(String localeCode) {
+        this.localeCode = localeCode;
+    }
+
+    public String getLocaleCode() {
+        return localeCode;
+    }
 }
 

@@ -1,6 +1,5 @@
 package org.dimas4ek.dawncord.event.handler;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.event.GuildDefaultEvent;
 import org.dimas4ek.dawncord.types.GatewayEvent;
 
@@ -8,9 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class GuildEventHandler {
-    @Getter
+public class GuildEventHandler implements EventHandler<GuildDefaultEvent> {
     private static final Map<GatewayEvent, Consumer<GuildDefaultEvent>> eventHandlers = new HashMap<>();
+
+    @Override
+    public Map<GatewayEvent, Consumer<GuildDefaultEvent>> getEventHandlers() {
+        return eventHandlers;
+    }
 
     public void create(Consumer<GuildDefaultEvent> handler) {
         eventHandlers.put(GatewayEvent.GUILD_CREATE, handler);

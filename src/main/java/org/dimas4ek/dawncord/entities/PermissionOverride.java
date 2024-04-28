@@ -1,12 +1,10 @@
 package org.dimas4ek.dawncord.entities;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.types.PermissionOverrideType;
 import org.dimas4ek.dawncord.types.PermissionType;
 
 import java.util.List;
 
-@Getter
 public class PermissionOverride {
     private final String id;
     private final PermissionOverrideType type;
@@ -25,5 +23,21 @@ public class PermissionOverride {
         this.type = type;
         this.denied = denied;
         this.allowed = allowed;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public PermissionOverrideType getType() {
+        return type;
+    }
+
+    public List<PermissionType> getDenied() {
+        return denied;
+    }
+
+    public List<PermissionType> getAllowed() {
+        return allowed;
     }
 }

@@ -91,8 +91,7 @@ public class EmbedBuilder {
         return this;
     }
 
-    public EmbedBuilder addFields(Embed.Field field, Embed.Field... fields) {
-        this.fields.add(field);
+    public EmbedBuilder addFields(Embed.Field... fields) {
         this.fields.addAll(List.of(fields));
         return this;
     }

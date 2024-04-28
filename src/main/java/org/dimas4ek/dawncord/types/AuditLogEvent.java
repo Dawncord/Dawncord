@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum AuditLogEvent {
     GUILD_UPDATE(1, "Server settings were updated", "Guild"),
     CHANNEL_CREATE(10, "Channel was created", "Channel"),
@@ -64,10 +59,24 @@ public enum AuditLogEvent {
     CREATOR_MONETIZATION_TERMS_ACCEPTED(151, "Creator monetization terms were accepted", "");
 
     private final int value;
-    private String description;
-    private String objectChanged;
+    private final String description;
+    private final String objectChanged;
 
-    AuditLogEvent(int value) {
+    AuditLogEvent(int value, String description, String objectChanged) {
         this.value = value;
+        this.description = description;
+        this.objectChanged = objectChanged;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getObjectChanged() {
+        return objectChanged;
     }
 }

@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum InteractionType {
     PING(1),
     APPLICATION_COMMAND(2),
@@ -13,4 +8,12 @@ public enum InteractionType {
     MODAL_SUBMIT(5);
 
     private final int value;
+
+    InteractionType(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

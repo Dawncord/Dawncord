@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum TeamMemberRole {
     OWNER("owner", "Owners are the most permissiable role, and can take destructive, irreversible actions like deleting team-owned apps or the team itself. Teams are limited to 1 owner."),
     ADMIN("admin", "Admins have similar access as owners, except they cannot take destructive actions on the team or team-owned apps."),
@@ -13,4 +8,17 @@ public enum TeamMemberRole {
 
     private final String value;
     private final String description;
+
+    TeamMemberRole(String value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

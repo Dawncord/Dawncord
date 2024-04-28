@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum VerificationLevel {
     NONE(0, "unrestricted"),
     LOW(1, "must have verified email on account"),
@@ -14,4 +9,17 @@ public enum VerificationLevel {
 
     private final int value;
     private final String description;
+
+    VerificationLevel(int value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

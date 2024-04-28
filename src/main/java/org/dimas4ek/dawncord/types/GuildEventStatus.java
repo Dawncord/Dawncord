@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum GuildEventStatus {
     SCHEDULED(1),
     ACTIVE(2),
@@ -12,4 +7,12 @@ public enum GuildEventStatus {
     CANCELED(4);
 
     private final int value;
+
+    GuildEventStatus(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

@@ -1,6 +1,5 @@
 package org.dimas4ek.dawncord.event.handler;
 
-import lombok.Getter;
 import org.dimas4ek.dawncord.event.AutoModEvent;
 import org.dimas4ek.dawncord.types.GatewayEvent;
 
@@ -8,10 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class AutoModEventHandler {
-    @Getter
+public class AutoModEventHandler implements EventHandler<AutoModEvent> {
     private static final Map<GatewayEvent, Consumer<AutoModEvent>> eventHandlers = new HashMap<>();
     private final Rule rule = new Rule();
+
+    @Override
+    public Map<GatewayEvent, Consumer<AutoModEvent>> getEventHandlers() {
+        return eventHandlers;
+    }
 
     public Rule rule() {
         return rule;

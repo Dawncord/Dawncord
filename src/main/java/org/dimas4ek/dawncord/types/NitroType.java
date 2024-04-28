@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum NitroType {
     NONE(0, "None"),
     NITRO_CLASSIC(1, "Nitro Classic"),
@@ -13,4 +8,17 @@ public enum NitroType {
 
     private final int value;
     private final String name;
+
+    NitroType(int value, String name) {
+        this.value = value;
+        this.name = name;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

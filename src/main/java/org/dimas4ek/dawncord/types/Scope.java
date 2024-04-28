@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum Scope {
     ACTIVITIES_READ("activities.read", "Allows your app to fetch data from a user's 'Now Playing/Recently Played' list — not currently available for apps"),
     ACTIVITIES_WRITE("activities.write", "Allows your app to update a user's activity - not currently available for apps (NOT REQUIRED FOR GAMESDK ACTIVITY MANAGER)"),
@@ -37,4 +32,17 @@ public enum Scope {
 
     private final String value;
     private final String description;
+
+    Scope(String value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

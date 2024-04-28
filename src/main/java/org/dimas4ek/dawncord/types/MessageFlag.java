@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum MessageFlag {
     ROSSPOSTED(1 << 0, "This message has been published to subscribed channels (via Channel Following)"),
     IS_CROSSPOST(1 << 1, "This message originated from a message in another channel (via Channel Following)"),
@@ -21,4 +16,16 @@ public enum MessageFlag {
     private final int value;
     private final String description;
 
+    MessageFlag(int value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum AllowedMention {
     ROLE("roles", "Controls role mentions"),
     USER("users", "Controls user mentions"),
@@ -13,4 +8,17 @@ public enum AllowedMention {
 
     private final String value;
     private final String description;
+
+    AllowedMention(String value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

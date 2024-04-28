@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum InteractionCallbackType {
     PONG(1, "ACK a Ping"),
     CHANNEL_MESSAGE_WITH_SOURCE(4, "respond to an interaction with a message"),
@@ -17,4 +12,17 @@ public enum InteractionCallbackType {
 
     private final int value;
     private final String description;
+
+    InteractionCallbackType(int value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

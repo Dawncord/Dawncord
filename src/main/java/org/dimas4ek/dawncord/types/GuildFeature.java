@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum GuildFeature {
     ANIMATED_BANNER("guild has access to set an animated guild banner image"),
     ANIMATED_ICON("guild has access to set an animated guild icon"),
@@ -35,5 +30,13 @@ public enum GuildFeature {
     WELCOME_SCREEN_ENABLED("guild has enabled the welcome screen");
 
     private final String description;
+
+    GuildFeature(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
 

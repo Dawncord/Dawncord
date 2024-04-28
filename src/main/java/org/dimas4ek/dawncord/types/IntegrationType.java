@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum IntegrationType {
     TWITCH("twitch"),
     DISCORD("discord"),
@@ -12,4 +7,12 @@ public enum IntegrationType {
     GUILD_SUBSCRIPTION("guild_subscription");
 
     private final String value;
+
+    IntegrationType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

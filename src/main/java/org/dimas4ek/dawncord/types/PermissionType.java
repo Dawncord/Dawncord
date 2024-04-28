@@ -1,13 +1,9 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
+
 public enum PermissionType {
     CREATE_INSTANT_INVITE(1L << 0),
     KICK_MEMBERS(1L << 1),
@@ -56,6 +52,14 @@ public enum PermissionType {
     SEND_VOICE_MESSAGES(1L << 46);
 
     private final long value;
+
+    PermissionType(long value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return value;
+    }
 
     public static List<String> getAll(PermissionType... permissions) {
         List<String> perms = new ArrayList<>();

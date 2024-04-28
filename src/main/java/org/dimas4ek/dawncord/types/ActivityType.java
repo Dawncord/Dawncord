@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum ActivityType {
     GAME(0),
     STREAMING(1),
@@ -14,4 +9,12 @@ public enum ActivityType {
     COMPETING(5);
 
     private final int value;
+
+    ActivityType(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

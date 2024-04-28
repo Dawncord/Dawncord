@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum GatewayIntent {
     GUILDS(1 << 0),
     GUILD_MEMBERS(1 << 1),
@@ -28,4 +23,12 @@ public enum GatewayIntent {
     ALL(0);
 
     private final long value;
+
+    GatewayIntent(long value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return value;
+    }
 }

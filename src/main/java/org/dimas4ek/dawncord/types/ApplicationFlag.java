@@ -1,10 +1,5 @@
 package org.dimas4ek.dawncord.types;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum ApplicationFlag {
     APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE(1 << 6, "Indicates if an app uses the Auto Moderation API"),
 
@@ -28,4 +23,17 @@ public enum ApplicationFlag {
 
     private final long value;
     private final String description;
+
+    ApplicationFlag(long value, String description) {
+        this.value = value;
+        this.description = description;
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
