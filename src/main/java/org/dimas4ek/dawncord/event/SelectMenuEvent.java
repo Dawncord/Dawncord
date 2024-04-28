@@ -38,6 +38,13 @@ public class SelectMenuEvent implements MessageComponentEvent {
         guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
         channel = guild.getChannelById(data.getChannelId());
         member = guild.getMemberById(data.getMemberId());
+
+        Event.getLogger().debug("Select menu event[{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
+                data.getCustomId(),
+                Routes.Reply("{id}", "{token}"),
+                guild.getId(), guild.getName(),
+                channel.getId(), channel.getName(),
+                member.getUser().getId(), member.getUser().getUsername());
     }
 
     public static InteractionData getData() {

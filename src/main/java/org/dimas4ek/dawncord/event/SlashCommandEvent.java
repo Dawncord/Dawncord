@@ -30,6 +30,13 @@ public class SlashCommandEvent implements ReplyEvent {
         guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
         channel = guild.getChannelById(data.getChannelId());
         member = guild.getMemberById(data.getMemberId());
+
+        Event.getLogger().debug("Slash command event[{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
+                data.getSlashCommand().getName(),
+                Routes.Reply("{id}", "{token}"),
+                guild.getId(), guild.getName(),
+                channel.getId(), channel.getName(),
+                member.getUser().getId(), member.getUser().getUsername());
     }
 
     public static InteractionData getData() {

@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
 public class ApiClient {
+    private static final Logger logger = LoggerFactory.getLogger(ApiClient.class);
+
     private static final OkHttpClient CLIENT = new OkHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -32,7 +36,7 @@ public class ApiClient {
 
     private static JsonNode doAction(String action, JsonNode jsonNode, String url) {
         Request.Builder builder = new Request.Builder()
-                .url(url)
+                .url(Constants.API_URL + url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
 
         RequestBody requestBody = null;
@@ -52,15 +56,19 @@ public class ApiClient {
             case "delete" -> builder.delete();
         }
 
+        logger.debug("[{}] -> {}", action.toUpperCase(), url);
+
         return performRequest(builder.build());
     }
 
     public static JsonNode getJson(String url) {
         Request request = new Request.Builder()
-                .url(url)
+                .url(Constants.API_URL + url)
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .get()
                 .build();
+
+        //logger.debug("GET -> {}", url);
 
         return performRequestAndGetJson(request);
     }
@@ -79,25 +87,31 @@ public class ApiClient {
                 .get()
                 .build();
 
+        //logger.debug("GET -> {}", url);
+
         return performRequestAndGetJson(request);
     }
 
     public static JsonNode postAttachments(MultipartBody.Builder multipartBuilder, String url) {
         Request request = new Request.Builder()
-                .url(url)
+                .url(Constants.API_URL + url)
                 .post(multipartBuilder.build())
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();
+
+        logger.debug("POST -> {}", url);
 
         return performRequest(request);
     }
 
     public static JsonNode patchAttachments(MultipartBody.Builder multipartBuilder, String url) {
         Request request = new Request.Builder()
-                .url(url)
+                .url(Constants.API_URL + url)
                 .patch(multipartBuilder.build())
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();
+
+        logger.debug("PATCH -> {}", url);
 
         return performRequest(request);
     }

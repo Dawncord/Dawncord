@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFrame;
-import org.dimas4ek.dawncord.Dawncord;
 import org.dimas4ek.dawncord.Routes;
 import org.dimas4ek.dawncord.entities.*;
 import org.dimas4ek.dawncord.entities.activity.Activity;
@@ -35,6 +32,8 @@ import org.dimas4ek.dawncord.utils.EnumUtils;
 import org.dimas4ek.dawncord.utils.EventHandler;
 import org.dimas4ek.dawncord.utils.Events;
 import org.dimas4ek.dawncord.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,13 +41,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventListener extends WebSocketAdapter {
-    private final EventHandler eventHandler = new EventHandler();
-    //private final Dawncord dawncord;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(EventListener.class);
 
-    public EventListener(Dawncord dawncord) {
-        //this.dawncord = dawncord;
-    }
+    private final EventHandler eventHandler = new EventHandler();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
@@ -111,7 +107,6 @@ public class EventListener extends WebSocketAdapter {
         ReadyEvent readyEvent = new ReadyEvent(version, user, sessionType, sessionId, resumeUrl, guilds, application);
         try {
             Method method = EventHandler.class.getDeclaredMethod("processReadyEvent", ReadyEvent.class);
-            //Method method = Dawncord.class.getDeclaredMethod("processReadyEvent", ReadyEvent.class);
             method.setAccessible(true);
             method.invoke(eventHandler, readyEvent);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException |
@@ -424,15 +419,5 @@ public class EventListener extends WebSocketAdapter {
                  IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) {
-        System.out.println("Closed: " + serverCloseFrame.getCloseReason());
-    }
-
-    @Override
-    public void onError(WebSocket websocket, WebSocketException cause) {
-        System.err.println("Error: " + cause.getMessage());
     }
 }
