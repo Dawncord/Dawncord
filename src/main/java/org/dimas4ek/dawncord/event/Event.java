@@ -11,6 +11,8 @@ import org.dimas4ek.dawncord.entities.application.ApplicationImpl;
 import org.dimas4ek.dawncord.entities.guild.Guild;
 import org.dimas4ek.dawncord.utils.ActionExecutor;
 import org.dimas4ek.dawncord.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
@@ -40,5 +42,9 @@ public interface Event {
 
     default User getBot() {
         return new UserImpl(JsonUtils.fetch(Routes.User("@me")));
+    }
+
+    static Logger getLogger() {
+        return LoggerFactory.getLogger(Event.class);
     }
 }

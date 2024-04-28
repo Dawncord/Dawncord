@@ -30,6 +30,8 @@ import org.dimas4ek.dawncord.types.OptionType;
 import org.dimas4ek.dawncord.utils.ActionExecutor;
 import org.dimas4ek.dawncord.utils.JsonUtils;
 import org.dimas4ek.dawncord.utils.SlashCommandUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ import java.util.function.Consumer;
 import static org.dimas4ek.dawncord.utils.EventHandler.*;
 
 public class Dawncord {
+    private static final Logger logger = LoggerFactory.getLogger(Dawncord.class);
     private final ObjectMapper mapper = new ObjectMapper();
     private final WebSocket webSocket;
     //private static Map<GatewayEvent, Consumer<GatewayEvent>> eventHandlers = new HashMap<>();
@@ -58,7 +61,7 @@ public class Dawncord {
 
         webSocket.addListener(new MainListener());
         webSocket.addListener(new InteractionListener());
-        webSocket.addListener(new EventListener(this));
+        webSocket.addListener(new EventListener());
 
         assignConstants(token);
         initializeCommandIdMap();
@@ -68,6 +71,10 @@ public class Dawncord {
         List<SlashCommand> commands = getSlashCommands();
         for (SlashCommand command : commands) {
             commandIdMap.put(command.getName(), command.getId());
+        }
+
+        if (!commandIdMap.isEmpty()) {
+            logger.debug("Initialized commands");
         }
     }
 
@@ -81,6 +88,8 @@ public class Dawncord {
             }
             intentsValue |= intent.getValue();
         }
+
+        logger.debug("Set intents");
     }
 
     private void assignConstants(String token) {
@@ -89,7 +98,7 @@ public class Dawncord {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(Routes.Application())
+                .url(Constants.API_URL + Routes.Application())
                 .addHeader("Authorization", "Bot " + token)
                 .build();
 
@@ -99,6 +108,8 @@ public class Dawncord {
                 JsonNode node = mapper.readTree(body.string());
                 Constants.APPLICATION_ID = node.get("id").asText();
                 Constants.CLIENT_KEY = node.get("verify_key").asText();
+
+                logger.debug("Assigned constants");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -471,6 +482,7 @@ public class Dawncord {
     public void start() {
         try {
             webSocket.connect();
+            logger.info("Connected to gateway");
         } catch (WebSocketException e) {
             throw new RuntimeException(e);
         }

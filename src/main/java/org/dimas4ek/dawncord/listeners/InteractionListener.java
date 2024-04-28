@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFrame;
 import org.dimas4ek.dawncord.Dawncord;
 import org.dimas4ek.dawncord.Routes;
 import org.dimas4ek.dawncord.command.SlashCommand;
@@ -31,6 +29,8 @@ import org.dimas4ek.dawncord.types.ComponentType;
 import org.dimas4ek.dawncord.types.InteractionType;
 import org.dimas4ek.dawncord.utils.EnumUtils;
 import org.dimas4ek.dawncord.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 public class InteractionListener extends WebSocketAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(InteractionListener.class);
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -225,15 +227,5 @@ public class InteractionListener extends WebSocketAdapter {
                  InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) {
-        System.out.println("Closed: " + serverCloseFrame.getCloseReason());
-    }
-
-    @Override
-    public void onError(WebSocket websocket, WebSocketException cause) {
-        System.err.println("Error: " + cause.getMessage());
     }
 }
