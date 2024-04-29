@@ -31,7 +31,7 @@ public class SlashCommandEvent implements ReplyEvent {
         channel = guild.getChannelById(data.getChannelId());
         member = guild.getMemberById(data.getMemberId());
 
-        Event.getLogger().debug("Slash command event[{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
+        Event.getLogger().debug("Slash command event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
                 data.getSlashCommand().getName(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),

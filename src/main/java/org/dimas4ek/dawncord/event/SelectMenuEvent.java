@@ -39,7 +39,7 @@ public class SelectMenuEvent implements MessageComponentEvent {
         channel = guild.getChannelById(data.getChannelId());
         member = guild.getMemberById(data.getMemberId());
 
-        Event.getLogger().debug("Select menu event[{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
+        Event.getLogger().debug("Select menu event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
                 data.getCustomId(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),

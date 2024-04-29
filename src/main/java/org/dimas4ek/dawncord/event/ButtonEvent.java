@@ -30,7 +30,7 @@ public class ButtonEvent implements MessageComponentEvent {
         channel = guild.getChannelById(data.getChannelId());
         member = guild.getMemberById(data.getMemberId());
 
-        Event.getLogger().debug("Button event[{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
+        Event.getLogger().debug("Button event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
                 data.getCustomId(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),

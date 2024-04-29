@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
+import org.dimas4ek.dawncord.utils.JsonError;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +57,6 @@ public class ApiClient {
             case "delete" -> builder.delete();
         }
 
-        logger.debug("[{}] -> {}", action.toUpperCase(), url);
-
         return performRequest(builder.build());
     }
 
@@ -68,7 +67,7 @@ public class ApiClient {
                 .get()
                 .build();
 
-        //logger.debug("GET -> {}", url);
+        //logger.debug("[GET] -> {}", url);
 
         return performRequestAndGetJson(request);
     }
@@ -87,7 +86,7 @@ public class ApiClient {
                 .get()
                 .build();
 
-        //logger.debug("GET -> {}", url);
+        //logger.debug("[GET] -> {}", url);
 
         return performRequestAndGetJson(request);
     }
@@ -99,7 +98,7 @@ public class ApiClient {
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();
 
-        logger.debug("POST -> {}", url);
+        logger.debug("[POST] -> {}", url);
 
         return performRequest(request);
     }
@@ -111,7 +110,7 @@ public class ApiClient {
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();
 
-        logger.debug("PATCH -> {}", url);
+        logger.debug("[PATCH] -> {}", url);
 
         return performRequest(request);
     }
@@ -119,8 +118,12 @@ public class ApiClient {
     @Nullable
     public static JsonNode performRequestAndGetJson(Request request) {
         try (Response response = CLIENT.newCall(request).execute(); ResponseBody body = response.body()) {
-            if (response.isSuccessful() && body != null) {
-                return mapper.readTree(body.string());
+            if (body != null) {
+                if (response.isSuccessful()) {
+                    return mapper.readTree(body.string());
+                } else {
+                    logError(request, body);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -129,27 +132,37 @@ public class ApiClient {
     }
 
     public static JsonNode performRequest(Request request) {
-        try (Response response = CLIENT.newCall(request).execute()) {
-            /*if (!response.isSuccessful()) {
-                System.out.println("Response code: " + response.code());
-                try (ResponseBody body = response.body()) {
-                    if (body != null) {
-                        System.out.println(mapper.readTree(body.string()).toPrettyString());
-                    }
+        try (Response response = CLIENT.newCall(request).execute(); ResponseBody body = response.body()) {
+            if (body != null) {
+                if (!response.isSuccessful()) {
+                    logError(request, body);
                 }
-            }*/
-            if (response.isSuccessful()) {
-                try (ResponseBody body = response.peekBody(99999L)) {
+                if (response.isSuccessful()) {
+                    logInfo(request);
                     String responseData = body.string();
                     return mapper.readTree(responseData);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public static void logError(Request request, ResponseBody body) throws IOException {
+        JsonNode errorJson = mapper.readTree(body.string());
+        String code = errorJson.get("code").asText();
+        String message = errorJson.get("message").asText();
+        String url = request.url().url().toString().substring(Constants.API_URL.length());
+        String method = request.method();
+        JsonError error = new JsonError(code, message, url, method);
+        error.log();
+    }
+
+    public static void logInfo(Request request) {
+        String url = request.url().url().toString().substring(Constants.API_URL.length());
+        String method = request.method();
+        logger.debug("[{}] -> {}", method.toUpperCase(), url);
     }
 }
 
