@@ -2,6 +2,7 @@ package io.github.dawncord.api.command;
 
 import io.github.dawncord.api.action.SlashCommandModifyAction;
 import io.github.dawncord.api.command.option.Option;
+import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.types.CommandType;
 import io.github.dawncord.api.types.PermissionType;
 
@@ -11,21 +12,7 @@ import java.util.function.Consumer;
 /**
  * Represents a slash command in the Discord API.
  */
-public interface ISlashCommand extends Command {
-    /**
-     * Gets the ID of the slash command.
-     *
-     * @return The ID of the slash command
-     */
-    String getId();
-
-    /**
-     * Gets the ID of the slash command as a long.
-     *
-     * @return The ID of the slash command as a long
-     */
-    long getIdLong();
-
+public interface ISlashCommand extends Command, ISnowflake {
     /**
      * Gets the type of the slash command.
      *

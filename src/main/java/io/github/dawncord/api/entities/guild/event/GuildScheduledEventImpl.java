@@ -18,7 +18,7 @@ import io.github.dawncord.api.types.GuildEventStatus;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
     @Override
     public ZonedDateTime getStartTimestamp() {
         if (startTimestamp == null) {
-            startTimestamp = MessageUtils.getZonedDateTime(event, "scheduled_start_time");
+            startTimestamp = TimeUtils.getZonedDateTime(event, "scheduled_start_time");
         }
         return startTimestamp;
     }
@@ -119,7 +119,7 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
     @Override
     public ZonedDateTime getEndTimestamp() {
         if (endTimestamp == null) {
-            endTimestamp = MessageUtils.getZonedDateTime(event, "scheduled_end_time");
+            endTimestamp = TimeUtils.getZonedDateTime(event, "scheduled_end_time");
         }
         return endTimestamp;
     }

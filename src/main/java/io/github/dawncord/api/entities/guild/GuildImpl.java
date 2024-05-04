@@ -31,6 +31,7 @@ import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.MfaLevel;
+import io.github.dawncord.api.types.VerificationLevel;
 import io.github.dawncord.api.types.VoiceRegion;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.EnumUtils;
@@ -104,6 +105,11 @@ public class GuildImpl implements Guild {
             features.add(feature.asText());
         }
         return features;
+    }
+
+    @Override
+    public VerificationLevel getVerificationLevel() {
+        return EnumUtils.getEnumObject(guild, "verification_level", VerificationLevel.class);
     }
 
     @Override

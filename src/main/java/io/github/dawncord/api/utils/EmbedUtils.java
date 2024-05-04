@@ -43,7 +43,7 @@ public class EmbedUtils {
         String title = embed.get("title").asText();
         String description = embed.has("description") ? embed.get("description").asText() : null;
         String url = embed.has("url") ? embed.get("url").asText() : null;
-        ZonedDateTime timestamp = embed.has("timestamp") ? MessageUtils.getZonedDateTime(embed, "timestamp") : null;
+        ZonedDateTime timestamp = embed.has("timestamp") ? TimeUtils.getZonedDateTime(embed, "timestamp") : null;
         int color = embed.has("color") ? embed.get("color").asInt() : 0;
         Embed.Footer footer = embed.has("footer") ? getEmbedFooterFromJson(embed.get("footer")) : null;
         Embed.EmbedImage image = embed.has("image") ? getEmbedImageFromJson(embed.get("image")) : null;

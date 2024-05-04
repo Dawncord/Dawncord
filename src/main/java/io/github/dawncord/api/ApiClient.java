@@ -84,12 +84,12 @@ public class ApiClient {
     /**
      * Performs a GET request to the specified URL with the provided query parameters.
      *
-     * @param url     The URL to which the request is sent.
-     * @param params  The query parameters to be included in the request.
+     * @param url    The URL to which the request is sent.
+     * @param params The query parameters to be included in the request.
      * @return The JSON response from the server.
      */
     public static JsonNode getJsonParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
+        HttpUrl.Builder httpBuilder = Objects.requireNonNull(HttpUrl.parse(Constants.API_URL + url)).newBuilder();
         if (params != null) {
             for (Map.Entry<String, String> param : params.entrySet()) {
                 httpBuilder.addQueryParameter(param.getKey(), param.getValue());
@@ -110,8 +110,8 @@ public class ApiClient {
     /**
      * Sends a POST request with multipart form data to the specified URL.
      *
-     * @param multipartBuilder  The builder for constructing the multipart request body.
-     * @param url               The URL to which the request is sent.
+     * @param multipartBuilder The builder for constructing the multipart request body.
+     * @param url              The URL to which the request is sent.
      * @return The JSON response from the server.
      */
     public static JsonNode postAttachments(MultipartBody.Builder multipartBuilder, String url) {
@@ -129,8 +129,8 @@ public class ApiClient {
     /**
      * Sends a PATCH request with multipart form data to the specified URL.
      *
-     * @param multipartBuilder  The builder for constructing the multipart request body.
-     * @param url               The URL to which the request is sent.
+     * @param multipartBuilder The builder for constructing the multipart request body.
+     * @param url              The URL to which the request is sent.
      * @return The JSON response from the server.
      */
     public static JsonNode patchAttachments(MultipartBody.Builder multipartBuilder, String url) {

@@ -72,7 +72,7 @@ public class SlashCommandModifyAction {
      * @return the modified SlashCommandModifyAction object
      */
     public SlashCommandModifyAction addOption(OptionType type, String name, String description) {
-        optionList.add(new Option(type, name, description));
+        addOption(type, name, description, false, false);
         return this;
     }
 
@@ -86,7 +86,7 @@ public class SlashCommandModifyAction {
      * @return the modified SlashCommandModifyAction object
      */
     public SlashCommandModifyAction addOption(OptionType type, String name, String description, boolean isRequired) {
-        optionList.add(new Option(type, name, description, isRequired));
+        addOption(type, name, description, isRequired, false);
         return this;
     }
 
@@ -102,6 +102,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addOption(OptionType type, String name, String description, boolean isRequired, boolean isAutocomplete) {
         optionList.add(new Option(type, name, description, isRequired, isAutocomplete));
+        hasChanges = true;
         return this;
     }
 
@@ -113,6 +114,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addOption(Option option) {
         optionList.add(option);
+        hasChanges = true;
         return this;
     }
 
@@ -124,6 +126,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addOptions(Option... options) {
         Collections.addAll(optionList, options);
+        hasChanges = true;
         return this;
     }
 
@@ -135,6 +138,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addOptions(List<Option> options) {
         optionList.addAll(options);
+        hasChanges = true;
         return this;
     }
 
@@ -147,6 +151,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addLocalizedName(Locale locale, String name) {
         localizedNameList.put(locale, name);
+        hasChanges = true;
         return this;
     }
 
@@ -158,6 +163,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction setNameLocalizations(Map<Locale, String> nameLocalizations) {
         localizedNameList.putAll(nameLocalizations);
+        hasChanges = true;
         return this;
     }
 
@@ -170,6 +176,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction addLocalizedDescription(Locale locale, String description) {
         localizedDescriptionList.put(locale, description);
+        hasChanges = true;
         return this;
     }
 
@@ -181,6 +188,7 @@ public class SlashCommandModifyAction {
      */
     public SlashCommandModifyAction setDescriptionLocalizations(Map<Locale, String> descriptionLocalizations) {
         localizedDescriptionList.putAll(descriptionLocalizations);
+        hasChanges = true;
         return this;
     }
 

@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 
@@ -30,7 +30,7 @@ public class ActivityTimestamp {
      */
     public ZonedDateTime getStartTimestamp() {
         if (start == null) {
-            start = MessageUtils.getZonedDateTime(timestamps, "start");
+            start = TimeUtils.getZonedDateTime(timestamps, "start");
         }
         return start;
     }
@@ -42,7 +42,7 @@ public class ActivityTimestamp {
      */
     public ZonedDateTime getEndTimestamp() {
         if (end == null) {
-            end = MessageUtils.getZonedDateTime(timestamps, "end");
+            end = TimeUtils.getZonedDateTime(timestamps, "end");
         }
         return end;
     }

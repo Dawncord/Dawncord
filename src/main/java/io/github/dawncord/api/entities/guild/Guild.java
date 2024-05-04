@@ -27,6 +27,7 @@ import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.MfaLevel;
+import io.github.dawncord.api.types.VerificationLevel;
 import io.github.dawncord.api.types.VoiceRegion;
 
 import java.util.List;
@@ -86,6 +87,13 @@ public interface Guild extends ISnowflake {
      * @return A list of features enabled for the guild.
      */
     List<String> getFeatures();
+
+    /**
+     * Retrieves the verification level of the guild.
+     *
+     * @return The verification level of the guild.
+     */
+    VerificationLevel getVerificationLevel();
 
     /**
      * Retrieves the list of stickers available in the guild.

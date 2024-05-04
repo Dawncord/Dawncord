@@ -12,8 +12,6 @@ import io.github.dawncord.api.entities.message.sticker.StickerImpl;
 import io.github.dawncord.api.types.AllowedMention;
 import io.github.dawncord.api.types.MessageFlag;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -163,14 +161,4 @@ public class MessageUtils {
         return messageJson;
     }
 
-    /**
-     * Parses a timestamp from a JSON object.
-     *
-     * @param object    The JSON object.
-     * @param timestamp The timestamp field name.
-     * @return The parsed ZonedDateTime object.
-     */
-    public static ZonedDateTime getZonedDateTime(JsonNode object, String timestamp) {
-        return ZonedDateTime.parse(object.get(timestamp).asText(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    }
 }

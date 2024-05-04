@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.action.GuildOnboardingModifyAction;
 import io.github.dawncord.api.entities.CustomEmoji;
-import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.role.GuildRoleImpl;
 import io.github.dawncord.api.event.ModifyEvent;
@@ -101,7 +100,7 @@ public class GuildOnboarding {
     /**
      * Represents a prompt in guild onboarding.
      */
-    public static class Prompt implements ISnowflake {
+    public static class Prompt {
         private final JsonNode prompt;
         private final Guild guild;
         private String id;
@@ -135,7 +134,11 @@ public class GuildOnboarding {
             this.inOnboarding = inOnboarding;
         }
 
-        @Override
+        /**
+         * Retrieves the id of the prompt.
+         *
+         * @return The id of the prompt.
+         */
         public String getId() {
             if (id == null) {
                 assert prompt != null;
@@ -144,7 +147,11 @@ public class GuildOnboarding {
             return id;
         }
 
-        @Override
+        /**
+         * Retrieves the id of the prompt.
+         *
+         * @return The id of the prompt.
+         */
         public long getIdLong() {
             return Long.parseLong(getId());
         }
@@ -246,7 +253,7 @@ public class GuildOnboarding {
         /**
          * Represents an option associated with a prompt in guild onboarding.
          */
-        public static class Option implements ISnowflake {
+        public static class Option {
             private final JsonNode option;
             private final Guild guild;
             private String id;
@@ -278,7 +285,11 @@ public class GuildOnboarding {
                 this.emoji = emoji;
             }
 
-            @Override
+            /**
+             * Retrieves the id of the option.
+             *
+             * @return The id of the option.
+             */
             public String getId() {
                 if (id == null) {
                     assert option != null;
@@ -287,7 +298,11 @@ public class GuildOnboarding {
                 return id;
             }
 
-            @Override
+            /**
+             * Retrieves the id of the option.
+             *
+             * @return The id of the option.
+             */
             public long getIdLong() {
                 return Long.parseLong(getId());
             }

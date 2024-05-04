@@ -2,7 +2,7 @@ package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.guild.GuildMember;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 
@@ -55,7 +55,7 @@ public class ThreadMember {
      */
     public ZonedDateTime getJoinedTimestamp() {
         if (joinedTimestamp == null) {
-            joinedTimestamp = MessageUtils.getZonedDateTime(threadMember, "join_timestamp");
+            joinedTimestamp = TimeUtils.getZonedDateTime(threadMember, "join_timestamp");
         }
         return joinedTimestamp;
     }

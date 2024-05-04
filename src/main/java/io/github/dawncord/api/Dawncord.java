@@ -228,7 +228,7 @@ public class Dawncord {
     }
 
     private static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
-        String commandName = slashCommandEvent.getCommandName();
+        String commandName = slashCommandEvent.getFullCommandName();
         Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
         if (handler != null) {
             handler.accept(slashCommandEvent);

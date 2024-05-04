@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.types.ActivityFlag;
 import io.github.dawncord.api.types.ActivityType;
 import io.github.dawncord.api.utils.EnumUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -67,7 +67,7 @@ public class ActivityImpl implements Activity {
     @Override
     public ZonedDateTime getCreationTimestamp() {
         if (creationTimestamp == null) {
-            creationTimestamp = MessageUtils.getZonedDateTime(activity, "created_at");
+            creationTimestamp = TimeUtils.getZonedDateTime(activity, "created_at");
         }
         return creationTimestamp;
     }

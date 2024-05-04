@@ -8,7 +8,9 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import io.github.dawncord.api.Dawncord;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.command.SlashCommand;
+import io.github.dawncord.api.command.SlashCommandData;
+import io.github.dawncord.api.command.SubCommand;
+import io.github.dawncord.api.command.SubCommandGroup;
 import io.github.dawncord.api.entities.CustomEmojiImpl;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.Emoji;
@@ -23,10 +25,7 @@ import io.github.dawncord.api.interaction.Interaction;
 import io.github.dawncord.api.interaction.MessageComponentInteractionData;
 import io.github.dawncord.api.interaction.ModalInteractionData;
 import io.github.dawncord.api.interaction.SlashCommandInteractionData;
-import io.github.dawncord.api.types.ButtonStyle;
-import io.github.dawncord.api.types.ChannelType;
-import io.github.dawncord.api.types.ComponentType;
-import io.github.dawncord.api.types.InteractionType;
+import io.github.dawncord.api.types.*;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -105,8 +104,33 @@ public class InteractionListener extends WebSocketAdapter {
     private void processSlashCommands(JsonNode d, String guildId, String guildChannelId, String guildMemberId) {
         JsonNode data = d.get("data");
 
-        JsonNode slashCommandJson = JsonUtils.fetch(Routes.SlashCommand.Get(data.get("id").asText()));
-        SlashCommand slashCommand = new SlashCommand(slashCommandJson);
+        SubCommand subCommand = null;
+        SubCommandGroup subCommandGroup = null;
+        if (data.has("options") && data.hasNonNull("options")) {
+            for (JsonNode option : data.get("options")) {
+                if (option.get("type").asInt() == OptionType.SUB_COMMAND.getValue()) {
+                    subCommand = new SubCommand(option);
+                }
+                if (option.get("type").asInt() == OptionType.SUB_COMMAND_GROUP.getValue()) {
+                    subCommandGroup = new SubCommandGroup(option);
+                }
+            }
+        }
+
+        String subCommandGroupName = null;
+        if (subCommandGroup != null) {
+            subCommandGroupName = subCommandGroup.getName();
+            SubCommand subCommandFromGroup = subCommandGroup.getSubCommands().get(0);
+            if (subCommandFromGroup != null) {
+                subCommandGroupName = subCommandGroupName + " " + subCommandFromGroup.getName();
+            }
+        }
+
+        SlashCommandData slashCommandData = new SlashCommandData(
+                data.get("name").asText(),
+                subCommand != null ? subCommand.getName() : null,
+                subCommandGroupName
+        );
 
         String interactionId = d.get("id").asText();
         String interactionToken = d.get("token").asText();
@@ -131,7 +155,7 @@ public class InteractionListener extends WebSocketAdapter {
             }
         }
 
-        SlashCommandInteractionData interactionData = new SlashCommandInteractionData(options, slashCommand, interaction, guildId, guildChannelId, guildMemberId);
+        SlashCommandInteractionData interactionData = new SlashCommandInteractionData(options, slashCommandData, interaction, guildId, guildChannelId, guildMemberId);
 
         SlashCommandEvent slashCommandEvent = new SlashCommandEvent(interactionData);
 
@@ -162,8 +186,8 @@ public class InteractionListener extends WebSocketAdapter {
                                 processButtonEvent(subComponent, interactionData, guildId);
                             }
                             if (componentType != ComponentType.ACTION.getValue()
-                                    || componentType != ComponentType.BUTTON.getValue()
-                                    || componentType != ComponentType.TEXT_INPUT.getValue()) {
+                                    && componentType != ComponentType.BUTTON.getValue()
+                                    && componentType != ComponentType.TEXT_INPUT.getValue()) {
                                 processSelectMenuEvent(subComponent, interactionData, data, guildId);
                             }
                         }
@@ -182,7 +206,7 @@ public class InteractionListener extends WebSocketAdapter {
                 subComponent.has("max_values") ? subComponent.get("max_values").asInt() : 1,
                 subComponent.has("options") ? subComponent.get("options") : null,
                 subComponent.has("disabled") && subComponent.get("disabled").asBoolean(),
-                EnumUtils.getEnumList(subComponent.get("channel_types"), ChannelType.class),
+                subComponent.has("channel_types") ? EnumUtils.getEnumList(subComponent.get("channel_types"), ChannelType.class) : null,
                 guild
         );
         JsonNode resolved = data.get("resolved");

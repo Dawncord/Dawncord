@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 
@@ -173,7 +173,7 @@ public class VoiceState {
      */
     public ZonedDateTime getRequestToSpeakTimestamp() {
         if (requestToSpeakTimestamp == null) {
-            requestToSpeakTimestamp = MessageUtils.getZonedDateTime(state, "request_to_speak_timestamp");
+            requestToSpeakTimestamp = TimeUtils.getZonedDateTime(state, "request_to_speak_timestamp");
         }
         return requestToSpeakTimestamp;
     }

@@ -47,7 +47,7 @@ public class OptionData {
      * @return the value of the option as string
      */
     public String getAsString() {
-        return String.valueOf(data.get("value"));
+        return ((JsonNode) data.get("value")).asText();
     }
 
     /**
@@ -100,9 +100,9 @@ public class OptionData {
      *
      * @return the Mentionable entity associated with the option value
      */
-    public Mentionable getAsMentionable() {
+    public String getAsMention() {
         return data.get("resolved") != null
-                ? new Mentionable(getAsString(), (JsonNode) data.get("resolved"))
+                ? new Mentionable(getAsString(), (JsonNode) data.get("resolved")).getAsMention()
                 : null;
     }
 

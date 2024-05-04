@@ -221,18 +221,11 @@ public interface Message extends ISnowflake {
     boolean isTTS();
 
     /**
-     * Retrieves the timestamp when the message was sent.
-     *
-     * @return The timestamp when the message was sent.
-     */
-    ZonedDateTime getTimestamp();
-
-    /**
      * Retrieves the timestamp when the message was last edited.
      *
      * @return The timestamp when the message was last edited.
      */
-    ZonedDateTime getEditedTimestamp();
+    ZonedDateTime getTimeEdited();
 
     /**
      * Modifies the message using the provided handler.

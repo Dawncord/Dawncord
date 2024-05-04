@@ -14,6 +14,7 @@ import io.github.dawncord.api.interaction.InteractionData;
 import io.github.dawncord.api.interaction.SlashCommandInteractionData;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
+import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,42 @@ public class SlashCommandEvent implements ReplyEvent {
     }
 
     /**
+     * Retrieves the full name of the slash command triggered in this event.
+     *
+     * @return The full name of the slash command.
+     */
+    public String getFullCommandName() {
+        String name = getCommandName();
+        if (getSubCommand() != null) {
+            name = name + " " + getSubCommand();
+        }
+        if (getSubCommandGroup() != null) {
+            name = name + " " + getSubCommandGroup();
+        }
+        return name;
+    }
+
+    /**
+     * Retrieves the sub-command associated with the slash command triggered in this event.
+     *
+     * @return The sub-command associated with the slash command.
+     */
+    @Nullable
+    public String getSubCommand() {
+        return data.getSlashCommand().getSubCommand();
+    }
+
+    /**
+     * Retrieves the sub-command group associated with the slash command triggered in this event.
+     *
+     * @return The sub-command group associated with the slash command.
+     */
+    @Nullable
+    public String getSubCommandGroup() {
+        return data.getSlashCommand().getSubCommandGroup();
+    }
+
+    /**
      * Retrieves the list of options provided with the slash command.
      *
      * @return The list of options.
@@ -96,6 +133,7 @@ public class SlashCommandEvent implements ReplyEvent {
      * @param name The name of the option to retrieve.
      * @return The option with the specified name, or null if not found.
      */
+    @Nullable
     public OptionData getOption(String name) {
         return getOptions().stream().filter(option -> option.getData().get("name").equals(name)).findAny().orElse(null);
     }

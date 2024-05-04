@@ -295,18 +295,10 @@ public class MessageImpl implements Message {
     }
 
     @Override
-    public ZonedDateTime getTimestamp() {
-        if (timestamp == null) {
-            timestamp = MessageUtils.getZonedDateTime(message, "timestamp");
-        }
-        return timestamp;
-    }
-
-    @Override
-    public ZonedDateTime getEditedTimestamp() {
+    public ZonedDateTime getTimeEdited() {
         if (editedTimestamp == null) {
             editedTimestamp = message.hasNonNull("edited_timestamp")
-                    ? MessageUtils.getZonedDateTime(message, "edited_timestamp")
+                    ? TimeUtils.getZonedDateTime(message, "edited_timestamp")
                     : null;
         }
         return editedTimestamp;

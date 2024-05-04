@@ -8,6 +8,7 @@ import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
 import io.github.dawncord.api.types.PermissionType;
+import jakarta.annotation.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -31,6 +32,7 @@ public interface GuildMember extends IMentionable {
      *
      * @return The avatar of the guild member.
      */
+    @Nullable
     Avatar getAvatar();
 
     /**
@@ -53,6 +55,14 @@ public interface GuildMember extends IMentionable {
      * @return The permissions of the guild member.
      */
     Set<PermissionType> getPermissions();
+
+    /**
+     * Checks if the guild member has the specified permission.
+     *
+     * @param permission the permission to check for
+     * @return true if the guild member has the permission, false otherwise
+     */
+    boolean hasPermission(PermissionType permission);
 
     /**
      * Gets the roles assigned to the guild member.

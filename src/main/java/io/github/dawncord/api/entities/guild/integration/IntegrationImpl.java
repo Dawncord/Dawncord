@@ -11,7 +11,7 @@ import io.github.dawncord.api.types.IntegrationExpireBehavior;
 import io.github.dawncord.api.types.IntegrationType;
 import io.github.dawncord.api.types.Scope;
 import io.github.dawncord.api.utils.EnumUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -154,7 +154,7 @@ public class IntegrationImpl implements Integration {
     @Override
     public ZonedDateTime getSyncedTimestamp() {
         if (syncedTimestamp == null) {
-            syncedTimestamp = MessageUtils.getZonedDateTime(integration, "synced_at");
+            syncedTimestamp = TimeUtils.getZonedDateTime(integration, "synced_at");
         }
         return syncedTimestamp;
     }

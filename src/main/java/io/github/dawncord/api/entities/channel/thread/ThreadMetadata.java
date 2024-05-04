@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 
@@ -44,7 +44,7 @@ public class ThreadMetadata {
      */
     public ZonedDateTime getArchiveTimestamp() {
         if (archiveTimestamp == null) {
-            archiveTimestamp = MessageUtils.getZonedDateTime(metadata, "archive_timestamp");
+            archiveTimestamp = TimeUtils.getZonedDateTime(metadata, "archive_timestamp");
         }
         return archiveTimestamp;
     }
@@ -56,7 +56,7 @@ public class ThreadMetadata {
      */
     public ZonedDateTime getCreationTimestamp() {
         if (creationTimestamp == null) {
-            creationTimestamp = MessageUtils.getZonedDateTime(metadata, "create_timestamp");
+            creationTimestamp = TimeUtils.getZonedDateTime(metadata, "create_timestamp");
         }
         return creationTimestamp;
     }

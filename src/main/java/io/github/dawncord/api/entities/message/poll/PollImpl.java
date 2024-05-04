@@ -3,7 +3,7 @@ package io.github.dawncord.api.entities.message.poll;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.utils.JsonUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -51,7 +51,7 @@ public class PollImpl implements Poll {
     public ZonedDateTime getExpiry() {
         if (expiry == null) {
             if (poll.has("expiry")) {
-                expiry = MessageUtils.getZonedDateTime(poll, "expiry");
+                expiry = TimeUtils.getZonedDateTime(poll, "expiry");
             }
         }
         return expiry;

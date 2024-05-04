@@ -89,8 +89,8 @@ public class SlashCommandUtils {
     /**
      * Creates an array of sub-commands for a Slash Command.
      *
-     * @param node              The JSON node to which sub-commands are added.
-     * @param subCommandList    The list of sub-commands to include in the array.
+     * @param node           The JSON node to which sub-commands are added.
+     * @param subCommandList The list of sub-commands to include in the array.
      * @return The JSON array of sub-commands.
      */
     public static ArrayNode createSubCommandsArray(ObjectNode node, List<SubCommand> subCommandList) {
@@ -114,8 +114,8 @@ public class SlashCommandUtils {
     /**
      * Creates an array of sub-command groups for a Slash Command.
      *
-     * @param node                   The JSON node to which sub-command groups are added.
-     * @param subCommandGroupList    The list of sub-command groups to include in the array.
+     * @param node                The JSON node to which sub-command groups are added.
+     * @param subCommandGroupList The list of sub-command groups to include in the array.
      */
     public static void createSubCommandGroupArray(ObjectNode node, List<SubCommandGroup> subCommandGroupList) {
         ArrayNode subCommandGroupsArray = mapper.createArrayNode();
@@ -147,8 +147,8 @@ public class SlashCommandUtils {
     /**
      * Retrieves a map of localized strings from a JSON node.
      *
-     * @param command         The JSON node containing the localization data.
-     * @param localizations   The key for the localization data within the JSON node.
+     * @param command       The JSON node containing the localization data.
+     * @param localizations The key for the localization data within the JSON node.
      * @return A map containing the localized strings, keyed by Locale.
      */
     public static Map<Locale, String> getLocaleStringMap(JsonNode command, String localizations) {
@@ -163,7 +163,7 @@ public class SlashCommandUtils {
     /**
      * Creates a list of options from a JSON node representing a command.
      *
-     * @param command   The JSON node representing the command.
+     * @param command The JSON node representing the command.
      * @return A list of options parsed from the JSON node.
      */
     public static List<Option> createOptions(JsonNode command) {

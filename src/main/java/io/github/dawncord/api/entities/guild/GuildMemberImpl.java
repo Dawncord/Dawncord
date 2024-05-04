@@ -13,7 +13,7 @@ import io.github.dawncord.api.types.GuildMemberFlag;
 import io.github.dawncord.api.types.PermissionType;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.EnumUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class GuildMemberImpl implements GuildMember {
     public Avatar getAvatar() {
         return member.has("avatar") && member.hasNonNull("avatar")
                 ? new Avatar(guild.getId(), getUser().getId(), member.get("avatar").asText())
-                : null;
+                : new Avatar(getUser().getId(), member.get("user").get("avatar").asText());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public ZonedDateTime getTimeJoined() {
-        return MessageUtils.getZonedDateTime(member, "joined_at");
+        return TimeUtils.getZonedDateTime(member, "joined_at");
     }
 
     @Override
@@ -83,6 +83,11 @@ public class GuildMemberImpl implements GuildMember {
             getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
         }
         return permissions;
+    }
+
+    @Override
+    public boolean hasPermission(PermissionType permission) {
+        return getPermissions().contains(permission);
     }
 
     @Override

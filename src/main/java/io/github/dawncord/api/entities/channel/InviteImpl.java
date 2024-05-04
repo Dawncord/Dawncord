@@ -13,7 +13,7 @@ import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.types.TargetType;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
-import io.github.dawncord.api.utils.MessageUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -130,7 +130,7 @@ public class InviteImpl implements Invite {
     @Override
     public ZonedDateTime getCreationTimestamp() {
         if (creationTimestamp == null) {
-            creationTimestamp = MessageUtils.getZonedDateTime(invite, "created_at");
+            creationTimestamp = TimeUtils.getZonedDateTime(invite, "created_at");
         }
         return creationTimestamp;
     }
@@ -138,7 +138,7 @@ public class InviteImpl implements Invite {
     @Override
     public ZonedDateTime getExpirationTimestamp() {
         if (expirationTimestamp == null) {
-            expirationTimestamp = invite.has("expires_at") ? MessageUtils.getZonedDateTime(invite, "expires_at") : null;
+            expirationTimestamp = invite.has("expires_at") ? TimeUtils.getZonedDateTime(invite, "expires_at") : null;
         }
         return expirationTimestamp;
     }
