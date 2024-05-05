@@ -68,7 +68,11 @@ public class EventListener extends WebSocketAdapter {
         } else if (Events.isChannelEvent(type)) {
             processChannelEvent(data, type);
         } else if (Events.isGuildEvent(type)) {
-            processGuildEvent(data, type);
+            if (type.equals(GatewayEvent.GUILD_CREATE)) {
+                processGuildCreateEvent(data, type);
+            } else {
+                processGuildEvent(data, type);
+            }
         } else if (Events.isMessageEvent(type)) {
             processMessageEvent(data, type);
         } else if (Events.isAutoModEvent(type)) {
@@ -132,6 +136,12 @@ public class EventListener extends WebSocketAdapter {
             }
             invokeProcessEvent("processChannelEvent", type, channelEvent, ChannelEvent.class);
         }
+    }
+
+    private void processGuildCreateEvent(JsonNode data, GatewayEvent type) {
+        Guild guild = new GuildImpl(data);
+        GuildDefaultEvent guildEvent = new GuildDefaultEvent(guild);
+        invokeProcessEvent("processGuildEvent", type, guildEvent, GuildDefaultEvent.class);
     }
 
     //todo fix guild events

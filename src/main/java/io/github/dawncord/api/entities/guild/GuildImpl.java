@@ -48,6 +48,7 @@ import java.util.function.Consumer;
  */
 public class GuildImpl implements Guild {
     private final JsonNode guild;
+    private final JsonNode presences;
 
     /**
      * Constructs a new GuildImpl object with the specified JSON node representing the guild.
@@ -56,6 +57,7 @@ public class GuildImpl implements Guild {
      */
     public GuildImpl(JsonNode guild) {
         this.guild = guild;
+        this.presences = guild.has("presences") ? guild.get("presences") : null;
     }
 
     @Override
@@ -242,18 +244,21 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildMember> getMembers() {
-        return JsonUtils.getEntityList(
-                JsonUtils.fetchParams(
-                        Routes.Guild.Member.All(getId()),
-                        Map.of("limit", "100")
-                ),
-                member -> new GuildMemberImpl(member, this)
-        );
+        return guild.has("members") ?
+                JsonUtils.getEntityList(guild.get("members"), member -> new GuildMemberImpl(member, presences, this))
+                :
+                JsonUtils.getEntityList(
+                        JsonUtils.fetchParams(
+                                Routes.Guild.Member.All(getId()),
+                                Map.of("limit", "100")
+                        ),
+                        member -> new GuildMemberImpl(member, presences, this)
+                );
     }
 
     @Override
     public GuildMember getMemberById(String memberId) {
-        return new GuildMemberImpl(JsonUtils.fetch(Routes.Guild.Member.Get(getId(), memberId)), this);
+        return new GuildMemberImpl(JsonUtils.fetch(Routes.Guild.Member.Get(getId(), memberId)), presences, this);
     }
 
     @Override
@@ -271,7 +276,7 @@ public class GuildImpl implements Guild {
                                 "limit", String.valueOf(limit)
                         )
                 ),
-                guildMember -> new GuildMemberImpl(guildMember, this)
+                guildMember -> new GuildMemberImpl(guildMember, presences, this)
         );
     }
 

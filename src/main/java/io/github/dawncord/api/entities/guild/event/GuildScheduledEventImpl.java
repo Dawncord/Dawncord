@@ -200,7 +200,7 @@ public class GuildScheduledEventImpl implements GuildScheduledEvent {
         );
         List<GuildMember> members = new ArrayList<>();
         for (JsonNode member : eventMembers) {
-            members.add(new GuildMemberImpl(member.get("member"), guild));
+            members.add(new GuildMemberImpl(member.get("member"), null, guild));
         }
         return members;
     }

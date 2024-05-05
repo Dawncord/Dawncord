@@ -7,6 +7,7 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
+import io.github.dawncord.api.types.OnlineStatus;
 import io.github.dawncord.api.types.PermissionType;
 import jakarta.annotation.Nullable;
 
@@ -41,6 +42,13 @@ public interface GuildMember extends IMentionable {
      * @return The flags associated with the guild member.
      */
     List<GuildMemberFlag> getFlags();
+
+    /**
+     * Gets the online status of the guild member.
+     *
+     * @return The online status of the guild member.
+     */
+    OnlineStatus getOnlineStatus();
 
     /**
      * Gets the date and time when the guild member joined the guild.

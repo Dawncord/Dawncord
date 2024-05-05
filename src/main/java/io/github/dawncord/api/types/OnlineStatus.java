@@ -7,20 +7,30 @@ public enum OnlineStatus {
     /**
      * Offline status.
      */
-    OFFLINE(),
+    OFFLINE("offline"),
 
     /**
      * Do Not Disturb status.
      */
-    DND(),
+    DND("dnd"),
 
     /**
      * Idle status.
      */
-    IDLE(),
+    IDLE("idle"),
 
     /**
      * Online status.
      */
-    ONLINE()
+    ONLINE(null);
+
+    private final String value;
+
+    OnlineStatus(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

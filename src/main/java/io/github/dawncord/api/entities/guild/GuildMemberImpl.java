@@ -10,6 +10,7 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
+import io.github.dawncord.api.types.OnlineStatus;
 import io.github.dawncord.api.types.PermissionType;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.EnumUtils;
@@ -28,6 +29,7 @@ import java.util.function.Consumer;
 public class GuildMemberImpl implements GuildMember {
     private final JsonNode member;
     private final Guild guild;
+    private JsonNode presences;
     private Boolean isPending;
     private Boolean isBoosting;
     private Boolean isMuted;
@@ -39,8 +41,11 @@ public class GuildMemberImpl implements GuildMember {
      * @param member The JSON data representing the guild member.
      * @param guild  The guild to which the member belongs.
      */
-    public GuildMemberImpl(JsonNode member, Guild guild) {
+    public GuildMemberImpl(JsonNode member, JsonNode presences, Guild guild) {
         this.member = member;
+        if (presences != null) {
+            this.presences = presences;
+        }
         this.guild = guild;
     }
 
@@ -66,6 +71,16 @@ public class GuildMemberImpl implements GuildMember {
     @Override
     public List<GuildMemberFlag> getFlags() {
         return EnumUtils.getEnumListFromLong(member, "flags", GuildMemberFlag.class);
+    }
+
+    @Override
+    public OnlineStatus getOnlineStatus() {
+        for (JsonNode presence : presences) {
+            if (presence.get("user").get("id").asText().equals(getUser().getId())) {
+                return OnlineStatus.valueOf(presence.get("status").asText());
+            }
+        }
+        return OnlineStatus.OFFLINE;
     }
 
     @Override
