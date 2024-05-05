@@ -295,6 +295,5 @@ public class SlashCommandCreateAction {
             }
         }
         ApiClient.post(jsonObject, Routes.SlashCommand.All());
-        jsonObject.removeAll();
     }
 }

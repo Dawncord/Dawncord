@@ -48,6 +48,5 @@ public class CurrentMemberModifyAction {
             ApiClient.patch(jsonObject, Routes.CurrentMember(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

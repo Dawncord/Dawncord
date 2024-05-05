@@ -79,6 +79,5 @@ public class StageCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

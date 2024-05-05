@@ -126,6 +126,5 @@ public class GuildRoleCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

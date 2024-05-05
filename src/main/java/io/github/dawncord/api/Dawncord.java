@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import io.github.dawncord.api.action.GuildCreateAction;
 import io.github.dawncord.api.action.SlashCommandCreateAction;
 import io.github.dawncord.api.action.SlashCommandModifyAction;
 import io.github.dawncord.api.command.Command;
@@ -15,6 +16,8 @@ import io.github.dawncord.api.command.SlashCommand;
 import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
 import io.github.dawncord.api.command.option.Option;
+import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.event.*;
 import io.github.dawncord.api.event.handler.*;
 import io.github.dawncord.api.listeners.EventListener;
@@ -77,41 +80,6 @@ public class Dawncord {
         initializeCommandIdMap();
     }
 
-    private void assignConstants(String token) {
-        Constants.BOT_TOKEN = token;
-        Constants.BOT_ID = JsonUtils.fetch(Routes.User("@me")).get("id").asText();
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(Constants.API_URL + Routes.Application())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .build();
-
-        try (Response response = client.newCall(request).execute();
-             ResponseBody body = response.body()) {
-            if (response.isSuccessful() && body != null) {
-                JsonNode node = mapper.readTree(body.string());
-                Constants.APPLICATION_ID = node.get("id").asText();
-                Constants.CLIENT_KEY = node.get("verify_key").asText();
-
-                logger.debug("Assigning constants");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void initializeCommandIdMap() {
-        List<SlashCommand> commands = getSlashCommands();
-        for (SlashCommand command : commands) {
-            commandIdMap.put(command.getName(), command.getId());
-        }
-
-        if (!commandIdMap.isEmpty()) {
-            logger.debug("Initializing commands");
-        }
-    }
-
     /**
      * Sets the intents for the gateway connection.
      *
@@ -132,6 +100,55 @@ public class Dawncord {
     }
 
     /**
+     * Creates a new guild using the specified handler and returns a CreateEvent containing the created Guild.
+     *
+     * @param handler the handler that will be used to create the guild
+     * @return a CreateEvent containing the created Guild
+     */
+    public CreateEvent<Guild> createGuild(Consumer<GuildCreateAction> handler) {
+        String id = ActionExecutor.createGuild(handler);
+        return new CreateEvent<>(new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(id))));
+    }
+
+    /**
+     * Retrieves a Guild object from the API based on the provided ID.
+     *
+     * @param id the unique identifier of the guild
+     * @return the Guild object representing the guild with the given ID
+     */
+    public Guild getGuildById(String id) {
+        return new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(id)));
+    }
+
+    /**
+     * Retrieves a Guild object from the API based on the provided ID.
+     *
+     * @param id the unique identifier of the guild
+     * @return the Guild object representing the guild with the given ID
+     */
+    public Guild getGuildById(long id) {
+        return getGuildById(String.valueOf(id));
+    }
+
+    /**
+     * Retrieves a list of Guild objects representing all the guilds that the bot is a member of.
+     *
+     * @return a list of Guild objects representing the guilds the bot is a member of
+     */
+    public List<Guild> getGuilds() {
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.BotAll()), GuildImpl::new);
+    }
+
+    /**
+     * Deletes a guild based on the provided ID.
+     *
+     * @param id the unique identifier of the guild to be deleted
+     */
+    public void deleteGuild(String id) {
+        ApiClient.delete(Routes.Guild.Get(id));
+    }
+
+    /**
      * Registers an event handler for a specific type of event.
      * When an event of the specified type is received, the handler function will be invoked.
      *
@@ -141,14 +158,6 @@ public class Dawncord {
      */
     public <T extends Event> void on(Class<T> type, Consumer<T> handler) {
         eventHandlers.put(type, event -> handler.accept(type.cast(event)));
-    }
-
-    private void processEvent(Event event) {
-        Consumer<Event> handler = eventHandlers.get(event.getClass());
-
-        if (handler != null) {
-            handler.accept(event);
-        }
     }
 
     /**
@@ -225,46 +234,6 @@ public class Dawncord {
      */
     public void onModal(Consumer<ModalSubmitEvent> handler) {
         defaultModalSubmitEventHandler = handler;
-    }
-
-    private static void processSlashCommand(SlashCommandEvent slashCommandEvent) {
-        String commandName = slashCommandEvent.getFullCommandName();
-        Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
-        if (handler != null) {
-            handler.accept(slashCommandEvent);
-        } else if (defaultSlashCommandEventHandler != null) {
-            defaultSlashCommandEventHandler.accept(slashCommandEvent);
-        }
-    }
-
-    private static void processButtonEvent(ButtonEvent buttonEvent) {
-        String customId = buttonEvent.getButton().getCustomId();
-        Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(buttonEvent);
-        } else if (defaultButtonComponentEventHandler != null) {
-            defaultButtonComponentEventHandler.accept(buttonEvent);
-        }
-    }
-
-    private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
-        String customId = selectMenuEvent.getSelectMenu().getCustomId();
-        Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(selectMenuEvent);
-        } else if (defaultSelectMenuEventHandler != null) {
-            defaultSelectMenuEventHandler.accept(selectMenuEvent);
-        }
-    }
-
-    private static void processModalSubmitEvent(ModalSubmitEvent modalSubmitEvent) {
-        String customId = modalSubmitEvent.getModal().getCustomId();
-        Consumer<ModalSubmitEvent> handler = modalSubmitEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(modalSubmitEvent);
-        } else if (defaultModalSubmitEventHandler != null) {
-            defaultModalSubmitEventHandler.accept(modalSubmitEvent);
-        }
     }
 
     /**
@@ -479,6 +448,116 @@ public class Dawncord {
         }
     }
 
+    /**
+     * Connects to the gateway
+     * <p>
+     * Starting the gateway will start the event loop for the gateway
+     */
+    public void start() {
+        try {
+            webSocket.connect();
+        } catch (WebSocketException e) {
+            throw new RuntimeException(e);
+        }
+
+        ObjectNode identify = mapper.createObjectNode()
+                .put("op", 2)
+                .set("d", mapper.createObjectNode()
+                        .put("token", Constants.BOT_TOKEN)
+                        .put("intents", intentsValue)
+                        .set("properties", mapper.createObjectNode()
+                                .put("os", "linux")
+                                .put("browser", "discord-java-gateway")
+                                .put("device", "discord-java-gateway")
+                        )
+                );
+
+        webSocket.sendText(identify.toString());
+    }
+
+    private void assignConstants(String token) {
+        Constants.BOT_TOKEN = token;
+        Constants.BOT_ID = JsonUtils.fetch(Routes.User("@me")).get("id").asText();
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(Constants.API_URL + Routes.Application())
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .build();
+
+        try (Response response = client.newCall(request).execute();
+             ResponseBody body = response.body()) {
+            if (response.isSuccessful() && body != null) {
+                JsonNode node = mapper.readTree(body.string());
+                Constants.APPLICATION_ID = node.get("id").asText();
+                Constants.CLIENT_KEY = node.get("verify_key").asText();
+
+                logger.debug("Assigning constants");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void initializeCommandIdMap() {
+        List<SlashCommand> commands = getSlashCommands();
+        for (SlashCommand command : commands) {
+            commandIdMap.put(command.getName(), command.getId());
+        }
+
+        if (!commandIdMap.isEmpty()) {
+            logger.debug("Initializing commands");
+        }
+    }
+
+    private void processEvent(Event event) {
+        Consumer<Event> handler = eventHandlers.get(event.getClass());
+
+        if (handler != null) {
+            handler.accept(event);
+        }
+    }
+
+    private static void processSlashCommandEvent(SlashCommandEvent slashCommandEvent) {
+        String commandName = slashCommandEvent.getFullCommandName();
+        Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
+        if (handler != null) {
+            handler.accept(slashCommandEvent);
+        } else if (defaultSlashCommandEventHandler != null) {
+            defaultSlashCommandEventHandler.accept(slashCommandEvent);
+        }
+    }
+
+    private static void processButtonEvent(ButtonEvent buttonEvent) {
+        String customId = buttonEvent.getButton().getCustomId();
+        Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(buttonEvent);
+        } else if (defaultButtonComponentEventHandler != null) {
+            defaultButtonComponentEventHandler.accept(buttonEvent);
+        }
+    }
+
+    private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
+        String customId = selectMenuEvent.getSelectMenu().getCustomId();
+        Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(selectMenuEvent);
+        } else if (defaultSelectMenuEventHandler != null) {
+            defaultSelectMenuEventHandler.accept(selectMenuEvent);
+        }
+    }
+
+    private static void processModalSubmitEvent(ModalSubmitEvent modalSubmitEvent) {
+        String customId = modalSubmitEvent.getModal().getCustomId();
+        Consumer<ModalSubmitEvent> handler = modalSubmitEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(modalSubmitEvent);
+        } else if (defaultModalSubmitEventHandler != null) {
+            defaultModalSubmitEventHandler.accept(modalSubmitEvent);
+        }
+    }
+
     private String getSlashCommandId(String name) {
         String commandId = commandIdMap.get(name);
         if (commandId == null) {
@@ -653,32 +732,5 @@ public class Dawncord {
             choicesJson.add(choiceJson);
         }
         return choicesJson;
-    }
-
-    /**
-     * Connects to the gateway
-     * <p>
-     * Starting the gateway will start the event loop for the gateway
-     */
-    public void start() {
-        try {
-            webSocket.connect();
-        } catch (WebSocketException e) {
-            throw new RuntimeException(e);
-        }
-
-        ObjectNode identify = mapper.createObjectNode()
-                .put("op", 2)
-                .set("d", mapper.createObjectNode()
-                        .put("token", Constants.BOT_TOKEN)
-                        .put("intents", intentsValue)
-                        .set("properties", mapper.createObjectNode()
-                                .put("os", "linux")
-                                .put("browser", "discord-java-gateway")
-                                .put("device", "discord-java-gateway")
-                        )
-                );
-
-        webSocket.sendText(identify.toString());
     }
 }

@@ -137,6 +137,5 @@ public class GuildEventModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.ScheduledEvent.Get(guildId, eventId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

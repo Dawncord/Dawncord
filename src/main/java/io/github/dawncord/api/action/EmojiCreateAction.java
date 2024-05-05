@@ -78,6 +78,5 @@ public class EmojiCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

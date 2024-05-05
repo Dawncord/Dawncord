@@ -117,6 +117,5 @@ public class GuildRoleModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.Role.Get(guildId, roleId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

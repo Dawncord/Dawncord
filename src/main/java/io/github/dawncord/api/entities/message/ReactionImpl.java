@@ -105,7 +105,6 @@ public class ReactionImpl implements Reaction {
     @Override
     public List<String> getBurstColors() {
         if (burstColors == null) {
-            //todo add burst colors
         }
         return burstColors;
     }

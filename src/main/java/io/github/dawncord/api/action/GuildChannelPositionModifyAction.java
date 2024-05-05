@@ -80,6 +80,5 @@ public class GuildChannelPositionModifyAction {
             ApiClient.patch(mapper.createArrayNode().add(jsonObject), Routes.Guild.Channels(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

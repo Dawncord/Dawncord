@@ -111,7 +111,7 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
                 .put("allow", String.valueOf(allowValue));
 
         ApiClient.put(jsonObject, Routes.Channel.Permission(getId(), permissionId));
-        jsonObject.removeAll();
+
     }
 
     @Override

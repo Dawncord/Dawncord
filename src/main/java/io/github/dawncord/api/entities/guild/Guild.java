@@ -79,7 +79,7 @@ public interface Guild extends ISnowflake {
      */
     DiscoverySplash getDiscoverySplash();
 
-    //List<GuildFeature> getFeatures(); todo fix missing features
+    //List<GuildFeature> getFeatures();
 
     /**
      * Retrieves the list of features enabled for the guild.
@@ -400,16 +400,20 @@ public interface Guild extends ISnowflake {
     /**
      * Adds a member to the guild by their ID.
      *
-     * @param userId The ID of the user to add as a member.
+     * @param accessToken The access token.
+     * @param userId      The ID of the user to add as a member.
+     * @see <a href="https://discord.com/developers/docs/topics/oauth2" target="_blank">Discord OAuth2 Documentation</a>
      */
-    void addMember(String userId);
+    void addMember(String accessToken, String userId);
 
     /**
      * Adds a member to the guild by their ID.
      *
-     * @param userId The ID of the user to add as a member.
+     * @param accessToken The access token.
+     * @param userId      The ID of the user to add as a member.
+     * @see <a href="https://discord.com/developers/docs/topics/oauth2" target="_blank">Discord OAuth2 Documentation</a>
      */
-    void addMember(long userId);
+    void addMember(String accessToken, long userId);
 
     /**
      * Retrieves a list of banned members in the guild.

@@ -159,7 +159,7 @@ public class InteractionListener extends WebSocketAdapter {
 
         SlashCommandEvent slashCommandEvent = new SlashCommandEvent(interactionData);
 
-        invokeEvent("processSlashCommand", SlashCommandEvent.class, slashCommandEvent);
+        invokeEvent("processSlashCommandEvent", SlashCommandEvent.class, slashCommandEvent);
     }
 
     private void processMessageComponents(JsonNode d, String guildId, String guildChannelId, String guildMemberId) {

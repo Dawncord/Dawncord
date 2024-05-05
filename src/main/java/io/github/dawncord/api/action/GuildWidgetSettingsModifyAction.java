@@ -68,6 +68,5 @@ public class GuildWidgetSettingsModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.Widget.Settings(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

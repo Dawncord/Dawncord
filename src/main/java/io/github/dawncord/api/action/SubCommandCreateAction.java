@@ -186,6 +186,5 @@ public class SubCommandCreateAction {
     private void submit() {
         SlashCommandUtils.createDefaults(jsonObject, localizedNameList, localizedDescriptionList, optionList);
         subCommandList.add(new SubCommand(jsonObject));
-        //jsonObject.removeAll();
     }
 }

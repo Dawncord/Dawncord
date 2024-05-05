@@ -81,6 +81,5 @@ public class GuildStickerModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.Sticker.Get(guildId, stickerId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

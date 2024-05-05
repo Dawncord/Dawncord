@@ -328,13 +328,17 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public void addMember(String userId) {
-        ApiClient.put(null, Routes.Guild.Member.Get(getId(), userId));
+    public void addMember(String accessToken, String userId) {
+        ApiClient.put(
+                JsonNodeFactory.instance.objectNode()
+                        .put("access_token", accessToken),
+                Routes.Guild.Member.Get(getId(), userId))
+        ;
     }
 
     @Override
-    public void addMember(long userId) {
-        addMember(String.valueOf(userId));
+    public void addMember(String accessToken, long userId) {
+        addMember(accessToken, String.valueOf(userId));
     }
 
     @Override
@@ -534,7 +538,6 @@ public class GuildImpl implements Guild {
 
     @Override
     public AuditLog getAuditLog() {
-        //todo fix audit log nulls
         return new AuditLog(JsonUtils.fetch(Routes.Guild.AuditLog(getId())), this);
     }
 

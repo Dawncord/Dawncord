@@ -472,7 +472,6 @@ public class AuditLog {
                 return oldValue;
             }
 
-            //todo fix this
             private Object getValue(JsonNode change, Guild guild, String key) {
                 if (actionType == APPLICATION_COMMAND_PERMISSION_UPDATE) {
                     return new CommandPermission(change.get(key));
@@ -513,7 +512,7 @@ public class AuditLog {
                                 .mapToObj(index -> guild.getRoleById(valueArray.get(index).asText()))
                                 .collect(Collectors.toList());
 
-                        default -> null; //todo add more keys support if needed
+                        default -> null;
                     };
                 } else {
                     return change.get(key).asText();

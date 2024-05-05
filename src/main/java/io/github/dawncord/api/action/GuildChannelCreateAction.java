@@ -339,6 +339,5 @@ public class GuildChannelCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

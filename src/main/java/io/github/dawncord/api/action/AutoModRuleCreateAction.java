@@ -241,7 +241,6 @@ public class AutoModRuleCreateAction {
                     triggerType == AutoModTriggerType.SPAM.getValue() && spamLimit == 1 ||
                     triggerType == AutoModTriggerType.MENTION_SPAM.getValue() && mentionSpamLimit == 1 ||
                     triggerType == AutoModTriggerType.KEYWORD_PRESET.getValue() && keywordPresetLimit == 1) {
-                jsonObject.removeAll();
                 return;
             }
             JsonNode jsonNode = ApiClient.post(jsonObject, Routes.Guild.AutoMod.All(guildId));
@@ -250,6 +249,5 @@ public class AutoModRuleCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

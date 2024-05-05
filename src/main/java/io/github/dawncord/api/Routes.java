@@ -294,6 +294,15 @@ public class Routes {
         }
 
         /**
+         * Constructs the route to retrieve all guilds that the bot is a member of.
+         *
+         * @return The route to retrieve all guilds that the bot is a member of.
+         */
+        public static String BotAll() {
+            return "/users/@me/guilds";
+        }
+
+        /**
          * Constructs the route to access channels within a guild.
          *
          * @param guildId The ID of the guild.

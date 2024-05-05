@@ -212,6 +212,5 @@ public class SlashCommandModifyAction {
             ApiClient.patch(jsonObject, Routes.SlashCommand.Get(commandId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

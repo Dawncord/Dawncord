@@ -448,7 +448,6 @@ public class GuildChannelModifyAction {
             ApiClient.patch(jsonObject, Routes.Channel.Get(channel.getId()));
             hasChanges = false;
         }
-        jsonObject.removeAll();
 
         if (SlashCommandEvent.getData() != null) {
             SlashCommandEvent.UpdateData();

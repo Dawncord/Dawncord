@@ -223,6 +223,5 @@ public class AutoModRuleModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.AutoMod.All(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

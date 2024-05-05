@@ -161,6 +161,5 @@ public class SubCommandGroupCreateAction {
             SlashCommandUtils.createSubCommandsArray(jsonObject, subCommandList);
         }
         subCommandGroupList.add(new SubCommandGroup(jsonObject));
-        //jsonObject.removeAll();
     }
 }

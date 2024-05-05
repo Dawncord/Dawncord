@@ -82,6 +82,5 @@ public class GuildWelcomeScreenModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.WelcomeScreen(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

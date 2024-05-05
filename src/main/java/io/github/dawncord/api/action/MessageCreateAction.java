@@ -353,7 +353,7 @@ public class MessageCreateAction {
             }
             hasChanges = false;
         }
-        //jsonObject.removeAll();
+
     }
 
     private void submitDefer() {
@@ -363,6 +363,5 @@ public class MessageCreateAction {
             }
             hasChanges = false;
         }
-        //jsonObject.removeAll();
     }
 }

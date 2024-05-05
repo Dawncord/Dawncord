@@ -68,6 +68,5 @@ public class WebhookCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

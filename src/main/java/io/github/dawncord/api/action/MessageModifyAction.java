@@ -293,6 +293,5 @@ public class MessageModifyAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

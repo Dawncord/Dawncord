@@ -104,6 +104,5 @@ public class ModalCreateAction {
 
     private void submit() {
         ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
-        jsonObject.removeAll();
     }
 }

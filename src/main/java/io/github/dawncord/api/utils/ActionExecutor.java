@@ -51,6 +51,19 @@ public class ActionExecutor {
     }
 
     /**
+     * Creates a guild using the specified handler.
+     *
+     * @param handler the handler that modifies the GuildCreateAction object
+     * @return the ID of the created guild
+     */
+    public static String createGuild(Consumer<GuildCreateAction> handler) {
+        GuildCreateAction action = new GuildCreateAction();
+        handler.accept(action);
+        invokeSubmit(action, GuildCreateAction.class);
+        return invokeGetId(action, GuildCreateAction.class);
+    }
+
+    /**
      * Modifies a guild using the specified handler, guild ID, and guild features.
      *
      * @param handler       The guild modification handler.

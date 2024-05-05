@@ -112,6 +112,5 @@ public class GuildOnboardingModifyAction {
             ApiClient.put(jsonObject, Routes.Guild.Onboarding(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

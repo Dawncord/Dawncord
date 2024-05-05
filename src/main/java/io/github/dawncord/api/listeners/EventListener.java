@@ -94,9 +94,6 @@ public class EventListener extends WebSocketAdapter {
         }
     }
 
-    //todo resumed reconnect event
-    //todo invalid session event
-
     private void processReadyEvent(JsonNode data) {
         String version = data.path("v").asText();
         User user = new UserImpl(JsonUtils.fetch(Routes.User(data.path("user").path("id").asText())));
@@ -134,7 +131,6 @@ public class EventListener extends WebSocketAdapter {
         }
     }
 
-    //todo fix guild events
     private void processGuildEvent(JsonNode data, GatewayEvent type) {
         String guildId = data.path("guild_id").asText();
         if (guildId.isEmpty()) {

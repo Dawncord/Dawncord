@@ -265,7 +265,6 @@ public class GuildModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.Get(guildId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
 
         if (SlashCommandEvent.getData() != null) {
             SlashCommandEvent.UpdateData();

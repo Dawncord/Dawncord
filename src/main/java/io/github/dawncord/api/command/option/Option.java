@@ -14,7 +14,7 @@ public class Option {
     private final String name;
     private final String description;
     private boolean isRequired;
-    private boolean isAutocomplete; //TODO add autocomplete
+    private boolean isAutocomplete;
     private final List<Choice> choices = new ArrayList<>();
 
     /**

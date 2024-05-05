@@ -13,8 +13,6 @@ import io.github.dawncord.api.utils.IOUtils;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-//todo add create guild
-
 /**
  * Represents an action for creating a guild.
  *
@@ -204,7 +202,6 @@ public class GuildCreateAction {
             ApiClient.post(jsonObject, Routes.Guild.All());
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 
     /**

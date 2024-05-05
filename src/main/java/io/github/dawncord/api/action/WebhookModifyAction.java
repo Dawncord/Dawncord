@@ -79,6 +79,5 @@ public class WebhookModifyAction {
             ApiClient.patch(jsonObject, Routes.Webhook.ById(webhookId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

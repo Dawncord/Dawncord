@@ -120,6 +120,5 @@ public class InviteCreateAction {
             ApiClient.post(jsonObject, Routes.Channel.Invite.All(channel.getId()));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

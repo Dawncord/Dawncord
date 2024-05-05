@@ -148,6 +148,5 @@ public class ApplicationModifyAction {
             ApiClient.post(jsonObject, Routes.Application());
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

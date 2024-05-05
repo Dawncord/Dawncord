@@ -61,6 +61,5 @@ public class EmojiModifyAction {
             ApiClient.patch(jsonObject, Routes.Guild.Emoji.Get(guildId, emojiId));
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

@@ -107,6 +107,5 @@ public class PollCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }

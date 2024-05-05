@@ -167,6 +167,5 @@ public class ThreadCreateAction {
         if (jsonNode != null && jsonNode.has("id")) {
             createdId = jsonNode.get("id").asText();
         }
-        jsonObject.removeAll();
     }
 }

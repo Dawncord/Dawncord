@@ -116,6 +116,5 @@ public class GuildStickerCreateAction {
             }
             hasChanges = false;
         }
-        jsonObject.removeAll();
     }
 }
