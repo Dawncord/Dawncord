@@ -45,8 +45,8 @@ Replace $version with the latest version of Dawncord available.
 Here's a simple example of how to create a basic Discord bot using Dawncord:
 
 ```java
-import dawncord.Dawncord;
-import dawncord.gateway.GatewayIntent;
+import io.github.dawncord.api.Dawncord;
+import io.github.dawncord.api.types.GatewayIntent;
 
 public class MyDiscordBot {
     public static void main(String[] args) {
