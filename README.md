@@ -2,6 +2,8 @@
 
 Dawncord is a Java library for creating Discord bots. It provides a simple and intuitive way to interact with the Discord API, allowing developers to create powerful and customizable bots with ease.
 
+To view the documentation, visit the website [here](https://dawncord.github.io).
+
 ## Features
 
 - Easy-to-use API for handling various Discord interactions, including messages, events, and commands.
@@ -43,8 +45,8 @@ Replace $version with the latest version of Dawncord available.
 Here's a simple example of how to create a basic Discord bot using Dawncord:
 
 ```java
-import dawncord.Dawncord;
-import dawncord.gateway.GatewayIntent;
+import io.github.dawncord.api.Dawncord;
+import io.github.dawncord.api.types.GatewayIntent;
 
 public class MyDiscordBot {
     public static void main(String[] args) {
