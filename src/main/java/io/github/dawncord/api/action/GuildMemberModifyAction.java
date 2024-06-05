@@ -1,7 +1,6 @@
 package io.github.dawncord.api.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
@@ -11,8 +10,6 @@ import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -103,25 +100,6 @@ public class GuildMemberModifyAction {
      */
     public GuildMemberModifyAction moveToChannel(long channelId) {
         return moveToChannel(String.valueOf(channelId));
-    }
-
-    /**
-     * Sets the timeout until the guild member's communication is disabled.
-     *
-     * @param timeout the zoned date and time until communication is disabled
-     * @return the modified GuildMemberModifyAction object
-     */
-    public GuildMemberModifyAction setTimeoutUntil(ZonedDateTime timeout) {
-        return setProperty("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-    }
-
-    /**
-     * Removes the timeout for the guild member's communication.
-     *
-     * @return the modified GuildMemberModifyAction object
-     */
-    public GuildMemberModifyAction removeTimeout() {
-        return setProperty("communication_disabled_until", NullNode.instance);
     }
 
     /**

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.dawncord.api.utils.JsonError;
 import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,20 +147,12 @@ public class ApiClient {
     }
 
     private static JsonNode doAction(String action, JsonNode jsonNode, String url) {
-        Request.Builder builder = new Request.Builder()
-                .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
+        Request.Builder builder = createRequestBuilder(url);
 
         RequestBody requestBody = null;
-        if (jsonNode != null) {
-            try {
-                requestBody = RequestBody.create(mapper.writeValueAsString(jsonNode), Constants.MEDIA_TYPE_JSON);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        if (jsonNode != null) requestBody = createRequestBody(jsonNode);
 
-        requestBody = Objects.requireNonNullElseGet(requestBody, () -> RequestBody.create(new byte[0]));
+        requestBody = createNullRequestBody(requestBody);
         switch (action) {
             case "post" -> builder.post(requestBody);
             case "patch" -> builder.patch(requestBody);
@@ -168,6 +161,29 @@ public class ApiClient {
         }
 
         return performRequest(builder.build());
+    }
+
+    @NotNull
+    private static RequestBody createNullRequestBody(RequestBody requestBody) {
+        return Objects.requireNonNullElseGet(requestBody, () -> RequestBody.create(new byte[0]));
+    }
+
+    @NotNull
+    private static RequestBody createRequestBody(JsonNode jsonNode) {
+        RequestBody requestBody;
+        try {
+            requestBody = RequestBody.create(mapper.writeValueAsString(jsonNode), Constants.MEDIA_TYPE_JSON);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return requestBody;
+    }
+
+    @NotNull
+    private static Request.Builder createRequestBuilder(String url) {
+        return new Request.Builder()
+                .url(Constants.API_URL + url)
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
     }
 
     @Nullable
@@ -217,6 +233,7 @@ public class ApiClient {
     private static void logInfo(Request request) {
         String url = request.url().url().toString().substring(Constants.API_URL.length());
         String method = request.method();
+
         logger.debug("[{}] -> {}", method.toUpperCase(), url);
     }
 }

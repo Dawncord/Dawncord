@@ -9,12 +9,13 @@ import java.util.List;
 /**
  * Represents a user in Discord.
  */
+
 public interface User extends ISnowflake, IMentionable {
 
     /**
      * Retrieves the global name of the user.
      *
-     * @return The global name  of the user.
+     * @return The global name of the user.
      */
     String getGlobalName();
 
@@ -67,3 +68,4 @@ public interface User extends ISnowflake, IMentionable {
      */
     boolean isBot();
 }
+

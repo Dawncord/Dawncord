@@ -53,7 +53,6 @@ public class Dawncord {
     private static final Logger logger = LoggerFactory.getLogger(Dawncord.class);
     private final ObjectMapper mapper = new ObjectMapper();
     private final WebSocket webSocket;
-    //private static Map<GatewayEvent, Consumer<GatewayEvent>> eventHandlers = new HashMap<>();
     private final Map<Class<? extends Event>, Consumer<Event>> eventHandlers = new HashMap<>();
     private long intentsValue = 0;
     private final Map<String, String> commandIdMap = new HashMap<>();

@@ -357,27 +357,27 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<GuildRoleImpl> getRoles() {
+    public List<GuildRole> getRoles() {
         return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Role.All(getId())), role -> new GuildRoleImpl(role, this));
     }
 
     @Override
-    public GuildRoleImpl getRoleById(String roleId) {
+    public GuildRole getRoleById(String roleId) {
         return getRoles().stream().filter(role -> role.getId().equals(roleId)).findFirst().orElse(null);
     }
 
     @Override
-    public GuildRoleImpl getRoleById(long roleId) {
+    public GuildRole getRoleById(long roleId) {
         return getRoleById(String.valueOf(roleId));
     }
 
     @Override
-    public List<GuildRoleImpl> getRolesByName(String roleName) {
+    public List<GuildRole> getRolesByName(String roleName) {
         return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
     }
 
     @Override
-    public GuildRoleImpl getPublicRole() {
+    public GuildRole getPublicRole() {
         return getRoleById(getId());
     }
 

@@ -15,7 +15,6 @@ import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
-import io.github.dawncord.api.entities.guild.role.GuildRoleImpl;
 import io.github.dawncord.api.entities.guild.welcomescreen.GuildWelcomeScreen;
 import io.github.dawncord.api.entities.guild.widget.GuildWidget;
 import io.github.dawncord.api.entities.guild.widget.GuildWidgetSettings;
@@ -443,7 +442,7 @@ public interface Guild extends ISnowflake {
      *
      * @return A list of roles in the guild.
      */
-    List<GuildRoleImpl> getRoles();
+    List<GuildRole> getRoles();
 
     /**
      * Retrieves information about the role with the specified ID.
@@ -451,7 +450,7 @@ public interface Guild extends ISnowflake {
      * @param roleId The ID of the role.
      * @return Information about the role with the specified ID.
      */
-    GuildRoleImpl getRoleById(String roleId);
+    GuildRole getRoleById(String roleId);
 
     /**
      * Retrieves information about the role with the specified ID.
@@ -459,7 +458,7 @@ public interface Guild extends ISnowflake {
      * @param roleId The ID of the role.
      * @return Information about the role with the specified ID.
      */
-    GuildRoleImpl getRoleById(long roleId);
+    GuildRole getRoleById(long roleId);
 
     /**
      * Retrieves a list of roles in the guild with the specified name.
@@ -467,14 +466,14 @@ public interface Guild extends ISnowflake {
      * @param roleName The name of the role.
      * @return A list of roles in the guild with the specified name.
      */
-    List<GuildRoleImpl> getRolesByName(String roleName);
+    List<GuildRole> getRolesByName(String roleName);
 
     /**
      * Retrieves the public role in the guild.
      *
      * @return The public role in the guild.
      */
-    GuildRoleImpl getPublicRole();
+    GuildRole getPublicRole();
 
     /**
      * Creates a new role in the guild.

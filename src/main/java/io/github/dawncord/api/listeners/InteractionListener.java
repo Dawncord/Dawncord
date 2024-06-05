@@ -56,25 +56,29 @@ public class InteractionListener extends WebSocketAdapter {
             JsonNode d = json.get("d");
             String type = json.get("t").asText();
 
-            String guildId = d.get("guild_id").asText();
-            String channelId = d.get("channel_id").asText();
-            String memberId = d.get("member").get("user").get("id").asText();
-
             if (type.equals("INTERACTION_CREATE")) {
-                int interactionType = d.get("type").asInt();
-
-                if (interactionType == InteractionType.APPLICATION_COMMAND.getValue()) {
-                    processSlashCommands(d, guildId, channelId, memberId);
-                }
-
-                if (interactionType == InteractionType.MESSAGE_COMPONENT.getValue()) {
-                    processMessageComponents(d, guildId, channelId, memberId);
-                }
-
-                if (interactionType == InteractionType.MODAL_SUBMIT.getValue()) {
-                    processModals(d, guildId, channelId, memberId);
-                }
+                processInteraction(d);
             }
+        }
+    }
+
+    private void processInteraction(JsonNode d) {
+        String guildId = d.get("guild_id").asText();
+        String channelId = d.get("channel_id").asText();
+        String memberId = d.get("member").get("user").get("id").asText();
+
+        int interactionType = d.get("type").asInt();
+
+        if (interactionType == InteractionType.APPLICATION_COMMAND.getValue()) {
+            processSlashCommands(d, guildId, channelId, memberId);
+        }
+
+        if (interactionType == InteractionType.MESSAGE_COMPONENT.getValue()) {
+            processMessageComponents(d, guildId, channelId, memberId);
+        }
+
+        if (interactionType == InteractionType.MODAL_SUBMIT.getValue()) {
+            processModals(d, guildId, channelId, memberId);
         }
     }
 
@@ -138,20 +142,31 @@ public class InteractionListener extends WebSocketAdapter {
 
         List<Map<String, Object>> options = new ArrayList<>();
         if (data.has("options")) {
-            ArrayNode optionsArray = (ArrayNode) data.get("options");
-
-            for (JsonNode optionNode : optionsArray) {
-                ObjectNode option = (ObjectNode) optionNode;
-                Map<String, Object> map = new HashMap<>();
-
-                map.put("name", option.get("name").asText());
-                map.put("value", option.get("value"));
-
-                if (data.has("resolved")) {
-                    map.put("resolved", data.get("resolved"));
+            ArrayNode optionsArray = null;
+            if (subCommandGroup != null) {
+                if (subCommandGroup.getSubCommands().get(0) != null) {
+                    optionsArray = (ArrayNode) data.get("options").get(0).get("options").get(0).get("options");
                 }
+            } else if (subCommand != null) {
+                optionsArray = (ArrayNode) data.get("options").get(0).get("options");
+            } else {
+                optionsArray = (ArrayNode) data.get("options");
+            }
 
-                options.add(map);
+            if (optionsArray != null) {
+                for (JsonNode optionNode : optionsArray) {
+                    ObjectNode option = (ObjectNode) optionNode;
+                    Map<String, Object> map = new HashMap<>();
+
+                    map.put("name", option.get("name").asText());
+                    map.put("value", option.get("value"));
+
+                    if (data.has("resolved")) {
+                        map.put("resolved", data.get("resolved"));
+                    }
+
+                    options.add(map);
+                }
             }
         }
 

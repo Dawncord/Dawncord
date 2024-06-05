@@ -1,6 +1,9 @@
 package io.github.dawncord.api.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildMemberModifyAction;
@@ -16,6 +19,7 @@ import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -196,6 +200,20 @@ public class GuildMemberImpl implements GuildMember {
     public ModifyEvent<GuildMember> modify(Consumer<GuildMemberModifyAction> handler) {
         ActionExecutor.modifyGuildMember(handler, getGuild().getId(), getUser().getId());
         return new ModifyEvent<>(guild.getMemberById(getUser().getId()));
+    }
+
+    @Override
+    public void setTimeout(ZonedDateTime timeout) {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.put("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
+    }
+
+    @Override
+    public void removeTimeout() {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.set("communication_disabled_until", NullNode.instance);
+        ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
     }
 
     @Override

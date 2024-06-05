@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  * Listens for main events over a WebSocket connection.
  */
 public class MainListener extends WebSocketAdapter {
+
     private static final Logger logger = LoggerFactory.getLogger(MainListener.class);
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -26,32 +27,39 @@ public class MainListener extends WebSocketAdapter {
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         JsonNode json = mapper.readTree(text);
-        System.out.println(json.toPrettyString());
         int op = json.get("op").asInt();
         if (op == 10) {
-            JsonNode d = json.get("d");
-            heartbeatInterval = d.get("heartbeat_interval").asInt();
-
-            logger.info("Sending heartbeat every " + heartbeatInterval + " ms...");
-
-            JsonNode payload = mapper.createObjectNode()
-                    .put("op", 1)
-                    .putNull("d");
-
-            websocket.sendText(payload.toString());
+            sendInterval(websocket, json);
         }
         if (json.get("t").asText().equals("READY")) {
-            logger.info("Successfully logged in");
-
-            JsonNode payload = mapper.createObjectNode()
-                    .put("op", 1)
-                    .putNull("d");
-
-            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-                websocket.sendText(payload.toString());
-                logger.debug("Sending heartbeat...");
-            }, heartbeatInterval, heartbeatInterval, TimeUnit.MILLISECONDS);
+            sendIntervals(websocket);
         }
+    }
+
+    private void sendIntervals(WebSocket websocket) {
+        logger.info("Successfully logged in");
+
+        JsonNode payload = mapper.createObjectNode()
+                .put("op", 1)
+                .putNull("d");
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            websocket.sendText(payload.toString());
+            logger.debug("Sending heartbeat...");
+        }, heartbeatInterval, heartbeatInterval, TimeUnit.MILLISECONDS);
+    }
+
+    private void sendInterval(WebSocket websocket, JsonNode json) {
+        JsonNode d = json.get("d");
+        heartbeatInterval = d.get("heartbeat_interval").asInt();
+
+        logger.info("Sending heartbeat every " + heartbeatInterval + " ms...");
+
+        JsonNode payload = mapper.createObjectNode()
+                .put("op", 1)
+                .putNull("d");
+
+        websocket.sendText(payload.toString());
     }
 
     @Override

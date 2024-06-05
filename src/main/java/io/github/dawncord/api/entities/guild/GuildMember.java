@@ -191,4 +191,14 @@ public interface GuildMember extends IMentionable {
      * @return The modification event for the guild member.
      */
     ModifyEvent<GuildMember> modify(Consumer<GuildMemberModifyAction> handler);
+
+    /**
+     * Sets the timeout for the guild member.
+     */
+    void setTimeout(ZonedDateTime timeout);
+
+    /**
+     * Removes the timeout for the guild member.
+     */
+    void removeTimeout();
 }

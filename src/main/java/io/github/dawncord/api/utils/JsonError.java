@@ -30,6 +30,7 @@ public class JsonError {
     /**
      * Logs the JSON error message, URL, and HTTP method at the error level.
      */
+
     public void log() {
         logger.error(message + ": [" + method + "] -> " + url);
     }

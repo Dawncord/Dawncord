@@ -7,7 +7,7 @@ import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.role.GuildRoleImpl;
+import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.Attachment;
 import io.github.dawncord.api.utils.JsonUtils;
 
@@ -91,7 +91,7 @@ public class OptionData {
      *
      * @return the GuildRole associated with the option value
      */
-    public GuildRoleImpl getAsRole() {
+    public GuildRole getAsRole() {
         return guild.getRoleById(getAsString());
     }
 

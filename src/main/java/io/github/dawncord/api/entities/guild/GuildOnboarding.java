@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.action.GuildOnboardingModifyAction;
 import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.channel.GuildChannel;
-import io.github.dawncord.api.entities.guild.role.GuildRoleImpl;
+import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.OnboardingMode;
 import io.github.dawncord.api.types.PromptType;
@@ -260,7 +260,7 @@ public class GuildOnboarding {
             private String title;
             private String description;
             private List<GuildChannel> channels;
-            private List<GuildRoleImpl> roles;
+            private List<GuildRole> roles;
             private CustomEmoji emoji;
 
             /**
@@ -274,7 +274,7 @@ public class GuildOnboarding {
                 this.guild = guild;
             }
 
-            private Option(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, CustomEmoji emoji) {
+            private Option(String id, String title, String description, List<GuildChannel> channels, List<GuildRole> roles, CustomEmoji emoji) {
                 this.option = null;
                 this.guild = null;
                 this.id = id;
@@ -351,7 +351,7 @@ public class GuildOnboarding {
              *
              * @return The roles associated with the option.
              */
-            public List<GuildRoleImpl> getRoles() {
+            public List<GuildRole> getRoles() {
                 if (roles == null) {
                     assert option != null;
                     roles = GuildOnboarding.getRoles(option);
@@ -388,7 +388,7 @@ public class GuildOnboarding {
              * @param emoji       The emoji associated with the option.
              * @return A new Option object.
              */
-            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRoleImpl> roles, CustomEmoji emoji) {
+            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRole> roles, CustomEmoji emoji) {
                 return new Option(id, title, description, channels, roles, emoji);
             }
         }
@@ -405,8 +405,8 @@ public class GuildOnboarding {
         return channels;
     }
 
-    private static List<GuildRoleImpl> getRoles(JsonNode jsonObject) {
-        List<GuildRoleImpl> roles = new ArrayList<>();
+    private static List<GuildRole> getRoles(JsonNode jsonObject) {
+        List<GuildRole> roles = new ArrayList<>();
         for (JsonNode id : jsonObject.get("role_ids")) {
             roles.add(guild.getRoleById(id.asText()));
         }
