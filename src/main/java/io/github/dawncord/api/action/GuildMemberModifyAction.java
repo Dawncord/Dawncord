@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.GuildMember;
+import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
@@ -53,12 +54,22 @@ public class GuildMemberModifyAction {
     }
 
     /**
-     * Sets the roles for the guild member.
+     * Sets the roles for the guild member
      *
-     * @param roleIds the list of role IDs to set
+     * @param roles the roles to set
      * @return the modified GuildMemberModifyAction object
      */
-    public GuildMemberModifyAction setRoles(List<String> roleIds) {
+    public GuildMemberModifyAction setRoles(List<GuildRole> roles) {
+        return setProperty("roles", roles.stream().map(GuildRole::getId).toList());
+    }
+
+    /**
+     * Sets the roles for the guild member.
+     *
+     * @param roleIds the IDs of the roles to set
+     * @return the modified GuildMemberModifyAction object
+     */
+    public GuildMemberModifyAction setRoles(String... roleIds) {
         return setProperty("roles", roleIds);
     }
 

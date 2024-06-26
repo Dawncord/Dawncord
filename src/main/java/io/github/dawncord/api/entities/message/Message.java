@@ -227,6 +227,8 @@ public interface Message extends ISnowflake {
      */
     ZonedDateTime getTimeEdited();
 
+    void setReference(Message message);
+
     /**
      * Modifies the message using the provided handler.
      *

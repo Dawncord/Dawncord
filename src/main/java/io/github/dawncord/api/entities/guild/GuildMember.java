@@ -80,18 +80,43 @@ public interface GuildMember extends IMentionable {
     List<GuildRole> getRolesByName(String roleName);
 
     /**
-     * Removes a role from the guild member by its ID.
+     * Gets the roles assigned to the guild member by ID.
      *
-     * @param roleId The ID of the role to remove.
+     * @param roleId The ID of the role.
+     * @return The roles assigned to the guild member with the specified ID.
      */
-    void deleteRoleById(String roleId);
+    GuildRole getRoleById(String roleId);
+
+    /**
+     * Gets the roles assigned to the guild member by ID.
+     *
+     * @param roleId The ID of the role.
+     * @return The roles assigned to the guild member with the specified ID.
+     */
+    GuildRole getRoleById(long roleId);
+
+    void modifyRoles(List<GuildRole> roles);
 
     /**
      * Removes a role from the guild member by its ID.
      *
      * @param roleId The ID of the role to remove.
      */
-    void deleteRoleById(long roleId);
+    void removeRoleById(String roleId);
+
+    /**
+     * Removes a role from the guild member by its ID.
+     *
+     * @param roleId The ID of the role to remove.
+     */
+    void removeRoleById(long roleId);
+
+    /**
+     * Removes a role from the guild member by its name.
+     *
+     * @param roleName The name of the role to remove.
+     */
+    void removeRoleByName(String roleName);
 
     /**
      * Checks if the guild member is pending.
@@ -201,4 +226,14 @@ public interface GuildMember extends IMentionable {
      * Removes the timeout for the guild member.
      */
     void removeTimeout();
+
+    /**
+     * Mutes the guild member.
+     */
+    void mute(boolean mute);
+
+    /**
+     * Deafens the guild member.
+     */
+    void deaf(boolean deaf);
 }

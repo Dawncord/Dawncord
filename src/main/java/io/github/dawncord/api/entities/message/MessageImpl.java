@@ -1,6 +1,8 @@
 package io.github.dawncord.api.entities.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.MessageModifyAction;
@@ -302,6 +304,18 @@ public class MessageImpl implements Message {
                     : null;
         }
         return editedTimestamp;
+    }
+
+    @Override
+    public void setReference(Message message) {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.set("message_reference", JsonNodeFactory.instance.objectNode()
+                .put("message_id", message.getId())
+                .put("channel_id", message.getChannel().getId())
+                .put("guild_id", message.getGuild().getId())
+                .put("fail_if_not_exists", JsonUtils.fetch(Routes.Channel.Message.Get(message.getChannel().getId(), message.getId())) == null ? true : null)
+        );
+        ApiClient.patch(jsonObject, Routes.Channel.Message.Get(channel.getId(), getId()));
     }
 
     @Override

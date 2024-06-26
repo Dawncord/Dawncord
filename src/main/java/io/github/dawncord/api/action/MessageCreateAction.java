@@ -335,7 +335,7 @@ public class MessageCreateAction {
         } else {
             jsonNode = ApiClient.patch(jsonObject, url);
         }
-        if (jsonNode.has("id") && jsonNode.has("id")) {
+        if (jsonNode != null && jsonNode.has("id")) {
             createdId = jsonNode.get("id").asText();
         }
     }

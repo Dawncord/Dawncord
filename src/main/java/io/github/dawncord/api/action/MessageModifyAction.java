@@ -62,9 +62,6 @@ public class MessageModifyAction {
         this.actions = new HashMap<>();
     }
 
-    /**
-     * Create a new {@link MessageModifyAction}
-     */
     private MessageModifyAction setProperty(String key, Object value) {
         jsonObject.set(key, mapper.valueToTree(value));
         hasChanges = true;
