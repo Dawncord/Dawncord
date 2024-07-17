@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities;
 
+import io.github.dawncord.api.types.ChannelPermissionType;
 import io.github.dawncord.api.types.PermissionOverrideType;
-import io.github.dawncord.api.types.PermissionType;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import java.util.List;
 public class PermissionOverride {
     private final String id;
     private final PermissionOverrideType type;
-    private final List<PermissionType> denied;
-    private final List<PermissionType> allowed;
+    private final List<ChannelPermissionType> denied;
+    private final List<ChannelPermissionType> allowed;
 
     /**
      * Constructs a permission override with the specified parameters.
@@ -22,7 +22,7 @@ public class PermissionOverride {
      * @param denied  The list of denied permissions.
      * @param allowed The list of allowed permissions.
      */
-    public PermissionOverride(String id, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed) {
+    public PermissionOverride(String id, PermissionOverrideType type, List<ChannelPermissionType> denied, List<ChannelPermissionType> allowed) {
         this.id = id;
         this.type = type;
         this.denied = denied;
@@ -52,7 +52,7 @@ public class PermissionOverride {
      *
      * @return The list of denied permissions.
      */
-    public List<PermissionType> getDenied() {
+    public List<ChannelPermissionType> getDenied() {
         return denied;
     }
 
@@ -61,7 +61,7 @@ public class PermissionOverride {
      *
      * @return The list of allowed permissions.
      */
-    public List<PermissionType> getAllowed() {
+    public List<ChannelPermissionType> getAllowed() {
         return allowed;
     }
 }

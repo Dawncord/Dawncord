@@ -2,23 +2,22 @@ package io.github.dawncord.api.entities.guild;
 
 import io.github.dawncord.api.action.GuildMemberModifyAction;
 import io.github.dawncord.api.entities.IMentionable;
+import io.github.dawncord.api.entities.PermissionHolder;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
-import io.github.dawncord.api.types.PermissionType;
 import jakarta.annotation.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * Represents a member of a guild.
  */
-public interface GuildMember extends IMentionable {
+public interface GuildMember extends PermissionHolder, IMentionable {
 
     /**
      * Gets the nickname of the guild member.
@@ -48,21 +47,6 @@ public interface GuildMember extends IMentionable {
      * @return The date and time when the guild member joined the guild.
      */
     ZonedDateTime getTimeJoined();
-
-    /**
-     * Gets the permissions of the guild member.
-     *
-     * @return The permissions of the guild member.
-     */
-    Set<PermissionType> getPermissions();
-
-    /**
-     * Checks if the guild member has the specified permission.
-     *
-     * @param permission the permission to check for
-     * @return true if the guild member has the permission, false otherwise
-     */
-    boolean hasPermission(PermissionType permission);
 
     /**
      * Gets the roles assigned to the guild member.

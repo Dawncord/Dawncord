@@ -87,11 +87,6 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
-    public boolean hasPermission(PermissionType permission) {
-        return getPermissions().contains(permission);
-    }
-
-    @Override
     public List<GuildRole> getRoles() {
         List<GuildRole> roles = new ArrayList<>();
         if (!member.get("roles").isEmpty()) {

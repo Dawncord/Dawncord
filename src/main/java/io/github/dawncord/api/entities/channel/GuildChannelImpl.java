@@ -1,8 +1,6 @@
 package io.github.dawncord.api.entities.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildChannelModifyAction;
@@ -17,9 +15,9 @@ import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
+import io.github.dawncord.api.types.ChannelPermissionType;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.PermissionOverrideType;
-import io.github.dawncord.api.types.PermissionType;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
@@ -86,37 +84,18 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
     }
 
     @Override
-    public PermissionOverride getPermissionById(String permissionId) {
-        return getPermissions().stream().filter(permission -> permission.getId().equals(permissionId)).findAny().orElse(null);
+    public PermissionOverride getPermissionById(String id) {
+        return getPermissions().stream().filter(permission -> permission.getId().equals(id)).findAny().orElse(null);
     }
 
     @Override
-    public PermissionOverride getPermissionById(long permissionId) {
-        return getPermissionById(String.valueOf(permissionId));
+    public PermissionOverride getPermissionById(long id) {
+        return getPermissionById(String.valueOf(id));
     }
 
     @Override
-    public void editPermission(String permissionId, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed) {
-        long denyValue = 0;
-        long allowValue = 0;
-        for (PermissionType deny : denied) {
-            denyValue |= deny.getValue();
-        }
-        for (PermissionType allow : allowed) {
-            allowValue |= allow.getValue();
-        }
-        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode()
-                .put("type", type.getValue())
-                .put("deny", String.valueOf(denyValue))
-                .put("allow", String.valueOf(allowValue));
-
-        ApiClient.put(jsonObject, Routes.Channel.Permission(getId(), permissionId));
-
-    }
-
-    @Override
-    public void deletePermission(long permissionId) {
-        ApiClient.delete(Routes.Channel.Permission(getId(), String.valueOf(permissionId)));
+    public void deletePermission(long id) {
+        ApiClient.delete(Routes.Channel.Permission(getId(), String.valueOf(id)));
     }
 
     @Override
@@ -220,12 +199,12 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
      * Retrieves the denied permissions from the provided bitfield.
      *
      * @param deny The bitfield representing denied permissions.
-     * @return A list of {@link PermissionType} representing denied permissions.
+     * @return A list of {@link ChannelPermissionType} representing denied permissions.
      */
-    private List<PermissionType> getDenied(String deny) {
-        List<PermissionType> deniedPermissions = new ArrayList<>();
+    private List<ChannelPermissionType> getDenied(String deny) {
+        List<ChannelPermissionType> deniedPermissions = new ArrayList<>();
 
-        for (PermissionType perm : PermissionType.values()) {
+        for (ChannelPermissionType perm : ChannelPermissionType.values()) {
             if ((Long.parseLong(deny) & perm.getValue()) != 0) {
                 deniedPermissions.add(perm);
             }
@@ -238,12 +217,12 @@ public class GuildChannelImpl extends ChannelImpl implements GuildChannel {
      * Retrieves the allowed permissions from the provided bitfield.
      *
      * @param allow The bitfield representing allowed permissions.
-     * @return A list of {@link PermissionType} representing allowed permissions.
+     * @return A list of {@link ChannelPermissionType} representing allowed permissions.
      */
-    private List<PermissionType> getAllowed(String allow) {
-        List<PermissionType> allowedPermissions = new ArrayList<>();
+    private List<ChannelPermissionType> getAllowed(String allow) {
+        List<ChannelPermissionType> allowedPermissions = new ArrayList<>();
 
-        for (PermissionType perm : PermissionType.values()) {
+        for (ChannelPermissionType perm : ChannelPermissionType.values()) {
             if ((Long.parseLong(allow) & perm.getValue()) != 0) {
                 allowedPermissions.add(perm);
             }

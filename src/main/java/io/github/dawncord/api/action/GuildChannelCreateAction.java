@@ -141,12 +141,14 @@ public class GuildChannelCreateAction {
                 override.put("type", permissionOverride.getType().getValue());
                 override.put("deny", permissionOverride.getDenied() != null && !permissionOverride.getDenied().isEmpty()
                         ? String.valueOf(permissionOverride.getDenied().stream()
-                        .mapToLong(PermissionType::getValue)
+                        .filter(this::checkChannelType)
+                        .mapToLong(ChannelPermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
                 override.put("allow", permissionOverride.getAllowed() != null && !permissionOverride.getAllowed().isEmpty()
                         ? String.valueOf(permissionOverride.getAllowed().stream()
-                        .mapToLong(PermissionType::getValue)
+                        .filter(this::checkChannelType)
+                        .mapToLong(ChannelPermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
                 jsonArray.add(override);
@@ -321,6 +323,17 @@ public class GuildChannelCreateAction {
 
     private boolean isVoiceChannelType() {
         return channelType == ChannelType.GUILD_VOICE || channelType == ChannelType.GUILD_STAGE_VOICE;
+    }
+
+    private boolean checkChannelType(ChannelPermissionType perm) {
+        String types = perm.getTypes();
+        return switch (channelType) {
+            case GUILD_TEXT, PUBLIC_THREAD, PRIVATE_THREAD, ANNOUNCEMENT_THREAD, GUILD_ANNOUNCEMENT ->
+                    types.contains("T");
+            case GUILD_VOICE -> types.contains("T") || types.contains("V");
+            case GUILD_STAGE_VOICE -> types.contains("S");
+            default -> false;
+        };
     }
 
     private String getCreatedId() {

@@ -213,23 +213,28 @@ public class GuildChannelModifyAction {
     public GuildChannelModifyAction setPermissionOverrides(PermissionOverride... overrides) {
         if (channel.getType() != ChannelType.PUBLIC_THREAD || channel.getType() != ChannelType.PRIVATE_THREAD
                 || channel.getType() != ChannelType.ANNOUNCEMENT_THREAD) {
+
             ArrayNode overridesArray = mapper.createArrayNode();
+
             for (PermissionOverride override : overrides) {
                 ObjectNode overrideJson = mapper.createObjectNode();
                 overrideJson.put("id", override.getId());
                 overrideJson.put("type", override.getType().getValue());
                 overrideJson.put("deny", override.getDenied() != null && !override.getDenied().isEmpty()
                         ? String.valueOf(override.getDenied().stream()
-                        .mapToLong(PermissionType::getValue)
+                        .filter(this::checkChannelType)
+                        .mapToLong(ChannelPermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
                 overrideJson.put("allow", override.getAllowed() != null && !override.getAllowed().isEmpty()
                         ? String.valueOf(override.getAllowed().stream()
-                        .mapToLong(PermissionType::getValue)
+                        .filter(this::checkChannelType)
+                        .mapToLong(ChannelPermissionType::getValue)
                         .reduce(0L, (x, y) -> x | y))
                         : "0");
                 overridesArray.add(overrideJson);
             }
+
             setProperty("permission_overwrites", overridesArray);
         }
         return this;
@@ -441,6 +446,17 @@ public class GuildChannelModifyAction {
             array.add(tagJson);
         }
         setProperty("available_tags", array);
+    }
+
+    private boolean checkChannelType(ChannelPermissionType perm) {
+        String types = perm.getTypes();
+        return switch (channel.getType()) {
+            case GUILD_TEXT, PUBLIC_THREAD, PRIVATE_THREAD, ANNOUNCEMENT_THREAD, GUILD_ANNOUNCEMENT ->
+                    types.contains("T");
+            case GUILD_VOICE -> types.contains("T") || types.contains("V");
+            case GUILD_STAGE_VOICE -> types.contains("S");
+            default -> false;
+        };
     }
 
     private void submit() {

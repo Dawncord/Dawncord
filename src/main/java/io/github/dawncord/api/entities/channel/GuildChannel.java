@@ -9,8 +9,6 @@ import io.github.dawncord.api.entities.Webhook;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
-import io.github.dawncord.api.types.PermissionOverrideType;
-import io.github.dawncord.api.types.PermissionType;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -65,37 +63,27 @@ public interface GuildChannel extends Channel {
     List<PermissionOverride> getPermissions();
 
     /**
-     * Retrieves a PermissionOverride by its ID.
+     * Retrieves a PermissionOverride by role or user ID.
      *
-     * @param permissionId The ID of the permission override to retrieve.
+     * @param id Role or user ID.
      * @return The permission override corresponding to the provided ID.
      */
-    PermissionOverride getPermissionById(String permissionId);
+    PermissionOverride getPermissionById(String id);
 
     /**
-     * Retrieves a PermissionOverride by its ID.
+     * Retrieves a PermissionOverride by role or user ID.
      *
-     * @param permissionId The ID of the permission override to retrieve.
+     * @param id Role or user ID.
      * @return The permission override corresponding to the provided ID.
      */
-    PermissionOverride getPermissionById(long permissionId);
+    PermissionOverride getPermissionById(long id);
 
     /**
-     * Edits a permission override for this guild channel.
+     * Deletes a permission override by role or user ID.
      *
-     * @param permissionId The ID of the permission override to edit.
-     * @param type         The type of the permission override.
-     * @param denied       The list of permission types to deny.
-     * @param allowed      The list of permission types to allow.
+     * @param id Role or user ID.
      */
-    void editPermission(String permissionId, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed);
-
-    /**
-     * Deletes a permission override by its ID.
-     *
-     * @param permissionId The ID of the permission override to delete.
-     */
-    void deletePermission(long permissionId);
+    void deletePermission(long id);
 
     /**
      * Retrieves the list of invites for this guild channel.
