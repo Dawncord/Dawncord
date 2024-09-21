@@ -15,8 +15,8 @@ import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.integration.IntegrationImpl;
 import io.github.dawncord.api.types.AuditLogEvent;
+import io.github.dawncord.api.types.ChannelPermissionType;
 import io.github.dawncord.api.types.PermissionOverrideType;
-import io.github.dawncord.api.types.PermissionType;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
 
@@ -487,8 +487,10 @@ public class AuditLog {
                                     JsonNode value = valueArray.get(index);
                                     String id = value.get("id").asText();
                                     PermissionOverrideType type = EnumUtils.getEnumObject(value, "type", PermissionOverrideType.class);
-                                    List<PermissionType> allow = EnumUtils.getEnumListFromLong(value, "allow", PermissionType.class);
-                                    List<PermissionType> deny = EnumUtils.getEnumListFromLong(value, "deny", PermissionType.class);
+                                    //List<PermissionType> allow = EnumUtils.getEnumListFromLong(value, "allow", PermissionType.class);
+                                    //List<PermissionType> deny = EnumUtils.getEnumListFromLong(value, "deny", PermissionType.class);
+                                    List<ChannelPermissionType> allow = EnumUtils.getEnumListFromLong(value, "allow", ChannelPermissionType.class);
+                                    List<ChannelPermissionType> deny = EnumUtils.getEnumListFromLong(value, "deny", ChannelPermissionType.class);
                                     return new PermissionOverride(id, type, allow, deny);
                                 })
                                 .collect(Collectors.toList());
