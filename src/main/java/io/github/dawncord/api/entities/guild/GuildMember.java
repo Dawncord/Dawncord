@@ -79,6 +79,11 @@ public interface GuildMember extends PermissionHolder, IMentionable {
      */
     GuildRole getRoleById(long roleId);
 
+    /**
+     * Modifies the roles of a guild member.
+     *
+     * @param roles The new roles to assign to the guild member
+     */
     void modifyRoles(List<GuildRole> roles);
 
     /**
@@ -203,6 +208,8 @@ public interface GuildMember extends PermissionHolder, IMentionable {
 
     /**
      * Sets the timeout for the guild member.
+     *
+     * @param timeout The timeout for the guild member.
      */
     void setTimeout(ZonedDateTime timeout);
 
@@ -213,11 +220,15 @@ public interface GuildMember extends PermissionHolder, IMentionable {
 
     /**
      * Mutes the guild member.
+     *
+     * @param mute The mute state for the guild member.
      */
     void mute(boolean mute);
 
     /**
      * Deafens the guild member.
+     *
+     * @param deaf The deaf state for the guild member.
      */
     void deaf(boolean deaf);
 }

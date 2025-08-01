@@ -5,6 +5,10 @@ import io.github.dawncord.api.types.PermissionType;
 import java.util.Collection;
 import java.util.List;
 
+
+/**
+ * Represents a permission holder.
+ */
 public interface PermissionHolder {
     /**
      * Gets the permissions of the permission holder.

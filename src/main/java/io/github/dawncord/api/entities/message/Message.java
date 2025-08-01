@@ -227,6 +227,11 @@ public interface Message extends ISnowflake {
      */
     ZonedDateTime getTimeEdited();
 
+    /**
+     * Sets the reference to another message.
+     *
+     * @param message The message to set as reference
+     */
     void setReference(Message message);
 
     /**

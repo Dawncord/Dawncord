@@ -4,7 +4,7 @@
 
     <groupId>io.github.dawncord</groupId>
     <artifactId>Dawncord</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>Dawncord</name>
@@ -28,11 +28,6 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk15to18</artifactId>
-            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

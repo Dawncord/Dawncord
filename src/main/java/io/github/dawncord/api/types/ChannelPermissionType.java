@@ -214,6 +214,11 @@ public enum ChannelPermissionType {
         return value;
     }
 
+    /**
+     * Retrieves the types of the ChannelPermissionType.
+     *
+     * @return the types of the ChannelPermissionType
+     */
     public String getTypes() {
         return types;
     }
