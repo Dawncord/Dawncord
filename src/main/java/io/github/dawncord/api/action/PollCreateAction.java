@@ -16,11 +16,8 @@ import io.github.dawncord.api.entities.message.poll.Poll;
  *
  * @see Poll
  */
-public class PollCreateAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class PollCreateAction extends Action<PollCreateAction> {
     private final String channelId;
-    private boolean hasChanges = false;
     private String createdId;
 
     /**
@@ -29,12 +26,13 @@ public class PollCreateAction {
      * @param channelId The ID of the channel where the poll will be created.
      */
     public PollCreateAction(String channelId) {
-        this.jsonObject = mapper.createObjectNode();
+        super();
         this.jsonObject.set("poll", mapper.createObjectNode());
         this.channelId = channelId;
     }
 
-    private PollCreateAction setProperty(String key, Object value) {
+    @Override
+    protected PollCreateAction setProperty(String key, Object value) {
         ((ObjectNode) jsonObject.get("poll")).set(key, mapper.valueToTree(value));
         hasChanges = true;
         return this;
@@ -99,7 +97,8 @@ public class PollCreateAction {
         return createdId;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             JsonNode jsonNode = ApiClient.post(jsonObject, Routes.Channel.Message.All(channelId));
             if (jsonNode != null && jsonNode.has("id")) {

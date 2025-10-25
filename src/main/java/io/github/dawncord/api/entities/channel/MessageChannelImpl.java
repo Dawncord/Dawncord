@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.action.PollCreateAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.entities.channel.thread.Thread;

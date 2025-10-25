@@ -14,11 +14,8 @@ import io.github.dawncord.api.utils.MessageUtils;
  *
  * @see GuildWelcomeScreen
  */
-public class GuildWelcomeScreenModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildWelcomeScreenModifyAction extends Action<GuildWelcomeScreenModifyAction> {
     private final String guildId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildWelcomeScreenModifyAction}
@@ -26,14 +23,8 @@ public class GuildWelcomeScreenModifyAction {
      * @param guildId The ID of the guild in which the welcome screen is being modified.
      */
     public GuildWelcomeScreenModifyAction(String guildId) {
+        super();
         this.guildId = guildId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private GuildWelcomeScreenModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -63,8 +54,7 @@ public class GuildWelcomeScreenModifyAction {
                             .put("emoji_name", !MessageUtils.isEmojiLong(channel.getEmoji()) ? channel.getEmoji() : null)
             );
         }
-        jsonObject.set("welcome_channels", channelsArray);
-        return this;
+        return setProperty("", channelsArray);
     }
 
     /**
@@ -77,7 +67,8 @@ public class GuildWelcomeScreenModifyAction {
         return setProperty("description", description);
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.WelcomeScreen(guildId));
             hasChanges = false;

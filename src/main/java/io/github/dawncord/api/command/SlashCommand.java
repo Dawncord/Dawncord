@@ -3,7 +3,7 @@ package io.github.dawncord.api.command;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.SlashCommandModifyAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
 import io.github.dawncord.api.command.option.Option;
 import io.github.dawncord.api.types.CommandType;
 import io.github.dawncord.api.types.Locale;

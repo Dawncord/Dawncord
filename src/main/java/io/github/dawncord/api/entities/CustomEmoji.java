@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities;
 
-import io.github.dawncord.api.action.EmojiModifyAction;
+import io.github.dawncord.api.action.emoji.EmojiModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ModifyEvent;

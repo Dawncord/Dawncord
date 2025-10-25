@@ -13,24 +13,15 @@ import io.github.dawncord.api.types.StagePrivacyLevel;
  *
  * @see Stage
  */
-public class StageCreateAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
-    private boolean hasChanges = false;
+public class StageCreateAction extends Action<StageCreateAction> {
     private String createdId;
 
     /**
      * Create a new {@link StageCreateAction}
      */
     public StageCreateAction() {
-        this.jsonObject = mapper.createObjectNode();
+        super();
         this.jsonObject.put("privacy_level", StagePrivacyLevel.GUILD_ONLY.getValue());
-    }
-
-    private StageCreateAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -71,7 +62,8 @@ public class StageCreateAction {
         return createdId;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             JsonNode jsonNode = ApiClient.post(jsonObject, Routes.StageInstances());
             if (jsonNode != null && jsonNode.has("id")) {

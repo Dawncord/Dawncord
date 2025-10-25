@@ -19,22 +19,12 @@ import java.util.List;
  *
  * @see Application
  */
-public class ApplicationModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
-    private boolean hasChanges = false;
-
+public class ApplicationModifyAction extends Action<ApplicationModifyAction> {
     /**
      * Create a new {@link ApplicationModifyAction}
      */
     public ApplicationModifyAction() {
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private ApplicationModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
+        super();
     }
 
     /**
@@ -136,14 +126,15 @@ public class ApplicationModifyAction {
     /**
      * Set tags for the application.
      *
-     * @param tags the tags to be set
+     * @param tags the  to be set
      * @return the resulting ApplicationModifyAction
      */
     public ApplicationModifyAction setTags(String... tags) {
         return setProperty("tags", tags);
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.post(jsonObject, Routes.Application());
             hasChanges = false;

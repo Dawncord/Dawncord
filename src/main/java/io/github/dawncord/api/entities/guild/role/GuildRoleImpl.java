@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.GuildRoleModifyAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.image.RoleIcon;
 import io.github.dawncord.api.event.ModifyEvent;

@@ -8,6 +8,7 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ForumTag;
 import io.github.dawncord.api.entities.channel.Channel;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.channel.GuildForum;
 import io.github.dawncord.api.entities.channel.thread.ThreadMessage;
 import io.github.dawncord.api.entities.message.Message;
@@ -19,11 +20,9 @@ import java.util.Arrays;
 /**
  * Represents an action for creating a thread.
  *
- * @see io.github.dawncord.api.entities.channel.thread.Thread
+ * @see Thread
  */
-public class ThreadCreateAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class ThreadCreateAction extends Action<ThreadCreateAction> {
     private Channel channel;
     private Message message;
     private String createdId;
@@ -35,8 +34,8 @@ public class ThreadCreateAction {
      * @param name    The name of the thread.
      */
     public ThreadCreateAction(Message message, String name) {
+        super();
         this.message = message;
-        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("name", name);
     }
 
@@ -46,8 +45,8 @@ public class ThreadCreateAction {
      * @param channel The channel where the thread will be created.
      */
     public ThreadCreateAction(Channel channel) {
+        super();
         this.channel = channel;
-        this.jsonObject = mapper.createObjectNode();
     }
 
     /**
@@ -57,8 +56,8 @@ public class ThreadCreateAction {
      * @param name  The name of the thread.
      */
     public ThreadCreateAction(GuildForum forum, String name) {
+        super();
         this.channel = forum;
-        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("name", name);
     }
 
@@ -69,14 +68,9 @@ public class ThreadCreateAction {
      * @param channel The channel where the thread will be created.
      */
     public ThreadCreateAction(Message message, Channel channel) {
+        super();
         this.message = message;
         this.channel = channel;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private ThreadCreateAction setProperty(String key, Object value) {
-        jsonObject.set(key, mapper.valueToTree(value));
-        return this;
     }
 
     /**
@@ -157,7 +151,10 @@ public class ThreadCreateAction {
         return createdId;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
+        if (!hasChanges) return;
+        
         JsonNode jsonNode;
         if (message == null) {
             jsonNode = ApiClient.post(jsonObject, Routes.Channel.Thread.All(channel.getId()));

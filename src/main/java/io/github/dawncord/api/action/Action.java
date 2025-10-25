@@ -1,0 +1,25 @@
+package io.github.dawncord.api.action;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dawncord.api.action.guildsticker.GuildStickerAction;
+
+
+public abstract class Action<T> {
+    protected static final ObjectMapper mapper = new ObjectMapper();
+    protected final ObjectNode jsonObject;
+    protected boolean hasChanges = false;
+
+    public Action() {
+        this.jsonObject = mapper.createObjectNode();
+    }
+
+    //todo check return
+    protected T setProperty(String name, Object value) {
+        jsonObject.set(name, mapper.valueToTree(value));
+        hasChanges = true;
+        return (T) this;
+    }
+
+    protected abstract void submit();
+}

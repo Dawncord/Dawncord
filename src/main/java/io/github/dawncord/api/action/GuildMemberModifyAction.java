@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.GuildMember;
-import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
@@ -18,12 +17,9 @@ import java.util.List;
  *
  * @see GuildMember
  */
-public class GuildMemberModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildMemberModifyAction extends Action<GuildMemberModifyAction> {
     private final String guildId;
     private final String userId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildMemberModifyAction}
@@ -32,15 +28,9 @@ public class GuildMemberModifyAction {
      * @param userId  The ID of the member to be modified.
      */
     public GuildMemberModifyAction(String guildId, String userId) {
+        super();
         this.guildId = guildId;
         this.userId = userId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private GuildMemberModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -54,22 +44,12 @@ public class GuildMemberModifyAction {
     }
 
     /**
-     * Sets the roles for the guild member
-     *
-     * @param roles the roles to set
-     * @return the modified GuildMemberModifyAction object
-     */
-    public GuildMemberModifyAction setRoles(List<GuildRole> roles) {
-        return setProperty("roles", roles.stream().map(GuildRole::getId).toList());
-    }
-
-    /**
      * Sets the roles for the guild member.
      *
-     * @param roleIds the IDs of the roles to set
+     * @param roleIds the list of role IDs to set
      * @return the modified GuildMemberModifyAction object
      */
-    public GuildMemberModifyAction setRoles(String... roleIds) {
+    public GuildMemberModifyAction setRoles(List<String> roleIds) {
         return setProperty("roles", roleIds);
     }
 
@@ -127,7 +107,8 @@ public class GuildMemberModifyAction {
         return setProperty("flags", value);
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guildId, userId));
             hasChanges = false;

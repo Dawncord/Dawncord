@@ -15,11 +15,8 @@ import io.github.dawncord.api.types.OnboardingMode;
  *
  * @see GuildOnboarding
  */
-public class GuildOnboardingModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildOnboardingModifyAction extends Action<GuildOnboardingModifyAction> {
     private final String guildId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildOnboardingModifyAction}
@@ -27,14 +24,8 @@ public class GuildOnboardingModifyAction {
      * @param guildId The ID of the guild for which onboarding settings are being modified.
      */
     public GuildOnboardingModifyAction(String guildId) {
+        super();
         this.guildId = guildId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private GuildOnboardingModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -107,7 +98,8 @@ public class GuildOnboardingModifyAction {
         return setProperty("mode", mode.getValue());
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.put(jsonObject, Routes.Guild.Onboarding(guildId));
             hasChanges = false;

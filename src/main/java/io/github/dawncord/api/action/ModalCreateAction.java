@@ -19,10 +19,8 @@ import java.util.List;
  *
  * @see ModalData
  */
-public class ModalCreateAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
-    private List<File> attachments;
+public class ModalCreateAction extends Action<ModalCreateAction> {
+    private List<File> attachments; //todo check
     private final InteractionData data;
 
     /**
@@ -31,13 +29,14 @@ public class ModalCreateAction {
      * @param interactionData The interaction data associated with the creation of the modal.
      */
     public ModalCreateAction(InteractionData interactionData) {
+        super();
         this.data = interactionData;
-        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("type", InteractionCallbackType.MODAL.getValue());
         this.jsonObject.set("data", mapper.createObjectNode().set("components", mapper.createArrayNode()));
     }
 
-    private ModalCreateAction setProperty(String key, Object value) {
+    @Override
+    protected ModalCreateAction setProperty(String key, Object value) {
         ((ObjectNode) jsonObject.get("data")).set(key, mapper.valueToTree(value));
         return this;
     }
@@ -102,7 +101,8 @@ public class ModalCreateAction {
         return this;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
     }
 }

@@ -54,6 +54,9 @@ public class EventListener extends WebSocketAdapter {
         JsonNode json = mapper.readTree(text);
         int op = json.get("op").asInt();
 
+        System.out.println("EVENT LISTENER");
+        System.out.println(json.toPrettyString());
+        
         if (op == 0) {
             JsonNode data = json.get("d");
             GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());

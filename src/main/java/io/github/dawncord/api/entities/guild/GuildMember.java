@@ -2,22 +2,23 @@ package io.github.dawncord.api.entities.guild;
 
 import io.github.dawncord.api.action.GuildMemberModifyAction;
 import io.github.dawncord.api.entities.IMentionable;
-import io.github.dawncord.api.entities.PermissionHolder;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
+import io.github.dawncord.api.types.PermissionType;
 import jakarta.annotation.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * Represents a member of a guild.
  */
-public interface GuildMember extends PermissionHolder, IMentionable {
+public interface GuildMember extends IMentionable {
 
     /**
      * Gets the nickname of the guild member.
@@ -49,6 +50,21 @@ public interface GuildMember extends PermissionHolder, IMentionable {
     ZonedDateTime getTimeJoined();
 
     /**
+     * Gets the permissions of the guild member.
+     *
+     * @return The permissions of the guild member.
+     */
+    Set<PermissionType> getPermissions();
+
+    /**
+     * Checks if the guild member has the specified permission.
+     *
+     * @param permission the permission to check for
+     * @return true if the guild member has the permission, false otherwise
+     */
+    boolean hasPermission(PermissionType permission);
+
+    /**
      * Gets the roles assigned to the guild member.
      *
      * @return The roles assigned to the guild member.
@@ -64,48 +80,18 @@ public interface GuildMember extends PermissionHolder, IMentionable {
     List<GuildRole> getRolesByName(String roleName);
 
     /**
-     * Gets the roles assigned to the guild member by ID.
+     * Removes a role from the guild member by its ID.
      *
-     * @param roleId The ID of the role.
-     * @return The roles assigned to the guild member with the specified ID.
+     * @param roleId The ID of the role to remove.
      */
-    GuildRole getRoleById(String roleId);
-
-    /**
-     * Gets the roles assigned to the guild member by ID.
-     *
-     * @param roleId The ID of the role.
-     * @return The roles assigned to the guild member with the specified ID.
-     */
-    GuildRole getRoleById(long roleId);
-
-    /**
-     * Modifies the roles of a guild member.
-     *
-     * @param roles The new roles to assign to the guild member
-     */
-    void modifyRoles(List<GuildRole> roles);
+    void deleteRoleById(String roleId);
 
     /**
      * Removes a role from the guild member by its ID.
      *
      * @param roleId The ID of the role to remove.
      */
-    void removeRoleById(String roleId);
-
-    /**
-     * Removes a role from the guild member by its ID.
-     *
-     * @param roleId The ID of the role to remove.
-     */
-    void removeRoleById(long roleId);
-
-    /**
-     * Removes a role from the guild member by its name.
-     *
-     * @param roleName The name of the role to remove.
-     */
-    void removeRoleByName(String roleName);
+    void deleteRoleById(long roleId);
 
     /**
      * Checks if the guild member is pending.
@@ -208,8 +194,6 @@ public interface GuildMember extends PermissionHolder, IMentionable {
 
     /**
      * Sets the timeout for the guild member.
-     *
-     * @param timeout The timeout for the guild member.
      */
     void setTimeout(ZonedDateTime timeout);
 
@@ -217,18 +201,4 @@ public interface GuildMember extends PermissionHolder, IMentionable {
      * Removes the timeout for the guild member.
      */
     void removeTimeout();
-
-    /**
-     * Mutes the guild member.
-     *
-     * @param mute The mute state for the guild member.
-     */
-    void mute(boolean mute);
-
-    /**
-     * Deafens the guild member.
-     *
-     * @param deaf The deaf state for the guild member.
-     */
-    void deaf(boolean deaf);
 }

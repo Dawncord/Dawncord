@@ -11,11 +11,8 @@ import io.github.dawncord.api.entities.channel.GuildChannel;
  *
  * @see GuildChannel
  */
-public class GuildChannelPositionModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildChannelPositionModifyAction extends Action<GuildChannelPositionModifyAction> {
     private final String guildId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildChannelPositionModifyAction}
@@ -24,15 +21,9 @@ public class GuildChannelPositionModifyAction {
      * @param channelId The ID of the channel whose position will be modified.
      */
     public GuildChannelPositionModifyAction(String guildId, String channelId) {
+        super();
         this.guildId = guildId;
-        this.jsonObject = mapper.createObjectNode();
         this.jsonObject.put("id", channelId);
-    }
-
-    private GuildChannelPositionModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -75,7 +66,8 @@ public class GuildChannelPositionModifyAction {
         return setParent(String.valueOf(parentId));
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(mapper.createArrayNode().add(jsonObject), Routes.Guild.Channels(guildId));
             hasChanges = false;

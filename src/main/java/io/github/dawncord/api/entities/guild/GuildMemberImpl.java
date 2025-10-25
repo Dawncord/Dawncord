@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
@@ -30,9 +30,12 @@ import java.util.function.Consumer;
  * Represents an implementation of a guild member.
  */
 public class GuildMemberImpl implements GuildMember {
-    private static final ObjectMapper mapper = new ObjectMapper();
     private final JsonNode member;
     private final Guild guild;
+    private Boolean isPending;
+    private Boolean isBoosting;
+    private Boolean isMuted;
+    private Boolean isDeafened;
 
     /**
      * Constructs a new GuildMemberImpl with the provided member data and guild.
@@ -87,6 +90,11 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
+    public boolean hasPermission(PermissionType permission) {
+        return getPermissions().contains(permission);
+    }
+
+    @Override
     public List<GuildRole> getRoles() {
         List<GuildRole> roles = new ArrayList<>();
         if (!member.get("roles").isEmpty()) {
@@ -107,46 +115,21 @@ public class GuildMemberImpl implements GuildMember {
     }
 
     @Override
-    public GuildRole getRoleById(String roleId) {
-        for (GuildRole role : getRoles()) {
-            if (role.getId().equals(roleId)) {
-                return role;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public GuildRole getRoleById(long roleId) {
-        return getRoleById(String.valueOf(roleId));
-    }
-
-    @Override
-    public void modifyRoles(List<GuildRole> roles) {
-        List<String> roleIds = roles.stream().map(GuildRole::getId).toList();
-        ObjectNode jsonObject = mapper.createObjectNode()
-                .set("roles", mapper.valueToTree(roleIds));
-        ApiClient.put(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
-    }
-
-    @Override
-    public void removeRoleById(String roleId) {
+    public void deleteRoleById(String roleId) {
         ApiClient.delete(Routes.Guild.Member.Role(guild.getId(), getUser().getId(), roleId));
     }
 
     @Override
-    public void removeRoleById(long roleId) {
-        removeRoleById(String.valueOf(roleId));
-    }
-
-    @Override
-    public void removeRoleByName(String roleName) {
-        getRolesByName(roleName).forEach(role -> removeRoleById(role.getId()));
+    public void deleteRoleById(long roleId) {
+        deleteRoleById(String.valueOf(roleId));
     }
 
     @Override
     public boolean isPending() {
-        return member.has("pending") && member.get("pending").asBoolean();
+        if (member.has("pending")) {
+            isPending = member.get("pending").asBoolean();
+        }
+        return isPending != null && isPending;
     }
 
     @Override
@@ -156,17 +139,26 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public boolean isBoosting() {
-        return member.has("premium_since") && !member.hasNonNull("premium_since");
+        if (member.has("premium_since")) {
+            isBoosting = !member.hasNonNull("premium_since");
+        }
+        return isBoosting != null && isBoosting;
     }
 
     @Override
     public boolean isMuted() {
-        return member.has("mute") && member.get("mute").asBoolean();
+        if (member.has("mute")) {
+            isMuted = member.get("mute").asBoolean();
+        }
+        return isMuted != null && isMuted;
     }
 
     @Override
     public boolean isDeafened() {
-        return member.has("deaf") && member.get("deaf").asBoolean();
+        if (member.has("deaf")) {
+            isDeafened = member.get("deaf").asBoolean();
+        }
+        return isDeafened != null && isDeafened;
     }
 
     @Override
@@ -212,26 +204,16 @@ public class GuildMemberImpl implements GuildMember {
 
     @Override
     public void setTimeout(ZonedDateTime timeout) {
-        ObjectNode jsonObject = mapper.createObjectNode()
-                .put("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.put("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
     }
 
     @Override
     public void removeTimeout() {
-        ObjectNode jsonObject = mapper.createObjectNode()
-                .set("communication_disabled_until", NullNode.instance);
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.set("communication_disabled_until", NullNode.instance);
         ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
-    }
-
-    @Override
-    public void mute(boolean mute) {
-        ApiClient.patch(mapper.createObjectNode().put("mute", mute), Routes.Guild.Member.Get(getGuild().getId(), getUser().getId()));
-    }
-
-    @Override
-    public void deaf(boolean deaf) {
-        ApiClient.patch(mapper.createObjectNode().put("deaf", deaf), Routes.Guild.Member.Get(getGuild().getId(), getUser().getId()));
     }
 
     @Override

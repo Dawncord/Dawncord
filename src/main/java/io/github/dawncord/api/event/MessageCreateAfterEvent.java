@@ -2,7 +2,7 @@ package io.github.dawncord.api.event;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.MessageImpl;

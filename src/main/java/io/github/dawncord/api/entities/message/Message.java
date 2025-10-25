@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities.message;
 
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
@@ -226,13 +226,6 @@ public interface Message extends ISnowflake {
      * @return The timestamp when the message was last edited.
      */
     ZonedDateTime getTimeEdited();
-
-    /**
-     * Sets the reference to another message.
-     *
-     * @param message The message to set as reference
-     */
-    void setReference(Message message);
 
     /**
      * Modifies the message using the provided handler.

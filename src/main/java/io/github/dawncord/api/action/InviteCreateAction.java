@@ -14,26 +14,19 @@ import io.github.dawncord.api.types.TargetType;
  *
  * @see Invite
  */
-public class InviteCreateAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
-    private final GuildChannel channel;
-    private boolean hasChanges = false;
+public class InviteCreateAction extends Action<InviteCreateAction> {
+    private final String channelId;
+    private final ChannelType channelType;
 
     /**
      * Create a new {@link InviteCreateAction}
      *
-     * @param channel The guild channel for which the invite is being created.
+     * @param channelId The ID of the guild channel for which the invite is being created.
      */
-    public InviteCreateAction(GuildChannel channel) {
-        this.channel = channel;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private InviteCreateAction setProperty(String key, Object value) {
-        jsonObject.set(key, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
+    public InviteCreateAction(String channelId, ChannelType channelType) {
+        super();
+        this.channelId = channelId;
+        this.channelType = channelType;
     }
 
     /**
@@ -83,7 +76,7 @@ public class InviteCreateAction {
      * @return the modified InviteCreateAction object
      */
     public InviteCreateAction setTargetType(TargetType targetType) {
-        if (channel.getType() == ChannelType.GUILD_VOICE) {
+        if (channelType == ChannelType.GUILD_VOICE) {
             setProperty("target_type", targetType.getValue());
         }
         return this;
@@ -115,9 +108,10 @@ public class InviteCreateAction {
         return this;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, Routes.Channel.Invite.All(channel.getId()));
+            ApiClient.post(jsonObject, Routes.Channel.Invite.All(channelId));
             hasChanges = false;
         }
     }

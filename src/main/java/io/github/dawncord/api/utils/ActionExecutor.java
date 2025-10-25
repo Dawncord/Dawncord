@@ -5,6 +5,26 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.*;
+import io.github.dawncord.api.action.automoderule.AutoModRuleCreateAction;
+import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
+import io.github.dawncord.api.action.emoji.EmojiCreateAction;
+import io.github.dawncord.api.action.emoji.EmojiModifyAction;
+import io.github.dawncord.api.action.guild.GuildCreateAction;
+import io.github.dawncord.api.action.guild.GuildModifyAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelCreateAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerCreateAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
+import io.github.dawncord.api.action.message.MessageCreateAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandCreateAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
+import io.github.dawncord.api.action.command.subcommand.SubCommandCreateAction;
+import io.github.dawncord.api.action.command.subcommand.SubCommandGroupCreateAction;
+import io.github.dawncord.api.action.webhook.WebhookCreateAction;
+import io.github.dawncord.api.action.webhook.WebhookModifyAction;
 import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
 import io.github.dawncord.api.entities.channel.Channel;
@@ -259,7 +279,7 @@ public class ActionExecutor {
      * @param channel The channel where the invite will be created.
      */
     public static void createChannelInvite(Consumer<InviteCreateAction> handler, GuildChannel channel) {
-        InviteCreateAction action = new InviteCreateAction(channel);
+        InviteCreateAction action = new InviteCreateAction(channel.getId(), channel.getType());
         handler.accept(action);
         invokeSubmit(action, InviteCreateAction.class);
     }
@@ -309,7 +329,7 @@ public class ActionExecutor {
      * @param message The message to be edited.
      */
     public static void deferEdit(Consumer<MessageModifyAction> handler, InteractionData data, Message message) {
-        MessageModifyAction action = new MessageModifyAction(message);
+        MessageModifyAction action = new MessageModifyAction(message, null);
         handler.accept(action);
         invokeSubmit(action, MessageModifyAction.class);
 
@@ -401,7 +421,7 @@ public class ActionExecutor {
      * @param message The message to be modified.
      */
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {
-        MessageModifyAction action = new MessageModifyAction(message);
+        MessageModifyAction action = new MessageModifyAction(message, null);
         handler.accept(action);
         invokeSubmit(action, MessageModifyAction.class);
     }

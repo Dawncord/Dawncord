@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities.guild.automod;
 
-import io.github.dawncord.api.action.AutoModRuleModifyAction;
+import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.event.ModifyEvent;

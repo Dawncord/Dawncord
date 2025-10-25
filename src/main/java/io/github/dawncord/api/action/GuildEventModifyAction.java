@@ -16,12 +16,9 @@ import java.time.ZonedDateTime;
  *
  * @see Guild
  */
-public class GuildEventModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildEventModifyAction extends Action<GuildEventModifyAction> {
     private final String guildId;
     private final String eventId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildEventModifyAction}
@@ -30,15 +27,9 @@ public class GuildEventModifyAction {
      * @param eventId The ID of the event to be modified.
      */
     public GuildEventModifyAction(String guildId, String eventId) {
+        super();
         this.guildId = guildId;
         this.eventId = eventId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private GuildEventModifyAction setProperty(String key, Object value) {
-        jsonObject.set(key, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -132,7 +123,8 @@ public class GuildEventModifyAction {
         return this;
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.ScheduledEvent.Get(guildId, eventId));
             hasChanges = false;

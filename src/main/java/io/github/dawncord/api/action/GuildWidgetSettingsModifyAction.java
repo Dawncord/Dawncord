@@ -11,11 +11,8 @@ import io.github.dawncord.api.entities.guild.widget.GuildWidgetSettings;
  *
  * @see GuildWidgetSettings
  */
-public class GuildWidgetSettingsModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class GuildWidgetSettingsModifyAction extends Action<GuildWidgetSettingsModifyAction> {
     private final String guildId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link GuildWidgetSettingsModifyAction}
@@ -23,14 +20,8 @@ public class GuildWidgetSettingsModifyAction {
      * @param guildId The ID of the guild in which the guild widget settings are being modified.
      */
     public GuildWidgetSettingsModifyAction(String guildId) {
+        super();
         this.guildId = guildId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private GuildWidgetSettingsModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
     }
 
     /**
@@ -63,7 +54,8 @@ public class GuildWidgetSettingsModifyAction {
         return setChannel(String.valueOf(channelId));
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.Widget.Settings(guildId));
             hasChanges = false;

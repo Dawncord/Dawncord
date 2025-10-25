@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities.channel;
 
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.action.PollCreateAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.entities.channel.thread.Thread;

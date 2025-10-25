@@ -6,6 +6,17 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Constants;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.*;
+import io.github.dawncord.api.action.automoderule.AutoModRuleCreateAction;
+import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
+import io.github.dawncord.api.action.emoji.EmojiCreateAction;
+import io.github.dawncord.api.action.emoji.EmojiModifyAction;
+import io.github.dawncord.api.action.guild.GuildModifyAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelCreateAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerCreateAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.channel.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
@@ -41,8 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link Guild} interface.
@@ -178,36 +187,6 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public List<TextChannel> getTextChannels() {
-        return getChannelsByType(ChannelType.GUILD_TEXT, GuildChannel::asText);
-    }
-
-    @Override
-    public List<TextChannel> getTextChannelsByName(String channelName) {
-        return getTextChannels().stream().filter(channel -> channel.getName().equals(channelName)).toList();
-    }
-
-    @Override
-    public List<VoiceChannel> getVoiceChannels() {
-        return getChannelsByType(ChannelType.GUILD_VOICE, GuildChannel::asVoice);
-    }
-
-    @Override
-    public List<VoiceChannel> getVoiceChannelsByName(String channelName) {
-        return getVoiceChannels().stream().filter(channel -> channel.getName().equals(channelName)).toList();
-    }
-
-    @Override
-    public List<GuildForum> getGuildForums() {
-        return getChannelsByType(ChannelType.GUILD_FORUM, GuildChannel::asForum);
-    }
-
-    @Override
-    public List<GuildForum> getGuildForumsByName(String channelName) {
-        return getGuildForums().stream().filter(channel -> channel.getName().equals(channelName)).toList();
-    }
-
-    @Override
     public CreateEvent<GuildChannel> createChannel(ChannelType type, Consumer<GuildChannelCreateAction> handler) {
         String id = ActionExecutor.createGuildChannel(handler, getId(), type);
         return new CreateEvent<>(getChannelById(id));
@@ -253,14 +232,6 @@ public class GuildImpl implements Guild {
     @Override
     public Stage getStageByChannelId(long channelId) {
         return getStageByChannelId(String.valueOf(channelId));
-    }
-
-    @Override
-    public List<Stage> getStages() {
-        return getChannels().stream()
-                .filter(channel -> channel.getType() == ChannelType.GUILD_STAGE_VOICE)
-                .map(channel -> getStageByChannelId(channel.getId()))
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -379,36 +350,6 @@ public class GuildImpl implements Guild {
     @Override
     public void addMember(String accessToken, long userId) {
         addMember(accessToken, String.valueOf(userId));
-    }
-
-    @Override
-    public void muteMember(String memberId, boolean mute) {
-        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("mute", mute), Routes.Guild.Member.Get(getId(), memberId));
-    }
-
-    @Override
-    public void muteMember(long memberId, boolean mute) {
-        muteMember(String.valueOf(memberId), mute);
-    }
-
-    @Override
-    public void deafMember(String memberId, boolean deaf) {
-        ApiClient.patch(JsonNodeFactory.instance.objectNode().put("deaf", deaf), Routes.Guild.Member.Get(getId(), memberId));
-    }
-
-    @Override
-    public void deafMember(long memberId, boolean deaf) {
-        deafMember(String.valueOf(memberId), deaf);
-    }
-
-    @Override
-    public void modifyMemberRoles(String memberId, List<GuildRole> roles) {
-        getMemberById(memberId).modifyRoles(roles);
-    }
-
-    @Override
-    public void modifyMemberRoles(long memberId, List<GuildRole> roles) {
-        modifyMemberRoles(String.valueOf(memberId), roles);
     }
 
     @Override
@@ -853,9 +794,5 @@ public class GuildImpl implements Guild {
     @Override
     public Webhook getWebhookByName(String webhookName) {
         return getWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findFirst().orElse(null);
-    }
-
-    private <T> List<T> getChannelsByType(ChannelType type, Function<GuildChannel, T> mapper) {
-        return getChannels().stream().filter(channel -> channel.getType() == type).map(mapper).toList();
     }
 }

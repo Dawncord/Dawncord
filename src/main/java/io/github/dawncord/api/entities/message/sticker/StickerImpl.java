@@ -3,7 +3,7 @@ package io.github.dawncord.api.entities.message.sticker;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.GuildStickerModifyAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.Guild;

@@ -1,6 +1,6 @@
 package io.github.dawncord.api.event;
 
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 
 import java.util.function.Consumer;
 

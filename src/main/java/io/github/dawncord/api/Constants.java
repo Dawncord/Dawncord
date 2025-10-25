@@ -10,7 +10,9 @@ public class Constants {
     /**
      * The WebSocket Gateway URL for connecting to Discord.
      */
-    public static final String GATEWAY = "wss://gateway.discord.gg/?v=10&encoding=json";
+    public static final String DEFAULT_GATEWAY = "wss://gateway.discord.gg/?v=10&encoding=json";
+
+    public static String GATEWAY = DEFAULT_GATEWAY;
 
     /**
      * The base URL for Discord's Content Delivery Network (CDN).
@@ -46,4 +48,18 @@ public class Constants {
      * The bot ID.
      */
     public static String BOT_ID = null;
+
+    /**
+     * The session ID.
+     */
+    public static String SESSION_ID = null;
+
+    /**
+     * The resume URL.
+     */
+    public static String RESUME_URL = null;
+
+    public static int SHARDS = 0;
+
+    public static int LAST_SEQUENCE = 0;
 }

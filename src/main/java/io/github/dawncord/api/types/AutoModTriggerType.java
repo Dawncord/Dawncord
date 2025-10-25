@@ -38,4 +38,13 @@ public enum AutoModTriggerType {
     public int getValue() {
         return value;
     }
+
+    public static AutoModTriggerType fromValue(int value) {
+        for (AutoModTriggerType type : values()) {
+            if (type.value == value) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown trigger type: " + value);
+    }
 }

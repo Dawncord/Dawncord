@@ -1,19 +1,20 @@
 package io.github.dawncord.api.entities.guild.role;
 
-import io.github.dawncord.api.action.GuildRoleModifyAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
 import io.github.dawncord.api.entities.IMentionable;
 import io.github.dawncord.api.entities.ISnowflake;
-import io.github.dawncord.api.entities.PermissionHolder;
 import io.github.dawncord.api.entities.image.RoleIcon;
 import io.github.dawncord.api.event.ModifyEvent;
+import io.github.dawncord.api.types.PermissionType;
 
 import java.awt.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * Represents a role within a guild.
  */
-public interface GuildRole extends PermissionHolder, ISnowflake, IMentionable {
+public interface GuildRole extends ISnowflake, IMentionable {
 
     /**
      * Retrieves the name of the role.
@@ -28,6 +29,13 @@ public interface GuildRole extends PermissionHolder, ISnowflake, IMentionable {
      * @return The icon of the role.
      */
     RoleIcon getIcon();
+
+    /**
+     * Retrieves the permissions granted to the role.
+     *
+     * @return The permissions granted to the role.
+     */
+    List<PermissionType> getPermissions();
 
     /**
      * Retrieves the position of the role in the role hierarchy.

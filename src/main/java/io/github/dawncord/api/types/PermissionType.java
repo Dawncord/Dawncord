@@ -221,12 +221,6 @@ public enum PermissionType {
      * Allows using soundboard functionality.
      */
     USE_SOUNDBOARD(1L << 42),
-
-    /**
-     * Allows creating events.
-     */
-    CREATE_EVENTS(1L << 44),
-
     /**
      * Allows the user to use external sounds.
      */
@@ -235,22 +229,7 @@ public enum PermissionType {
     /**
      * Allows sending voice messages.
      */
-    SEND_VOICE_MESSAGES(1L << 46),
-
-    /**
-     * Allows sending polls.
-     */
-    SEND_POLLS(1L << 49),
-
-    /**
-     * Allows using external apps.
-     */
-    USE_EXTERNAL_APPS(1L << 50),
-
-    /**
-     * No permissions.
-     */
-    EMPTY(0);
+    SEND_VOICE_MESSAGES(1L << 46);
 
     private final long value;
 

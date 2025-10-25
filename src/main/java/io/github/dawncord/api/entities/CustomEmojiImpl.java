@@ -3,7 +3,7 @@ package io.github.dawncord.api.entities;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.EmojiModifyAction;
+import io.github.dawncord.api.action.emoji.EmojiModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ModifyEvent;

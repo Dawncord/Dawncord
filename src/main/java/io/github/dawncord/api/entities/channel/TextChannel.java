@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities.channel;
 
-import io.github.dawncord.api.action.MessageCreateAction;
+import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.event.MessageCreateEvent;
 
 import java.util.function.Consumer;

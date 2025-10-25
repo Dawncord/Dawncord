@@ -11,11 +11,8 @@ import io.github.dawncord.api.entities.User;
  *
  * @see User
  */
-public class CurrentMemberModifyAction {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private final ObjectNode jsonObject;
+public class CurrentMemberModifyAction extends Action<CurrentMemberModifyAction> {
     private final String guildId;
-    private boolean hasChanges = false;
 
     /**
      * Create a new {@link CurrentMemberModifyAction}
@@ -24,13 +21,7 @@ public class CurrentMemberModifyAction {
      */
     public CurrentMemberModifyAction(String guildId) {
         this.guildId = guildId;
-        this.jsonObject = mapper.createObjectNode();
-    }
-
-    private CurrentMemberModifyAction setProperty(String name, Object value) {
-        jsonObject.set(name, mapper.valueToTree(value));
-        hasChanges = true;
-        return this;
+        super();
     }
 
     /**
@@ -43,7 +34,8 @@ public class CurrentMemberModifyAction {
         return setProperty("nick", nickname);
     }
 
-    private void submit() {
+    @Override
+    protected void submit() {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.CurrentMember(guildId));
             hasChanges = false;

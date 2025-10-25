@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import io.github.dawncord.api.action.GuildCreateAction;
-import io.github.dawncord.api.action.SlashCommandCreateAction;
-import io.github.dawncord.api.action.SlashCommandModifyAction;
+import io.github.dawncord.api.action.guild.GuildCreateAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandCreateAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
 import io.github.dawncord.api.command.Command;
 import io.github.dawncord.api.command.SlashCommand;
 import io.github.dawncord.api.command.SubCommand;
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +51,9 @@ import static io.github.dawncord.api.utils.EventProcessor.*;
  * It provides functionalities for interacting with the Discord API through a WebSocket.
  */
 public class Dawncord {
-    private static final Logger logger = LoggerFactory.getLogger(Dawncord.class);
+    private final static Logger logger = LoggerFactory.getLogger(Dawncord.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    private final WebSocket webSocket;
+    private WebSocket webSocket;
     private final Map<Class<? extends Event>, Consumer<Event>> eventHandlers = new HashMap<>();
     private long intentsValue = 0;
     private final Map<String, String> commandIdMap = new HashMap<>();
@@ -64,9 +65,26 @@ public class Dawncord {
      * @see #setIntents(GatewayIntent...)
      */
     public Dawncord(String token) {
+        assignConstants(token);
+        initializeCommandIdMap();
+
+        getGateway();
+
+        connect();
+    }
+
+    private void getGateway() {
+        JsonNode data = JsonUtils.fetch("/gateway/bot");
+        System.out.println("GET GATEWAY");
+        System.out.println(data.toPrettyString());
+        Constants.GATEWAY = data.get("url").asText();
+        Constants.SHARDS = data.get("shards").asInt();
+    }
+
+    private void connect() {
         WebSocketFactory factory = new WebSocketFactory();
         try {
-            webSocket = factory.createSocket(Constants.GATEWAY);
+            webSocket = factory.createSocket(Constants.DEFAULT_GATEWAY);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,9 +92,6 @@ public class Dawncord {
         webSocket.addListener(new MainListener());
         webSocket.addListener(new InteractionListener());
         webSocket.addListener(new EventListener());
-
-        assignConstants(token);
-        initializeCommandIdMap();
     }
 
     /**
@@ -85,6 +100,15 @@ public class Dawncord {
      * @param intents the gateway intents to set
      */
     public void setIntents(GatewayIntent... intents) {
+        setIntents(Arrays.stream(intents).toList());
+    }
+
+    /**
+     * Sets the intents for the gateway connection.
+     *
+     * @param intents the gateway intents to set
+     */
+    public void setIntents(List<GatewayIntent> intents) {
         for (GatewayIntent intent : intents) {
             if (intent == GatewayIntent.ALL) {
                 for (GatewayIntent i : GatewayIntent.values()) {
@@ -466,13 +490,34 @@ public class Dawncord {
                         .put("intents", intentsValue)
                         .set("properties", mapper.createObjectNode()
                                 .put("os", "linux")
-                                .put("browser", "discord-java-gateway")
-                                .put("device", "discord-java-gateway")
+                                .put("browser", "dawncord")
+                                .put("device", "dawncord")
                         )
                 );
 
         webSocket.sendText(identify.toString());
     }
+
+    /**
+     * Disconnects from the gateway
+     * <p>
+     * Stopping the gateway will stop the event loop for the gateway
+     */
+    public void stop() {
+        if (webSocket.isOpen()) {
+            intentsValue = 0L;
+            webSocket.disconnect("Shutting down");
+        }
+    }
+
+    /*public void recreate(String token) {
+        connect();
+
+        assignConstants(token);
+        initializeCommandIdMap();
+
+        start();
+    }*/
 
     private void assignConstants(String token) {
         Constants.BOT_TOKEN = token;

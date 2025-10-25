@@ -1,0 +1,196 @@
+package io.github.dawncord.api.action.guild;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
+import io.github.dawncord.api.entities.channel.GuildCategory;
+import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.types.*;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
+
+/**
+ * Represents an action for creating a guild.
+ *
+ * @see Guild
+ */
+public class GuildCreateAction extends GuildAction {
+    private int roleId = 1;
+    private int channelId = 1;
+    private boolean hasChanges = false;
+
+    /**
+     * Create a new {@link GuildCreateAction}
+     */
+    public GuildCreateAction() {
+        super();
+        this.jsonObject.set("roles", mapper.createArrayNode());
+        this.jsonObject.set("channels", mapper.createArrayNode());
+    }
+
+    /**
+     * Creates a role using the given handler and adds it to the list of roles in the guild.
+     *
+     * @param handler a Consumer that takes a GuildRoleCreateAction object and modifies it
+     * @return the modified GuildCreateAction object
+     */
+    public GuildCreateAction createRole(Consumer<GuildRoleCreateAction> handler) {
+        GuildRoleCreateAction action = new GuildRoleCreateAction(null, false);
+        handler.accept(action);
+        try {
+            Method executeMethod = GuildRoleCreateAction.class.getDeclaredMethod("getJsonObject");
+            executeMethod.setAccessible(true);
+            ((ArrayNode) jsonObject.get("roles")).add(((ObjectNode) executeMethod.invoke(action)).put("id", roleId++));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    /**
+     * Creates a channel of the specified type and name in the guild.
+     *
+     * @param type the type of the channel to create
+     * @param name the name of the channel to create
+     * @return the modified GuildCreateAction object
+     */
+    public GuildCreateAction createChannel(ChannelType type, String name) {
+        createGuildChannel(type, name);
+        return this;
+    }
+
+    /**
+     * Creates a category with the specified name and executes the given handler on it.
+     *
+     * @param name    the name of the category to create
+     * @param handler a Consumer that takes a CategoryCreateAction object and modifies it
+     * @return the modified GuildCreateAction object
+     */
+    public GuildCreateAction createCategory(String name, Consumer<CategoryCreateAction> handler) {
+        createGuildChannel(ChannelType.GUILD_CATEGORY, name);
+        handler.accept(new CategoryCreateAction(channelId - 1));
+        return this;
+    }
+
+    /**
+     * Creates an AFK channel of the specified type and name in the guild.
+     *
+     * @param type the type of the channel to create
+     * @param name the name of the channel to create
+     * @return the modified GuildCreateAction object with the AFK channel ID set
+     */
+    public GuildCreateAction createAfkChannel(ChannelType type, String name) {
+        createGuildChannel(type, name);
+        setProperty("afk_channel_id", channelId - 1);
+        return this;
+    }
+
+    /**
+     * Creates a system channel of the specified type and name in the guild.
+     *
+     * @param type the type of the channel to create
+     * @param name the name of the channel to create
+     * @return the modified GuildCreateAction object
+     */
+    public GuildCreateAction createSystemChannel(ChannelType type, String name) {
+        createGuildChannel(type, name);
+        setProperty("system_channel_id", channelId - 1);
+        return this;
+    }
+
+    private void createGuildChannel(ChannelType type, String name) {
+        ObjectNode channel = mapper.createObjectNode()
+                .put("id", channelId++)
+                .put("type", type.getValue())
+                .put("name", name);
+        if (jsonObject.has("channels") && jsonObject.hasNonNull("channels")) {
+            ((ArrayNode) jsonObject.get("channels")).add(channel);
+        } else {
+            jsonObject.set("channels", mapper.createArrayNode().add(channel));
+        }
+    }
+
+    @Override
+    protected void submit() {
+        if (hasChanges) {
+            ApiClient.post(jsonObject, Routes.Guild.All());
+            hasChanges = false;
+        }
+    }
+
+    /**
+     * Represents an action for creating a guild category.
+     *
+     * @see GuildCategory
+     */
+    public class CategoryCreateAction {
+        private final int parentId;
+
+        /**
+         * Create a new {@link CategoryCreateAction}
+         *
+         * @param parentId The ID of the parent category or guild where the category will be created.
+         */
+        public CategoryCreateAction(int parentId) {
+            this.parentId = parentId;
+        }
+
+        private CategoryCreateAction setProperty(String name, Object value) {
+            jsonObject.set(name, mapper.valueToTree(value));
+            hasChanges = true;
+            return this;
+        }
+
+        /**
+         * Adds a new channel to the category.
+         *
+         * @param type The type of the channel to be created.
+         * @param name The name of the channel.
+         * @return The CategoryCreateAction instance to allow method chaining.
+         */
+        public CategoryCreateAction addChannel(ChannelType type, String name) {
+            createGuildChannelUnderCategory(type, name);
+            return this;
+        }
+
+        /**
+         * Adds an AFK channel to the category.
+         *
+         * @param type The type of the AFK channel to be created.
+         * @param name The name of the AFK channel.
+         * @return The CategoryCreateAction instance to allow method chaining.
+         */
+        public CategoryCreateAction addAfkChannel(ChannelType type, String name) {
+            createGuildChannelUnderCategory(type, name);
+            return setProperty("afk_channel_id", channelId - 1); // Assuming channelId is defined elsewhere
+        }
+
+        /**
+         * Adds a system channel to the category.
+         *
+         * @param type The type of the system channel to be created.
+         * @param name The name of the system channel.
+         * @return The CategoryCreateAction instance to allow method chaining.
+         */
+        public CategoryCreateAction addSystemChannel(ChannelType type, String name) {
+            createGuildChannelUnderCategory(type, name);
+            return setProperty("system_channel_id", channelId - 1); // Assuming channelId is defined elsewhere
+        }
+
+        private void createGuildChannelUnderCategory(ChannelType type, String name) {
+            ObjectNode channel = mapper.createObjectNode()
+                    .put("id", channelId++)
+                    .put("type", type.getValue())
+                    .put("name", name)
+                    .put("parent_id", parentId);
+            if (jsonObject.has("channels") && jsonObject.hasNonNull("channels")) {
+                ((ArrayNode) jsonObject.get("channels")).add(channel);
+            } else {
+                jsonObject.set("channels", mapper.createArrayNode().add(channel));
+            }
+        }
+    }
+}

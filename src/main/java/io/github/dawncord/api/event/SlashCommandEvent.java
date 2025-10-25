@@ -1,8 +1,8 @@
 package io.github.dawncord.api.event;
 
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.action.MessageCreateAction;
-import io.github.dawncord.api.action.MessageModifyAction;
+import io.github.dawncord.api.action.message.MessageCreateAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.action.ModalCreateAction;
 import io.github.dawncord.api.command.option.OptionData;
 import io.github.dawncord.api.entities.channel.GuildChannel;

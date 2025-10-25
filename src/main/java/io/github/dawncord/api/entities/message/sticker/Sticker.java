@@ -1,6 +1,6 @@
 package io.github.dawncord.api.entities.message.sticker;
 
-import io.github.dawncord.api.action.GuildStickerModifyAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.guild.Guild;

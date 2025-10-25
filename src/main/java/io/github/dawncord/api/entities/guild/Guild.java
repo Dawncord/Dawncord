@@ -1,11 +1,25 @@
 package io.github.dawncord.api.entities.guild;
 
 import io.github.dawncord.api.action.*;
+import io.github.dawncord.api.action.automoderule.AutoModRuleCreateAction;
+import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
+import io.github.dawncord.api.action.emoji.EmojiCreateAction;
+import io.github.dawncord.api.action.emoji.EmojiModifyAction;
+import io.github.dawncord.api.action.guild.GuildModifyAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelCreateAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
+import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerCreateAction;
+import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.Webhook;
-import io.github.dawncord.api.entities.channel.*;
+import io.github.dawncord.api.entities.channel.GuildCategory;
+import io.github.dawncord.api.entities.channel.GuildChannel;
+import io.github.dawncord.api.entities.channel.Invite;
+import io.github.dawncord.api.entities.channel.Stage;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
@@ -187,51 +201,6 @@ public interface Guild extends ISnowflake {
     List<GuildChannel> getChannelsByName(String channelName);
 
     /**
-     * Retrieves a list of text channels in the guild.
-     *
-     * @return A list of text channels in the guild.
-     */
-    List<TextChannel> getTextChannels();
-
-    /**
-     * Retrieves a list of text channels in the guild with the specified name.
-     *
-     * @param channelName The name of the channel.
-     * @return A list of text channels with the specified name.
-     */
-    List<TextChannel> getTextChannelsByName(String channelName);
-
-    /**
-     * Retrieves a list of voice channels in the guild.
-     *
-     * @return A list of voice channels in the guild.
-     */
-    List<VoiceChannel> getVoiceChannels();
-
-    /**
-     * Retrieves a list of voice channels in the guild with the specified name.
-     *
-     * @param channelName The name of the channel.
-     * @return A list of voice channels with the specified name.
-     */
-    List<VoiceChannel> getVoiceChannelsByName(String channelName);
-
-    /**
-     * Retrieves a list of forum channels in the guild.
-     *
-     * @return A list of forum channels in the guild.
-     */
-    List<GuildForum> getGuildForums();
-
-    /**
-     * Retrieves a list of forum channels in the guild with the specified name.
-     *
-     * @param channelName The name of the channel.
-     * @return A list of forum channels with the specified name.
-     */
-    List<GuildForum> getGuildForumsByName(String channelName);
-
-    /**
      * Creates a new channel in the guild.
      *
      * @param type    The type of the channel to create.
@@ -305,13 +274,6 @@ public interface Guild extends ISnowflake {
      * @return The stage associated with the specified channel ID.
      */
     Stage getStageByChannelId(long channelId);
-
-    /**
-     * Retrieves a list of stages in the guild.
-     *
-     * @return A list of stages in the guild.
-     */
-    List<Stage> getStages();
 
     /**
      * Creates a new stage channel in the guild.
@@ -462,54 +424,6 @@ public interface Guild extends ISnowflake {
      * @see <a href="https://discord.com/developers/docs/topics/oauth2" target="_blank">Discord OAuth2 Documentation</a>
      */
     void addMember(String accessToken, long userId);
-
-    /**
-     * Mutes or unmutes a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to mute or unmute.
-     * @param mute     Whether to mute or unmute the member.
-     */
-    void muteMember(String memberId, boolean mute);
-
-    /**
-     * Mutes or unmutes a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to mute or unmute.
-     * @param mute     Whether to mute or unmute the member.
-     */
-    void muteMember(long memberId, boolean mute);
-
-    /**
-     * Deafens or undeafens a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to deafen or undeafen.
-     * @param deaf     Whether to deafen or undeafen the member.
-     */
-    void deafMember(String memberId, boolean deaf);
-
-    /**
-     * Deafens or undeafens a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to deafen or undeafen.
-     * @param deaf     Whether to deafen or undeafen the member.
-     */
-    void deafMember(long memberId, boolean deaf);
-
-    /**
-     * Modifies the roles of a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to modify the roles of.
-     * @param roles    The roles to modify the member with.
-     */
-    void modifyMemberRoles(String memberId, List<GuildRole> roles);
-
-    /**
-     * Modifies the roles of a member in the guild by their ID.
-     *
-     * @param memberId The ID of the member to modify the roles of.
-     * @param roles    The roles to modify the member with.
-     */
-    void modifyMemberRoles(long memberId, List<GuildRole> roles);
 
     /**
      * Retrieves a list of banned members in the guild.

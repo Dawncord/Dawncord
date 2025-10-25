@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.action.MessageCreateAction;
+import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.MessageCreateEvent;
 import io.github.dawncord.api.utils.ActionExecutor;
