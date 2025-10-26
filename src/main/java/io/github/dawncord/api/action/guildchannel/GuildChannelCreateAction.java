@@ -31,6 +31,10 @@ public class GuildChannelCreateAction extends GuildChannelAction {
         super();
     }
 
+    public GuildChannelCreateAction test(){
+        return this;
+    }
+    
     private String getCreatedId() {
         return createdId;
     }

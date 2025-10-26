@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @see AutoModRule
  */
-public class AutoModRuleCreateAction extends AutoModeRuleAction {
+public class AutoModRuleCreateAction extends AutoModRuleAction {
     private String createdId;
     
     /**

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @see AutoModRule
  */
-public class AutoModRuleModifyAction extends AutoModeRuleAction {
+public class AutoModRuleModifyAction extends AutoModRuleAction {
     private final AutoModTriggerType triggerType;
 
     /**

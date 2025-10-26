@@ -9,8 +9,10 @@ import io.github.dawncord.api.action.automoderule.AutoModRuleCreateAction;
 import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
 import io.github.dawncord.api.action.emoji.EmojiCreateAction;
 import io.github.dawncord.api.action.emoji.EmojiModifyAction;
+import io.github.dawncord.api.action.guild.GuildAction;
 import io.github.dawncord.api.action.guild.GuildCreateAction;
 import io.github.dawncord.api.action.guild.GuildModifyAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelAction;
 import io.github.dawncord.api.action.guildchannel.GuildChannelCreateAction;
 import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
@@ -70,6 +72,12 @@ public class ActionExecutor {
         invokeSubmit(action, actionClass);
     }
 
+    private static <T extends Action<?>> String execute(T action, Consumer<T> handler, boolean returnId) {
+        handler.accept(action);
+        invokeSubmit(action, Action.class);
+        return returnId ? invokeGetId(action, action.getClass()) : null;
+    }
+
     /**
      * Creates a guild using the specified handler.
      *
@@ -78,9 +86,7 @@ public class ActionExecutor {
      */
     public static String createGuild(Consumer<GuildCreateAction> handler) {
         GuildCreateAction action = new GuildCreateAction();
-        handler.accept(action);
-        invokeSubmit(action, GuildCreateAction.class);
-        return invokeGetId(action, GuildCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -92,8 +98,7 @@ public class ActionExecutor {
      */
     public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<String> guildFeatures) {
         GuildModifyAction action = new GuildModifyAction(guildId, guildFeatures);
-        handler.accept(action);
-        invokeSubmit(action, GuildModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -105,9 +110,7 @@ public class ActionExecutor {
      */
     public static String createAutoModRule(Consumer<AutoModRuleCreateAction> handler, String guildId) {
         AutoModRuleCreateAction action = new AutoModRuleCreateAction(guildId);
-        handler.accept(action);
-        invokeSubmit(action, AutoModRuleCreateAction.class);
-        return invokeGetId(action, AutoModRuleCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -119,8 +122,7 @@ public class ActionExecutor {
      */
     public static void modifyAutoModRule(Consumer<AutoModRuleModifyAction> handler, String guildId, AutoModTriggerType triggerType) {
         AutoModRuleModifyAction action = new AutoModRuleModifyAction(guildId, triggerType);
-        handler.accept(action);
-        invokeSubmit(action, AutoModRuleModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -131,8 +133,7 @@ public class ActionExecutor {
      */
     public static void modifyChannel(Consumer<GuildChannelModifyAction> handler, GuildChannel channel) {
         GuildChannelModifyAction action = new GuildChannelModifyAction(channel.getType(), channel.getId());
-        handler.accept(action);
-        invokeSubmit(action, GuildChannelModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -144,8 +145,7 @@ public class ActionExecutor {
      */
     public static void modifyChannelPosition(Consumer<GuildChannelPositionModifyAction> handler, String guildId, String channelId) {
         GuildChannelPositionModifyAction action = new GuildChannelPositionModifyAction(guildId, channelId);
-        handler.accept(action);
-        invokeSubmit(action, GuildChannelPositionModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -157,9 +157,7 @@ public class ActionExecutor {
      */
     public static String createEmoji(Consumer<EmojiCreateAction> handler, String guildId) {
         EmojiCreateAction action = new EmojiCreateAction(guildId);
-        handler.accept(action);
-        invokeSubmit(action, EmojiCreateAction.class);
-        return invokeGetId(action, EmojiCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -171,8 +169,7 @@ public class ActionExecutor {
      */
     public static void modifyEmoji(Consumer<EmojiModifyAction> handler, String guildId, String emojiId) {
         EmojiModifyAction action = new EmojiModifyAction(guildId, emojiId);
-        handler.accept(action);
-        invokeSubmit(action, EmojiModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -184,8 +181,7 @@ public class ActionExecutor {
      */
     public static void modifyGuildEvent(Consumer<GuildEventModifyAction> handler, String guildId, String eventId) {
         GuildEventModifyAction action = new GuildEventModifyAction(guildId, eventId);
-        handler.accept(action);
-        invokeSubmit(action, GuildEventModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -197,8 +193,7 @@ public class ActionExecutor {
      */
     public static void modifyGuildMember(Consumer<GuildMemberModifyAction> handler, String guildId, String memberId) {
         GuildMemberModifyAction action = new GuildMemberModifyAction(guildId, memberId);
-        handler.accept(action);
-        invokeSubmit(action, GuildMemberModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -211,9 +206,7 @@ public class ActionExecutor {
      */
     public static String createGuildChannel(Consumer<GuildChannelCreateAction> handler, String guildId, ChannelType type) {
         GuildChannelCreateAction action = new GuildChannelCreateAction(guildId, type);
-        handler.accept(action);
-        invokeSubmit(action, GuildChannelCreateAction.class);
-        return invokeGetId(action, GuildChannelCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -226,9 +219,7 @@ public class ActionExecutor {
      */
     public static String createGuildRole(Consumer<GuildRoleCreateAction> handler, String guildId, boolean hasRoleIcons) {
         GuildRoleCreateAction action = new GuildRoleCreateAction(guildId, hasRoleIcons);
-        handler.accept(action);
-        invokeSubmit(action, GuildRoleCreateAction.class);
-        return invokeGetId(action, GuildRoleCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -241,8 +232,7 @@ public class ActionExecutor {
      */
     public static void modifyGuildRole(Consumer<GuildRoleModifyAction> handler, String guildId, String roleId, boolean hasRoleIcons) {
         GuildRoleModifyAction action = new GuildRoleModifyAction(guildId, roleId, hasRoleIcons);
-        handler.accept(action);
-        invokeSubmit(action, GuildRoleModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -254,9 +244,7 @@ public class ActionExecutor {
      */
     public static String createSticker(Consumer<GuildStickerCreateAction> handler, Guild guild) {
         GuildStickerCreateAction action = new GuildStickerCreateAction(guild);
-        handler.accept(action);
-        invokeSubmit(action, GuildStickerCreateAction.class);
-        return invokeGetId(action, GuildStickerCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -268,8 +256,7 @@ public class ActionExecutor {
      */
     public static void modifyGuildSticker(Consumer<GuildStickerModifyAction> handler, String guildId, String stickerId) {
         GuildStickerModifyAction action = new GuildStickerModifyAction(guildId, stickerId);
-        handler.accept(action);
-        invokeSubmit(action, GuildStickerModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -280,8 +267,7 @@ public class ActionExecutor {
      */
     public static void createChannelInvite(Consumer<InviteCreateAction> handler, GuildChannel channel) {
         InviteCreateAction action = new InviteCreateAction(channel.getId(), channel.getType());
-        handler.accept(action);
-        invokeSubmit(action, InviteCreateAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -293,9 +279,7 @@ public class ActionExecutor {
      */
     public static String createPoll(Consumer<PollCreateAction> handler, String id) {
         PollCreateAction action = new PollCreateAction(id);
-        handler.accept(action);
-        invokeSubmit(action, PollCreateAction.class);
-        return invokeGetId(action, PollCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -372,8 +356,7 @@ public class ActionExecutor {
      */
     public static void replyModal(Consumer<ModalCreateAction> handler, InteractionData data) {
         ModalCreateAction action = new ModalCreateAction(data);
-        handler.accept(action);
-        invokeSubmit(action, ModalCreateAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -406,8 +389,7 @@ public class ActionExecutor {
      */
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message, InteractionData data) {
         MessageModifyAction action = new MessageModifyAction(message, data);
-        handler.accept(action);
-        invokeSubmit(action, MessageModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -418,8 +400,7 @@ public class ActionExecutor {
      */
     public static void modifyMessage(Consumer<MessageModifyAction> handler, Message message) {
         MessageModifyAction action = new MessageModifyAction(message, null);
-        handler.accept(action);
-        invokeSubmit(action, MessageModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -454,9 +435,7 @@ public class ActionExecutor {
      */
     public static String startForumThread(Consumer<ThreadCreateAction> handler, GuildForum forum, String name) {
         ThreadCreateAction action = new ThreadCreateAction(forum, name);
-        handler.accept(action);
-        invokeSubmit(action, ThreadCreateAction.class);
-        return invokeGetId(action, ThreadCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -483,8 +462,7 @@ public class ActionExecutor {
      */
     public static void modifyApplication(Consumer<ApplicationModifyAction> handler) {
         ApplicationModifyAction action = new ApplicationModifyAction();
-        handler.accept(action);
-        invokeSubmit(action, ApplicationModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -496,9 +474,7 @@ public class ActionExecutor {
      */
     public static String createWebhook(Consumer<WebhookCreateAction> handler, String id) {
         WebhookCreateAction action = new WebhookCreateAction(id);
-        handler.accept(action);
-        invokeSubmit(action, WebhookCreateAction.class);
-        return invokeGetId(action, WebhookCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -509,8 +485,7 @@ public class ActionExecutor {
      */
     public static void modifyWebhook(Consumer<WebhookModifyAction> handler, String id) {
         WebhookModifyAction action = new WebhookModifyAction(id);
-        handler.accept(action);
-        invokeSubmit(action, WebhookModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -521,9 +496,7 @@ public class ActionExecutor {
      */
     public static String createStage(Consumer<StageCreateAction> handler) {
         StageCreateAction action = new StageCreateAction();
-        handler.accept(action);
-        invokeSubmit(action, StageCreateAction.class);
-        return invokeGetId(action, StageCreateAction.class);
+        return execute(action, handler, true);
     }
 
     /**
@@ -535,8 +508,7 @@ public class ActionExecutor {
      */
     public static void createSlashCommand(Consumer<SlashCommandCreateAction> handler, String name, String description) {
         SlashCommandCreateAction action = new SlashCommandCreateAction(name, description);
-        handler.accept(action);
-        invokeSubmit(action, SlashCommandCreateAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -547,8 +519,7 @@ public class ActionExecutor {
      */
     public static void modifySlashCommand(Consumer<SlashCommandModifyAction> handler, String id) {
         SlashCommandModifyAction action = new SlashCommandModifyAction(id);
-        handler.accept(action);
-        invokeSubmit(action, SlashCommandModifyAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -561,8 +532,7 @@ public class ActionExecutor {
      */
     public static void createSubCommand(Consumer<SubCommandCreateAction> handler, String name, String description, List<SubCommand> subCommandList) {
         SubCommandCreateAction action = new SubCommandCreateAction(name, description, subCommandList);
-        handler.accept(action);
-        invokeSubmit(action, SubCommandCreateAction.class);
+        execute(action, handler, false);
     }
 
     /**
@@ -575,8 +545,7 @@ public class ActionExecutor {
      */
     public static void createSubCommandGroup(Consumer<SubCommandGroupCreateAction> handler, String name, String description, List<SubCommandGroup> subCommandGroupList) {
         SubCommandGroupCreateAction action = new SubCommandGroupCreateAction(name, description, subCommandGroupList);
-        handler.accept(action);
-        invokeSubmit(action, SubCommandGroupCreateAction.class);
+        execute(action, handler, false);
     }
 
     private static String invokeGetId(Object action, Class<?> clazz) {
