@@ -27,9 +27,11 @@ public class MainListener extends WebSocketAdapter {
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         JsonNode json = mapper.readTree(text);
 
-        System.out.println("MAIN LISTENER");
-        System.out.println(json.toPrettyString());
-
+        if (Constants.DEV_LOGGING) {
+            System.out.println("MAIN LISTENER");
+            System.out.println(json.toPrettyString());
+        }
+        
         int op = json.get("op").asInt();
         if (op == 10) {
             sendInterval(websocket, json);

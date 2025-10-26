@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -42,7 +43,7 @@ public interface Icon {
 
     private void downloadImage(ImageFormat format, String name) {
         try {
-            URL url = new URL(getUrl(format));
+            URL url = URI.create(getUrl(format)).toURL();
             InputStream is = url.openStream();
             OutputStream os = new FileOutputStream(name + format.getExtension());
 

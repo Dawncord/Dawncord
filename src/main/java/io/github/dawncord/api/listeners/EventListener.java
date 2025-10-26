@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import io.github.dawncord.api.Constants;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.activity.Activity;
@@ -54,8 +55,10 @@ public class EventListener extends WebSocketAdapter {
         JsonNode json = mapper.readTree(text);
         int op = json.get("op").asInt();
 
-        System.out.println("EVENT LISTENER");
-        System.out.println(json.toPrettyString());
+        if (Constants.DEV_LOGGING) {
+            System.out.println("EVENT LISTENER");
+            System.out.println(json.toPrettyString());
+        }
         
         if (op == 0) {
             JsonNode data = json.get("d");

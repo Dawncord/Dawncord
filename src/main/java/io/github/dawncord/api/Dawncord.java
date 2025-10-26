@@ -75,8 +75,12 @@ public class Dawncord {
 
     private void getGateway() {
         JsonNode data = JsonUtils.fetch("/gateway/bot");
-        System.out.println("GET GATEWAY");
-        System.out.println(data.toPrettyString());
+        
+        if (Constants.DEV_LOGGING) {
+            System.out.println("GET GATEWAY");
+            System.out.println(data.toPrettyString());
+        }
+        
         Constants.GATEWAY = data.get("url").asText();
         Constants.SHARDS = data.get("shards").asInt();
     }
@@ -776,5 +780,13 @@ public class Dawncord {
             choicesJson.add(choiceJson);
         }
         return choicesJson;
+    }
+
+    public void enableDevLogging() {
+        Constants.DEV_LOGGING = true;
+    }
+
+    public void disableDevLogging() {
+        Constants.DEV_LOGGING = false;
     }
 }
