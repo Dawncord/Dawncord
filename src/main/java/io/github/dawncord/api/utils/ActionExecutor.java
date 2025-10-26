@@ -130,7 +130,7 @@ public class ActionExecutor {
      * @param channel The guild channel to modify.
      */
     public static void modifyChannel(Consumer<GuildChannelModifyAction> handler, GuildChannel channel) {
-        GuildChannelModifyAction action = new GuildChannelModifyAction(channel);
+        GuildChannelModifyAction action = new GuildChannelModifyAction(channel.getType(), channel.getId());
         handler.accept(action);
         invokeSubmit(action, GuildChannelModifyAction.class);
     }
@@ -329,9 +329,7 @@ public class ActionExecutor {
      * @param message The message to be edited.
      */
     public static void deferEdit(Consumer<MessageModifyAction> handler, InteractionData data, Message message) {
-        MessageModifyAction action = new MessageModifyAction(message, null);
-        handler.accept(action);
-        invokeSubmit(action, MessageModifyAction.class);
+        modifyMessage(handler, message);
 
         ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
         jsonObject.put("type", InteractionCallbackType.UPDATE_MESSAGE.getValue());
@@ -396,9 +394,7 @@ public class ActionExecutor {
                 action.setElements(modal.getElements().toArray(new Element[0]));
             }
         };
-        ModalCreateAction action = new ModalCreateAction(data);
-        handler.accept(action);
-        invokeSubmit(action, ModalCreateAction.class);
+        replyModal(handler, data);
     }
 
     /**
