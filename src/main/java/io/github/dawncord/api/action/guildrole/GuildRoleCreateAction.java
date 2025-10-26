@@ -16,8 +16,6 @@ import java.util.List;
  * @see GuildRole
  */
 public class GuildRoleCreateAction extends GuildRoleAction {
-    private String createdId;
-
     /**
      * Create a new {@link GuildRoleCreateAction}
      *
@@ -27,11 +25,7 @@ public class GuildRoleCreateAction extends GuildRoleAction {
     public GuildRoleCreateAction(String guildId, boolean hasRoleIcons) {
         super(guildId, hasRoleIcons);
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     private JsonNode getJsonObject() {
         return jsonObject;
     }

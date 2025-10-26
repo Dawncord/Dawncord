@@ -12,8 +12,6 @@ import io.github.dawncord.api.types.*;
  * @see GuildChannel
  */
 public class GuildChannelCreateAction extends GuildChannelAction {
-    private String createdId;
-
     /**
      * Create a new {@link GuildChannelCreateAction}
      *
@@ -35,10 +33,6 @@ public class GuildChannelCreateAction extends GuildChannelAction {
         return this;
     }
     
-    private String getCreatedId() {
-        return createdId;
-    }
-
     private JsonNode getJsonObject() {
         return jsonObject;
     }

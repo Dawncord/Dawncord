@@ -18,7 +18,6 @@ import io.github.dawncord.api.entities.message.poll.Poll;
  */
 public class PollCreateAction extends Action<PollCreateAction> {
     private final String channelId;
-    private String createdId;
 
     /**
      * Create a new {@link PollCreateAction}
@@ -92,11 +91,7 @@ public class PollCreateAction extends Action<PollCreateAction> {
     public PollCreateAction setAllowMultiselect(boolean allowMultiselect) {
         return setProperty("allow_multiselect", allowMultiselect);
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     @Override
     protected void submit() {
         if (hasChanges) {

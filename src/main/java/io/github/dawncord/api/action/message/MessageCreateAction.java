@@ -29,7 +29,6 @@ import java.util.List;
 public class MessageCreateAction extends MessageAction {
     private final String channelId;
     private int flags;
-    private String createdId;
 
     /**
      * Create a new {@link MessageCreateAction}
@@ -315,11 +314,7 @@ public class MessageCreateAction extends MessageAction {
             createdId = jsonNode.get("id").asText();
         }
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     @Override
     protected void submit() {
         if (hasChanges) {

@@ -75,7 +75,11 @@ public class ActionExecutor {
     private static <T extends Action<?>> String execute(T action, Consumer<T> handler, boolean returnId) {
         handler.accept(action);
         invokeSubmit(action, Action.class);
-        return returnId ? invokeGetId(action, action.getClass()) : null;
+        try {
+            return returnId ? invokeGetId(action, action.getClass()) : null;
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -302,7 +306,11 @@ public class ActionExecutor {
             handler.accept(action);
         }
         invokeSubmit(action, MessageCreateAction.class);
-        return invokeGetId(action, MessageCreateAction.class);
+        try {
+            return invokeGetId(action, MessageCreateAction.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -422,7 +430,11 @@ public class ActionExecutor {
             handler.accept(action);
         }
         invokeSubmit(action, ThreadCreateAction.class);
-        return invokeGetId(action, ThreadCreateAction.class);
+        try {
+            return invokeGetId(action, ThreadCreateAction.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -452,7 +464,11 @@ public class ActionExecutor {
             handler.accept(action);
         }
         invokeSubmit(action, ThreadCreateAction.class);
-        return invokeGetId(action, ThreadCreateAction.class);
+        try {
+            return invokeGetId(action, ThreadCreateAction.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -547,15 +563,21 @@ public class ActionExecutor {
         SubCommandGroupCreateAction action = new SubCommandGroupCreateAction(name, description, subCommandGroupList);
         execute(action, handler, false);
     }
-
-    private static String invokeGetId(Object action, Class<?> clazz) {
-        try {
-            Method method = clazz.getDeclaredMethod("getCreatedId");
-            method.setAccessible(true);
-            return (String) method.invoke(action);
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+    
+    private static String invokeGetId(Object action, Class<?> clazz) throws NoSuchMethodException {
+        while (clazz != null) {
+            try {
+                Method method = clazz.getDeclaredMethod("getCreatedId");
+                method.setAccessible(true);
+                return (String) method.invoke(action);
+            } catch(NoSuchMethodException e) {
+                clazz = clazz.getSuperclass();
+            }
+            catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
+        throw new NoSuchMethodException("Method getCreatedId was not found");
     }
 
     private static void invokeSubmit(Object action, Class<?> clazz) {

@@ -12,8 +12,6 @@ import io.github.dawncord.api.utils.IOUtils;
  * @see Emoji
  */
 public class EmojiCreateAction extends EmojiAction {
-    private String createdId;
-
     /**
      * Create a new {@link EmojiCreateAction}
      *
@@ -32,11 +30,7 @@ public class EmojiCreateAction extends EmojiAction {
     public EmojiCreateAction setImage(String path) {
         return (EmojiCreateAction) setProperty("image", IOUtils.setImageData(path));
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     @Override
     protected void submit() {
         if (hasChanges) {

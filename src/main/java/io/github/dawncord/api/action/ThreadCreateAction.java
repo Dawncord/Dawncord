@@ -25,7 +25,6 @@ import java.util.Arrays;
 public class ThreadCreateAction extends Action<ThreadCreateAction> {
     private Channel channel;
     private Message message;
-    private String createdId;
 
     /**
      * Create a new {@link ThreadCreateAction}
@@ -146,11 +145,7 @@ public class ThreadCreateAction extends Action<ThreadCreateAction> {
         }
         return this;
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     @Override
     protected void submit() {
         if (!hasChanges) return;

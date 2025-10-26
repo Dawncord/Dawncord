@@ -12,7 +12,6 @@ import io.github.dawncord.api.entities.Webhook;
  */
 public class WebhookCreateAction extends WebhookAction {
     private final String channelId;
-    private String createdId;
 
     /**
      * Create a new {@link WebhookCreateAction}
@@ -22,10 +21,6 @@ public class WebhookCreateAction extends WebhookAction {
     public WebhookCreateAction(String channelId) {
         super();
         this.channelId = channelId;
-    }
-
-    private String getCreatedId() {
-        return createdId;
     }
 
     @Override

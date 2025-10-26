@@ -14,8 +14,6 @@ import io.github.dawncord.api.types.StagePrivacyLevel;
  * @see Stage
  */
 public class StageCreateAction extends Action<StageCreateAction> {
-    private String createdId;
-
     /**
      * Create a new {@link StageCreateAction}
      */
@@ -56,10 +54,6 @@ public class StageCreateAction extends Action<StageCreateAction> {
      */
     public StageCreateAction setGuildEventId(String guildEventId) {
         return setProperty("guild_scheduled_event_id", guildEventId);
-    }
-
-    private String getCreatedId() {
-        return createdId;
     }
 
     @Override

@@ -20,8 +20,6 @@ import java.util.Map;
  * @see AutoModRule
  */
 public class AutoModRuleCreateAction extends AutoModRuleAction {
-    private String createdId;
-    
     /**
      * Create a new {@link AutoModRuleCreateAction}
      *
@@ -98,10 +96,6 @@ public class AutoModRuleCreateAction extends AutoModRuleAction {
         return this;
     }
     
-    private String getCreatedId() {
-        return createdId;
-    }
-
     @Override
     protected void submit() {
         if (!hasChanges) {

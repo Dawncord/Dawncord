@@ -21,7 +21,6 @@ import java.util.List;
 public class GuildStickerCreateAction extends GuildStickerAction {
     private final Guild guild;
     private File file;
-    private String createdId;
 
     /**
      * Create a new {@link GuildStickerCreateAction}
@@ -53,11 +52,7 @@ public class GuildStickerCreateAction extends GuildStickerAction {
         }
         return this;
     }
-
-    private String getCreatedId() {
-        return createdId;
-    }
-
+    
     @Override
     protected void submit() {
         if (hasChanges) {
