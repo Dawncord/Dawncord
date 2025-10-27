@@ -16,6 +16,15 @@ public abstract class CommandAction extends Action<CommandAction> {
     protected final Map<Locale, String> localizedDescriptionList = new EnumMap<>(Locale.class);
     protected List<SubCommand> subCommandList = new ArrayList<>();
 
+    //todo
+    // rewrite classes
+    // - sub command groups will be in SlashCommandAction
+    // - SubCommandCreateAction will extends SubCommandable
+    // - SlashCommandAction will extend Optionable 
+    // - Optionable will extend SubCommandable
+    // - command creation will be like
+    // - command.addSubCommand()[in SlashCommandAction].newSubCommand()[in SubCommandCreateAction]...
+    
     protected CommandAction(String name, String description) {
         super();
         this.jsonObject.put("name", name);
@@ -24,6 +33,14 @@ public abstract class CommandAction extends Action<CommandAction> {
 
     public CommandAction() {
         super();
+    }
+    
+    public List<Option> getOptionList() {
+        return optionList;
+    }
+    
+    public List<SubCommand> getSubCommandList() {
+        return subCommandList;
     }
 
     /**
