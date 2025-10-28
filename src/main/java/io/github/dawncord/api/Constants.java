@@ -62,6 +62,6 @@ public class Constants {
     public static int SHARDS = 0;
 
     public static int LAST_SEQUENCE = 0;
-    
+
     public static boolean DEV_LOGGING = false;
 }

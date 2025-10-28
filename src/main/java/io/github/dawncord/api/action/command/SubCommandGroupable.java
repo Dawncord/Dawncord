@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 public interface SubCommandGroupable<T> {
     List<SubCommandGroup> getSubCommandGroupList();
+
     T getSelf();
 
     /**

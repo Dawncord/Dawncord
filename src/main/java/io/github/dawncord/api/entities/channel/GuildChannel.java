@@ -1,8 +1,8 @@
 package io.github.dawncord.api.entities.channel;
 
-import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.GuildChannelPositionModifyAction;
 import io.github.dawncord.api.action.InviteCreateAction;
+import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.webhook.WebhookCreateAction;
 import io.github.dawncord.api.entities.PermissionOverride;
 import io.github.dawncord.api.entities.Webhook;

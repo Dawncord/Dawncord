@@ -59,7 +59,7 @@ public class EventListener extends WebSocketAdapter {
             System.out.println("EVENT LISTENER");
             System.out.println(json.toPrettyString());
         }
-        
+
         if (op == 0) {
             JsonNode data = json.get("d");
             GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());

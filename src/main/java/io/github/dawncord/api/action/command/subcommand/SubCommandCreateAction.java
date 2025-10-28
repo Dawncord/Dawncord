@@ -3,11 +3,8 @@ package io.github.dawncord.api.action.command.subcommand;
 import io.github.dawncord.api.action.command.CommandAction;
 import io.github.dawncord.api.action.command.Optionable;
 import io.github.dawncord.api.command.SubCommand;
-import io.github.dawncord.api.command.option.Option;
-import io.github.dawncord.api.types.OptionType;
 import io.github.dawncord.api.utils.SlashCommandUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

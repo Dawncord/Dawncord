@@ -1,7 +1,6 @@
 package io.github.dawncord.api.action.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
@@ -17,8 +16,6 @@ import io.github.dawncord.api.types.MessageFlag;
 import io.github.dawncord.api.utils.*;
 import okhttp3.MultipartBody;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +71,7 @@ public class MessageCreateAction extends MessageAction {
         super(interactionData);
         this.channelId = null;
     }
-    
+
     private void setReplyProperty(String key, Object value) {
         if (jsonObject.has("data")) {
             ((ObjectNode) jsonObject.get("data")).set(key, mapper.valueToTree(value));
@@ -314,7 +311,7 @@ public class MessageCreateAction extends MessageAction {
             createdId = jsonNode.get("id").asText();
         }
     }
-    
+
     @Override
     protected void submit() {
         if (hasChanges) {

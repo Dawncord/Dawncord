@@ -21,7 +21,7 @@ public class WebhookModifyAction extends WebhookAction {
         super();
         this.webhookId = webhookId;
     }
-    
+
     /**
      * Sets the channel ID for the webhook.
      *

@@ -7,12 +7,14 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.*;
 import io.github.dawncord.api.action.automoderule.AutoModRuleCreateAction;
 import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandCreateAction;
+import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
+import io.github.dawncord.api.action.command.subcommand.SubCommandCreateAction;
+import io.github.dawncord.api.action.command.subcommand.SubCommandGroupCreateAction;
 import io.github.dawncord.api.action.emoji.EmojiCreateAction;
 import io.github.dawncord.api.action.emoji.EmojiModifyAction;
-import io.github.dawncord.api.action.guild.GuildAction;
 import io.github.dawncord.api.action.guild.GuildCreateAction;
 import io.github.dawncord.api.action.guild.GuildModifyAction;
-import io.github.dawncord.api.action.guildchannel.GuildChannelAction;
 import io.github.dawncord.api.action.guildchannel.GuildChannelCreateAction;
 import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
@@ -21,10 +23,6 @@ import io.github.dawncord.api.action.guildsticker.GuildStickerCreateAction;
 import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
-import io.github.dawncord.api.action.command.slashcommand.SlashCommandCreateAction;
-import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
-import io.github.dawncord.api.action.command.subcommand.SubCommandCreateAction;
-import io.github.dawncord.api.action.command.subcommand.SubCommandGroupCreateAction;
 import io.github.dawncord.api.action.webhook.WebhookCreateAction;
 import io.github.dawncord.api.action.webhook.WebhookModifyAction;
 import io.github.dawncord.api.command.SubCommand;
@@ -563,17 +561,16 @@ public class ActionExecutor {
         SubCommandGroupCreateAction action = new SubCommandGroupCreateAction(name, description, subCommandGroupList);
         execute(action, handler, false);
     }
-    
+
     private static String invokeGetId(Object action, Class<?> clazz) throws NoSuchMethodException {
         while (clazz != null) {
             try {
                 Method method = clazz.getDeclaredMethod("getCreatedId");
                 method.setAccessible(true);
                 return (String) method.invoke(action);
-            } catch(NoSuchMethodException e) {
+            } catch (NoSuchMethodException e) {
                 clazz = clazz.getSuperclass();
-            }
-            catch (InvocationTargetException | IllegalAccessException e) {
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }

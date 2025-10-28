@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.channel.GuildChannel;
-import io.github.dawncord.api.types.*;
+import io.github.dawncord.api.types.ChannelType;
 
 /**
  * Represents an action for creating a guild channel.
@@ -29,10 +29,10 @@ public class GuildChannelCreateAction extends GuildChannelAction {
         super();
     }
 
-    public GuildChannelCreateAction test(){
+    public GuildChannelCreateAction test() {
         return this;
     }
-    
+
     private JsonNode getJsonObject() {
         return jsonObject;
     }

@@ -1,7 +1,6 @@
 package io.github.dawncord.api.action;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
@@ -91,7 +90,7 @@ public class PollCreateAction extends Action<PollCreateAction> {
     public PollCreateAction setAllowMultiselect(boolean allowMultiselect) {
         return setProperty("allow_multiselect", allowMultiselect);
     }
-    
+
     @Override
     protected void submit() {
         if (hasChanges) {

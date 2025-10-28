@@ -30,7 +30,7 @@ public class EmojiCreateAction extends EmojiAction {
     public EmojiCreateAction setImage(String path) {
         return (EmojiCreateAction) setProperty("image", IOUtils.setImageData(path));
     }
-    
+
     @Override
     protected void submit() {
         if (hasChanges) {

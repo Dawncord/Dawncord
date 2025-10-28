@@ -1,12 +1,10 @@
 package io.github.dawncord.api.action.emoji;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.action.Action;
 
 public abstract class EmojiAction extends Action<EmojiAction> {
     protected final String guildId;
-    
+
     protected EmojiAction(String guildId) {
         super();
         this.guildId = guildId;

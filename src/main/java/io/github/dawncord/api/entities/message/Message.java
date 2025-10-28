@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.message;
 
-import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
+import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.application.Application;

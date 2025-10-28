@@ -95,7 +95,7 @@ public class AutoModRuleCreateAction extends AutoModRuleAction {
         );
         return this;
     }
-    
+
     @Override
     protected void submit() {
         if (!hasChanges) {

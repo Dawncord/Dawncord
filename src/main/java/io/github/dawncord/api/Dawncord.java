@@ -8,11 +8,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import io.github.dawncord.api.action.guild.GuildAction;
-import io.github.dawncord.api.action.guild.GuildCreateAction;
 import io.github.dawncord.api.action.command.slashcommand.SlashCommandCreateAction;
 import io.github.dawncord.api.action.command.slashcommand.SlashCommandModifyAction;
-import io.github.dawncord.api.command.Command;
+import io.github.dawncord.api.action.guild.GuildCreateAction;
+import io.github.dawncord.api.command.ICommand;
 import io.github.dawncord.api.command.SlashCommand;
 import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
@@ -76,12 +75,12 @@ public class Dawncord {
 
     private void getGateway() {
         JsonNode data = JsonUtils.fetch("/gateway/bot");
-        
+
         if (Constants.DEV_LOGGING) {
             System.out.println("GET GATEWAY");
             System.out.println(data.toPrettyString());
         }
-        
+
         Constants.GATEWAY = data.get("url").asText();
         Constants.SHARDS = data.get("shards").asInt();
     }
@@ -665,7 +664,7 @@ public class Dawncord {
         }
     }
 
-    private void setLocalizations(Command command, ObjectNode node) {
+    private void setLocalizations(ICommand command, ObjectNode node) {
         Map<Locale, String> nameLocalizations = command.getNameLocalizations();
         if (nameLocalizations != null && !nameLocalizations.isEmpty()) {
             ObjectNode nameLocalizationsJson = mapper.createObjectNode();

@@ -24,7 +24,7 @@ public abstract class CommandAction extends Action<CommandAction> {
     // - Optionable will extend SubCommandable
     // - command creation will be like
     // - command.addSubCommand()[in SlashCommandAction].newSubCommand()[in SubCommandCreateAction]...
-    
+
     protected CommandAction(String name, String description) {
         super();
         this.jsonObject.put("name", name);
@@ -34,11 +34,11 @@ public abstract class CommandAction extends Action<CommandAction> {
     public CommandAction() {
         super();
     }
-    
+
     public List<Option> getOptionList() {
         return optionList;
     }
-    
+
     public List<SubCommand> getSubCommandList() {
         return subCommandList;
     }

@@ -1,17 +1,14 @@
-package io.github.dawncord.api.command;
+package io.github.dawncord.api.command.builder;
 
 import io.github.dawncord.api.command.option.Option;
 import io.github.dawncord.api.types.OptionType;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * A builder interface for constructing option-based commands.
- * Implementations of this interface facilitate the creation of commands with various options.
- *
- * @see CommandBuilder
- */
-public interface OptionCommandBuilder extends CommandBuilder {
+public interface IOptionCommandBuilder<T> {
+    List<Option> getOptionList();
 
     /**
      * Adds an option to the command with the specified type, name, and description.
@@ -21,7 +18,10 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param description The description of the option.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOption(OptionType type, String name, String description);
+    default T addOption(OptionType type, String name, String description) {
+        getOptionList().add(new Option(type, name, description));
+        return (T) this;
+    }
 
     /**
      * Adds an option to the command with the specified type, name, description, and requirement status.
@@ -32,7 +32,10 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param isRequired  Whether the option is required.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOption(OptionType type, String name, String description, boolean isRequired);
+    default T addOption(OptionType type, String name, String description, boolean isRequired) {
+        getOptionList().add(new Option(type, name, description, isRequired));
+        return (T) this;
+    }
 
     /**
      * Adds an option to the command with the specified type, name, description, requirement status, and autocomplete status.
@@ -44,7 +47,10 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param isAutocomplete Whether the option supports autocomplete.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOption(OptionType type, String name, String description, boolean isRequired, boolean isAutocomplete);
+    default T addOption(OptionType type, String name, String description, boolean isRequired, boolean isAutocomplete) {
+        getOptionList().add(new Option(type, name, description, isRequired, isAutocomplete));
+        return (T) this;
+    }
 
     /**
      * Adds the provided option to the command.
@@ -52,7 +58,10 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param option The option to add.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOption(Option option);
+    default T addOption(Option option) {
+        getOptionList().add(option);
+        return (T) this;
+    }
 
     /**
      * Adds multiple options to the command.
@@ -60,7 +69,10 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param options The options to add.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOptions(Option... options);
+    default T addOptions(Option... options) {
+        Collections.addAll(getOptionList(), options);
+        return (T) this;
+    }
 
     /**
      * Adds a collection of options to the command.
@@ -68,5 +80,8 @@ public interface OptionCommandBuilder extends CommandBuilder {
      * @param options The collection of options to add.
      * @return This OptionCommandBuilder instance for method chaining.
      */
-    OptionCommandBuilder addOptions(Collection<Option> options);
+    default T addOptions(Collection<Option> options) {
+        getOptionList().addAll(options);
+        return (T) this;
+    }
 }

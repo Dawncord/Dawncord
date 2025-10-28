@@ -8,7 +8,8 @@ import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
-import io.github.dawncord.api.types.*;
+import io.github.dawncord.api.types.GuildFeature;
+import io.github.dawncord.api.types.Locale;
 import io.github.dawncord.api.utils.IOUtils;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class GuildModifyAction extends GuildAction {
         setProperty("afk_channel_id", channel.getId());
         return this;
     }
-    
+
     /**
      * Sets the system channel for the guild.
      *

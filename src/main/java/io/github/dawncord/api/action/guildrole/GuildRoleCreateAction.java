@@ -4,11 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
-import io.github.dawncord.api.types.PermissionType;
-import io.github.dawncord.api.utils.IOUtils;
-
-import java.awt.*;
-import java.util.List;
 
 /**
  * Represents an action for creating a guild role.
@@ -19,17 +14,17 @@ public class GuildRoleCreateAction extends GuildRoleAction {
     /**
      * Create a new {@link GuildRoleCreateAction}
      *
-     * @param guildId   The ID of the guild in which the role is being created.
+     * @param guildId      The ID of the guild in which the role is being created.
      * @param hasRoleIcons A boolean flag indicating whether role icons are enabled.
      */
     public GuildRoleCreateAction(String guildId, boolean hasRoleIcons) {
         super(guildId, hasRoleIcons);
     }
-    
+
     private JsonNode getJsonObject() {
         return jsonObject;
     }
-    
+
     @Override
     protected void submit() {
         if (hasChanges) {

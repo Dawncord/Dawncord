@@ -31,7 +31,7 @@ public class MainListener extends WebSocketAdapter {
             System.out.println("MAIN LISTENER");
             System.out.println(json.toPrettyString());
         }
-        
+
         int op = json.get("op").asInt();
         if (op == 10) {
             sendInterval(websocket, json);

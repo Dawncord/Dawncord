@@ -2,7 +2,6 @@ package io.github.dawncord.api.action;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.dawncord.api.action.guildsticker.GuildStickerAction;
 
 
 public abstract class Action<T> {
@@ -21,7 +20,7 @@ public abstract class Action<T> {
         hasChanges = true;
         return (T) this;
     }
-    
+
     protected String getCreatedId() {
         return createdId;
     }

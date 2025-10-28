@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface Optionable<T> {
     List<Option> getOptionList();
+
     T getSelf();
+
     void setHasChanges(boolean hasChanges);
 
     /**

@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 public interface SubCommandable<T> {
     List<SubCommand> getSubCommandList();
+
     T getSelf();
 
     /**

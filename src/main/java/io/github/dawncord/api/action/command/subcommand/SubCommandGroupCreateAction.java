@@ -2,14 +2,10 @@ package io.github.dawncord.api.action.command.subcommand;
 
 import io.github.dawncord.api.action.command.CommandAction;
 import io.github.dawncord.api.action.command.SubCommandable;
-import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
-import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.SlashCommandUtils;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Represents an action for creating a subcommand group.
@@ -18,7 +14,7 @@ import java.util.function.Consumer;
  */
 public class SubCommandGroupCreateAction extends CommandAction implements SubCommandable<SubCommandGroupCreateAction> {
     private final List<SubCommandGroup> subCommandGroupList;
-    
+
     /**
      * Create a new {@link SubCommandGroupCreateAction}
      *

@@ -8,7 +8,8 @@ import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
-import io.github.dawncord.api.types.*;
+import io.github.dawncord.api.types.ChannelFlag;
+import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.utils.JsonUtils;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class GuildChannelModifyAction extends GuildChannelAction {
      * Create a new {@link GuildChannelModifyAction}
      *
      * @param channelType The type of the guild channel
-     * @param channelId The ID of the guild channel
+     * @param channelId   The ID of the guild channel
      */
     public GuildChannelModifyAction(ChannelType channelType, String channelId) {
         super(null, channelType);

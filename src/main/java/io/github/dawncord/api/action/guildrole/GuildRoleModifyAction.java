@@ -1,15 +1,8 @@
 package io.github.dawncord.api.action.guildrole;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
-import io.github.dawncord.api.types.PermissionType;
-import io.github.dawncord.api.utils.IOUtils;
-
-import java.awt.*;
-import java.util.List;
 
 /**
  * Represents an action for updating a guild role.

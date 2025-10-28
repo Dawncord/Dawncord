@@ -1,7 +1,5 @@
 package io.github.dawncord.api.action.guildsticker;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.message.sticker.Sticker;

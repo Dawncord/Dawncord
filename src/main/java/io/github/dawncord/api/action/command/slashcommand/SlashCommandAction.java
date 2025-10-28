@@ -1,28 +1,23 @@
 package io.github.dawncord.api.action.command.slashcommand;
 
-import io.github.dawncord.api.action.Action;
-import io.github.dawncord.api.action.command.*;
-import io.github.dawncord.api.action.command.subcommand.SubCommandCreateAction;
-import io.github.dawncord.api.action.command.subcommand.SubCommandGroupCreateAction;
-import io.github.dawncord.api.command.SubCommand;
+import io.github.dawncord.api.action.command.CommandAction;
+import io.github.dawncord.api.action.command.Optionable;
+import io.github.dawncord.api.action.command.SubCommandGroupable;
+import io.github.dawncord.api.action.command.SubCommandable;
 import io.github.dawncord.api.command.SubCommandGroup;
-import io.github.dawncord.api.command.option.Option;
-import io.github.dawncord.api.types.Locale;
-import io.github.dawncord.api.types.OptionType;
-import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.SlashCommandUtils;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class SlashCommandAction extends CommandAction 
+public abstract class SlashCommandAction extends CommandAction
         implements Optionable<SlashCommandAction>, SubCommandable<SlashCommandAction>, SubCommandGroupable<SlashCommandAction> {
     protected final List<SubCommandGroup> subCommandGroupList = new ArrayList<>();
 
     protected SlashCommandAction(String name, String description) {
         super(name, description);
     }
-    
+
     protected SlashCommandAction() {
         super();
     }
@@ -45,7 +40,7 @@ public abstract class SlashCommandAction extends CommandAction
     @Override
     protected void submit() {
         if (!hasChanges) return;
-        
+
         SlashCommandUtils.createDefaults(jsonObject, localizedNameList, localizedDescriptionList, optionList);
         if (optionList.isEmpty()) {
             if (!subCommandList.isEmpty()) {

@@ -1,13 +1,10 @@
 package io.github.dawncord.api.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.types.Locale;
 import io.github.dawncord.api.types.OptionType;
-import io.github.dawncord.api.utils.SlashCommandUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a sub-command group.
@@ -15,13 +12,9 @@ import java.util.Map;
  *
  * @see SubCommand
  */
-public class SubCommandGroup implements Command {
+public class SubCommandGroup extends Command {
     private final JsonNode subCommandGroup;
-    private String name;
-    private String description;
     private List<SubCommand> subCommandList;
-    private Map<Locale, String> nameLocalizations;
-    private Map<Locale, String> descriptionLocalizations;
 
     /**
      * Constructs a new SubCommandGroup instance with the provided JSON node.
@@ -30,6 +23,7 @@ public class SubCommandGroup implements Command {
      */
     public SubCommandGroup(JsonNode subCommandGroup) {
         this.subCommandGroup = subCommandGroup;
+        super(subCommandGroup);
     }
 
     /**
@@ -39,38 +33,6 @@ public class SubCommandGroup implements Command {
      */
     public OptionType getType() {
         return OptionType.SUB_COMMAND_GROUP;
-    }
-
-    @Override
-    public String getName() {
-        if (name == null) {
-            name = subCommandGroup.get("name").asText();
-        }
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        if (description == null) {
-            description = subCommandGroup.get("description").asText();
-        }
-        return description;
-    }
-
-    @Override
-    public Map<Locale, String> getNameLocalizations() {
-        if (nameLocalizations == null) {
-            nameLocalizations = SlashCommandUtils.getLocaleStringMap(subCommandGroup, "name_localizations");
-        }
-        return nameLocalizations;
-    }
-
-    @Override
-    public Map<Locale, String> getDescriptionLocalizations() {
-        if (descriptionLocalizations == null) {
-            descriptionLocalizations = SlashCommandUtils.getLocaleStringMap(subCommandGroup, "description_localizations");
-        }
-        return descriptionLocalizations;
     }
 
     /**
