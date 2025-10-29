@@ -1,13 +1,14 @@
 package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents a button associated with an activity.
  * ActivityButton is a class providing methods to access properties of activity buttons.
  */
 public class ActivityButton {
-    private final JsonNode buttons;
+    private final LazyLoader loader;
     private String label;
     private String url;
 
@@ -17,7 +18,7 @@ public class ActivityButton {
      * @param buttons The JSON node containing button information.
      */
     public ActivityButton(JsonNode buttons) {
-        this.buttons = buttons;
+        loader = new LazyLoader(buttons);
     }
 
     /**
@@ -26,9 +27,7 @@ public class ActivityButton {
      * @return The label of the activity button.
      */
     public String getLabel() {
-        if (label == null) {
-            label = buttons.get("label").asText();
-        }
+        label = loader.loadStringIfNull(label, "label");
         return label;
     }
 
@@ -38,9 +37,7 @@ public class ActivityButton {
      * @return The URL of the activity button.
      */
     public String getUrl() {
-        if (url == null) {
-            url = buttons.get("url").asText();
-        }
+        url = loader.loadStringIfNull(url, "url");
         return url;
     }
 }

@@ -1,13 +1,15 @@
 package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.entities.ISnowflake;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents an emoji associated with an activity.
  * ActivityEmoji is a class providing methods to access properties of activity emojis.
  */
-public class ActivityEmoji {
-    private final JsonNode emoji;
+public class ActivityEmoji implements ISnowflake {
+    private final LazyLoader loader;
     private String id;
     private String name;
     private Boolean isAnimated;
@@ -18,7 +20,7 @@ public class ActivityEmoji {
      * @param emoji The JSON node containing emoji information.
      */
     public ActivityEmoji(JsonNode emoji) {
-        this.emoji = emoji;
+        loader = new LazyLoader(emoji);
     }
 
     /**
@@ -26,11 +28,15 @@ public class ActivityEmoji {
      *
      * @return The ID of the activity emoji.
      */
+    @Override
     public String getId() {
-        if (id == null) {
-            id = emoji.get("id").asText();
-        }
+        id = loader.loadStringIfExistsAndNull(id, "id");
         return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
     }
 
     /**
@@ -39,9 +45,7 @@ public class ActivityEmoji {
      * @return The name of the activity emoji.
      */
     public String getName() {
-        if (name == null) {
-            name = emoji.get("name").asText();
-        }
+        name = loader.loadStringIfNull(name, "name");
         return name;
     }
 
@@ -51,9 +55,7 @@ public class ActivityEmoji {
      * @return True if the activity emoji is animated, false otherwise.
      */
     public boolean isAnimated() {
-        if (isAnimated == null) {
-            isAnimated = emoji.get("animated").asBoolean();
-        }
+        isAnimated = loader.loadBooleanIfExistsNull(isAnimated, "animated");
         return isAnimated;
     }
 }

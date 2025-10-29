@@ -733,7 +733,7 @@ public class Routes {
          * @return The route to retrieve the image associated with the activity.
          */
         public static String ActivityImage(String applicationId, String imageId, String format) {
-            return Constants.CDN_URL + "/app-assets/" + applicationId + "/" + imageId + "." + format;
+            return Constants.CDN_URL + "/app-assets/" + applicationId + "/" + imageId + format;
         }
 
         /**

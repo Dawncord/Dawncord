@@ -8,7 +8,6 @@ import io.github.dawncord.api.Constants;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.activity.Activity;
-import io.github.dawncord.api.entities.activity.ActivityImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.application.ApplicationImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
@@ -318,7 +317,7 @@ public class EventListener extends WebSocketAdapter {
             OnlineStatus status = EnumUtils.getEnumObject(data, "status", OnlineStatus.class);
             ClientStatus clientStatus = new ClientStatus(data.path("client_status"));
             List<Activity> activities = new ArrayList<>();
-            data.path("activities").forEach(node -> activities.add(new ActivityImpl(node)));
+            data.path("activities").forEach(node -> activities.add(new Activity(node)));
 
             PresenceEvent presenceEvent = new PresenceEvent(guild, member, status, clientStatus, activities);
             invokeSingleProcessEvent("processPresenceEvent", presenceEvent, PresenceEvent.class);

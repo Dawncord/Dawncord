@@ -1,13 +1,14 @@
 package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents a party associated with an activity.
  * ActivityParty is a class providing methods to access properties of activity parties.
  */
 public class ActivityParty {
-    private final JsonNode party;
+    private final LazyLoader loader;
     private String id;
     private Integer currentSize;
     private Integer maxSize;
@@ -18,7 +19,7 @@ public class ActivityParty {
      * @param party The JSON node containing party information.
      */
     public ActivityParty(JsonNode party) {
-        this.party = party;
+        loader = new LazyLoader(party);
     }
 
     /**
@@ -27,9 +28,7 @@ public class ActivityParty {
      * @return The ID of the activity party.
      */
     public String getId() {
-        if (id == null) {
-            id = party.get("id").asText();
-        }
+        id = loader.loadStringIfExistsAndNull(id, "id");
         return id;
     }
 
@@ -39,9 +38,7 @@ public class ActivityParty {
      * @return The current size of the activity party.
      */
     public int getCurrentSize() {
-        if (currentSize == null) {
-            currentSize = party.path("size").get(0).asInt();
-        }
+        currentSize = loader.loadIntFromArrayIfNull(currentSize, "size", 0);
         return currentSize;
     }
 
@@ -51,9 +48,7 @@ public class ActivityParty {
      * @return The maximum size of the activity party.
      */
     public int getMaxSize() {
-        if (maxSize == null) {
-            maxSize = party.path("size").get(1).asInt();
-        }
+        maxSize = loader.loadIntFromArrayIfNull(maxSize, "size", 1);
         return maxSize;
     }
 }

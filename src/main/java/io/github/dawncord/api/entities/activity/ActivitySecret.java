@@ -1,13 +1,14 @@
 package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents secrets associated with an activity.
  * ActivitySecret is a class providing methods to access properties of activity secrets.
  */
 public class ActivitySecret {
-    private final JsonNode secrets;
+    private final LazyLoader loader;
     private String join;
     private String spectate;
     private String match;
@@ -18,7 +19,7 @@ public class ActivitySecret {
      * @param secrets The JSON node containing secret information.
      */
     public ActivitySecret(JsonNode secrets) {
-        this.secrets = secrets;
+        loader = new LazyLoader(secrets);
     }
 
     /**
@@ -26,10 +27,8 @@ public class ActivitySecret {
      *
      * @return The join secret.
      */
-    public String getJoin() {
-        if (join == null) {
-            join = secrets.get("join").asText();
-        }
+    public String getJoinSecret() {
+        join = loader.loadStringIfExistsAndNull(join, "join");
         return join;
     }
 
@@ -38,10 +37,8 @@ public class ActivitySecret {
      *
      * @return The spectate secret.
      */
-    public String getSpectate() {
-        if (spectate == null) {
-            spectate = secrets.get("spectate").asText();
-        }
+    public String getSpectateSecret() {
+        spectate = loader.loadStringIfExistsAndNull(spectate, "spectate");
         return spectate;
     }
 
@@ -50,10 +47,8 @@ public class ActivitySecret {
      *
      * @return The match secret.
      */
-    public String getMatch() {
-        if (match == null) {
-            match = secrets.get("match").asText();
-        }
+    public String getMatchSecret() {
+        match = loader.loadStringIfExistsAndNull(match, "match");
         return match;
     }
 }

@@ -2,18 +2,22 @@ package io.github.dawncord.api.entities.activity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.image.ActivityImage;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents assets associated with an activity.
  * ActivityAsset is a class providing methods to access various properties of activity assets.
  */
 public class ActivityAsset {
-    private final JsonNode assets;
+    private final LazyLoader loader;
     private final String applicationId;
     private String largeImage;
     private String largeText;
+    private String largeUrl;
     private String smallImage;
     private String smallText;
+    private String smallUrl;
+    private String inviteCoverImage;
 
     /**
      * Constructs an ActivityAsset object with the provided assets and application ID.
@@ -22,7 +26,7 @@ public class ActivityAsset {
      * @param applicationId The ID of the application.
      */
     public ActivityAsset(JsonNode assets, String applicationId) {
-        this.assets = assets;
+        loader = new LazyLoader(assets);
         this.applicationId = applicationId;
     }
 
@@ -32,9 +36,7 @@ public class ActivityAsset {
      * @return The large image of the activity asset.
      */
     public ActivityImage getLargeImage() {
-        if (largeImage == null) {
-            largeImage = assets.get("large_image").asText();
-        }
+        largeImage = loader.loadStringIfExistsAndNull(largeImage, "large_image");
         return new ActivityImage(applicationId, largeImage);
     }
 
@@ -44,21 +46,22 @@ public class ActivityAsset {
      * @return The large text of the activity asset.
      */
     public String getLargeText() {
-        if (largeText == null) {
-            largeText = assets.get("large_text").asText();
-        }
+        largeText = loader.loadStringIfExistsAndNull(largeText, "large_text");
         return largeText;
     }
-
+    
+    public String getLargeUrl() {
+        largeUrl = loader.loadStringIfExistsAndNull(largeUrl, "large_url");
+        return largeUrl;
+    }
+    
     /**
      * Retrieves the small image associated with the activity asset.
      *
      * @return The small image of the activity asset.
      */
     public ActivityImage getSmallImage() {
-        if (smallImage == null) {
-            smallImage = assets.get("small_image").asText();
-        }
+        smallImage = loader.loadStringIfExistsAndNull(smallImage, "small_image");
         return new ActivityImage(applicationId, smallImage);
     }
 
@@ -68,9 +71,17 @@ public class ActivityAsset {
      * @return The small text of the activity asset.
      */
     public String getSmallText() {
-        if (smallText == null) {
-            smallText = assets.get("small_text").asText();
-        }
+        smallText = loader.loadStringIfExistsAndNull(smallText, "small_text");
         return smallText;
+    }
+    
+    public String getSmallUrl() {
+        smallUrl = loader.loadStringIfExistsAndNull(smallUrl, "small_url");
+        return smallUrl;
+    }
+    
+    public ActivityImage getInviteCoverImage() {
+        inviteCoverImage = loader.loadStringIfExistsAndNull(inviteCoverImage, "invite_cover_image");
+        return new ActivityImage(applicationId, inviteCoverImage);
     }
 }

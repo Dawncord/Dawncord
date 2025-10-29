@@ -1,119 +1,132 @@
 package io.github.dawncord.api.entities.activity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.types.ActivityFlag;
 import io.github.dawncord.api.types.ActivityType;
+import io.github.dawncord.api.types.StatusDisplayType;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Represents an activity.
- * Activity is an interface defining methods to access various properties of an activity.
+ * Represents an implementation of the Activity interface.
+ * ActivityImpl is a class implementing the Activity interface and providing methods to access activity properties.
  */
-public interface Activity {
+public class Activity {
+    private final JsonNode activity;
+    private final LazyLoader loader;
+    private String name;
+    private ActivityType type;
+    private String url;
+    private ZonedDateTime creationTimestamp;
+    private ActivityTimestamp timestamps;
+    private String applicationId;
+    private StatusDisplayType statusDisplay;
+    private String details;
+    private String state;
+    private String stateUrl;
+    private ActivityEmoji emoji;
+    private ActivityParty party;
+    private ActivityAsset assets;
+    private ActivitySecret secrets;
+    private Boolean instance;
+    private List<ActivityFlag> flags;
+    private ActivityButton buttons;
 
     /**
-     * Retrieves the name of the activity.
+     * Constructs an ActivityImpl object with the provided JSON node containing activity information.
      *
-     * @return The name of the activity.
+     * @param activity The JSON node containing activity information.
      */
-    String getName();
+    public Activity(JsonNode activity) {
+        this.activity = activity;
+        loader = new LazyLoader(activity);
+    }
 
-    /**
-     * Retrieves the type of the activity.
-     *
-     * @return The type of the activity.
-     */
-    ActivityType getType();
+    public String getName() {
+        name = loader.loadStringIfNull(name, "name");
+        return name;
+    }
 
-    /**
-     * Retrieves the URL associated with the activity.
-     *
-     * @return The URL of the activity.
-     */
-    String getUrl();
+    public ActivityType getType() {
+        type = loader.loadEnumIfNull(type, "type", ActivityType.class);
+        return type;
+    }
 
-    /**
-     * Retrieves the creation timestamp of the activity.
-     *
-     * @return The creation timestamp of the activity.
-     */
-    ZonedDateTime getCreationTimestamp();
+    public String getUrl() {
+        url = loader.loadStringIfExistsAndNull(url, "url");
+        return url;
+    }
 
-    /**
-     * Retrieves the timestamps of the activity.
-     *
-     * @return The timestamps of the activity.
-     */
-    ActivityTimestamp getTimestamps();
+    public ZonedDateTime getCreationTimestamp() {
+        creationTimestamp = loader.loadZonedDateTimeIfNull(creationTimestamp, "created_at");
+        return creationTimestamp;
+    }
 
-    /**
-     * Retrieves the application ID associated with the activity.
-     *
-     * @return The application ID of the activity.
-     */
-    String getApplicationId();
+    public ActivityTimestamp getTimestamps() {
+        timestamps = loader.loadIfExistsAndNull(timestamps, "timestamps", ActivityTimestamp::new);
+        return timestamps;
+    }
 
-    /**
-     * Retrieves the details of the activity.
-     *
-     * @return The details of the activity.
-     */
-    String getDetails();
+    public String getApplicationId() {
+        applicationId = loader.loadStringIfExistsAndNull(applicationId, "application_id");
+        return applicationId;
+    }
 
-    /**
-     * Retrieves the state of the activity.
-     *
-     * @return The state of the activity.
-     */
-    String getState();
+    public StatusDisplayType getStatusDisplay() {
+        statusDisplay = loader.loadEnumIfNull(statusDisplay, "status_display_type", StatusDisplayType.class);
+        return statusDisplay;
+    }
 
-    /**
-     * Retrieves the emoji associated with the activity.
-     *
-     * @return The emoji of the activity.
-     */
-    ActivityEmoji getEmoji();
+    public String getDetails() {
+        details = loader.loadStringIfExistsAndNull(details, "details");
+        return details;
+    }
 
-    /**
-     * Retrieves the party information associated with the activity.
-     *
-     * @return The party information of the activity.
-     */
-    ActivityParty getParty();
+    public String getState() {
+        state = loader.loadStringIfExistsAndNull(state, "state");
+        return state;
+    }
+    
+    public String getStateUrl() {
+        stateUrl = loader.loadStringIfExistsAndNull(stateUrl, "state_url");
+        return stateUrl;
+    }
 
-    /**
-     * Retrieves the assets associated with the activity.
-     *
-     * @return The assets of the activity.
-     */
-    ActivityAsset getAssets();
+    public ActivityEmoji getEmoji() {
+        emoji = loader.loadIfExistsAndNull(emoji, "emoji", ActivityEmoji::new);
+        return emoji;
+    }
 
-    /**
-     * Retrieves the secrets associated with the activity.
-     *
-     * @return The secrets of the activity.
-     */
-    ActivitySecret getSecrets();
+    public ActivityParty getParty() {
+        party = loader.loadIfExistsAndNull(party, "party", ActivityParty::new);
+        return party;
+    }
 
-    /**
-     * Checks if the activity is an instance.
-     *
-     * @return True if the activity is an instance, false otherwise.
-     */
-    boolean isInstance();
+    public ActivityAsset getAssets() {
+        assets = loader.loadIfExistsAndNull(assets, "assets",
+                () -> new ActivityAsset(activity.path("assets"), activity.path("application_id").asText()));
+        return assets;
+    }
 
-    /**
-     * Retrieves the flags associated with the activity.
-     *
-     * @return The flags of the activity.
-     */
-    List<ActivityFlag> getFlags();
+    public ActivitySecret getSecrets() {
+        secrets = loader.loadIfExistsAndNull(secrets, "secrets", ActivitySecret::new);
+        return secrets;
+    }
 
-    /**
-     * Retrieves the button associated with the activity.
-     *
-     * @return The button of the activity.
-     */
-    ActivityButton getButtons();
+    public boolean isInstance() {
+        instance = loader.loadBooleanIfExistsNull(instance, "instance");
+        return instance;
+    }
+
+    public List<ActivityFlag> getFlags() {
+        flags = loader.loadEnumListFromLongIfNull(flags, "flags", ActivityFlag.class);
+        return flags;
+    }
+
+    public ActivityButton getButtons() {
+        buttons = loader.loadIfExistsAndNull(buttons, "buttons", ActivityButton::new);
+        return buttons;
+    }
 }
