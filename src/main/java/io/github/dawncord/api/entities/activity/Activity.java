@@ -45,88 +45,88 @@ public class Activity {
     }
 
     public String getName() {
-        name = loader.loadStringIfNull(name, "name");
+        name = loader.loadString(name, "name");
         return name;
     }
 
     public ActivityType getType() {
-        type = loader.loadEnumIfNull(type, "type", ActivityType.class);
+        type = loader.loadEnumObject(type, "type", ActivityType.class);
         return type;
     }
 
     public String getUrl() {
-        url = loader.loadStringIfExistsAndNull(url, "url");
+        url = loader.loadStringIfExists(url, "url");
         return url;
     }
 
     public ZonedDateTime getCreationTimestamp() {
-        creationTimestamp = loader.loadZonedDateTimeIfNull(creationTimestamp, "created_at");
+        creationTimestamp = loader.loadZonedDateTime(creationTimestamp, "created_at");
         return creationTimestamp;
     }
 
     public ActivityTimestamp getTimestamps() {
-        timestamps = loader.loadIfExistsAndNull(timestamps, "timestamps", ActivityTimestamp::new);
+        timestamps = loader.loadIfExists(timestamps, "timestamps", ActivityTimestamp::new);
         return timestamps;
     }
 
     public String getApplicationId() {
-        applicationId = loader.loadStringIfExistsAndNull(applicationId, "application_id");
+        applicationId = loader.loadStringIfExists(applicationId, "application_id");
         return applicationId;
     }
 
     public StatusDisplayType getStatusDisplay() {
-        statusDisplay = loader.loadEnumIfNull(statusDisplay, "status_display_type", StatusDisplayType.class);
+        statusDisplay = loader.loadEnumObject(statusDisplay, "status_display_type", StatusDisplayType.class);
         return statusDisplay;
     }
 
     public String getDetails() {
-        details = loader.loadStringIfExistsAndNull(details, "details");
+        details = loader.loadStringIfExists(details, "details");
         return details;
     }
 
     public String getState() {
-        state = loader.loadStringIfExistsAndNull(state, "state");
+        state = loader.loadStringIfExists(state, "state");
         return state;
     }
-    
+
     public String getStateUrl() {
-        stateUrl = loader.loadStringIfExistsAndNull(stateUrl, "state_url");
+        stateUrl = loader.loadStringIfExists(stateUrl, "state_url");
         return stateUrl;
     }
 
     public ActivityEmoji getEmoji() {
-        emoji = loader.loadIfExistsAndNull(emoji, "emoji", ActivityEmoji::new);
+        emoji = loader.loadIfExists(emoji, "emoji", ActivityEmoji::new);
         return emoji;
     }
 
     public ActivityParty getParty() {
-        party = loader.loadIfExistsAndNull(party, "party", ActivityParty::new);
+        party = loader.loadIfExists(party, "party", ActivityParty::new);
         return party;
     }
 
     public ActivityAsset getAssets() {
-        assets = loader.loadIfExistsAndNull(assets, "assets",
+        assets = loader.loadIfExists(assets, "assets",
                 () -> new ActivityAsset(activity.path("assets"), activity.path("application_id").asText()));
         return assets;
     }
 
     public ActivitySecret getSecrets() {
-        secrets = loader.loadIfExistsAndNull(secrets, "secrets", ActivitySecret::new);
+        secrets = loader.loadIfExists(secrets, "secrets", ActivitySecret::new);
         return secrets;
     }
 
     public boolean isInstance() {
-        instance = loader.loadBooleanIfExistsNull(instance, "instance");
+        instance = loader.loadBooleanIfExists(instance, "instance");
         return instance;
     }
 
     public List<ActivityFlag> getFlags() {
-        flags = loader.loadEnumListFromLongIfNull(flags, "flags", ActivityFlag.class);
+        flags = loader.loadEnumListFromLong(flags, "flags", ActivityFlag.class);
         return flags;
     }
 
     public ActivityButton getButtons() {
-        buttons = loader.loadIfExistsAndNull(buttons, "buttons", ActivityButton::new);
+        buttons = loader.loadIfExists(buttons, "buttons", ActivityButton::new);
         return buttons;
     }
 }

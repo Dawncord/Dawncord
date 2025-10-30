@@ -1,9 +1,9 @@
 package io.github.dawncord.api.entities.guild.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.entities.IApplication;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
-import io.github.dawncord.api.entities.application.IApplication;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
 
 /**

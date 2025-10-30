@@ -58,14 +58,14 @@ public class JsonUtils {
     /**
      * Extracts a list of strings from a JSON object.
      *
-     * @param json   The JSON object containing string data.
-     * @param object The key of the JSON object containing the string array.
+     * @param json      The JSON object containing string data.
+     * @param fieldName The key of the JSON object containing the string array.
      * @return A list of strings extracted from the JSON object.
      */
-    public static List<String> getStringList(JsonNode json, String object) {
-        if (json.has(object)) {
+    public static List<String> getStringList(JsonNode json, String fieldName) {
+        if (json.has(fieldName)) {
             List<String> list = new ArrayList<>();
-            for (JsonNode node : json.get(object)) {
+            for (JsonNode node : json.get(fieldName)) {
                 list.add(node.asText());
             }
             return list;

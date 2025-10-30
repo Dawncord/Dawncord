@@ -221,7 +221,7 @@ public class InteractionListener extends WebSocketAdapter {
                 subComponent.has("max_values") ? subComponent.get("max_values").asInt() : 1,
                 subComponent.has("options") ? subComponent.get("options") : null,
                 subComponent.has("disabled") && subComponent.get("disabled").asBoolean(),
-                subComponent.has("channel_types") ? EnumUtils.getEnumList(subComponent.get("channel_types"), ChannelType.class) : null,
+                subComponent.has("channel_types") ? EnumUtils.getEnumList(subComponent.get("channel_types"), ChannelType.class, "int") : null,
                 guild
         );
         JsonNode resolved = data.get("resolved");

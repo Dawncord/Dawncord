@@ -63,7 +63,7 @@ public class ActionRow {
                         component.has("max_values") ? component.get("max_values").asInt() : 1,
                         component.has("options") ? component.get("options") : null,
                         component.has("disabled") && component.get("disabled").asBoolean(),
-                        EnumUtils.getEnumList(component.get("channel_types"), ChannelType.class),
+                        EnumUtils.getEnumList(component.get("channel_types"), ChannelType.class, "int"),
                         guild
                 );
                 selectMenus.add(selectMenu);

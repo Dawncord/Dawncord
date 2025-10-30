@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.command.SlashCommand;
 import io.github.dawncord.api.entities.*;
-import io.github.dawncord.api.entities.application.CommandPermission;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
 import io.github.dawncord.api.entities.guild.Guild;

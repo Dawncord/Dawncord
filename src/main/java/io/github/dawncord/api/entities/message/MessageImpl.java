@@ -8,7 +8,6 @@ import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
-import io.github.dawncord.api.entities.application.ApplicationImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
@@ -206,7 +205,7 @@ public class MessageImpl implements Message {
     @Override
     public Application getApplication() {
         if (application == null) {
-            application = message.has("application") ? new ApplicationImpl(message.get("application"), guild) : null;
+            application = message.has("application") ? new Application(message.get("application")) : null;
         }
         return application;
     }

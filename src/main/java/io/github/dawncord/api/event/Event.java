@@ -7,7 +7,6 @@ import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.Webhook;
 import io.github.dawncord.api.entities.WebhookImpl;
 import io.github.dawncord.api.entities.application.Application;
-import io.github.dawncord.api.entities.application.ApplicationImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
@@ -34,7 +33,7 @@ public interface Event {
      * @return The application associated with the event.
      */
     default Application getApplication() {
-        return new ApplicationImpl(JsonUtils.fetch(Routes.Application()), getGuild());
+        return new Application(JsonUtils.fetch(Routes.Application()));
     }
 
     /**

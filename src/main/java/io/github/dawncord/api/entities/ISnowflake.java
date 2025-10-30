@@ -22,6 +22,7 @@ public interface ISnowflake {
      */
     long getIdLong();
 
+    //todo remove
 
     /**
      * Retrieves the timestamp when the message was sent.

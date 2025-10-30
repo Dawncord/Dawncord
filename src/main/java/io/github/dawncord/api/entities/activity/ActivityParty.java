@@ -28,7 +28,7 @@ public class ActivityParty {
      * @return The ID of the activity party.
      */
     public String getId() {
-        id = loader.loadStringIfExistsAndNull(id, "id");
+        id = loader.loadStringIfExists(id, "id");
         return id;
     }
 
@@ -38,7 +38,7 @@ public class ActivityParty {
      * @return The current size of the activity party.
      */
     public int getCurrentSize() {
-        currentSize = loader.loadIntFromArrayIfNull(currentSize, "size", 0);
+        currentSize = loader.loadIntFromArray(currentSize, "size", 0);
         return currentSize;
     }
 
@@ -48,7 +48,7 @@ public class ActivityParty {
      * @return The maximum size of the activity party.
      */
     public int getMaxSize() {
-        maxSize = loader.loadIntFromArrayIfNull(maxSize, "size", 1);
+        maxSize = loader.loadIntFromArray(maxSize, "size", 1);
         return maxSize;
     }
 }

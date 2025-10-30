@@ -9,7 +9,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.activity.Activity;
 import io.github.dawncord.api.entities.application.Application;
-import io.github.dawncord.api.entities.application.ApplicationImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.Invite;
 import io.github.dawncord.api.entities.channel.Stage;
@@ -107,7 +106,7 @@ public class EventListener extends WebSocketAdapter {
         String resumeUrl = data.path("resume_gateway_url").asText();
         List<Guild> guilds = new ArrayList<>();
         data.path("guilds").forEach(node -> guilds.add(new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(node.path("id").asText())))));
-        Application application = new ApplicationImpl(JsonUtils.fetch(Routes.Application()));
+        Application application = new Application(JsonUtils.fetch(Routes.Application()));
 
         ReadyEvent readyEvent = new ReadyEvent(version, user, sessionType, sessionId, resumeUrl, guilds, application);
         try {

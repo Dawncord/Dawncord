@@ -1,7 +1,5 @@
-package io.github.dawncord.api.entities.application;
+package io.github.dawncord.api.entities;
 
-import io.github.dawncord.api.entities.ISnowflake;
-import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
 
 /**

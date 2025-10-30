@@ -28,7 +28,7 @@ public class ActivitySecret {
      * @return The join secret.
      */
     public String getJoinSecret() {
-        join = loader.loadStringIfExistsAndNull(join, "join");
+        join = loader.loadStringIfExists(join, "join");
         return join;
     }
 
@@ -38,7 +38,7 @@ public class ActivitySecret {
      * @return The spectate secret.
      */
     public String getSpectateSecret() {
-        spectate = loader.loadStringIfExistsAndNull(spectate, "spectate");
+        spectate = loader.loadStringIfExists(spectate, "spectate");
         return spectate;
     }
 
@@ -48,7 +48,7 @@ public class ActivitySecret {
      * @return The match secret.
      */
     public String getMatchSecret() {
-        match = loader.loadStringIfExistsAndNull(match, "match");
+        match = loader.loadStringIfExists(match, "match");
         return match;
     }
 }

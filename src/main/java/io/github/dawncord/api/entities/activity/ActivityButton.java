@@ -27,7 +27,7 @@ public class ActivityButton {
      * @return The label of the activity button.
      */
     public String getLabel() {
-        label = loader.loadStringIfNull(label, "label");
+        label = loader.loadString(label, "label");
         return label;
     }
 
@@ -37,7 +37,7 @@ public class ActivityButton {
      * @return The URL of the activity button.
      */
     public String getUrl() {
-        url = loader.loadStringIfNull(url, "url");
+        url = loader.loadString(url, "url");
         return url;
     }
 }

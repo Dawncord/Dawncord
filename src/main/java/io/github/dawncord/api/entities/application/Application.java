@@ -1,157 +1,256 @@
 package io.github.dawncord.api.entities.application;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.IApplication;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.team.Team;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
-import io.github.dawncord.api.types.ActivityType;
 import io.github.dawncord.api.types.ApplicationFlag;
+import io.github.dawncord.api.types.EventWebhookStatus;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 
 /**
- * Represents an application.
- * Application is an interface providing methods to access properties of an application.
+ * Represents an implementation of an application.
+ * ApplicationImpl is a class providing methods to access properties of an application.
  */
-public interface Application extends IApplication {
+public class Application implements IApplication {
+    private final LazyLoader loader;
+    private final JsonNode application;
+    private String id;
+    private String name;
+    private String description;
+    private ApplicationIcon icon;
+    private List<String> rpcOrigins;
+    private Boolean publicBot;
+    private Boolean requiresCodeGrant;
+    private User bot;
+    private String tosUrl;
+    private String ppUrl;
+    private User owner;
+    private String verifyKey;
+    private Team team;
+    private Guild guild;
+    private String primarySkuId;
+    private String slug;
+    private ApplicationIcon coverImage;
+    private List<ApplicationFlag> flags;
+    private Integer guildCount;
+    private Integer userCount;
+    private Integer authCount;
+    private List<String> redirectURIs;
+    private String interactionEndpointUrl;
+    private String roleConnectionUrl;
+    private String eventWebhooksUrl;
+    private EventWebhookStatus eventWebhooksStatus;
+    //private List<?> eventWebhooksTypes; todo check how it look in json
+    private List<String> tags;
+    private InstallParams installParams;
+    private IntegrationTypesConfig integrationTypesConfig;
+    private String customInstallUrl;
 
     /**
-     * Retrieves the guild associated with this application.
+     * Constructs an ApplicationImpl object with the provided JSON node and guild.
      *
-     * @return The guild associated with this application.
+     * @param application The JSON node representing the application.
      */
-    Guild getGuild();
+    public Application(JsonNode application) {
+        this.application = application;
+        loader = new LazyLoader(application);
+    }
 
-    /**
-     * Retrieves the count of guilds associated with this application.
-     *
-     * @return The count of guilds associated with this application.
-     */
-    int getGuildCount();
+    public JsonNode getApplication() {
+        return this.application;
+    }
 
-    /**
-     * Retrieves the redirect URIs of this application.
-     *
-     * @return The redirect URIs of this application.
-     */
-    List<String> getRedirectURIs();
+    @Override
+    public String getId() {
+        id = loader.loadString(id, "id");
+        return id;
+    }
 
-    /**
-     * Retrieves the interaction endpoint URL of this application.
-     *
-     * @return The interaction endpoint URL of this application.
-     */
-    String getInteractionEndpointUrl();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Retrieves the verification URL of this application.
-     *
-     * @return The verification URL of this application.
-     */
-    String getVerificationUrl();
+    @Override
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
-    /**
-     * Retrieves the custom install URL of this application.
-     *
-     * @return The custom install URL of this application.
-     */
-    String getCustomInstallUrl();
+    @Override
+    public String getDescription() {
+        description = loader.loadString(description, "description");
+        return description;
+    }
 
-    /**
-     * Retrieves the icon of this application.
-     *
-     * @return The icon of this application.
-     */
-    ApplicationIcon getIcon();
+    @Override
+    public ApplicationIcon getIcon() {
+        icon = loader.loadIfExistsAndNonNull(icon, "icon",
+                () -> new ApplicationIcon(getId(), application.get("icon").asText()));
+        return icon;
+    }
 
-    /**
-     * Retrieves the cover image of this application.
-     *
-     * @return The cover image of this application.
-     */
-    ApplicationIcon getCoverImage();
+    @Override
+    public User getBot() {
+        bot = loader.loadIfExists(bot, "bot",
+                () -> new UserImpl(JsonUtils.fetch(Routes.User(getBotId()))));
+        return bot;
+    }
 
-    /**
-     * Retrieves the type of this application's activity.
-     *
-     * @return The type of this application's activity.
-     */
-    ActivityType getType();
+    public Guild getGuild() {
+        guild = loader.loadIfExists(guild, "guild_id",
+                () -> new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(getGuildId()))));
+        return guild;
+    }
 
-    /**
-     * Retrieves the owner of this application.
-     *
-     * @return The owner of this application.
-     */
-    User getOwner();
+    public List<String> getRpcOrigins() {
+        rpcOrigins = loader.loadIfExists(rpcOrigins, "rpc_origins",
+                () -> JsonUtils.getStringList(application, "rpc_origins"));
+        return rpcOrigins;
+    }
 
-    /**
-     * Retrieves the team associated with this application.
-     *
-     * @return The team associated with this application.
-     */
-    Team getTeam();
+    public int getGuildCount() {
+        guildCount = loader.loadIntIfExists(guildCount, "approximate_guild_count");
+        return guildCount != null ? guildCount : 0;
+    }
 
-    /**
-     * Checks if this application is a public bot.
-     *
-     * @return True if this application is a public bot, false otherwise.
-     */
-    boolean isPublicBot();
+    public int getUserCount() {
+        userCount = loader.loadIntIfExists(userCount, "approximate_user_install_count");
+        return userCount != null ? userCount : 0;
+    }
 
-    /**
-     * Checks if this application's bot requires OAuth.
-     *
-     * @return True if this application's bot requires OAuth, false otherwise.
-     */
-    boolean isBotRequiresOAuth();
+    public int getAuthorizationCount() {
+        authCount = loader.loadIntIfExists(authCount, "approximate_user_authorization_count");
+        return authCount != null ? authCount : 0;
+    }
 
-    /**
-     * Retrieves the Terms of Service (TOS) URL of this application.
-     *
-     * @return The TOS URL of this application.
-     */
-    String getTOSUrl();
+    public List<String> getRedirectURIs() {
+        redirectURIs = loader.loadIfExists(redirectURIs, "redirect_uris",
+                () -> JsonUtils.getStringList(application, "redirect_uris"));
+        return redirectURIs;
+    }
 
-    /**
-     * Retrieves the Privacy Policy (PP) URL of this application.
-     *
-     * @return The PP URL of this application.
-     */
-    String getPPUrl();
+    public String getInteractionEndpointUrl() {
+        interactionEndpointUrl = loader.loadStringIfExists(interactionEndpointUrl, "interaction_endpoint_url");
+        return interactionEndpointUrl;
+    }
 
-    /**
-     * Retrieves the verify key of this application.
-     *
-     * @return The verify key of this application.
-     */
-    String getVerifyKey();
+    public String getRoleConnectionVerificationUrl() {
+        roleConnectionUrl = loader.loadStringIfExists(roleConnectionUrl, "role_connections_verification_url");
+        return roleConnectionUrl;
+    }
 
-    /**
-     * Retrieves the flags associated with this application.
-     *
-     * @return The flags associated with this application.
-     */
-    List<ApplicationFlag> getFlags();
+    public String getEventWebhooksUrl() {
+        eventWebhooksUrl = loader.loadStringIfExists(eventWebhooksUrl, "event_webhooks_url");
+        return eventWebhooksUrl;
+    }
 
-    /**
-     * Retrieves the tags associated with this application.
-     *
-     * @return The tags associated with this application.
-     */
-    List<String> getTags();
+    public EventWebhookStatus getEventWebhooksStatus() {
+        eventWebhooksStatus = loader.loadEnumObject(eventWebhooksStatus, "event_webhooks_status", EventWebhookStatus.class);
+        return eventWebhooksStatus;
+    }
 
-    /**
-     * Checks if this application is monetized.
-     *
-     * @return True if this application is monetized, false otherwise.
-     */
-    boolean isMonetized();
+    public String getCustomInstallUrl() {
+        customInstallUrl = loader.loadStringIfExists(customInstallUrl, "custom_install_url");
+        return customInstallUrl;
+    }
 
-    /**
-     * Retrieves the install parameters of this application.
-     *
-     * @return The install parameters of this application.
-     */
-    InstallParams getInstallParams();
+    public ApplicationIcon getCoverImage() {
+        coverImage = loader.loadIfExists(coverImage, "cover_image",
+                () -> new ApplicationIcon(getId(), getCoverImageId()));
+        return coverImage;
+    }
+
+    public User getOwner() {
+        owner = loader.loadIfExists(owner, "owner",
+                () -> new UserImpl(JsonUtils.fetch(Routes.User(getOwnerId()))));
+        return owner;
+    }
+
+    public Team getTeam() {
+        team = loader.loadIfExists(team, "team", Team::new);
+        return team;
+    }
+
+    public boolean getPublicBot() {
+        publicBot = loader.loadBooleanIfExists(publicBot, "bot_public");
+        return publicBot != null && publicBot;
+    }
+
+    public boolean isBotRequiresCodeGrant() {
+        requiresCodeGrant = loader.loadBoolean(requiresCodeGrant, "bot_require_code_grant");
+        return requiresCodeGrant != null && requiresCodeGrant;
+    }
+
+    public String getTOSUrl() {
+        tosUrl = loader.loadStringIfExists(tosUrl, "terms_of_service_url");
+        return tosUrl;
+    }
+
+    public String getPPUrl() {
+        ppUrl = loader.loadStringIfExists(ppUrl, "privacy_policy_url");
+        return ppUrl;
+    }
+
+    public String getVerifyKey() {
+        verifyKey = loader.loadStringIfExists(verifyKey, "verify_key");
+        return verifyKey;
+    }
+
+    public String getPrimarySkuId() {
+        primarySkuId = loader.loadStringIfExists(primarySkuId, "primary_sku_id");
+        return primarySkuId;
+    }
+
+    public String getSlug() {
+        slug = loader.loadStringIfExists(slug, "slug");
+        return slug;
+    }
+
+    public List<ApplicationFlag> getFlags() {
+        flags = loader.loadEnumListFromLong(flags, "flags", ApplicationFlag.class);
+        return flags;
+    }
+
+    public List<String> getTags() {
+        tags = loader.loadIfExists(tags, "tags",
+                () -> JsonUtils.getStringList(application, "tags"));
+        return tags;
+    }
+
+    public InstallParams getInstallParams() {
+        installParams = loader.loadIfExists(installParams, "install_params",
+                () -> new InstallParams(application.get("install_params")));
+        return installParams;
+    }
+
+    public IntegrationTypesConfig getIntegrationTypesConfig() {
+        integrationTypesConfig = loader.loadIfExists(integrationTypesConfig, "integration_types_config", IntegrationTypesConfig::new);
+        return integrationTypesConfig;
+    }
+
+    private String getBotId() {
+        return application.get("bot").get("id").asText();
+    }
+
+    private String getGuildId() {
+        return application.get("guild_id").asText();
+    }
+
+    private String getCoverImageId() {
+        return application.get("cover_image").asText();
+    }
+
+    private String getOwnerId() {
+        return application.get("owner").get("id").asText();
+    }
 }

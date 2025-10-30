@@ -36,7 +36,7 @@ public class ActivityAsset {
      * @return The large image of the activity asset.
      */
     public ActivityImage getLargeImage() {
-        largeImage = loader.loadStringIfExistsAndNull(largeImage, "large_image");
+        largeImage = loader.loadStringIfExists(largeImage, "large_image");
         return new ActivityImage(applicationId, largeImage);
     }
 
@@ -46,22 +46,22 @@ public class ActivityAsset {
      * @return The large text of the activity asset.
      */
     public String getLargeText() {
-        largeText = loader.loadStringIfExistsAndNull(largeText, "large_text");
+        largeText = loader.loadStringIfExists(largeText, "large_text");
         return largeText;
     }
-    
+
     public String getLargeUrl() {
-        largeUrl = loader.loadStringIfExistsAndNull(largeUrl, "large_url");
+        largeUrl = loader.loadStringIfExists(largeUrl, "large_url");
         return largeUrl;
     }
-    
+
     /**
      * Retrieves the small image associated with the activity asset.
      *
      * @return The small image of the activity asset.
      */
     public ActivityImage getSmallImage() {
-        smallImage = loader.loadStringIfExistsAndNull(smallImage, "small_image");
+        smallImage = loader.loadStringIfExists(smallImage, "small_image");
         return new ActivityImage(applicationId, smallImage);
     }
 
@@ -71,17 +71,17 @@ public class ActivityAsset {
      * @return The small text of the activity asset.
      */
     public String getSmallText() {
-        smallText = loader.loadStringIfExistsAndNull(smallText, "small_text");
+        smallText = loader.loadStringIfExists(smallText, "small_text");
         return smallText;
     }
-    
+
     public String getSmallUrl() {
-        smallUrl = loader.loadStringIfExistsAndNull(smallUrl, "small_url");
+        smallUrl = loader.loadStringIfExists(smallUrl, "small_url");
         return smallUrl;
     }
-    
+
     public ActivityImage getInviteCoverImage() {
-        inviteCoverImage = loader.loadStringIfExistsAndNull(inviteCoverImage, "invite_cover_image");
+        inviteCoverImage = loader.loadStringIfExists(inviteCoverImage, "invite_cover_image");
         return new ActivityImage(applicationId, inviteCoverImage);
     }
 }

@@ -61,20 +61,38 @@ public class EnumUtils {
      * @param <T>       The enum type.
      * @return The list of enum objects corresponding to the given integer values.
      */
-    public static <T extends Enum<T>> List<T> getEnumList(JsonNode jsonArray, Class<T> enumClass) {
+    public static <T extends Enum<T>> List<T> getEnumList(JsonNode jsonArray, Class<T> enumClass, String type) {
         List<T> enumObjects = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
-            int intValue = jsonArray.get(i).asInt(-1);
-            for (T obj : enumClass.getEnumConstants()) {
-                try {
-                    Method m = enumClass.getMethod("getValue");
-                    if (intValue >= 0 && intValue == (int) m.invoke(obj)) {
-                        enumObjects.add(obj);
+            switch (type) {
+                case "int" -> {
+                    int intValue = jsonArray.get(i).asInt(-1);
+                    for (T obj : enumClass.getEnumConstants()) {
+                        try {
+                            Method m = enumClass.getMethod("getValue");
+                            if (intValue >= 0 && intValue == (int) m.invoke(obj)) {
+                                enumObjects.add(obj);
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    throw new RuntimeException(ex);
+                }
+                case "str" -> {
+                    String strValue = jsonArray.get(i).asText();
+                    for (T obj : enumClass.getEnumConstants()) {
+                        try {
+                            Method m = enumClass.getMethod("getValue");
+                            if (strValue != null && !strValue.isEmpty() && strValue.equals(m.invoke(obj))) {
+                                enumObjects.add(obj);
+                            }
+                        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
                 }
             }
+
         }
         return enumObjects;
     }

@@ -51,7 +51,7 @@ public class AutoModTriggerMetadataImpl implements AutoModTriggerMetadata {
         if (presets == null) {
             assert metadata != null;
             presets = metadata.has("presets") && metadata.hasNonNull("presets")
-                    ? EnumUtils.getEnumList(metadata.get("presets"), KeywordPreset.class)
+                    ? EnumUtils.getEnumList(metadata.get("presets"), KeywordPreset.class, "int")
                     : null;
         }
         return presets;

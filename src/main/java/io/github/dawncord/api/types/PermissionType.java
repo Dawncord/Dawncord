@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Represents permission types.
  */
+//todo update permissions
 public enum PermissionType {
     /**
      * Allows creation of instant invites.

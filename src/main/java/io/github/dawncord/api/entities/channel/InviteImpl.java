@@ -6,7 +6,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
-import io.github.dawncord.api.entities.application.ApplicationImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
@@ -98,7 +97,7 @@ public class InviteImpl implements Invite {
     @Override
     public Application getTargetApplication() {
         if (targetApplication == null) {
-            targetApplication = invite.has("target_application") ? new ApplicationImpl(invite.get("target_application"), guild) : null;
+            targetApplication = invite.has("target_application") ? new Application(invite.get("target_application")) : null;
         }
         return targetApplication;
     }
