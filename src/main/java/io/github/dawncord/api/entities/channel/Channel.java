@@ -1,48 +1,77 @@
 package io.github.dawncord.api.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.IMentionable;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.types.ChannelFlag;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.GuildMemberFlag;
+import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 
 /**
- * Represents a channel in a guild or DM conversation.
+ * Represents an implementation of the Channel interface.
  */
-public interface Channel extends ISnowflake, IMentionable {
+public class Channel implements ISnowflake, IMentionable {
+    private final LazyLoader loader;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private ChannelType type;
+    private List<ChannelFlag> flags;
 
     /**
-     * Gets the name of the channel.
+     * Constructs a ChannelImpl object.
      *
-     * @return The name of the channel.
+     * @param channel The JSON representation of the channel.
+     * @param guild   The guild to which this channel belongs.
      */
-    String getName();
+    public Channel(JsonNode channel, Guild guild) {
+        this.guild = guild;
+        loader = new LazyLoader(channel);
+    }
 
-    /**
-     * Gets the type of the Channel.
-     *
-     * @return The type of the channel.
-     */
-    ChannelType getType();
+    @Override
+    public String getId() {
+        id = loader.loadString(id, "id");
+        return id;
+    }
 
-    /**
-     * Gets the Guild to which this channel belongs.
-     *
-     * @return The guild to which this channel belongs, or null if it's a DM channel.
-     */
-    Guild getGuild();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Gets the GuildMemberFlag list associated with this channel.
-     *
-     * @return The flags associated with this channel.
-     */
-    List<GuildMemberFlag> getFlags();
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
-    /**
-     * Deletes this channel.
-     */
-    void delete();
+    public ChannelType getType() {
+        type = loader.loadEnumObject(type, "type", ChannelType.class);
+        return type;
+    }
+
+    public Guild getGuild() {
+        return guild;
+    }
+
+    public List<ChannelFlag> getFlags() {
+        flags = loader.loadEnumListFromLong(flags, "flags", ChannelFlag.class);
+        return flags;
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Channel.Get(getId()));
+    }
+
+    @Override
+    public String getAsMention() {
+        return "<#" + getId() + ">";
+    }
 }

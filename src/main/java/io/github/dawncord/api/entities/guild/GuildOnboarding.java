@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.action.GuildOnboardingModifyAction;
 import io.github.dawncord.api.entities.CustomEmoji;
-import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.OnboardingMode;

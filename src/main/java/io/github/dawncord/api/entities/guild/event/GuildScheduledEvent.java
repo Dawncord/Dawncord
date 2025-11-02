@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild.event;
 import io.github.dawncord.api.action.GuildEventModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.image.GuildEventImage;

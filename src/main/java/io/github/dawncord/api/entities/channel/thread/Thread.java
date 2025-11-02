@@ -1,96 +1,123 @@
 package io.github.dawncord.api.entities.channel.thread;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.MessageChannel;
+import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Represents a thread, a distinct conversation within a guild channel.
+ * Represents an implementation of a thread, a distinct conversation within a guild channel.
  * Threads can be either public or private, and they are a form of message channel.
  */
-public interface Thread extends MessageChannel {
+public class Thread extends MessageChannel {
+    private final LazyLoader loader;
+    private final JsonNode thread;
+    private final Guild guild;
+    private GuildChannel channel;
+    private User creator;
+    private ThreadMetadata metaData;
+    private List<ThreadMember> threadMembers;
+    private Integer messageCount;
+    private Integer totalMessageSent;
+    private Integer memberCount;
 
     /**
-     * Retrieves the guild channel to which this thread belongs.
+     * Constructs a new ThreadImpl instance.
      *
-     * @return The guild channel.
+     * @param thread The JSON node representing the thread.
+     * @param guild  The guild to which the thread belongs.
      */
-    GuildChannel getChannel();
+    public Thread(JsonNode thread, Guild guild) {
+        super(thread, guild);
+        this.thread = thread;
+        this.guild = guild;
+        loader = new LazyLoader(thread);
+    }
 
-    /**
-     * Retrieves the creator of this thread.
-     *
-     * @return The user who created the thread.
-     */
-    User getCreator();
+    public GuildChannel getChannel() {
+        channel = loader.load(channel, () -> guild.getChannelById(thread.get("parent_id").asText()));
+        return channel;
+    }
 
-    /**
-     * Retrieves metadata associated with this thread.
-     *
-     * @return The metadata of the thread.
-     */
-    ThreadMetadata getMetaData();
+    public User getCreator() {
+        creator = loader.load(creator,
+                () -> new UserImpl(JsonUtils.fetch(Routes.User(thread.get("owner_id").asText()))));
+        return creator;
+    }
 
-    /**
-     * Retrieves a list of members participating in this thread.
-     *
-     * @return The list of thread members.
-     */
-    List<ThreadMember> getThreadMembers();
+    public ThreadMetadata getMetaData() {
+        metaData = loader.loadIfExists(metaData, "thread_metadata", ThreadMetadata::new);
+        return metaData;
+    }
 
-    /**
-     * Retrieves the thread member associated with the specified user ID.
-     *
-     * @param userId The ID of the user.
-     * @return The thread member with the specified user ID.
-     */
-    ThreadMember getThreadMemberById(String userId);
+    public List<ThreadMember> getThreadMembers() {
+        threadMembers = loader.load(threadMembers,
+                () -> {
+                    threadMembers = JsonUtils.getEntityList(
+                            JsonUtils.fetchParams(
+                                    Routes.Channel.Thread.Member.All(getId()),
+                                    Map.of("with_members", "true")
+                            ),
+                            threadMember -> new ThreadMember(threadMember, this)
+                    );
+                    return threadMembers;
+                });
+        return threadMembers;
+    }
 
-    /**
-     * Retrieves the thread member associated with the specified user ID.
-     *
-     * @param userId The ID of the user.
-     * @return The thread member with the specified user ID.
-     */
-    ThreadMember getThreadMemberById(long userId);
+    public int getMessageCount() {
+        messageCount = loader.loadInt(messageCount, "message_count");
+        return messageCount;
+    }
 
-    /**
-     * Joins the thread.
-     */
-    void join();
+    public int getTotalMessageSent() {
+        totalMessageSent = loader.loadInt(totalMessageSent, "total_message_sent");
+        return totalMessageSent;
+    }
 
-    /**
-     * Joins the thread with the specified user ID.
-     *
-     * @param userId The ID of the user to join the thread.
-     */
-    void join(String userId);
+    public int getMemberCount() {
+        memberCount = loader.loadInt(memberCount, "member_count");
+        return memberCount;
+    }
 
-    /**
-     * Joins the thread with the specified user ID.
-     *
-     * @param userId The ID of the user to join the thread.
-     */
-    void join(long userId);
+    public ThreadMember getThreadMemberById(String userId) {
+        return getThreadMembers().stream().filter(member -> member.asGuildMember().getUser().getId().equals(userId)).findAny().orElse(null);
+    }
 
-    /**
-     * Leaves the thread.
-     */
-    void leave();
+    public ThreadMember getThreadMemberById(long userId) {
+        return getThreadMemberById(String.valueOf(userId));
+    }
 
-    /**
-     * Leaves the thread with the specified user ID.
-     *
-     * @param userId The ID of the user to leave the thread.
-     */
-    void leave(String userId);
+    public void join() {
+        ApiClient.put(null, Routes.Channel.Thread.Member.Get(getId(), "@me"));
+    }
 
-    /**
-     * Leaves the thread with the specified user ID.
-     *
-     * @param userId The ID of the user to leave the thread.
-     */
-    void leave(long userId);
+    public void join(String userId) {
+        ApiClient.put(null, Routes.Channel.Thread.Member.Get(getId(), userId));
+    }
+
+    public void join(long userId) {
+        join(String.valueOf(userId));
+    }
+
+    public void leave() {
+        ApiClient.delete(Routes.Channel.Thread.Member.Get(getId(), "@me"));
+    }
+
+    public void leave(String userId) {
+        ApiClient.delete(Routes.Channel.Thread.Member.Get(getId(), userId));
+    }
+
+    public void leave(long userId) {
+        leave(String.valueOf(userId));
+    }
 }

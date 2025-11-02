@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.GuildOnboarding;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.types.OnboardingMode;

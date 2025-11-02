@@ -9,10 +9,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.activity.Activity;
 import io.github.dawncord.api.entities.application.Application;
-import io.github.dawncord.api.entities.channel.GuildChannel;
-import io.github.dawncord.api.entities.channel.Invite;
-import io.github.dawncord.api.entities.channel.Stage;
-import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
@@ -33,6 +29,7 @@ import io.github.dawncord.api.utils.Events;
 import io.github.dawncord.api.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

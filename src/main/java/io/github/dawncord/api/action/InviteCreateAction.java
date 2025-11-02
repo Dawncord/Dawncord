@@ -2,7 +2,6 @@ package io.github.dawncord.api.action;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.channel.Invite;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.TargetType;
 

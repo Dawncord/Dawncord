@@ -7,7 +7,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.Action;
 import io.github.dawncord.api.entities.ForumTag;
 import io.github.dawncord.api.entities.PermissionOverride;
-import io.github.dawncord.api.entities.channel.GuildCategory;
 import io.github.dawncord.api.types.*;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.MessageUtils;

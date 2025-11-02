@@ -2,7 +2,6 @@ package io.github.dawncord.api.action;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.channel.GuildChannel;
 
 /**
  * Represents an action for updating a guild channel position.

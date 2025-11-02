@@ -3,7 +3,6 @@ package io.github.dawncord.api.action;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.channel.Stage;
 import io.github.dawncord.api.types.StagePrivacyLevel;
 
 /**

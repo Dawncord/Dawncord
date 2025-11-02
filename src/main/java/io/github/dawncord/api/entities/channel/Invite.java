@@ -1,124 +1,131 @@
 package io.github.dawncord.api.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
+import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.types.TargetType;
+import io.github.dawncord.api.utils.*;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 /**
- * Represents an invite to a guild or channel.
+ * Represents an implementation of an invite to a guild or channel.
  */
-public interface Invite {
-    /**
-     * Gets the guild associated with this invite.
-     *
-     * @return The guild associated with this invite.
-     */
-    Guild getGuild();
+public class Invite {
+    private final LazyLoader loader;
+    private final JsonNode invite;
+    private final Guild guild;
+    private InviteType type;
+    private String code;
+    private GuildChannel channel;
+    private User inviter;
+    private TargetType targetType;
+    private User targetUser;
+    private Application targetApplication;
+    private Integer onlineMembersCount;
+    private Integer totalMembersCount;
+    private GuildScheduledEvent guildEvent;
+    private ZonedDateTime expirationTimestamp;
 
     /**
-     * Gets the code of this invite.
+     * Constructs a new InviteImpl with the provided JSON invite and guild.
      *
-     * @return The code of this invite.
+     * @param invite The JSON node representing the invite.
+     * @param guild  The guild associated with this invite.
      */
-    String getCode();
+    public Invite(JsonNode invite, Guild guild) {
+        this.invite = invite;
+        this.guild = guild;
+        loader = new LazyLoader(invite);
+    }
 
-    /**
-     * Gets the channel associated with this invite.
-     *
-     * @return The channel associated with this invite.
-     */
-    GuildChannel getChannel();
+    public Guild getGuild() {
+        return guild;
+    }
 
-    /**
-     * Gets the user who created this invite.
-     *
-     * @return The user who created this invite.
-     */
-    User getInviter();
+    public InviteType getType() {
+        type = loader.loadEnumObject(type, "type", InviteType.class);
+        return type;
+    }
 
-    /**
-     * Gets the target type of this invite.
-     *
-     * @return The target type of this invite.
-     */
-    TargetType getTargetType();
+    public String getCode() {
+        code = loader.loadString(code, "code");
+        return code;
+    }
 
-    /**
-     * Gets the target user associated with this invite.
-     *
-     * @return The target user associated with this invite.
-     */
-    User getTargetUser();
+    public GuildChannel getChannel() {
+        channel = loader.loadIfExists(channel, "channel", () -> {
+            channel = guild.getChannelById(invite.get("channel").get("id").asText());
+            return channel;
+        });
+        return channel;
+    }
 
-    /**
-     * Gets the target application associated with this invite.
-     *
-     * @return The target application associated with this invite.
-     */
-    Application getTargetApplication();
+    public User getInviter() {
+        inviter = loader.loadIfExists(inviter, "inviter", () -> new UserImpl(invite.get("inviter")));
+        return inviter;
+    }
 
-    /**
-     * Gets the count of online members associated with this invite.
-     *
-     * @return The count of online members associated with this invite.
-     */
-    int getOnlineMembersCount();
+    public TargetType getTargetType() {
+        targetType = loader.loadEnumObject(targetType, "type", TargetType.class);
+        return targetType;
+    }
 
-    /**
-     * Gets the total count of members associated with this invite.
-     *
-     * @return The total count of members associated with this invite.
-     */
-    int getTotalMembersCount();
+    public User getTargetUser() {
+        targetUser = loader.loadIfExists(targetUser, "target_user",
+                () -> new UserImpl(invite.get("target_user")));
+        return targetUser;
+    }
 
-    /**
-     * Gets the creation timestamp of this invite.
-     *
-     * @return The creation timestamp of this invite.
-     */
-    ZonedDateTime getCreationTimestamp();
+    public Application getTargetApplication() {
+        targetApplication = loader.loadIfExists(targetApplication, "target_application",
+                () -> new Application(invite.get("target_application")));
+        return targetApplication;
+    }
 
-    /**
-     * Gets the expiration timestamp of this invite.
-     *
-     * @return The expiration timestamp of this invite.
-     */
-    ZonedDateTime getExpirationTimestamp();
+    public int getOnlineMembersCount() {
+        onlineMembersCount = loader.load(onlineMembersCount, () -> {
+            onlineMembersCount =
+                    JsonUtils.fetchParams(
+                            Routes.Channel.Invite.Get(code),
+                            Map.of("with_counts", "true")
+                    ).get("approximate_presence_count").asInt();
+            return onlineMembersCount;
+        });
+        return onlineMembersCount;
+    }
 
-    /**
-     * Gets the guild scheduled event associated with this invite.
-     *
-     * @return The guild scheduled event associated with this invite.
-     */
-    GuildScheduledEvent getGuildEvent();
+    public int getTotalMembersCount() {
+        totalMembersCount = loader.load(totalMembersCount, () -> {
+            totalMembersCount =
+                    JsonUtils.fetchParams(
+                            Routes.Channel.Invite.Get(code),
+                            Map.of("with_counts", "true")
+                    ).get("approximate_member_count").asInt();
+            return totalMembersCount;
+        });
+        return totalMembersCount;
+    }
 
-    /**
-     * Gets the maximum age of this invite in seconds.
-     *
-     * @return The maximum age of this invite in seconds.
-     */
-    int getMaxAge();
+    public GuildScheduledEvent getGuildEvent() {
+        guildEvent = loader.loadIfExists(guildEvent, "guild_scheduled_event",
+                () -> new GuildScheduledEventImpl(invite.get("guild_scheduled_event"), guild));
+        return guildEvent;
+    }
 
-    /**
-     * Gets the number of times this invite has been used.
-     *
-     * @return The number of times this invite has been used.
-     */
-    int getUses();
+    public ZonedDateTime getExpirationTimestamp() {
+        expirationTimestamp = loader.loadZonedDateTime(expirationTimestamp, "expires_at");
+        return expirationTimestamp;
+    }
 
-    /**
-     * Checks if this invite is temporary.
-     *
-     * @return True if this invite is temporary, otherwise false.
-     */
-    boolean isTemporary();
-
-    /**
-     * Deletes this invite.
-     */
-    void delete();
+    public void delete() {
+        ApiClient.delete(Routes.Channel.Invite.Get(getCode()));
+    }
 }

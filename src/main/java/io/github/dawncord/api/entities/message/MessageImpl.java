@@ -10,7 +10,6 @@ import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.thread.Thread;
-import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
@@ -224,7 +223,7 @@ public class MessageImpl implements Message {
     public Thread getThread() {
         if (thread == null) {
             thread = message.has("thread")
-                    ? new ThreadImpl(message.get("thread"), guild)
+                    ? new Thread(message.get("thread"), guild)
                     : null;
         }
         return thread;

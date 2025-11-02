@@ -1,7 +1,6 @@
 package io.github.dawncord.api.entities.guild.welcomescreen;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 
 /**

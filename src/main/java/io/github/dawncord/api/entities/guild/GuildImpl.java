@@ -20,7 +20,6 @@ import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.channel.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
-import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.automod.AutoModRuleImpl;
@@ -167,13 +166,13 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildChannel> getChannels() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Channels(getId())), channel -> new GuildChannelImpl(channel, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Channels(getId())), channel -> new GuildChannel(channel, this));
     }
 
     @Override
     public GuildChannel getChannelById(String channelId) {
         JsonNode channelNode = JsonUtils.fetch(Routes.Channel.Get(channelId));
-        return channelNode != null ? new GuildChannelImpl(channelNode, this) : null;
+        return channelNode != null ? new GuildChannel(channelNode, this) : null;
     }
 
     @Override
@@ -226,7 +225,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public Stage getStageByChannelId(String channelId) {
-        return new StageImpl(JsonUtils.fetch(Routes.StageInstance(channelId)), this);
+        return new Stage(JsonUtils.fetch(Routes.StageInstance(channelId)), this);
     }
 
     @Override
@@ -424,7 +423,7 @@ public class GuildImpl implements Guild {
         List<GuildCategory> categories = new ArrayList<>();
         for (Channel channel : getChannels()) {
             if (channel.getType() == ChannelType.GUILD_CATEGORY) {
-                categories.add(new GuildCategoryImpl(JsonUtils.fetch(Routes.Channel.Get(channel.getId())), this));
+                categories.add(new GuildCategory(JsonUtils.fetch(Routes.Channel.Get(channel.getId())), this));
             }
         }
         return categories;
@@ -468,7 +467,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<Thread> getActiveThreads() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.ActiveThreads(getId())).get("threads"), thread -> new ThreadImpl(thread, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.ActiveThreads(getId())).get("threads"), thread -> new Thread(thread, this));
     }
 
     @Override
@@ -704,7 +703,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<Invite> getInvites() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Invites(getId())), invite -> new InviteImpl(invite, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Invites(getId())), invite -> new Invite(invite, this));
     }
 
     @Override

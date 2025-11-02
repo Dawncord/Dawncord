@@ -145,7 +145,7 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the enum value from JSON
      */
     public <T extends Enum<T>> T loadEnumObject(T currentValue, String fieldName, Class<T> enumClass) {
-        if (currentValue == null) {
+        if (currentValue == null && jsonNode.has(fieldName)) {
             return EnumUtils.getEnumObject(jsonNode, fieldName, enumClass);
         }
         return currentValue;

@@ -20,7 +20,6 @@ import io.github.dawncord.api.entities.channel.GuildCategory;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.Invite;
 import io.github.dawncord.api.entities.channel.Stage;
-import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
@@ -39,6 +38,7 @@ import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.MfaLevel;
 import io.github.dawncord.api.types.VerificationLevel;
 import io.github.dawncord.api.types.VoiceRegion;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 
 import java.util.List;
 import java.util.function.Consumer;

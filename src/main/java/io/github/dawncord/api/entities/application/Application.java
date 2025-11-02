@@ -65,10 +65,6 @@ public class Application implements IApplication {
         loader = new LazyLoader(application);
     }
 
-    public JsonNode getApplication() {
-        return this.application;
-    }
-
     @Override
     public String getId() {
         id = loader.loadString(id, "id");

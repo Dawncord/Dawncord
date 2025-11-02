@@ -1,6 +1,7 @@
 package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.utils.LazyLoader;
 import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
@@ -9,12 +10,11 @@ import java.time.ZonedDateTime;
  * Represents metadata associated with a thread.
  */
 public class ThreadMetadata {
-    private final JsonNode metadata;
-    private Boolean isArchived;
+    private final LazyLoader loader;
+    private Boolean archived;
     private ZonedDateTime archiveTimestamp;
-    private ZonedDateTime creationTimestamp;
     private Integer archiveDuration;
-    private Boolean isLocked;
+    private Boolean locked;
 
     /**
      * Constructs a new ThreadMetadata instance with the provided metadata.
@@ -22,7 +22,7 @@ public class ThreadMetadata {
      * @param metadata The metadata associated with the thread.
      */
     public ThreadMetadata(JsonNode metadata) {
-        this.metadata = metadata;
+        loader = new LazyLoader(metadata);
     }
 
     /**
@@ -31,10 +31,8 @@ public class ThreadMetadata {
      * @return True if the thread is archived, false otherwise.
      */
     public boolean isArchived() {
-        if (isArchived == null) {
-            isArchived = metadata.get("archived").asBoolean();
-        }
-        return isArchived;
+        archived = loader.loadBoolean(archived, "archived");
+        return archived;
     }
 
     /**
@@ -43,22 +41,8 @@ public class ThreadMetadata {
      * @return The archive timestamp.
      */
     public ZonedDateTime getArchiveTimestamp() {
-        if (archiveTimestamp == null) {
-            archiveTimestamp = TimeUtils.getZonedDateTime(metadata, "archive_timestamp");
-        }
+        archiveTimestamp = loader.loadZonedDateTime(archiveTimestamp, "archive_timestamp");
         return archiveTimestamp;
-    }
-
-    /**
-     * Retrieves the timestamp when the thread was created.
-     *
-     * @return The creation timestamp.
-     */
-    public ZonedDateTime getCreationTimestamp() {
-        if (creationTimestamp == null) {
-            creationTimestamp = TimeUtils.getZonedDateTime(metadata, "create_timestamp");
-        }
-        return creationTimestamp;
     }
 
     /**
@@ -67,9 +51,7 @@ public class ThreadMetadata {
      * @return The auto-archive duration.
      */
     public int getArchiveDuration() {
-        if (archiveDuration == null) {
-            archiveDuration = metadata.get("auto_archive_duration").asInt();
-        }
+        archiveDuration = loader.loadInt(archiveDuration, "auto_archive_duration");
         return archiveDuration;
     }
 
@@ -79,9 +61,7 @@ public class ThreadMetadata {
      * @return True if the thread is locked, false otherwise.
      */
     public boolean isLocked() {
-        if (isLocked == null) {
-            isLocked = metadata.get("locked").asBoolean();
-        }
-        return isLocked;
+        locked = loader.loadBoolean(locked, "locked");
+        return locked;
     }
 }

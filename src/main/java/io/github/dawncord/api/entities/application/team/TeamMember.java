@@ -35,7 +35,7 @@ public class TeamMember {
     }
 
     public User getUser() {
-        user = loader.load(user, () -> new UserImpl(JsonUtils.fetch(Routes.User(getMemberId()))));
+        user = loader.load(user, () -> new UserImpl(JsonUtils.fetch(Routes.User(getUserId()))));
         return user;
     }
 
@@ -56,7 +56,7 @@ public class TeamMember {
         return membershipState;
     }
 
-    private String getMemberId() {
+    private String getUserId() {
         return member.get("user").get("id").asText();
     }
 }

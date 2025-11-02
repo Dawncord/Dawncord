@@ -1,210 +1,228 @@
 package io.github.dawncord.api.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildChannelPositionModifyAction;
 import io.github.dawncord.api.action.InviteCreateAction;
 import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.webhook.WebhookCreateAction;
 import io.github.dawncord.api.entities.PermissionOverride;
 import io.github.dawncord.api.entities.Webhook;
+import io.github.dawncord.api.entities.WebhookImpl;
 import io.github.dawncord.api.entities.channel.thread.Thread;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
+import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.types.PermissionOverrideType;
 import io.github.dawncord.api.types.PermissionType;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Represents a channel within a guild.
- * Extends the Channel interface.
+ * Represents an implementation of a guild channel.
  */
-public interface GuildChannel extends Channel {
-    /**
-     * Converts this guild channel to a TextChannel.
-     *
-     * @return The corresponding text channel.
-     */
-    TextChannel asText();
+public class GuildChannel extends Channel {
+    private final JsonNode channel;
+    private final Guild guild;
 
     /**
-     * Converts this guild channel to a VoiceChannel.
+     * Constructs a new GuildChannelImpl instance.
      *
-     * @return The corresponding voice channel.
+     * @param channel The JSON node representing the guild channel.
+     * @param guild   The guild to which this channel belongs.
      */
-    VoiceChannel asVoice();
+    public GuildChannel(JsonNode channel, Guild guild) {
+        super(channel, guild);
+        this.channel = channel;
+        this.guild = guild;
+    }
+
+    public TextChannel asText() {
+        return new TextChannel(channel, guild);
+    }
+
+    public VoiceChannel asVoice() {
+        return new VoiceChannel(channel, guild);
+    }
+
+    public Thread asThread() {
+        return new Thread(channel, guild);
+    }
+
+    public GuildForum asForum() {
+        return new GuildForum(channel, guild);
+    }
+
+    public ModifyEvent<GuildChannel> modify(Consumer<GuildChannelModifyAction> handler) {
+        ActionExecutor.modifyChannel(handler, this);
+        return new ModifyEvent<>(guild.getChannelById(getId()));
+    }
+
+    public List<PermissionOverride> getPermissions() {
+        return JsonUtils.getEntityList(channel.get("permission_overwrites"), override ->
+                new PermissionOverride(
+                        override.get("id").asText(),
+                        getPermissionType(override.get("type").asInt()),
+                        getDenied(override.get("deny").asText()),
+                        getAllowed(override.get("allow").asText())
+                )
+        );
+    }
+
+    public PermissionOverride getPermissionById(String permissionId) {
+        return getPermissions().stream().filter(permission -> permission.getId().equals(permissionId)).findAny().orElse(null);
+    }
+
+    public PermissionOverride getPermissionById(long permissionId) {
+        return getPermissionById(String.valueOf(permissionId));
+    }
+
+    public void editPermission(String permissionId, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed) {
+        long denyValue = 0;
+        long allowValue = 0;
+        for (PermissionType deny : denied) {
+            denyValue |= deny.getValue();
+        }
+        for (PermissionType allow : allowed) {
+            allowValue |= allow.getValue();
+        }
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode()
+                .put("type", type.getValue())
+                .put("deny", String.valueOf(denyValue))
+                .put("allow", String.valueOf(allowValue));
+
+        ApiClient.put(jsonObject, Routes.Channel.Permission(getId(), permissionId));
+
+    }
+
+    public void deletePermission(long permissionId) {
+        ApiClient.delete(Routes.Channel.Permission(getId(), String.valueOf(permissionId)));
+    }
+
+    public List<Invite> getInvites() {
+        return (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Invite.All(getId())), invite -> new Invite(invite, guild))
+                : null;
+    }
+
+    public Invite getInvite(String code) {
+        return getInvites().stream().filter(invite -> invite.getCode().equals(code)).findAny().orElse(null);
+    }
+
+    public void createInvite(Consumer<InviteCreateAction> handler) {
+        ActionExecutor.createChannelInvite(handler, this);
+    }
+
+    public boolean hasActiveThreads() {
+        return !getActiveThreads().isEmpty();
+    }
+
+    public int getActiveThreadsCount() {
+        return getActiveThreads().size();
+    }
+
+    public List<Thread> getActiveThreads() {
+        return getGuild().getActiveThreads().stream().filter(thread -> thread.getChannel().equals(this)).toList();
+    }
+
+    public List<Thread> getPublicArchiveThreads() {
+        return (getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD)
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.Public(getId())).get("threads"), thread -> new Thread(thread, guild))
+                : null;
+    }
+
+    public List<Thread> getPrivateArchiveThreads() {
+        return getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.Private(getId())).get("threads"), thread -> new Thread(thread, guild))
+                : null;
+    }
+
+    public List<Thread> getJoinedPrivateArchiveThreads() {
+        return getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Thread.Archive.JoinedPrivate(getId(), "@me")).get("threads"), thread -> new Thread(thread, guild))
+                : null;
+    }
+
+    public ModifyEvent<GuildChannel> modifyPosition(Consumer<GuildChannelPositionModifyAction> handler) {
+        ActionExecutor.modifyChannelPosition(handler, getGuild().getId(), getId());
+        return new ModifyEvent<>(guild.getChannelById(getId()));
+    }
+
+    public List<Webhook> getWebhooks() {
+        return getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
+                : null;
+    }
+
+    public Webhook getWebhookById(String webhookId) {
+        return getWebhooks().stream().filter(webhook -> webhook.getId().equals(webhookId)).findAny().orElse(null);
+    }
+
+    public Webhook getWebhookById(long webhookId) {
+        return getWebhookById(String.valueOf(webhookId));
+    }
+
+    public Webhook getWebhookByName(String webhookName) {
+        return getWebhooks().stream().filter(webhook -> webhook.getName().equals(webhookName)).findAny().orElse(null);
+    }
+
+    public CreateEvent<Webhook> createWebhook(Consumer<WebhookCreateAction> handler) {
+        String id = ActionExecutor.createWebhook(handler, getId());
+        return new CreateEvent<>(guild.getWebhookById(id));
+    }
 
     /**
-     * Converts this guild channel to a Thread.
+     * Converts an integer representation of permission override type to its corresponding enum value.
      *
-     * @return The corresponding thread.
+     * @param type The integer representation of permission override type.
+     * @return The corresponding {@link PermissionOverrideType} enum value.
      */
-    Thread asThread();
-
-
-    /**
-     * Converts this guild channel to a GuildForum.
-     *
-     * @return The corresponding guild forum.
-     */
-    GuildForum asForum();
+    private PermissionOverrideType getPermissionType(int type) {
+        return EnumUtils.getEnumObjectFromInt(type, PermissionOverrideType.class);
+    }
 
     /**
-     * Modifies this guild channel.
+     * Retrieves the denied permissions from the provided bitfield.
      *
-     * @param handler The consumer for the modification action.
-     * @return A ModifyEvent for this guild channel.
+     * @param deny The bitfield representing denied permissions.
+     * @return A list of {@link PermissionType} representing denied permissions.
      */
-    ModifyEvent<GuildChannel> modify(Consumer<GuildChannelModifyAction> handler);
+    private List<PermissionType> getDenied(String deny) {
+        List<PermissionType> deniedPermissions = new ArrayList<>();
+
+        for (PermissionType perm : PermissionType.values()) {
+            if ((Long.parseLong(deny) & perm.getValue()) != 0) {
+                deniedPermissions.add(perm);
+            }
+        }
+
+        return deniedPermissions;
+    }
 
     /**
-     * Retrieves the list of permissions overrides for this guild channel.
+     * Retrieves the allowed permissions from the provided bitfield.
      *
-     * @return The list of PermissionOverrides.
+     * @param allow The bitfield representing allowed permissions.
+     * @return A list of {@link PermissionType} representing allowed permissions.
      */
-    List<PermissionOverride> getPermissions();
+    private List<PermissionType> getAllowed(String allow) {
+        List<PermissionType> allowedPermissions = new ArrayList<>();
 
-    /**
-     * Retrieves a PermissionOverride by its ID.
-     *
-     * @param permissionId The ID of the permission override to retrieve.
-     * @return The permission override corresponding to the provided ID.
-     */
-    PermissionOverride getPermissionById(String permissionId);
+        for (PermissionType perm : PermissionType.values()) {
+            if ((Long.parseLong(allow) & perm.getValue()) != 0) {
+                allowedPermissions.add(perm);
+            }
+        }
 
-    /**
-     * Retrieves a PermissionOverride by its ID.
-     *
-     * @param permissionId The ID of the permission override to retrieve.
-     * @return The permission override corresponding to the provided ID.
-     */
-    PermissionOverride getPermissionById(long permissionId);
-
-    /**
-     * Edits a permission override for this guild channel.
-     *
-     * @param permissionId The ID of the permission override to edit.
-     * @param type         The type of the permission override.
-     * @param denied       The list of permission types to deny.
-     * @param allowed      The list of permission types to allow.
-     */
-    void editPermission(String permissionId, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed);
-
-    /**
-     * Deletes a permission override by its ID.
-     *
-     * @param permissionId The ID of the permission override to delete.
-     */
-    void deletePermission(long permissionId);
-
-    /**
-     * Retrieves the list of invites for this guild channel.
-     *
-     * @return The list of Invites.
-     */
-    List<Invite> getInvites();
-
-    /**
-     * Retrieves an Invite by its code.
-     *
-     * @param code The code of the invite to retrieve.
-     * @return The invite corresponding to the provided code.
-     */
-    Invite getInvite(String code);
-
-    /**
-     * Creates a new invite for this guild channel.
-     *
-     * @param handler The consumer for the invite creation action.
-     */
-    void createInvite(Consumer<InviteCreateAction> handler);
-
-    /**
-     * Checks if this guild channel has active threads.
-     *
-     * @return True if there are active threads, false otherwise.
-     */
-    boolean hasActiveThreads();
-
-    /**
-     * Retrieves the count of active threads for this guild channel.
-     *
-     * @return The count of active threads.
-     */
-    int getActiveThreadsCount();
-
-    /**
-     * Retrieves the list of active threads for this guild channel.
-     *
-     * @return The list of Threads.
-     */
-    List<Thread> getActiveThreads();
-
-    /**
-     * Retrieves the list of public archive threads for this guild channel.
-     *
-     * @return The list of Threads.
-     */
-    List<Thread> getPublicArchiveThreads();
-
-    /**
-     * Retrieves the list of private archive threads for this guild channel.
-     *
-     * @return The list of Threads.
-     */
-    List<Thread> getPrivateArchiveThreads();
-
-    /**
-     * Retrieves the list of joined private archive threads for this guild channel.
-     *
-     * @return The list of Threads.
-     */
-    List<Thread> getJoinedPrivateArchiveThreads();
-
-    /**
-     * Modifies the position of this guild channel.
-     *
-     * @param handler The consumer for the position modification action.
-     * @return A ModifyEvent for this guild channel's position.
-     */
-    ModifyEvent<GuildChannel> modifyPosition(Consumer<GuildChannelPositionModifyAction> handler);
-
-    /**
-     * Retrieves the list of webhooks for this guild channel.
-     *
-     * @return The list of Webhooks.
-     */
-    List<Webhook> getWebhooks();
-
-    /**
-     * Retrieves a Webhook by its ID.
-     *
-     * @param webhookId The ID of the webhook to retrieve.
-     * @return The webhook corresponding to the provided ID.
-     */
-    Webhook getWebhookById(String webhookId);
-
-    /**
-     * Retrieves a Webhook by its ID.
-     *
-     * @param webhookId The ID of the webhook to retrieve.
-     * @return The webhook corresponding to the provided ID.
-     */
-    Webhook getWebhookById(long webhookId);
-
-    /**
-     * Retrieves a Webhook by its name.
-     *
-     * @param webhookName The name of the webhook to retrieve.
-     * @return The webhook corresponding to the provided name.
-     */
-    Webhook getWebhookByName(String webhookName);
-
-    /**
-     * Creates a new webhook for this guild channel.
-     *
-     * @param handler The consumer for the webhook creation action.
-     * @return A CreateEvent for the newly created webhook.
-     */
-    CreateEvent<Webhook> createWebhook(Consumer<WebhookCreateAction> handler);
+        return allowedPermissions;
+    }
 }

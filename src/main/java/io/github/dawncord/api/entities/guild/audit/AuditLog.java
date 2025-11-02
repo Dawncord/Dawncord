@@ -5,7 +5,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.command.SlashCommand;
 import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
-import io.github.dawncord.api.entities.channel.thread.ThreadImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.automod.AutoModRuleImpl;
@@ -260,7 +259,7 @@ public class AuditLog {
      */
     public List<Thread> getThreads() {
         if (threads == null) {
-            threads = JsonUtils.getEntityList(audit.get("threads"), thread -> new ThreadImpl(thread, guild));
+            threads = JsonUtils.getEntityList(audit.get("threads"), thread -> new Thread(thread, guild));
         }
         return threads;
     }

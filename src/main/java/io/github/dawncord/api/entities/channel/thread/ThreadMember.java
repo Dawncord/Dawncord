@@ -1,7 +1,10 @@
 package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
+import io.github.dawncord.api.utils.LazyLoader;
 import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
@@ -10,20 +13,19 @@ import java.time.ZonedDateTime;
  * Represents a member of a thread.
  */
 public class ThreadMember {
-    private final JsonNode threadMember;
+    private final LazyLoader loader;
     private final Thread thread;
     private String userId;
-    private ZonedDateTime joinedTimestamp;
+    private ZonedDateTime joinTimestamp;
 
     /**
      * Constructs a new ThreadMember instance.
      *
      * @param threadMember The JSON node representing the thread member.
-     * @param thread       The thread to which the member belongs.
      */
     public ThreadMember(JsonNode threadMember, Thread thread) {
-        this.threadMember = threadMember;
         this.thread = thread;
+        loader = new LazyLoader(threadMember);
     }
 
     /**
@@ -41,11 +43,8 @@ public class ThreadMember {
      * @return The guild member, or null if not available.
      */
     public GuildMember asGuildMember() {
-        if (userId == null) {
-            userId = threadMember.get("user_id").asText();
-            return getThread().getGuild().getMemberById(userId);
-        }
-        return null;
+        userId = loader.loadString(userId, "user_id");
+        return thread.getGuild().getMemberById(userId);
     }
 
     /**
@@ -53,10 +52,8 @@ public class ThreadMember {
      *
      * @return The joined timestamp.
      */
-    public ZonedDateTime getJoinedTimestamp() {
-        if (joinedTimestamp == null) {
-            joinedTimestamp = TimeUtils.getZonedDateTime(threadMember, "join_timestamp");
-        }
-        return joinedTimestamp;
+    public ZonedDateTime getJoinTimestamp() {
+        joinTimestamp = loader.loadZonedDateTime(joinTimestamp, "join_timestamp");
+        return joinTimestamp;
     }
 }

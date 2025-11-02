@@ -1,210 +1,182 @@
 package io.github.dawncord.api.entities.channel;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.PollCreateAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
-import io.github.dawncord.api.entities.channel.thread.Thread;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.Message;
+import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.entities.message.poll.Poll;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.entities.channel.thread.Thread;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
- * Represents a channel for sending and receiving messages.
+ * Implementation of a message channel.
  */
-public interface MessageChannel extends Channel {
+public class MessageChannel extends Channel {
+    private final LazyLoader loader;
+    private final JsonNode channel;
+    private List<Message> messages;
+    private Message lastMessage;
+    private Integer rateLimit;
+    private Boolean nsfw;
+    private List<Message> pinnedMessages;
 
     /**
-     * Retrieves all messages in the channel.
+     * Constructs a new MessageChannelImpl object.
      *
-     * @return A list of messages in the channel.
+     * @param channel The JSON representation of the channel.
+     * @param guild   The guild to which this channel belongs.
      */
-    List<Message> getMessages();
+    public MessageChannel(JsonNode channel, Guild guild) {
+        super(channel, guild);
+        this.channel = channel;
+        loader = new LazyLoader(channel);
+    }
 
-    /**
-     * Retrieves the last message sent in the channel.
-     *
-     * @return The last message sent in the channel.
-     */
-    Message getLastMessage();
+    public List<Message> getMessages() {
+        messages = loader.load(messages, () -> {
+            messages = JsonUtils.getEntityList(
+                    JsonUtils.fetch(Routes.Channel.Message.All(getId())),
+                    message -> new MessageImpl(message, getGuild())
+            );
+            return messages;
+        });
+        return messages;
+    }
 
-    /**
-     * Retrieves a message by its ID.
-     *
-     * @param messageId The ID of the message to retrieve.
-     * @return The message with the specified ID.
-     */
-    Message getMessageById(String messageId);
+    public Message getLastMessage() {
+        lastMessage = loader.loadIfExists(lastMessage, "last_message_id",
+                () -> new MessageImpl(
+                        JsonUtils.fetch(Routes.Channel.Message.Get(getId(), channel.get("last_message_id").asText())),
+                        getGuild()
+                )
+        );
+        return lastMessage;
+    }
 
-    /**
-     * Retrieves a message by its ID.
-     *
-     * @param messageId The ID of the message to retrieve.
-     * @return The message with the specified ID.
-     */
-    Message getMessageById(long messageId);
+    public Message getMessageById(String messageId) {
+        return new MessageImpl(JsonUtils.fetch(Routes.Channel.Message.Get(getId(), messageId)), getGuild());
+    }
 
-    /**
-     * Retrieves the rate limit for sending messages in the channel.
-     *
-     * @return The rate limit for sending messages.
-     */
-    int getRateLimit();
+    public Message getMessageById(long messageId) {
+        return getMessageById(String.valueOf(messageId));
+    }
 
-    /**
-     * Checks if the channel is marked as NSFW (Not Safe For Work).
-     *
-     * @return True if the channel is NSFW, false otherwise.
-     */
-    boolean isNsfw();
+    public int getRateLimit() {
+        rateLimit = loader.loadIntIfExists(rateLimit, "rate_limit_per_user");
+        return rateLimit != null ? rateLimit : 0;
+    }
 
-    /**
-     * Deletes a specified number of messages from the channel.
-     *
-     * @param count The number of messages to delete.
-     */
-    void deleteMessages(int count);
+    public boolean isNsfw() {
+        nsfw = loader.loadBooleanIfExists(nsfw, "nsfw");
+        return nsfw != null && nsfw;
+    }
 
-    /**
-     * Sets the typing indicator in the channel.
-     */
-    void setTyping();
+    public void deleteMessages(int count) {
+        List<String> messagesToDelete = getMessages().stream()
+                .limit(count)
+                .map(Message::getId)
+                .collect(Collectors.toList());
 
-    /**
-     * Retrieves all pinned messages in the channel.
-     *
-     * @return A list of pinned messages.
-     */
-    List<Message> getPinnedMessages();
+        ObjectNode body = new ObjectMapper().createObjectNode();
+        body.set("messages", new ObjectMapper().valueToTree(messagesToDelete));
+        ApiClient.post(body, Routes.Channel.Message.ToDelete(getId()));
+    }
 
-    /**
-     * Pins a message by its ID.
-     *
-     * @param messageId The ID of the message to pin.
-     */
-    void pinMessage(String messageId);
+    public void setTyping() {
+        ApiClient.post(null, Routes.Typing(getId()));
+    }
 
-    /**
-     * Pins a message by its ID.
-     *
-     * @param messageId The ID of the message to pin.
-     */
-    void pinMessage(long messageId);
+    public List<Message> getPinnedMessages() {
+        pinnedMessages = loader.load(pinnedMessages, () ->
+                JsonUtils.getEntityList(
+                        JsonUtils.fetch(Routes.Channel.Message.Pin.All(getId())),
+                        message -> new MessageImpl(message, getGuild())
+                )
+        );
+        return pinnedMessages;
+    }
 
-    /**
-     * Unpins a message by its ID.
-     *
-     * @param messageId The ID of the message to unpin.
-     */
-    void unpinMessage(String messageId);
+    public void pinMessage(String messageId) {
+        ApiClient.put(null, Routes.Channel.Message.Pin.Get(getId(), messageId));
+    }
 
-    /**
-     * Unpins a message by its ID.
-     *
-     * @param messageId The ID of the message to unpin.
-     */
-    void unpinMessage(long messageId);
+    public void pinMessage(long messageId) {
+        pinMessage(String.valueOf(messageId));
+    }
 
-    /**
-     * Starts a new thread with the specified message ID and provides a handler for thread creation events.
-     *
-     * @param messageId The ID of the message to start the thread with.
-     * @param handler   The handler for thread creation events.
-     * @return An event representing the creation of the thread.
-     */
-    CreateEvent<Thread> startThread(String messageId, Consumer<ThreadCreateAction> handler);
+    public void unpinMessage(String messageId) {
+        ApiClient.delete(Routes.Channel.Message.Pin.Get(getId(), messageId));
+    }
 
-    /**
-     * Starts a new thread with the specified message ID and provides a handler for thread creation events.
-     *
-     * @param messageId The ID of the message to start the thread with.
-     * @param handler   The handler for thread creation events.
-     * @return An event representing the creation of the thread.
-     */
-    CreateEvent<Thread> startThread(long messageId, Consumer<ThreadCreateAction> handler);
+    public void unpinMessage(long messageId) {
+        unpinMessage(String.valueOf(messageId));
+    }
 
-    /**
-     * Starts a new thread and provides a handler for thread creation events.
-     *
-     * @param handler The handler for thread creation events.
-     * @return An event representing the creation of the thread.
-     */
-    CreateEvent<Thread> startThread(Consumer<ThreadCreateAction> handler);
+    public CreateEvent<Thread> startThread(String messageId, Consumer<ThreadCreateAction> handler) {
+        String id = ActionExecutor.startThread(handler, getMessageById(messageId), this);
+        return new CreateEvent<>(getGuild().getThreadById(id));
+    }
 
-    /**
-     * Starts a new thread.
-     *
-     * @return An event representing the creation of the thread.
-     */
-    CreateEvent<Thread> startThread();
+    public CreateEvent<Thread> startThread(long messageId, Consumer<ThreadCreateAction> handler) {
+        return startThread(String.valueOf(messageId), handler);
+    }
 
-    /**
-     * Modifies a message with the specified ID and provides a handler for message modification events.
-     *
-     * @param messageId The ID of the message to modify.
-     * @param handler   The handler for message modification events.
-     * @return An event representing the modification of the message.
-     */
-    ModifyEvent<Message> modifyMessageById(String messageId, Consumer<MessageModifyAction> handler);
+    public CreateEvent<Thread> startThread(Consumer<ThreadCreateAction> handler) {
+        String id = ActionExecutor.startThread(handler, null, this);
+        return new CreateEvent<>(getGuild().getThreadById(id));
+    }
 
-    /**
-     * Modifies a message with the specified ID and provides a handler for message modification events.
-     *
-     * @param messageId The ID of the message to modify.
-     * @param handler   The handler for message modification events.
-     * @return An event representing the modification of the message.
-     */
-    ModifyEvent<Message> modifyMessageById(long messageId, Consumer<MessageModifyAction> handler);
+    public CreateEvent<Thread> startThread() {
+        return startThread(null);
+    }
 
-    /**
-     * Creates a new poll and provides a handler for poll creation events.
-     *
-     * @param handler The handler for poll creation events.
-     * @return An event representing the creation of the poll.
-     */
-    CreateEvent<Poll> createPoll(Consumer<PollCreateAction> handler);
+    public ModifyEvent<Message> modifyMessageById(String messageId, Consumer<MessageModifyAction> handler) {
+        ActionExecutor.modifyMessage(handler, getMessageById(messageId));
+        return new ModifyEvent<>(getMessageById(messageId));
+    }
 
-    /**
-     * Retrieves the poll associated with the specified message ID.
-     *
-     * @param messageId The ID of the message associated with the poll.
-     * @return The poll associated with the specified message ID, or null if not found.
-     */
-    Poll getPoll(String messageId);
+    public ModifyEvent<Message> modifyMessageById(long messageId, Consumer<MessageModifyAction> handler) {
+        return modifyMessageById(String.valueOf(messageId), handler);
+    }
 
-    /**
-     * Retrieves the poll associated with the specified message ID.
-     *
-     * @param messageId The ID of the message associated with the poll.
-     * @return The poll associated with the specified message ID, or null if not found.
-     */
-    Poll getPoll(long messageId);
+    public CreateEvent<Poll> createPoll(Consumer<PollCreateAction> handler) {
+        String id = ActionExecutor.createPoll(handler, getId());
+        return new CreateEvent<>(getMessageById(id).getPoll());
+    }
 
-    /**
-     * Retrieves all polls in the channel.
-     *
-     * @return A list of all polls in the channel.
-     */
-    List<Poll> getPolls();
+    public Poll getPoll(String messageId) {
+        return getMessageById(messageId).getPoll();
+    }
 
-    /**
-     * Retrieves all polls in the channel with the specified question.
-     *
-     * @param question The question of the polls to retrieve.
-     * @return A list of polls with the specified question.
-     */
-    List<Poll> getPolls(String question);
+    public Poll getPoll(long messageId) {
+        return getPoll(String.valueOf(messageId));
+    }
 
-    /**
-     * Retrieves the voters of the specified poll answer in the specified message.
-     *
-     * @param messageId The ID of the message associated with the poll.
-     * @param answerId  The ID of the answer in the poll.
-     * @return A list of guild members who voted for the specified poll answer.
-     */
-    List<GuildMember> getPollVoters(String messageId, String answerId);
+    public List<Poll> getPolls() {
+        return getMessages().stream().map(Message::getPoll).collect(Collectors.toList());
+    }
+
+    public List<Poll> getPolls(String question) {
+        return getPolls().stream().filter(poll -> poll != null && poll.getQuestion().equals(question)).collect(Collectors.toList());
+    }
+
+    public List<GuildMember> getPollVoters(String messageId, String answerId) {
+        return getMessageById(messageId).getPollVoters(answerId);
+    }
 }

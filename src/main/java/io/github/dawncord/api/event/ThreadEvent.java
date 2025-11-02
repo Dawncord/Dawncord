@@ -1,7 +1,7 @@
 package io.github.dawncord.api.event;
 
-import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 
 /**
  * Represents an event related to a thread.

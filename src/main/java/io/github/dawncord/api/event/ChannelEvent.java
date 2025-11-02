@@ -1,6 +1,5 @@
 package io.github.dawncord.api.event;
 
-import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 
 /**
