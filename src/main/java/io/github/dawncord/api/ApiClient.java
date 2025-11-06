@@ -77,7 +77,9 @@ public class ApiClient {
                 .get()
                 .build();
 
-        //logger.debug("[GET] -> {}", url);
+        if (Constants.DEV_LOGGING) {
+            logger.debug("[GET] -> {}", url);
+        }
 
         return performRequestAndGetJson(request);
     }
@@ -103,7 +105,9 @@ public class ApiClient {
                 .get()
                 .build();
 
-        //logger.debug("[GET] -> {}", url);
+        if (Constants.DEV_LOGGING) {
+            logger.debug("[GET] -> {}", url);
+        }
 
         return performRequestAndGetJson(request);
     }

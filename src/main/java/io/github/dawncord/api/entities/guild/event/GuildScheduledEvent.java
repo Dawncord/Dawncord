@@ -56,6 +56,10 @@ public class GuildScheduledEvent implements ISnowflake {
         this.event = event;
         loader = new LazyLoader(event);
     }
+    
+    public String getJson() {
+        return event.toPrettyString();
+    }
 
     @Override
     public String getId() {
@@ -154,7 +158,7 @@ public class GuildScheduledEvent implements ISnowflake {
 
     public List<GuildMember> getGuildEventMembers(int limit) {
         JsonNode eventMembers = JsonUtils.fetchParams(
-                Routes.Guild.ScheduledEvent.Members(guild.getId(), getId()),
+                Routes.Guild.ScheduledEvent.Members(getGuild().getId(), getId()),
                 Map.of(
                         "with_member", "true",
                         "limit", String.valueOf(limit)
@@ -162,7 +166,7 @@ public class GuildScheduledEvent implements ISnowflake {
         );
         List<GuildMember> members = new ArrayList<>();
         for (JsonNode member : eventMembers) {
-            members.add(new GuildMemberImpl(member.get("member"), guild));
+            members.add(new GuildMemberImpl(member.get("member"), getGuild()));
         }
         return members;
     }
@@ -173,11 +177,11 @@ public class GuildScheduledEvent implements ISnowflake {
     }
 
     public ModifyEvent<GuildScheduledEvent> modify(Consumer<GuildEventModifyAction> handler) {
-        ActionExecutor.modifyGuildEvent(handler, guild.getId(), getId());
-        return new ModifyEvent<>(guild.getGuildEventById(getId()));
+        ActionExecutor.modifyGuildEvent(handler, getGuild().getId(), getId());
+        return new ModifyEvent<>(getGuild().getGuildEventById(getId()));
     }
 
     public void delete() {
-        ApiClient.delete(Routes.Guild.ScheduledEvent.Get(guild.getId(), getId()));
+        ApiClient.delete(Routes.Guild.ScheduledEvent.Get(getGuild().getId(), getId()));
     }
 }
