@@ -7,7 +7,6 @@ import io.github.dawncord.api.entities.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
-import io.github.dawncord.api.entities.guild.automod.AutoModRuleImpl;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.entities.guild.integration.Integration;
@@ -17,6 +16,7 @@ import io.github.dawncord.api.types.PermissionOverrideType;
 import io.github.dawncord.api.types.PermissionType;
 import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +31,7 @@ import static io.github.dawncord.api.types.AuditLogEvent.*;
  * Represents an audit log for a guild, containing information about various actions performed within the guild.
  */
 public class AuditLog {
+    private final LazyLoader loader;
     private final JsonNode audit;
     private final Guild guild;
     private List<Entry> entries;
@@ -51,6 +52,7 @@ public class AuditLog {
     public AuditLog(JsonNode audit, Guild guild) {
         this.audit = audit;
         this.guild = guild;
+        loader = new LazyLoader(audit);
     }
 
     /**
@@ -59,9 +61,7 @@ public class AuditLog {
      * @return The list of entries in the audit log.
      */
     public List<Entry> getEntries() {
-        if (entries == null) {
-            entries = JsonUtils.getEntityList(audit.get("audit_log_entries"), entry -> new Entry(entry, guild));
-        }
+        entries = loader.loadEntityList(entries, "audit_log_entries", entry -> new Entry(entry, guild));
         return entries;
     }
 
@@ -131,9 +131,7 @@ public class AuditLog {
      * @return The list of auditors.
      */
     public List<User> getAuditors() {
-        if (auditors == null) {
-            auditors = JsonUtils.getEntityList(audit.get("users"), UserImpl::new);
-        }
+        auditors = loader.loadEntityList(auditors, "users", UserImpl::new);
         return auditors;
     }
 
@@ -153,7 +151,7 @@ public class AuditLog {
      * @return The list of integrations.
      */
     public List<Integration> getIntegrations() {
-        if (integrations == null) {
+        integrations = loader.load(integrations, () -> {
             integrations = new ArrayList<>();
             Set<String> auditIntegrationIds = new HashSet<>();
             for (JsonNode auditIntegration : audit.get("integrations")) {
@@ -164,7 +162,8 @@ public class AuditLog {
                     integrations.add(new IntegrationImpl(guildIntegration, guild));
                 }
             }
-        }
+            return integrations;
+        });
         return integrations;
     }
 
@@ -194,9 +193,7 @@ public class AuditLog {
      * @return The list of webhooks.
      */
     public List<Webhook> getWebhooks() {
-        if (webhooks == null) {
-            webhooks = JsonUtils.getEntityList(audit.get("webhooks"), webhook -> new WebhookImpl(webhook, guild));
-        }
+        webhooks = loader.loadEntityList(webhooks, "webhooks", webhook -> new WebhookImpl(webhook, guild));
         return webhooks;
     }
 
@@ -226,9 +223,7 @@ public class AuditLog {
      * @return The list of guild events.
      */
     public List<GuildScheduledEvent> getGuildEvents() {
-        if (guildEvents == null) {
-            guildEvents = JsonUtils.getEntityList(audit.get("guild_scheduled_events"), event -> new GuildScheduledEventImpl(event, guild));
-        }
+        guildEvents = loader.loadEntityList(guildEvents, "guild_scheduled_events", event -> new GuildScheduledEventImpl(event, guild));
         return guildEvents;
     }
 
@@ -258,9 +253,7 @@ public class AuditLog {
      * @return The list of threads.
      */
     public List<Thread> getThreads() {
-        if (threads == null) {
-            threads = JsonUtils.getEntityList(audit.get("threads"), thread -> new Thread(thread, guild));
-        }
+        threads = loader.loadEntityList(threads, "threads", thread -> new Thread(thread, guild));
         return threads;
     }
 
@@ -290,9 +283,7 @@ public class AuditLog {
      * @return The list of slash commands.
      */
     public List<SlashCommand> getSlashCommands() {
-        if (slashCommands == null) {
-            slashCommands = JsonUtils.getEntityList(audit.get("application_commands"), SlashCommand::new);
-        }
+        slashCommands = loader.loadEntityList(slashCommands, "application_commands", SlashCommand::new);
         return slashCommands;
     }
 
@@ -302,9 +293,7 @@ public class AuditLog {
      * @return The list of auto moderation rules.
      */
     public List<AutoModRule> getAutoModRules() {
-        if (autoModRules == null) {
-            autoModRules = JsonUtils.getEntityList(audit.get("auto_moderation_rules"), rule -> new AutoModRuleImpl(rule, guild));
-        }
+        autoModRules = loader.loadEntityList(autoModRules, "auto_moderation_rules", rule -> new AutoModRule(rule, guild));
         return autoModRules;
     }
 
@@ -312,6 +301,7 @@ public class AuditLog {
      * Represents an entry in the audit log.
      */
     public static class Entry implements ISnowflake {
+        private final LazyLoader loader;
         private final JsonNode entry;
         private final Guild guild;
         private String id;
@@ -329,13 +319,12 @@ public class AuditLog {
         public Entry(JsonNode entry, Guild guild) {
             this.entry = entry;
             this.guild = guild;
+            loader = new LazyLoader(entry);
         }
 
         @Override
         public String getId() {
-            if (id == null) {
-                id = entry.get("id").asText();
-            }
+            id = loader.loadString(id, "id");
             return id;
         }
 
@@ -354,10 +343,9 @@ public class AuditLog {
          *
          * @return The action type of the entry.
          */
+        //todo check return
         public AuditLogEvent getActionType() {
-            if (actionType == null) {
-                actionType = EnumUtils.getEnumObject(entry, "action_type", AuditLogEvent.class);
-            }
+            actionType = loader.loadEnumObject(actionType, "action_type", AuditLogEvent.class);
             return actionType;
         }
 
@@ -367,9 +355,8 @@ public class AuditLog {
          * @return The user associated with the entry, or null if not available.
          */
         public User getUser() {
-            if (user == null) {
-                user = entry.has("user_id") ? new UserImpl(JsonUtils.fetch(Routes.User(entry.get("user_id").asText()))) : null;
-            }
+            user = loader.loadIfExists(user, "user_id",
+                    () -> new UserImpl(JsonUtils.fetch(Routes.User(entry.get("user_id").asText()))));
             return user;
         }
 
@@ -379,9 +366,7 @@ public class AuditLog {
          * @return The target ID of the entry, or null if not available.
          */
         public String getTargetId() {
-            if (targetId == null) {
-                targetId = entry.has("target_id") ? entry.get("target_id").asText() : null;
-            }
+            targetId = loader.loadString(targetId, "target_id");
             return targetId;
         }
 
@@ -401,11 +386,7 @@ public class AuditLog {
          * @return The list of changes associated with the entry, or null if not available.
          */
         public List<Change> getChanges() {
-            if (changes == null) {
-                changes = entry.has("changes") && entry.hasNonNull("changes")
-                        ? JsonUtils.getEntityList(entry.get("changes"), change -> new Change(change, guild))
-                        : null;
-            }
+            changes = loader.loadEntityList(changes, "changes", change -> new Change(change, guild));
             return changes;
         }
 
@@ -413,6 +394,7 @@ public class AuditLog {
          * Represents a change in the audit log entry.
          */
         public class Change {
+            private final LazyLoader loader;
             private final JsonNode change;
             private final Guild guild;
             private String key;
@@ -428,6 +410,7 @@ public class AuditLog {
             public Change(JsonNode change, Guild guild) {
                 this.change = change;
                 this.guild = guild;
+                loader = new LazyLoader(change);
             }
 
             /**
@@ -436,9 +419,7 @@ public class AuditLog {
              * @return The key associated with the change.
              */
             public String getKey() {
-                if (key == null) {
-                    key = change.get("key").asText();
-                }
+                key = loader.loadString(key, "key");
                 return key;
             }
 
@@ -448,11 +429,7 @@ public class AuditLog {
              * @return The new value of the change, or null if not available.
              */
             public Object getNewValue() {
-                if (newValue == null) {
-                    newValue = change.has("new_value") && change.hasNonNull("new_value")
-                            ? getValue(change, guild, "new_value")
-                            : null;
-                }
+                newValue = loader.loadIfExists(newValue, "new_value", () -> getValue(change, guild, "new_value"));
                 return newValue;
             }
 
@@ -462,11 +439,7 @@ public class AuditLog {
              * @return The old value of the change, or null if not available.
              */
             public Object getOldValue() {
-                if (oldValue == null) {
-                    oldValue = change.has("old_value") && change.hasNonNull("old_value")
-                            ? getValue(change, guild, "old_value")
-                            : null;
-                }
+                oldValue = loader.loadIfExists(oldValue, "old_value", () -> getValue(change, guild, "old_value"));
                 return oldValue;
             }
 

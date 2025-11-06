@@ -28,7 +28,7 @@ public class ActivityParty {
      * @return The ID of the activity party.
      */
     public String getId() {
-        id = loader.loadStringIfExists(id, "id");
+        id = loader.loadString(id, "id");
         return id;
     }
 

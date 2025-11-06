@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.types.AutoModActionType;
 import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents an action taken by the auto-moderation system.
  */
 public class AutoModAction {
+    private final LazyLoader loader;
     private final JsonNode action;
     private final Guild guild;
     private AutoModActionType type;
@@ -23,6 +25,7 @@ public class AutoModAction {
     public AutoModAction(JsonNode action, Guild guild) {
         this.action = action;
         this.guild = guild;
+        loader = new LazyLoader(action);
     }
 
     /**
@@ -31,9 +34,7 @@ public class AutoModAction {
      * @return The type of the auto-moderation action.
      */
     public AutoModActionType getType() {
-        if (type == null) {
-            type = EnumUtils.getEnumObject(action, "type", AutoModActionType.class);
-        }
+        type = loader.loadEnumObject(type, "type", AutoModActionType.class);
         return type;
     }
 
@@ -43,11 +44,8 @@ public class AutoModAction {
      * @return The metadata associated with the auto-moderation action, or null if not available.
      */
     public ActionMetadata getMetadata() {
-        if (metadata == null) {
-            metadata = action.has("metadata") && action.hasNonNull("metadata") && !action.get("metadata").isEmpty()
-                    ? new ActionMetadata(action.get("metadata"), guild)
-                    : null;
-        }
+        metadata = loader.loadIfExists(metadata, "metadata",
+                () -> new ActionMetadata(action.get("metadata"), guild));
         return metadata;
     }
 }

@@ -1,12 +1,15 @@
 package io.github.dawncord.api.entities.guild.automod;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents metadata associated with an action, such as moderation actions.
  */
 public class ActionMetadata {
+    private final LazyLoader loader;
     private final JsonNode metadata;
     private final Guild guild;
     private GuildChannel channel;
@@ -22,6 +25,7 @@ public class ActionMetadata {
     public ActionMetadata(JsonNode metadata, Guild guild) {
         this.metadata = metadata;
         this.guild = guild;
+        loader = new LazyLoader(metadata);
     }
 
     /**
@@ -30,9 +34,7 @@ public class ActionMetadata {
      * @return The channel associated with the action.
      */
     public GuildChannel getChannel() {
-        if (channel == null) {
-            channel = guild.getChannelById(metadata.get("channel_id").asText());
-        }
+        channel = loader.load(channel, () -> guild.getChannelById(metadata.get("channel_id").asText()));
         return channel;
     }
 
@@ -42,9 +44,7 @@ public class ActionMetadata {
      * @return The duration of the action in seconds.
      */
     public int getDuration() {
-        if (duration == null) {
-            duration = metadata.get("duration_seconds").asInt();
-        }
+        duration = loader.loadInt(duration, "duration_seconds");
         return duration;
     }
 
@@ -54,11 +54,7 @@ public class ActionMetadata {
      * @return The custom message associated with the action, or null if not available.
      */
     public String getCustomMessage() {
-        if (customMessage == null) {
-            customMessage = metadata.has("custom_message") && metadata.hasNonNull("custom_message")
-                    ? metadata.get("custom_message").asText()
-                    : null;
-        }
+        customMessage = loader.loadString(customMessage, "custom_message");
         return customMessage;
     }
 }

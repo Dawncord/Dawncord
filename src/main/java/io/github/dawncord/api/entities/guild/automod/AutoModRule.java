@@ -1,92 +1,112 @@
 package io.github.dawncord.api.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.AutoModEventType;
 import io.github.dawncord.api.types.AutoModTriggerType;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Represents an auto-moderation rule.
- */
-public interface AutoModRule extends ISnowflake {
-    /**
-     * Retrieves the name of the auto-moderation rule.
-     *
-     * @return The name of the auto-moderation rule.
-     */
-    String getName();
+
+public class AutoModRule implements ISnowflake {
+    private final LazyLoader loader;
+    private final JsonNode rule;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private User creator;
+    private AutoModTriggerType triggerType;
+    private AutoModTriggerMetadata triggerMetadata;
+    private List<AutoModAction> actions;
+    private Boolean enabled;
+    private List<String> exemptRoles;
+    private List<String> exemptChannels;
 
     /**
-     * Retrieves the creator of the auto-moderation rule.
+     * Constructs an AutoModRuleImpl object.
      *
-     * @return The creator of the auto-moderation rule.
+     * @param rule  The JSON node representing the auto-mod rule.
+     * @param guild The guild to which the auto-mod rule belongs.
      */
-    User getCreator();
+    public AutoModRule(JsonNode rule, Guild guild) {
+        this.rule = rule;
+        this.guild = guild;
+        loader = new LazyLoader(rule);
+    }
 
-    /**
-     * Retrieves the event type associated with the auto-moderation rule.
-     *
-     * @return The event type associated with the auto-moderation rule.
-     */
-    AutoModEventType getEventType();
+    @Override
+    public String getId() {
+        id = loader.loadString(id, "id");
+        return id;
+    }
 
-    /**
-     * Retrieves the trigger type of the auto-moderation rule.
-     *
-     * @return The trigger type of the auto-moderation rule.
-     */
-    AutoModTriggerType getTriggerType();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Retrieves the trigger metadata of the auto-moderation rule.
-     *
-     * @return The trigger metadata of the auto-moderation rule.
-     */
-    AutoModTriggerMetadata getTriggerMetadata();
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
-    /**
-     * Retrieves the list of actions associated with the auto-moderation rule.
-     *
-     * @return The list of actions associated with the auto-moderation rule.
-     */
-    List<AutoModAction> getActions();
+    public User getCreator() {
+        creator = loader.loadIfExists(creator, "user_id",
+                () -> new UserImpl(JsonUtils.fetch(Routes.User(rule.get("creator_id").asText()))));
+        return creator;
+    }
 
-    /**
-     * Checks if the auto-moderation rule is enabled.
-     *
-     * @return True if the auto-moderation rule is enabled, false otherwise.
-     */
-    boolean isEnabled();
+    public AutoModEventType getEventType() {
+        return AutoModEventType.MESSAGE_SEND;
+    }
 
-    /**
-     * Retrieves the list of exempt roles from the auto-moderation rule.
-     *
-     * @return The list of exempt roles from the auto-moderation rule.
-     */
-    List<String> getExemptRoles();
+    public AutoModTriggerType getTriggerType() {
+        triggerType = loader.loadEnumObject(triggerType, "trigger_type", AutoModTriggerType.class);
+        return triggerType;
+    }
 
-    /**
-     * Retrieves the list of exempt channels from the auto-moderation rule.
-     *
-     * @return The list of exempt channels from the auto-moderation rule.
-     */
-    List<String> getExemptChannels();
+    public AutoModTriggerMetadata getTriggerMetadata() {
+        triggerMetadata = loader.load(triggerMetadata, () -> new AutoModTriggerMetadata(rule.get("trigger_metadata")));
+        return triggerMetadata;
+    }
 
-    /**
-     * Modifies the auto-moderation rule using the provided handler.
-     *
-     * @param handler The handler for modifying the auto-moderation rule.
-     * @return A ModifyEvent representing the modification event.
-     */
-    ModifyEvent<AutoModRule> modify(Consumer<AutoModRuleModifyAction> handler);
+    public List<AutoModAction> getActions() {
+        actions = loader.loadEntityList(actions, "actions", action -> new AutoModAction(action, guild));
+        return actions;
+    }
 
-    /**
-     * Deletes the auto-moderation rule.
-     */
-    void delete();
+    public boolean isEnabled() {
+        enabled = loader.loadBoolean(enabled, "enabled");
+        return enabled;
+    }
+
+    public List<String> getExemptRoles() {
+        exemptRoles = loader.loadStringList(exemptRoles, "exempt_roles");
+        return exemptRoles;
+    }
+
+    public List<String> getExemptChannels() {
+        exemptChannels = loader.loadStringList(exemptChannels, "exempt_channels");
+        return exemptChannels;
+    }
+
+    public ModifyEvent<AutoModRule> modify(Consumer<AutoModRuleModifyAction> handler) {
+        ActionExecutor.modifyAutoModRule(handler, guild.getId(), getTriggerType());
+        return new ModifyEvent<>(guild.getAutoModRuleById(getId()));
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Guild.AutoMod.Get(guild.getId(), getId()));
+    }
 }

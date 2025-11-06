@@ -51,7 +51,7 @@ public class Team implements ISnowflake {
     }
 
     public TeamIcon getIcon() {
-        icon = loader.loadIfExistsAndNonNull(icon, "icon", () -> new TeamIcon(id, team.get("icon").asText()));
+        icon = loader.loadIfExists(icon, "icon", () -> new TeamIcon(id, team.get("icon").asText()));
         return icon;
     }
 

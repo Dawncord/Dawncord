@@ -30,7 +30,7 @@ public class ActivityEmoji implements ISnowflake {
      */
     @Override
     public String getId() {
-        id = loader.loadStringIfExists(id, "id");
+        id = loader.loadString(id, "id");
         return id;
     }
 
@@ -55,7 +55,7 @@ public class ActivityEmoji implements ISnowflake {
      * @return True if the activity emoji is animated, false otherwise.
      */
     public boolean isAnimated() {
-        isAnimated = loader.loadBooleanIfExists(isAnimated, "animated");
+        isAnimated = loader.loadBoolean(isAnimated, "animated");
         return isAnimated;
     }
 }

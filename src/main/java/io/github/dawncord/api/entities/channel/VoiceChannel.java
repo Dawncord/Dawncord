@@ -29,12 +29,12 @@ public class VoiceChannel extends MessageChannel {
     }
 
     public int getUserLimit() {
-        userLimit = loader.loadIntIfExists(userLimit, "user_limit");
+        userLimit = loader.loadInt(userLimit, "user_limit");
         return userLimit != null ? userLimit : 0;
     }
 
     public int getBitrate() {
-        bitrate = loader.loadIntIfExists(bitrate, "bitrate");
+        bitrate = loader.loadInt(bitrate, "bitrate");
         return bitrate != null ? bitrate : 0;
     }
 

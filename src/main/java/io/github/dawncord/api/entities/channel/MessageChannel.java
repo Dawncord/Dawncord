@@ -78,12 +78,12 @@ public class MessageChannel extends Channel {
     }
 
     public int getRateLimit() {
-        rateLimit = loader.loadIntIfExists(rateLimit, "rate_limit_per_user");
+        rateLimit = loader.loadInt(rateLimit, "rate_limit_per_user");
         return rateLimit != null ? rateLimit : 0;
     }
 
     public boolean isNsfw() {
-        nsfw = loader.loadBooleanIfExists(nsfw, "nsfw");
+        nsfw = loader.loadBoolean(nsfw, "nsfw");
         return nsfw != null && nsfw;
     }
 

@@ -21,7 +21,6 @@ import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.Invite;
 import io.github.dawncord.api.entities.channel.Stage;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
-import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.role.GuildRole;

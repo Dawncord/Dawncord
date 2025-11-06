@@ -1,59 +1,64 @@
 package io.github.dawncord.api.entities.guild.automod;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.types.KeywordPreset;
+import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Represents the metadata associated with an auto-mod trigger.
- */
-public interface AutoModTriggerMetadata {
-    /**
-     * Gets the keyword filters for the trigger.
-     *
-     * @return The list of keyword filters.
-     */
-    List<String> getKeywordFilters();
+
+public class AutoModTriggerMetadata {
+    private final LazyLoader loader;
+    private List<String> keywordFilters;
+    private List<KeywordPreset> presets;
+    private List<String> allows;
+    private Integer mentionLimit;
+    private Boolean isRaidProtected;
 
     /**
-     * Gets the presets for the trigger.
+     * Constructs a new AutoModTriggerMetadataImpl with the specified JSON node.
      *
-     * @return The list of keyword presets.
+     * @param metadata The JSON node containing metadata.
      */
-    List<KeywordPreset> getPresets();
+    public AutoModTriggerMetadata(JsonNode metadata) {
+        loader = new LazyLoader(metadata);
+    }
 
-    /**
-     * Gets the allowed items for the trigger.
-     *
-     * @return The list of allowed items.
-     */
-    List<String> getAllows();
+    /*protected AutoModTriggerMetadata(List<String> keywordFilter, List<KeywordPreset> presets, List<String> allows, int mentionLimit, boolean raidProtected) {
+        this.metadata = null;
+        this.loader = null;
+        this.keywordFilters = keywordFilter;
+        this.presets = presets;
+        this.allows = allows;
+        this.mentionLimit = mentionLimit;
+        this.isRaidProtected = raidProtected;
+    }*/
 
-    /**
-     * Gets the mention limit for the trigger.
-     *
-     * @return The mention limit.
-     */
-    int getMentionLimit();
+    public List<String> getKeywordFilters() {
+        keywordFilters = loader.loadStringList(keywordFilters, "keyword_filter");
+        return keywordFilters;
+    }
 
-    /**
-     * Checks if the trigger is raid protected.
-     *
-     * @return true if raid protection is enabled,  false otherwise.
-     */
-    boolean isRaidProtected();
+    public List<KeywordPreset> getPresets() {
+        presets = loader.loadEnumList(presets, "presets", KeywordPreset.class, "int");
+        return presets;
+    }
 
-    /**
-     * Creates an instance of AutoModTriggerMetadata with the specified parameters.
-     *
-     * @param keywordFilter The keyword filters.
-     * @param presets       The keyword presets.
-     * @param allows        The allowed items.
-     * @param mentionLimit  The mention limit.
-     * @param raidProtected Whether raid protection is enabled.
-     * @return An instance of AutoModTriggerMetadata.
-     */
-    static AutoModTriggerMetadata of(List<String> keywordFilter, List<KeywordPreset> presets, List<String> allows, int mentionLimit, boolean raidProtected) {
-        return new AutoModTriggerMetadataImpl(keywordFilter, presets, allows, mentionLimit, raidProtected);
+    public List<String> getAllows() {
+        allows = loader.loadStringList(allows, "allow_list");
+        return allows;
+    }
+
+    public int getMentionLimit() {
+        mentionLimit = loader.loadInt(mentionLimit, "mention_total_limit");
+        return mentionLimit;
+    }
+
+    public boolean isRaidProtected() {
+        isRaidProtected = loader.loadBoolean(isRaidProtected, "mention_raid_protection_enabled");
+        return isRaidProtected;
     }
 }

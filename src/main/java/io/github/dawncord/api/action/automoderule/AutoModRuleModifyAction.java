@@ -3,7 +3,6 @@ package io.github.dawncord.api.action.automoderule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.types.AutoModTriggerType;
 import io.github.dawncord.api.types.KeywordPreset;
 

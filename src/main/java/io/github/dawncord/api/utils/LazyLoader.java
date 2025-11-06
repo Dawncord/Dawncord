@@ -31,17 +31,8 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the string value from JSON
      */
     public String loadString(String currentValue, String fieldName) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             return jsonNode.path(fieldName).asText();
-        }
-        return currentValue;
-    }
-
-    public String loadStringIfExists(String currentValue, String fieldName) {
-        if (currentValue == null) {
-            if (jsonNode.has(fieldName)) {
-                return jsonNode.path(fieldName).asText();
-            }
         }
         return currentValue;
     }
@@ -54,17 +45,8 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the integer value from JSON
      */
     public Integer loadInt(Integer currentValue, String fieldName) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             return jsonNode.path(fieldName).asInt(0);
-        }
-        return currentValue;
-    }
-
-    public Integer loadIntIfExists(Integer currentValue, String fieldName) {
-        if (currentValue == null) {
-            if (jsonNode.has(fieldName)) {
-                return jsonNode.path(fieldName).asInt(0);
-            }
         }
         return currentValue;
     }
@@ -79,7 +61,7 @@ public class LazyLoader {
      * @throws IndexOutOfBoundsException if the array doesn't have the specified index
      */
     public Integer loadIntFromArray(Integer currentValue, String fieldName, int arrayIndex) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             JsonNode arrayNode = jsonNode.path(fieldName);
             if (arrayNode.isArray() && arrayIndex < arrayNode.size()) {
                 return arrayNode.get(arrayIndex).asInt();
@@ -96,17 +78,8 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the long value from JSON
      */
     public Long loadLong(Long currentValue, String fieldName) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             return jsonNode.path(fieldName).asLong(0L);
-        }
-        return currentValue;
-    }
-
-    public Long loadLongIfExists(Long currentValue, String fieldName) {
-        if (currentValue == null) {
-            if (jsonNode.has(fieldName)) {
-                return jsonNode.path(fieldName).asLong(0L);
-            }
         }
         return currentValue;
     }
@@ -119,17 +92,8 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the boolean value from JSON
      */
     public Boolean loadBoolean(Boolean currentValue, String fieldName) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             return jsonNode.path(fieldName).asBoolean(false);
-        }
-        return currentValue;
-    }
-
-    public Boolean loadBooleanIfExists(Boolean currentValue, String fieldName) {
-        if (currentValue == null) {
-            if (jsonNode.has(fieldName)) {
-                return jsonNode.path(fieldName).asBoolean(false);
-            }
         }
         return currentValue;
     }
@@ -145,14 +109,14 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the enum value from JSON
      */
     public <T extends Enum<T>> T loadEnumObject(T currentValue, String fieldName, Class<T> enumClass) {
-        if (currentValue == null && jsonNode.has(fieldName)) {
+        if (checkNull(currentValue, fieldName)) {
             return EnumUtils.getEnumObject(jsonNode, fieldName, enumClass);
         }
         return currentValue;
     }
 
     public <T extends Enum<T>> List<T> loadEnumList(List<T> currentValue, String fieldName, Class<T> enumClass, String type) {
-        if (currentValue == null && jsonNode.has(fieldName)) {
+        if (checkNull(currentValue, fieldName)) {
             return EnumUtils.getEnumList(jsonNode.get(fieldName), enumClass, type);
         }
         return currentValue;
@@ -169,8 +133,15 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the list of enum values from JSON if field exists, otherwise null
      */
     public <T extends Enum<T>> List<T> loadEnumListFromLong(List<T> currentValue, String fieldName, Class<T> enumClass) {
-        if (currentValue == null && jsonNode.has(fieldName)) {
+        if (checkNull(currentValue, fieldName)) {
             return EnumUtils.getEnumListFromLong(jsonNode, fieldName, enumClass);
+        }
+        return currentValue;
+    }
+
+    public List<String> loadStringList(List<String> currentValue, String fieldName) {
+        if (checkNull(currentValue, fieldName)) {
+            return JsonUtils.getStringList(jsonNode, fieldName);
         }
         return currentValue;
     }
@@ -183,28 +154,8 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the ZonedDateTime value from JSON
      */
     public ZonedDateTime loadZonedDateTime(ZonedDateTime currentValue, String fieldName) {
-        if (currentValue == null) {
+        if (checkNull(currentValue, fieldName)) {
             return TimeUtils.getZonedDateTime(jsonNode, fieldName);
-        }
-        return currentValue;
-    }
-
-    /**
-     * Loads a value from JSON using a custom mapper function if the current value is null.
-     *
-     * @param <T>          the type of the value to load
-     * @param currentValue the current value (may be null)
-     * @param fieldName    the name of the field in the JSON node
-     * @param mapper       function that maps JSON node to the desired type
-     * @return the current value if not null, otherwise the mapped value from JSON
-     */
-    public <T> T loadMapped(T currentValue, String fieldName, Function<JsonNode, T> mapper) {
-        if (currentValue == null) {
-            JsonNode fieldNode = jsonNode.path(fieldName);
-            if (fieldNode.isMissingNode() || fieldNode.isNull()) {
-                return null;
-            }
-            return mapper.apply(fieldNode);
         }
         return currentValue;
     }
@@ -226,23 +177,6 @@ public class LazyLoader {
     }
 
     /**
-     * Loads an object if the current value is null and the field exists and is not null.
-     * Uses a supplier function for object creation.
-     *
-     * @param <T>          the type of the value to load
-     * @param currentValue the current value (may be null)
-     * @param fieldName    the name of the field in the JSON node
-     * @param supplier     function that provides the value when the field exists and is not null
-     * @return the current value if not null, otherwise the supplied value if field exists and is not null, otherwise null
-     */
-    public <T> T loadIfExistsAndNonNull(T currentValue, String fieldName, Supplier<T> supplier) {
-        if (currentValue == null && jsonNode.has(fieldName) && jsonNode.hasNonNull(fieldName)) {
-            return supplier.get();
-        }
-        return currentValue;
-    }
-
-    /**
      * Loads a value from JSON only if the field exists and current value is null.
      *
      * @param <T>          the type of the value to load
@@ -252,7 +186,7 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the loaded value if field exists, otherwise null
      */
     public <T> T loadIfExists(T currentValue, String fieldName, Function<JsonNode, T> loader) {
-        if (currentValue == null && jsonNode.has(fieldName)) {
+        if (checkNull(currentValue, fieldName)) {
             return loader.apply(jsonNode.path(fieldName));
         }
         return currentValue;
@@ -269,9 +203,20 @@ public class LazyLoader {
      * @return the current value if not null, otherwise the supplied value if field exists, otherwise null
      */
     public <T> T loadIfExists(T currentValue, String fieldName, Supplier<T> supplier) {
-        if (currentValue == null && jsonNode.has(fieldName)) {
+        if (checkNull(currentValue, fieldName)) {
             return supplier.get();
         }
         return currentValue;
+    }
+
+    public <T> List<T> loadEntityList(List<T> currentValue, String fieldName, Function<JsonNode, T> constructor) {
+        if (checkNull(currentValue, fieldName)) {
+            return JsonUtils.getEntityList(jsonNode.get(fieldName), constructor);
+        }
+        return currentValue;
+    }
+
+    private <T> boolean checkNull(T currentValue, String fieldName) {
+        return currentValue == null && jsonNode.has(fieldName) && jsonNode.hasNonNull(fieldName);
     }
 }

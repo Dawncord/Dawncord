@@ -13,7 +13,6 @@ import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
-import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.role.GuildRole;

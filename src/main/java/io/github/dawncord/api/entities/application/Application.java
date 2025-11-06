@@ -90,7 +90,7 @@ public class Application implements IApplication {
 
     @Override
     public ApplicationIcon getIcon() {
-        icon = loader.loadIfExistsAndNonNull(icon, "icon",
+        icon = loader.loadIfExists(icon, "icon",
                 () -> new ApplicationIcon(getId(), application.get("icon").asText()));
         return icon;
     }
@@ -115,17 +115,17 @@ public class Application implements IApplication {
     }
 
     public int getGuildCount() {
-        guildCount = loader.loadIntIfExists(guildCount, "approximate_guild_count");
+        guildCount = loader.loadInt(guildCount, "approximate_guild_count");
         return guildCount != null ? guildCount : 0;
     }
 
     public int getUserCount() {
-        userCount = loader.loadIntIfExists(userCount, "approximate_user_install_count");
+        userCount = loader.loadInt(userCount, "approximate_user_install_count");
         return userCount != null ? userCount : 0;
     }
 
     public int getAuthorizationCount() {
-        authCount = loader.loadIntIfExists(authCount, "approximate_user_authorization_count");
+        authCount = loader.loadInt(authCount, "approximate_user_authorization_count");
         return authCount != null ? authCount : 0;
     }
 
@@ -136,17 +136,17 @@ public class Application implements IApplication {
     }
 
     public String getInteractionEndpointUrl() {
-        interactionEndpointUrl = loader.loadStringIfExists(interactionEndpointUrl, "interaction_endpoint_url");
+        interactionEndpointUrl = loader.loadString(interactionEndpointUrl, "interaction_endpoint_url");
         return interactionEndpointUrl;
     }
 
     public String getRoleConnectionVerificationUrl() {
-        roleConnectionUrl = loader.loadStringIfExists(roleConnectionUrl, "role_connections_verification_url");
+        roleConnectionUrl = loader.loadString(roleConnectionUrl, "role_connections_verification_url");
         return roleConnectionUrl;
     }
 
     public String getEventWebhooksUrl() {
-        eventWebhooksUrl = loader.loadStringIfExists(eventWebhooksUrl, "event_webhooks_url");
+        eventWebhooksUrl = loader.loadString(eventWebhooksUrl, "event_webhooks_url");
         return eventWebhooksUrl;
     }
 
@@ -156,7 +156,7 @@ public class Application implements IApplication {
     }
 
     public String getCustomInstallUrl() {
-        customInstallUrl = loader.loadStringIfExists(customInstallUrl, "custom_install_url");
+        customInstallUrl = loader.loadString(customInstallUrl, "custom_install_url");
         return customInstallUrl;
     }
 
@@ -178,7 +178,7 @@ public class Application implements IApplication {
     }
 
     public boolean getPublicBot() {
-        publicBot = loader.loadBooleanIfExists(publicBot, "bot_public");
+        publicBot = loader.loadBoolean(publicBot, "bot_public");
         return publicBot != null && publicBot;
     }
 
@@ -188,27 +188,27 @@ public class Application implements IApplication {
     }
 
     public String getTOSUrl() {
-        tosUrl = loader.loadStringIfExists(tosUrl, "terms_of_service_url");
+        tosUrl = loader.loadString(tosUrl, "terms_of_service_url");
         return tosUrl;
     }
 
     public String getPPUrl() {
-        ppUrl = loader.loadStringIfExists(ppUrl, "privacy_policy_url");
+        ppUrl = loader.loadString(ppUrl, "privacy_policy_url");
         return ppUrl;
     }
 
     public String getVerifyKey() {
-        verifyKey = loader.loadStringIfExists(verifyKey, "verify_key");
+        verifyKey = loader.loadString(verifyKey, "verify_key");
         return verifyKey;
     }
 
     public String getPrimarySkuId() {
-        primarySkuId = loader.loadStringIfExists(primarySkuId, "primary_sku_id");
+        primarySkuId = loader.loadString(primarySkuId, "primary_sku_id");
         return primarySkuId;
     }
 
     public String getSlug() {
-        slug = loader.loadStringIfExists(slug, "slug");
+        slug = loader.loadString(slug, "slug");
         return slug;
     }
 

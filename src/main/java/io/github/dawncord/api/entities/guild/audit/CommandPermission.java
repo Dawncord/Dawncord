@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.types.CommandPermissionType;
 import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents a command permission.
  * CommandPermission is a class providing methods to access properties of a command permission.
  */
 public class CommandPermission implements ISnowflake {
-    private final JsonNode permission;
+    private final LazyLoader loader;
     private String id;
     private CommandPermissionType type;
     private Boolean isPermission;
@@ -21,14 +22,12 @@ public class CommandPermission implements ISnowflake {
      * @param permission The JSON node representing the command permission.
      */
     public CommandPermission(JsonNode permission) {
-        this.permission = permission;
+        loader = new LazyLoader(permission);
     }
 
     @Override
     public String getId() {
-        if (id == null) {
-            id = permission.get("id").asText();
-        }
+        id = loader.loadString(id, "id");
         return id;
     }
 
@@ -43,9 +42,7 @@ public class CommandPermission implements ISnowflake {
      * @return The type of the command permission.
      */
     public CommandPermissionType getType() {
-        if (type == null) {
-            type = EnumUtils.getEnumObject(permission, "type", CommandPermissionType.class);
-        }
+        type = loader.loadEnumObject(type, "type", CommandPermissionType.class);
         return type;
     }
 
@@ -55,9 +52,7 @@ public class CommandPermission implements ISnowflake {
      * @return True if the permission is granted, otherwise false.
      */
     public boolean isPermission() {
-        if (isPermission == null) {
-            isPermission = permission.get("permission").asBoolean();
-        }
+        isPermission = loader.loadBoolean(isPermission, "permission");
         return isPermission;
     }
 }

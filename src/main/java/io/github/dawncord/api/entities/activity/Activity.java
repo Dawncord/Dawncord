@@ -55,7 +55,7 @@ public class Activity {
     }
 
     public String getUrl() {
-        url = loader.loadStringIfExists(url, "url");
+        url = loader.loadString(url, "url");
         return url;
     }
 
@@ -70,7 +70,7 @@ public class Activity {
     }
 
     public String getApplicationId() {
-        applicationId = loader.loadStringIfExists(applicationId, "application_id");
+        applicationId = loader.loadString(applicationId, "application_id");
         return applicationId;
     }
 
@@ -80,17 +80,17 @@ public class Activity {
     }
 
     public String getDetails() {
-        details = loader.loadStringIfExists(details, "details");
+        details = loader.loadString(details, "details");
         return details;
     }
 
     public String getState() {
-        state = loader.loadStringIfExists(state, "state");
+        state = loader.loadString(state, "state");
         return state;
     }
 
     public String getStateUrl() {
-        stateUrl = loader.loadStringIfExists(stateUrl, "state_url");
+        stateUrl = loader.loadString(stateUrl, "state_url");
         return stateUrl;
     }
 
@@ -116,7 +116,7 @@ public class Activity {
     }
 
     public boolean isInstance() {
-        instance = loader.loadBooleanIfExists(instance, "instance");
+        instance = loader.loadBoolean(instance, "instance");
         return instance;
     }
 

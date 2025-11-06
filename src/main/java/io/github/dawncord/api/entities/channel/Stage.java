@@ -60,7 +60,7 @@ public class Stage implements ISnowflake {
     }
 
     public String getTopic() {
-        topic = loader.loadStringIfExists(topic, "topic");
+        topic = loader.loadString(topic, "topic");
         return topic;
     }
 

@@ -22,7 +22,6 @@ import io.github.dawncord.api.entities.channel.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
-import io.github.dawncord.api.entities.guild.automod.AutoModRuleImpl;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.entities.guild.integration.Integration;
@@ -613,12 +612,12 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<AutoModRule> getAutoModRules() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.AutoMod.All(getId())), rule -> new AutoModRuleImpl(rule, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.AutoMod.All(getId())), rule -> new AutoModRule(rule, this));
     }
 
     @Override
     public AutoModRule getAutoModRuleById(String ruleId) {
-        return new AutoModRuleImpl(JsonUtils.fetch(Routes.Guild.AutoMod.Get(getId(), ruleId)), this);
+        return new AutoModRule(JsonUtils.fetch(Routes.Guild.AutoMod.Get(getId(), ruleId)), this);
     }
 
     @Override
