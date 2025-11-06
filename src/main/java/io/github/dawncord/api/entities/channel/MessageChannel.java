@@ -8,6 +8,7 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.PollCreateAction;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.Message;
@@ -17,7 +18,6 @@ import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
-import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;

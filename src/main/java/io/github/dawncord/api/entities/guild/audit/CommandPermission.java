@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild.audit;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.types.CommandPermissionType;
-import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
 /**

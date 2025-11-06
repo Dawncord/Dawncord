@@ -2,11 +2,8 @@ package io.github.dawncord.api.entities.guild.automod;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.types.KeywordPreset;
-import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.LazyLoader;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

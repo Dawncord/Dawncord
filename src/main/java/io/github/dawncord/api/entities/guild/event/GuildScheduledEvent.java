@@ -1,162 +1,183 @@
 package io.github.dawncord.api.entities.guild.event;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildEventModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
+import io.github.dawncord.api.entities.guild.GuildMemberImpl;
 import io.github.dawncord.api.entities.image.GuildEventImage;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildEventEntityType;
 import io.github.dawncord.api.types.GuildEventPrivacyLevel;
 import io.github.dawncord.api.types.GuildEventStatus;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * Represents a scheduled event in a guild.
- */
-public interface GuildScheduledEvent extends ISnowflake {
+
+public class GuildScheduledEvent implements ISnowflake {
+    private final LazyLoader loader;
+    private final JsonNode event;
+    private String id;
+    private String name;
+    private String description;
+    private GuildChannel channel;
+    private Guild guild;
+    private User creator;
+    private ZonedDateTime startTimestamp;
+    private ZonedDateTime endTimestamp;
+    private GuildEventStatus status;
+    private GuildEventEntityType entityType;
+    private String entityId;
+    private String location;
+    private Integer memberCount;
+    private GuildEventImage image;
 
     /**
-     * Gets the name of the scheduled event.
+     * Constructs a new instance of GuildScheduledEventImpl with the given JSON node representing the event
+     * and the guild to which the event belongs.
      *
-     * @return The name of the event.
+     * @param event The JSON node representing the event.
      */
-    String getName();
+    public GuildScheduledEvent(JsonNode event) {
+        this.event = event;
+        loader = new LazyLoader(event);
+    }
 
-    /**
-     * Gets the description of the scheduled event.
-     *
-     * @return The description of the event.
-     */
-    String getDescription();
+    @Override
+    public String getId() {
+        id = loader.loadString(id, "id");
+        return id;
+    }
 
-    /**
-     * Gets the guild to which the scheduled event belongs.
-     *
-     * @return The guild of the event.
-     */
-    Guild getGuild();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Gets the channel where the event will take place.
-     *
-     * @return The channel of the event.
-     */
-    GuildChannel getChannel();
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
-    /**
-     * Gets the creator of the scheduled event.
-     *
-     * @return The creator of the event.
-     */
-    User getCreator();
+    public String getDescription() {
+        description = loader.loadString(description, "description");
+        return description;
+    }
 
-    /**
-     * Gets the start timestamp of the scheduled event.
-     *
-     * @return The start timestamp of the event.
-     */
-    ZonedDateTime getStartTimestamp();
+    public Guild getGuild() {
+        guild = loader.load(guild, () -> new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(event.get("guild_id").asText()))));
+        return guild;
+    }
 
-    /**
-     * Gets the end timestamp of the scheduled event.
-     *
-     * @return The end timestamp of the event.
-     */
-    ZonedDateTime getEndTimestamp();
+    public GuildChannel getChannel() {
+        channel = loader.load(channel, () -> guild.getChannelById(event.get("channel_id").asText()));
+        return channel;
+    }
 
-    /**
-     * Gets the privacy level of the scheduled event.
-     *
-     * @return The privacy level of the event.
-     */
-    GuildEventPrivacyLevel getPrivacyLevel();
+    public User getCreator() {
+        creator = loader.load(creator, () -> new UserImpl(event.get("creator")));
+        return creator;
+    }
 
-    /**
-     * Gets the status of the scheduled event.
-     *
-     * @return The status of the event.
-     */
-    GuildEventStatus getStatus();
+    public ZonedDateTime getStartTimestamp() {
+        startTimestamp = loader.loadZonedDateTime(startTimestamp, "scheduled_start_time");
+        return startTimestamp;
+    }
 
-    /**
-     * Gets the entity type of the scheduled event.
-     *
-     * @return The entity type of the event.
-     */
-    GuildEventEntityType getEntityType();
+    public ZonedDateTime getEndTimestamp() {
+        endTimestamp = loader.loadZonedDateTime(endTimestamp, "scheduled_end_time");
+        return endTimestamp;
+    }
 
-    /**
-     * Checks if the event is scheduled to occur in a channel.
-     *
-     * @return True if the event is scheduled in a channel, false otherwise.
-     */
-    boolean inChannel();
+    public GuildEventPrivacyLevel getPrivacyLevel() {
+        return GuildEventPrivacyLevel.GUILD_ONLY;
+    }
 
-    /**
-     * Gets the ID of the entity associated with the event.
-     *
-     * @return The ID of the entity.
-     */
-    String getEntityId();
+    public GuildEventStatus getStatus() {
+        status = loader.loadEnumObject(status, "status", GuildEventStatus.class);
+        return status;
+    }
 
-    /**
-     * Gets the ID of the entity associated with the event as a long.
-     *
-     * @return The ID of the entity as a long.
-     */
-    long getEntityIdLong();
+    public GuildEventEntityType getEntityType() {
+        entityType = loader.loadEnumObject(entityType, "entity_type", GuildEventEntityType.class);
+        return entityType;
+    }
 
-    /**
-     * Gets the location of the event.
-     *
-     * @return The location of the event.
-     */
-    String getLocation();
+    public boolean inChannel() {
+        return getEntityType() != GuildEventEntityType.EXTERNAL;
+    }
 
-    /**
-     * Gets the count of members attending the event.
-     *
-     * @return The count of attending members.
-     */
-    int getMemberCount();
+    public String getEntityId() {
+        entityId = loader.loadString(entityId, "entity_id");
+        return entityId;
+    }
 
-    /**
-     * Gets a list of guild members attending the event.
-     *
-     * @return A list of attending guild members.
-     */
-    List<GuildMember> getGuildEventMembers();
+    public long getEntityIdLong() {
+        return Long.parseLong(getEntityId());
+    }
 
-    /**
-     * Gets a limited list of guild members attending the event.
-     *
-     * @param limit The maximum number of members to retrieve.
-     * @return A limited list of attending guild members.
-     */
-    List<GuildMember> getGuildEventMembers(int limit);
+    public String getLocation() {
+        location = loader.load(location, () -> {
+            if (event.has("entity_metadata") && event.hasNonNull("entity_metadata")) {
+                JsonNode metadata = event.get("entity_metadata");
+                if (metadata.has("location") && metadata.hasNonNull("location")) {
+                    location = metadata.get("location").asText();
+                }
+            }
+            return location;
+        });
+        return location;
+    }
 
-    /**
-     * Gets the image associated with the event.
-     *
-     * @return The image of the event.
-     */
-    GuildEventImage getImage();
+    public int getMemberCount() {
+        memberCount = loader.loadInt(memberCount, "user_count");
+        return memberCount;
+    }
 
-    /**
-     * Modifies the scheduled event using the provided handler.
-     *
-     * @param handler The action to be performed on the event.
-     * @return An event representing the modification.
-     */
-    ModifyEvent<GuildScheduledEvent> modify(Consumer<GuildEventModifyAction> handler);
+    public List<GuildMember> getGuildEventMembers() {
+        return getGuildEventMembers(100);
+    }
 
-    /**
-     * Deletes the scheduled event.
-     */
-    void delete();
+    public List<GuildMember> getGuildEventMembers(int limit) {
+        JsonNode eventMembers = JsonUtils.fetchParams(
+                Routes.Guild.ScheduledEvent.Members(guild.getId(), getId()),
+                Map.of(
+                        "with_member", "true",
+                        "limit", String.valueOf(limit)
+                )
+        );
+        List<GuildMember> members = new ArrayList<>();
+        for (JsonNode member : eventMembers) {
+            members.add(new GuildMemberImpl(member.get("member"), guild));
+        }
+        return members;
+    }
+
+    public GuildEventImage getImage() {
+        image = loader.loadIfExists(image, "image", () -> new GuildEventImage(getId(), event.get("image").asText()));
+        return image;
+    }
+
+    public ModifyEvent<GuildScheduledEvent> modify(Consumer<GuildEventModifyAction> handler) {
+        ActionExecutor.modifyGuildEvent(handler, guild.getId(), getId());
+        return new ModifyEvent<>(guild.getGuildEventById(getId()));
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Guild.ScheduledEvent.Get(guild.getId(), getId()));
+    }
 }

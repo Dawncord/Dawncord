@@ -1,6 +1,7 @@
 package io.github.dawncord.api.entities;
 
 import io.github.dawncord.api.action.webhook.WebhookModifyAction;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;

@@ -23,7 +23,6 @@ import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
-import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.integration.IntegrationImpl;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
@@ -516,7 +515,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<GuildScheduledEvent> getGuildEvents() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.ScheduledEvent.All(getId())), event -> new GuildScheduledEventImpl(event, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.ScheduledEvent.All(getId())), GuildScheduledEvent::new);
     }
 
     @Override

@@ -7,11 +7,11 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ForumTag;
 import io.github.dawncord.api.entities.channel.Channel;
 import io.github.dawncord.api.entities.channel.GuildForum;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.channel.thread.ThreadMessage;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.types.ChannelType;
 import io.github.dawncord.api.utils.MessageUtils;
-import io.github.dawncord.api.entities.channel.thread.Thread;
 
 import java.util.Arrays;
 

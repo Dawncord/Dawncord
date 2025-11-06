@@ -3,6 +3,7 @@ package io.github.dawncord.api.action.guildchannel;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.types.ChannelType;
 
 /**

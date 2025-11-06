@@ -2,6 +2,7 @@ package io.github.dawncord.api.entities.guild.widget;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.action.GuildWidgetSettingsModifyAction;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.utils.ActionExecutor;

@@ -8,9 +8,10 @@ import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
-import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.types.TargetType;
-import io.github.dawncord.api.utils.*;
+import io.github.dawncord.api.utils.InviteType;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -115,8 +116,7 @@ public class Invite {
     }
 
     public GuildScheduledEvent getGuildEvent() {
-        guildEvent = loader.loadIfExists(guildEvent, "guild_scheduled_event",
-                () -> new GuildScheduledEventImpl(invite.get("guild_scheduled_event"), guild));
+        guildEvent = loader.loadIfExists(guildEvent, "guild_scheduled_event", GuildScheduledEvent::new);
         return guildEvent;
     }
 

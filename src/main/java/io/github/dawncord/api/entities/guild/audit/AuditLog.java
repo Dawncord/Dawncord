@@ -8,7 +8,6 @@ import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
-import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.integration.IntegrationImpl;
 import io.github.dawncord.api.types.AuditLogEvent;
@@ -223,7 +222,7 @@ public class AuditLog {
      * @return The list of guild events.
      */
     public List<GuildScheduledEvent> getGuildEvents() {
-        guildEvents = loader.loadEntityList(guildEvents, "guild_scheduled_events", event -> new GuildScheduledEventImpl(event, guild));
+        guildEvents = loader.loadEntityList(guildEvents, "guild_scheduled_events", GuildScheduledEvent::new);
         return guildEvents;
     }
 

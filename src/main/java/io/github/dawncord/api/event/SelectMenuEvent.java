@@ -6,6 +6,7 @@ import io.github.dawncord.api.action.ModalCreateAction;
 import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.Mentionable;
+import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;

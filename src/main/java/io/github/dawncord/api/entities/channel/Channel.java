@@ -8,8 +8,6 @@ import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.types.ChannelFlag;
 import io.github.dawncord.api.types.ChannelType;
-import io.github.dawncord.api.types.GuildMemberFlag;
-import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;

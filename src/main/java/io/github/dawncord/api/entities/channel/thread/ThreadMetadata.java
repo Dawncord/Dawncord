@@ -2,7 +2,6 @@ package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.utils.LazyLoader;
-import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 

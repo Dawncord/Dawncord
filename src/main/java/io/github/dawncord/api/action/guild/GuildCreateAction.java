@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
+import io.github.dawncord.api.entities.channel.GuildCategory;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.types.ChannelType;
 

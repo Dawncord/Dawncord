@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild.automod;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.types.AutoModActionType;
-import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
 /**

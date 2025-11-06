@@ -6,6 +6,7 @@ import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.channel.GuildChannel;
+import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
@@ -17,7 +18,6 @@ import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.MessageFlag;
 import io.github.dawncord.api.types.MessageType;
-import io.github.dawncord.api.entities.channel.thread.Thread;
 
 import java.time.ZonedDateTime;
 import java.util.List;

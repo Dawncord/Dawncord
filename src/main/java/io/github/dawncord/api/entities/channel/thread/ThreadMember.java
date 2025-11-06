@@ -1,11 +1,8 @@
 package io.github.dawncord.api.entities.channel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.utils.LazyLoader;
-import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 

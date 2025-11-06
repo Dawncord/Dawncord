@@ -7,7 +7,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
-import io.github.dawncord.api.entities.guild.event.GuildScheduledEventImpl;
 import io.github.dawncord.api.types.StagePrivacyLevel;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
@@ -69,11 +68,11 @@ public class Stage implements ISnowflake {
     }
 
     public GuildScheduledEvent getGuildEvent() {
-        guildEvent = loader.load(guildEvent, () -> new GuildScheduledEventImpl(
+        guildEvent = loader.load(guildEvent, () -> new GuildScheduledEvent(
                 JsonUtils.fetchParams(
                         Routes.Guild.ScheduledEvent.Get(guild.getId(), stage.get("guild_scheduled_event_id").asText()),
                         Map.of("with_user_count", "true")
-                ), guild)
+                ))
         );
         return guildEvent;
     }
