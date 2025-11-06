@@ -2,6 +2,7 @@ package io.github.dawncord.api.entities.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.AbstractApplication;
 import io.github.dawncord.api.entities.IApplication;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
@@ -20,17 +21,12 @@ import java.util.List;
  * Represents an implementation of an application.
  * ApplicationImpl is a class providing methods to access properties of an application.
  */
-public class Application implements IApplication {
+public class Application extends AbstractApplication implements IApplication {
     private final LazyLoader loader;
     private final JsonNode application;
-    private String id;
-    private String name;
-    private String description;
-    private ApplicationIcon icon;
     private List<String> rpcOrigins;
     private Boolean publicBot;
     private Boolean requiresCodeGrant;
-    private User bot;
     private String tosUrl;
     private String ppUrl;
     private User owner;
@@ -61,45 +57,9 @@ public class Application implements IApplication {
      * @param application The JSON node representing the application.
      */
     public Application(JsonNode application) {
+        super(application);
         this.application = application;
         loader = new LazyLoader(application);
-    }
-
-    @Override
-    public String getId() {
-        id = loader.loadString(id, "id");
-        return id;
-    }
-
-    @Override
-    public long getIdLong() {
-        return Long.parseLong(getId());
-    }
-
-    @Override
-    public String getName() {
-        name = loader.loadString(name, "name");
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        description = loader.loadString(description, "description");
-        return description;
-    }
-
-    @Override
-    public ApplicationIcon getIcon() {
-        icon = loader.loadIfExists(icon, "icon",
-                () -> new ApplicationIcon(getId(), application.get("icon").asText()));
-        return icon;
-    }
-
-    @Override
-    public User getBot() {
-        bot = loader.loadIfExists(bot, "bot",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(getBotId()))));
-        return bot;
     }
 
     public Guild getGuild() {

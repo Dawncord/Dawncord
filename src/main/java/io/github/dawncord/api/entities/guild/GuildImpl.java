@@ -24,7 +24,6 @@ import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
-import io.github.dawncord.api.entities.guild.integration.IntegrationImpl;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.guild.role.GuildRoleImpl;
 import io.github.dawncord.api.entities.guild.welcomescreen.GuildWelcomeScreen;
@@ -711,7 +710,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public List<Integration> getIntegrations() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Integration.All(getId())), integration -> new IntegrationImpl(integration, this));
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.Integration.All(getId())), integration -> new Integration(integration, this));
     }
 
     @Override

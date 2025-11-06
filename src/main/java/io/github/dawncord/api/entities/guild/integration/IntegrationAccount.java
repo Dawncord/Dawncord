@@ -1,27 +1,28 @@
 package io.github.dawncord.api.entities.guild.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.ISnowflake;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents an account associated with an integration.
  */
 public class IntegrationAccount implements ISnowflake {
-    private final String id;
-    private final String name;
+    private final LazyLoader loader;
+    private String id;
+    private String name;
 
     /**
      * Constructs a new IntegrationAccount with the given ID and name.
      *
-     * @param id   The ID of the integration account.
-     * @param name The name of the integration account.
      */
-    public IntegrationAccount(String id, String name) {
-        this.id = id;
-        this.name = name;
+    public IntegrationAccount(JsonNode account) {
+        loader = new LazyLoader(account);
     }
 
     @Override
     public String getId() {
+        id = loader.loadString(id, "id");
         return id;
     }
 
@@ -36,6 +37,7 @@ public class IntegrationAccount implements ISnowflake {
      * @return The name of the integration account.
      */
     public String getName() {
+        name = loader.loadString(name, "name");
         return name;
     }
 }

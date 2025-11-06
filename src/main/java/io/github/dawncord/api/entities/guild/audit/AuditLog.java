@@ -9,7 +9,6 @@ import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
-import io.github.dawncord.api.entities.guild.integration.IntegrationImpl;
 import io.github.dawncord.api.types.AuditLogEvent;
 import io.github.dawncord.api.types.PermissionOverrideType;
 import io.github.dawncord.api.types.PermissionType;
@@ -158,7 +157,7 @@ public class AuditLog {
             }
             for (JsonNode guildIntegration : JsonUtils.fetch(Routes.Guild.Integration.All(guild.getId()))) {
                 if (auditIntegrationIds.contains(guildIntegration.get("id").asText())) {
-                    integrations.add(new IntegrationImpl(guildIntegration, guild));
+                    integrations.add(new Integration(guildIntegration, guild));
                 }
             }
             return integrations;

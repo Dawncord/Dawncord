@@ -1,126 +1,157 @@
 package io.github.dawncord.api.entities.guild.integration;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.types.IntegrationExpireBehavior;
 import io.github.dawncord.api.types.IntegrationType;
 import io.github.dawncord.api.types.Scope;
+import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an integration of a third-party service with a guild.
+ * Represents an implementation of an integration within a guild.
  */
-public interface Integration extends ISnowflake {
-    /**
-     * Gets the name of the integration.
-     *
-     * @return The name of the integration.
-     */
-    String getName();
+public class Integration implements ISnowflake {
+    private final LazyLoader loader;
+    private final JsonNode integration;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private IntegrationType type;
+    private Boolean isEnabled;
+    private Boolean isSyncing;
+    private GuildRole role;
+    private Boolean isEmoticonsEnabled;
+    private IntegrationExpireBehavior expireBehavior;
+    private Integer expireGrace;
+    private User user;
+    private IntegrationAccount account;
+    private ZonedDateTime syncedTimestamp;
+    private Integer subscriberCount;
+    private Boolean isRevoked;
+    private IntegrationApplication application;
+    private List<Scope> scopes = new ArrayList<>();
 
     /**
-     * Gets the type of the integration.
+     * Constructs a new IntegrationImpl with the given JSON integration data and guild.
      *
-     * @return The type of the integration.
+     * @param integration The JSON data representing the integration.
+     * @param guild       The guild to which the integration belongs.
      */
-    IntegrationType getType();
+    public Integration(JsonNode integration, Guild guild) {
+        this.integration = integration;
+        this.guild = guild;
+        loader = new LazyLoader(integration);
+    }
+
+    @Override
+    public String getId() {
+        id = loader.loadString(id, "id");
+        return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
+
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
     /**
-     * Gets the account associated with the integration.
+     * Retrieves the guild to which this integration belongs.
      *
-     * @return The account associated with the integration.
+     * @return The guild associated with this integration.
      */
-    IntegrationAccount getAccount();
+    public Guild getGuild() {
+        return guild;
+    }
 
-    /**
-     * Gets the application associated with the integration.
-     *
-     * @return The application associated with the integration.
-     */
-    IntegrationApplication getApplication();
+    public IntegrationType getType() {
+        type = loader.loadEnumObject(type, "type", IntegrationType.class);
+        return type;
+    }
 
-    /**
-     * Gets the scopes of the integration.
-     *
-     * @return The scopes of the integration.
-     */
-    List<Scope> getScopes();
+    public IntegrationAccount getAccount() {
+        account = loader.loadIfExists(account, "account", () -> new IntegrationAccount(integration.get("account")));
+        return account;
+    }
 
-    /**
-     * Gets the user associated with the integration.
-     *
-     * @return The user associated with the integration.
-     */
-    User getUser();
+    public IntegrationApplication getApplication() {
+        application = loader.loadIfExists(application, "application",
+                () -> new IntegrationApplication(integration.get("application")));
+        return application;
+    }
 
-    /**
-     * Gets the role associated with the integration.
-     *
-     * @return The role associated with the integration.
-     */
-    GuildRole getRole();
+    public List<Scope> getScopes() {
+        scopes = loader.loadEnumList(scopes, "scopes", Scope.class, "str");
+        return scopes;
+    }
 
-    /**
-     * Gets the expiration behavior of the integration.
-     *
-     * @return The expiration behavior of the integration.
-     */
-    IntegrationExpireBehavior getExpireBehavior();
+    public User getUser() {
+        user = loader.loadIfExists(user, "user", () -> new UserImpl(integration.get("user")));
+        return user;
+    }
 
-    /**
-     * Gets the timestamp when the integration was last synced.
-     *
-     * @return The timestamp when the integration was last synced.
-     */
-    ZonedDateTime getSyncedTimestamp();
+    public GuildRole getRole() {
+        role = loader.loadIfExists(role, "role", () -> guild.getRoleById(integration.get("role_id").asText()));
+        return role;
+    }
 
-    /**
-     * Checks if the integration is enabled.
-     *
-     * @return true if the integration is enabled, false otherwise.
-     */
-    boolean isEnabled();
+    public IntegrationExpireBehavior getExpireBehavior() {
+        expireBehavior = loader.loadEnumObject(expireBehavior, "expire_behavior", IntegrationExpireBehavior.class);
+        return expireBehavior;
+    }
 
-    /**
-     * Checks if the integration is currently syncing.
-     *
-     * @return true if the integration is syncing, false otherwise.
-     */
-    boolean isSyncing();
+    public ZonedDateTime getSyncedTimestamp() {
+        syncedTimestamp = loader.loadZonedDateTime(syncedTimestamp, "synced_at");
+        return syncedTimestamp;
+    }
 
-    /**
-     * Checks if emoticons are enabled for the integration.
-     *
-     * @return true if emoticons are enabled, false otherwise.
-     */
-    boolean isEmoticonsEnabled();
+    public boolean isEnabled() {
+        isEnabled = loader.loadBoolean(isEnabled, "enabled");
+        return isEnabled != null ? isEnabled : false;
+    }
 
-    /**
-     * Checks if the integration has been revoked.
-     *
-     * @return true if the integration has been revoked, false otherwise.
-     */
-    boolean isRevoked();
+    public boolean isSyncing() {
+        isSyncing = loader.loadBoolean(isSyncing, "syncing");
+        return isSyncing != null ? isSyncing : false;
+    }
 
-    /**
-     * Gets the grace period before expiration of the integration.
-     *
-     * @return The grace period before expiration of the integration.
-     */
-    int getExpireGrace();
+    public boolean isEmoticonsEnabled() {
+        isEmoticonsEnabled = loader.loadBoolean(isEmoticonsEnabled, "enable_emoticons");
+        return isEmoticonsEnabled != null ? isEmoticonsEnabled : false;
+    }
 
-    /**
-     * Gets the subscriber count of the integration.
-     *
-     * @return The subscriber count of the integration.
-     */
-    int getSubscriberCount();
+    public boolean isRevoked() {
+        isRevoked = loader.loadBoolean(isRevoked, "revoked");
+        return isRevoked;
+    }
 
-    /**
-     * Deletes the integration.
-     */
-    void delete();
+    public int getExpireGrace() {
+        expireGrace = loader.loadInt(expireGrace, "expire_grace_period");
+        return expireGrace != null ? expireGrace : 0;
+    }
+
+    public int getSubscriberCount() {
+        subscriberCount = loader.loadInt(subscriberCount, "subscriber_count");
+        return subscriberCount != null ? subscriberCount : 0;
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Guild.Integration.Get(guild.getId(), getId()));
+    }
 }
