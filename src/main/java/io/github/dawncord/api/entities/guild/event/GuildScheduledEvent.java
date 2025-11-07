@@ -56,7 +56,7 @@ public class GuildScheduledEvent implements ISnowflake {
         this.event = event;
         loader = new LazyLoader(event);
     }
-    
+
     public String getJson() {
         return event.toPrettyString();
     }

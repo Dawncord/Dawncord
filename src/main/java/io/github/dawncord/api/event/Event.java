@@ -33,7 +33,7 @@ public interface Event {
      * @return The application associated with the event.
      */
     default Application getApplication() {
-        return new Application(JsonUtils.fetch(Routes.Application()));
+        return new Application(JsonUtils.fetch(Routes.CurrentApplication()));
     }
 
     /**

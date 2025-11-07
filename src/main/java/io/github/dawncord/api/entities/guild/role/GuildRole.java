@@ -1,101 +1,145 @@
 package io.github.dawncord.api.entities.guild.role;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
 import io.github.dawncord.api.entities.IMentionable;
 import io.github.dawncord.api.entities.ISnowflake;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.image.RoleIcon;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.PermissionType;
+import io.github.dawncord.api.types.RoleFlags;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * Represents a role within a guild.
- */
-public interface GuildRole extends ISnowflake, IMentionable {
+public class GuildRole implements ISnowflake, IMentionable {
+    private final LazyLoader loader;
+    private final JsonNode role;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private Color color;
+    private RoleColors colors;
+    private Boolean isPinned;
+    private RoleIcon icon;
+    private String unicodeEmoji;
+    private Integer position;
+    private List<PermissionType> permissions;
+    private Boolean isManaged;
+    private Boolean isMentionable;
+    private Tags tags;
 
     /**
-     * Retrieves the name of the role.
+     * Constructs a new GuildRoleImpl object with the provided JSON node and guild.
      *
-     * @return The name of the role.
+     * @param role  The JSON node representing the role.
+     * @param guild The guild to which the role belongs.
      */
-    String getName();
+    public GuildRole(JsonNode role, Guild guild) {
+        this.role = role;
+        this.guild = guild;
+        loader = new LazyLoader(role);
+    }
 
-    /**
-     * Retrieves the icon of the role.
-     *
-     * @return The icon of the role.
-     */
-    RoleIcon getIcon();
+    @Override
+    public String getId() {
+        if (id == null) {
+            id = role.get("id").asText();
+        }
+        return id;
+    }
 
-    /**
-     * Retrieves the permissions granted to the role.
-     *
-     * @return The permissions granted to the role.
-     */
-    List<PermissionType> getPermissions();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Retrieves the position of the role in the role hierarchy.
-     *
-     * @return The position of the role.
-     */
-    int getPosition();
+    public String getName() {
+        name = loader.loadString(name, "name");
+        return name;
+    }
 
-    /**
-     * Retrieves the color of the role.
-     *
-     * @return The color of the role.
-     */
-    Color getColor();
+    public RoleIcon getIcon() {
+        icon = loader.loadIfExists(icon, "icon", () -> new RoleIcon(getId(), role.get("icon").asText()));
+        return icon;
+    }
 
-    /**
-     * Checks if the role is pinned.
-     *
-     * @return true if the role is pinned, false otherwise.
-     */
-    boolean isPinned();
+    public String getUnicodeEmoji() {
+        unicodeEmoji = loader.loadString(unicodeEmoji, "unicode_emoji");
+        return unicodeEmoji;
+    }
 
-    /**
-     * Checks if the role is managed by an integration or bot.
-     *
-     * @return true if the role is managed, false otherwise.
-     */
-    boolean isManaged();
+    public List<PermissionType> getPermissions() {
+        permissions = loader.loadEnumListFromLong(permissions, "permissions", PermissionType.class);
+        return permissions;
+    }
 
-    /**
-     * Checks if the role is mentionable.
-     *
-     * @return true if the role is mentionable, false otherwise.
-     */
-    boolean isMentionable();
+    public int getPosition() {
+        position = loader.loadInt(position, "position");
+        return position;
+    }
 
-    /**
-     * Retrieves the tags associated with the role.
-     *
-     * @return The tags associated with the role.
-     */
-    Tags getTags();
+    public Color getColor() {
+        color = loader.loadIfExists(color, "color", () -> new Color(role.get("color").asInt()));
+        return color;
+    }
 
-    /**
-     * Sets the position of the role in the role hierarchy.
-     *
-     * @param position The new position of the role.
-     */
-    void setPosition(int position);
+    public RoleColors getColors() {
+        colors = loader.loadIfExists(colors, "colors", () -> new RoleColors(role.get("colors")));
+        return colors;
+    }
 
-    /**
-     * Modifies the role using the provided action handler.
-     *
-     * @param handler The action handler for modifying the role.
-     * @return A ModifyEvent representing the modification event.
-     */
-    ModifyEvent<GuildRole> modify(Consumer<GuildRoleModifyAction> handler);
+    public boolean isPinned() {
+        isPinned = loader.loadBoolean(isPinned, "hoist");
+        return isPinned;
+    }
 
-    /**
-     * Deletes the role.
-     */
-    void delete();
+    public boolean isManaged() {
+        isManaged = loader.loadBoolean(isManaged, "managed");
+        return isManaged;
+    }
+
+    public boolean isMentionable() {
+        isMentionable = loader.loadBoolean(isMentionable, "mentionable");
+        return isMentionable;
+    }
+
+    public Tags getTags() {
+        tags = loader.loadIfExists(tags, "tags", () -> new Tags(role.get("tags"), guild));
+        return tags;
+    }
+
+    public RoleFlags getFlags() {
+        return RoleFlags.IN_PROMPT;
+    }
+
+    public void setPosition(int position) {
+        ApiClient.patch(
+                JsonNodeFactory.instance.objectNode()
+                        .put("id", getId())
+                        .put("position", position),
+                Routes.Guild.Role.All(guild.getId())
+        );
+    }
+
+    public ModifyEvent<GuildRole> modify(Consumer<GuildRoleModifyAction> handler) {
+        ActionExecutor.modifyGuildRole(handler, guild.getId(), getId(), guild.getFeatures().contains("ROLE_ICONS"));
+        return new ModifyEvent<>(guild.getRoleById(getId()));
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Guild.Role.Get(guild.getId(), getId()));
+    }
+
+    @Override
+    public String getAsMention() {
+        return "<@&" + getId() + ">";
+    }
 }

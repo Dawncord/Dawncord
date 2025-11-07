@@ -1,15 +1,23 @@
 package io.github.dawncord.api.entities.guild.role;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
+import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.guild.integration.Integration;
+import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents the tags associated with a role.
  */
 public class Tags {
-
+    private final LazyLoader loader;
     private final JsonNode tags;
-    private String botId;
-    private String integrationId;
+    private final Guild guild;
+    private User bot;
+    private Integration integration;
     private String subscriptionId;
 
     /**
@@ -17,50 +25,35 @@ public class Tags {
      *
      * @param tags The JSON node representing the tags.
      */
-    public Tags(JsonNode tags) {
+    public Tags(JsonNode tags, Guild guild) {
         this.tags = tags;
+        this.guild = guild;
+        loader = new LazyLoader(tags);
     }
 
     /**
-     * Retrieves the bot ID from the tags.
+     * Retrieves the bot from the tags.
      *
-     * @return The bot ID, or null if not present.
+     * @return The bot, or null if not present.
      */
-    public String getBotId() {
-        if (botId == null) {
-            botId = tags.has("bot_id") ? tags.get("bot_id").asText() : null;
-        }
-        return botId;
+    public User getBot() {
+        bot = loader.loadIfExists(bot, "bot_id",
+                () -> new UserImpl(JsonUtils.fetch(Routes.User(tags.get("bot_id").asText()))));
+        return bot;
     }
 
     /**
-     * Retrieves the bot ID as a long value.
+     * Retrieves the integration from the tags.
      *
-     * @return The bot ID as a long value, or 0 if not present.
+     * @return The integration, or null if not present.
      */
-    public long getBotIdLong() {
-        return Long.parseLong(getBotId());
-    }
-
-    /**
-     * Retrieves the integration ID from the tags.
-     *
-     * @return The integration ID, or null if not present.
-     */
-    public String getIntegrationId() {
-        if (integrationId == null) {
-            integrationId = tags.has("integration_id") ? tags.get("integration_id").asText() : null;
-        }
-        return integrationId;
-    }
-
-    /**
-     * Retrieves the integration ID as a long value.
-     *
-     * @return The integration ID as a long value, or 0 if not present.
-     */
-    public long getIntegrationIdLong() {
-        return Long.parseLong(getIntegrationId());
+    public Integration getIntegration() {
+        integration = loader.loadIfExists(integration, "integration_id",
+                () -> new Integration(
+                        JsonUtils.fetch(Routes.Guild.Integration.Get(guild.getId(), tags.get("integration_id").asText())),
+                        guild)
+        );
+        return integration;
     }
 
     /**
@@ -68,6 +61,7 @@ public class Tags {
      *
      * @return The subscription ID, or null if not present.
      */
+    //todo rewrite using SKU
     public String getSubscriptionId() {
         if (subscriptionId == null) {
             subscriptionId = tags.has("subscription_listing_id") ? tags.get("subscription_listing_id").asText() : null;

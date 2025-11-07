@@ -529,7 +529,7 @@ public class Dawncord {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(Constants.API_URL + Routes.Application())
+                .url(Constants.API_URL + Routes.CurrentApplication())
                 .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
                 .build();
 

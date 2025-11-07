@@ -14,12 +14,12 @@ public class AbstractApplication implements IApplication {
     private ApplicationIcon icon;
     private String description;
     private User bot;
-    
+
     public AbstractApplication(JsonNode application) {
         this.application = application;
         loader = new LazyLoader(application);
     }
-    
+
     @Override
     public String getId() {
         id = loader.loadString(id, "id");

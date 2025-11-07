@@ -135,7 +135,7 @@ public class ApplicationModifyAction extends Action<ApplicationModifyAction> {
     @Override
     protected void submit() {
         if (hasChanges) {
-            ApiClient.post(jsonObject, Routes.Application());
+            ApiClient.post(jsonObject, Routes.CurrentApplication());
             hasChanges = false;
         }
     }

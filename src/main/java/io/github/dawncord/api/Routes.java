@@ -874,8 +874,12 @@ public class Routes {
      *
      * @return The route to the application.
      */
-    public static String Application() {
+    public static String CurrentApplication() {
         return "/applications/@me";
+    }
+
+    public static String Application(String applicationId) {
+        return "/applications/" + applicationId;
     }
 
     /**

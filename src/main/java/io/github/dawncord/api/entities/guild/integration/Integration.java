@@ -11,9 +11,7 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.types.IntegrationExpireBehavior;
 import io.github.dawncord.api.types.IntegrationType;
 import io.github.dawncord.api.types.Scope;
-import io.github.dawncord.api.utils.EnumUtils;
 import io.github.dawncord.api.utils.LazyLoader;
-import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
