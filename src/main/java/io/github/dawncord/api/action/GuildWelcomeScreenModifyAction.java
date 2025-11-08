@@ -3,7 +3,7 @@ package io.github.dawncord.api.action;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.guild.welcomescreen.GuildWelcomeChannel;
+import io.github.dawncord.api.entities.guild.welcomescreen.GuildWelcomeChannelData;
 import io.github.dawncord.api.entities.guild.welcomescreen.GuildWelcomeScreen;
 import io.github.dawncord.api.utils.MessageUtils;
 
@@ -41,15 +41,15 @@ public class GuildWelcomeScreenModifyAction extends Action<GuildWelcomeScreenMod
      * @param channels the GuildWelcomeChannel objects to set
      * @return the modified GuildWelcomeScreenModifyAction object
      */
-    public GuildWelcomeScreenModifyAction setChannels(GuildWelcomeChannel... channels) {
+    public GuildWelcomeScreenModifyAction setChannels(GuildWelcomeChannelData... channels) {
         ArrayNode channelsArray = mapper.createArrayNode();
-        for (GuildWelcomeChannel channel : channels) {
+        for (GuildWelcomeChannelData channel : channels) {
             channelsArray.add(
                     mapper.createObjectNode()
-                            .put("channel_id", channel.getChannel().getId())
+                            .put("channel_id", channel.getChannelId())
                             .put("description", channel.getDescription())
-                            .put("emoji_id", MessageUtils.isEmojiLong(channel.getEmoji()) ? channel.getEmoji() : null)
-                            .put("emoji_name", !MessageUtils.isEmojiLong(channel.getEmoji()) ? channel.getEmoji() : null)
+                            .put("emoji_id", MessageUtils.isEmojiLong(channel.getEmojiIdOrName()) ? channel.getEmojiIdOrName() : null)
+                            .put("emoji_name", !MessageUtils.isEmojiLong(channel.getEmojiIdOrName()) ? channel.getEmojiIdOrName() : null)
             );
         }
         return setProperty("", channelsArray);
@@ -68,6 +68,7 @@ public class GuildWelcomeScreenModifyAction extends Action<GuildWelcomeScreenMod
     @Override
     protected void submit() {
         if (hasChanges) {
+            //System.out.println(jsonObject.toPrettyString());
             ApiClient.patch(jsonObject, Routes.Guild.WelcomeScreen(guildId));
             hasChanges = false;
         }

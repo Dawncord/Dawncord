@@ -5,7 +5,7 @@ import io.github.dawncord.api.action.GuildWelcomeScreenModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.utils.ActionExecutor;
-import io.github.dawncord.api.utils.JsonUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,8 +14,7 @@ import java.util.function.Consumer;
  * Represents the welcome screen configuration for a guild.
  */
 public class GuildWelcomeScreen {
-
-    private final JsonNode welcomeScreen;
+    private final LazyLoader loader;
     private final Guild guild;
     private String description;
     private List<GuildWelcomeChannel> welcomeChannels;
@@ -27,8 +26,8 @@ public class GuildWelcomeScreen {
      * @param guild         The guild to which the welcome screen belongs.
      */
     public GuildWelcomeScreen(JsonNode welcomeScreen, Guild guild) {
-        this.welcomeScreen = welcomeScreen;
         this.guild = guild;
+        loader = new LazyLoader(welcomeScreen);
     }
 
     /**
@@ -37,9 +36,7 @@ public class GuildWelcomeScreen {
      * @return The description of the welcome screen, or null if not available.
      */
     public String getDescription() {
-        if (description == null && welcomeScreen.has("description")) {
-            description = welcomeScreen.get("description").asText();
-        }
+        description = loader.loadString(description, "description");
         return description;
     }
 
@@ -49,9 +46,8 @@ public class GuildWelcomeScreen {
      * @return The list of welcome channels.
      */
     public List<GuildWelcomeChannel> getChannels() {
-        if (welcomeChannels == null && welcomeScreen.has("welcome_channels")) {
-            welcomeChannels = JsonUtils.getEntityList(welcomeScreen.get("welcome_channels"), channel -> new GuildWelcomeChannel(channel, guild));
-        }
+        welcomeChannels = loader.loadEntityList(welcomeChannels, "welcome_channels",
+                channel -> new GuildWelcomeChannel(channel, guild));
         return welcomeChannels;
     }
 

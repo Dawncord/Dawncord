@@ -3,14 +3,15 @@ package io.github.dawncord.api.entities.guild.welcomescreen;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents the welcome channel configuration for a guild.
  */
 public class GuildWelcomeChannel {
-
+    private final LazyLoader loader;
     private final JsonNode welcomeChannel;
-    private static Guild guild;
+    private final Guild guild;
     private GuildChannel channel;
     private String description;
     private String emoji;
@@ -23,12 +24,14 @@ public class GuildWelcomeChannel {
      */
     public GuildWelcomeChannel(JsonNode welcomeChannel, Guild guild) {
         this.welcomeChannel = welcomeChannel;
-        GuildWelcomeChannel.guild = guild;
+        this.guild = guild;
+        loader = new LazyLoader(welcomeChannel);
     }
 
     private GuildWelcomeChannel(String channelId, String description, String emojiIdOrName, Guild guild) {
+        loader = null;
         this.welcomeChannel = null;
-        GuildWelcomeChannel.guild = guild;
+        this.guild = guild;
         this.channel = guild.getChannelById(channelId);
         this.description = description;
         this.emoji = emojiIdOrName;
@@ -40,9 +43,8 @@ public class GuildWelcomeChannel {
      * @return The welcome channel.
      */
     public GuildChannel getChannel() {
-        if (channel == null) {
-            channel = guild.getChannelById(welcomeChannel.get("channel_id").asText());
-        }
+        channel = loader.loadIfExists(channel, "channel_id",
+                () -> guild.getChannelById(welcomeChannel.get("channel_id").asText()));
         return channel;
     }
 
@@ -52,9 +54,7 @@ public class GuildWelcomeChannel {
      * @return The description of the welcome channel.
      */
     public String getDescription() {
-        if (description == null) {
-            description = welcomeChannel.get("description").asText();
-        }
+        description = loader.loadString(description, "description");
         return description;
     }
 
@@ -64,24 +64,10 @@ public class GuildWelcomeChannel {
      * @return The emoji used in the welcome message.
      */
     public String getEmoji() {
-        if (emoji == null) {
-            emoji = welcomeChannel.has("emoji_id")
-                    ? welcomeChannel.get("emoji_id").asText()
-                    : welcomeChannel.get("emoji_name").asText();
-        }
+        emoji = loader.load(emoji, () -> welcomeChannel.has("emoji_id")
+                ? welcomeChannel.get("emoji_id").asText()
+                : welcomeChannel.get("emoji_name").asText()
+        );
         return emoji;
-    }
-
-    /**
-     * Constructs a new GuildWelcomeChannel object with the provided channel ID, description, emoji, and guild.
-     * This is a static factory method.
-     *
-     * @param channelId     The ID of the welcome channel.
-     * @param description   The description of the welcome channel.
-     * @param emojiIdOrName The ID or name of the emoji used in the welcome message.
-     * @return A GuildWelcomeChannel object.
-     */
-    public static GuildWelcomeChannel of(String channelId, String description, String emojiIdOrName) {
-        return new GuildWelcomeChannel(channelId, description, emojiIdOrName, guild);
     }
 }
