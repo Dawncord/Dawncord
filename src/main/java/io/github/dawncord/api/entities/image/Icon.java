@@ -13,14 +13,16 @@ import java.net.URL;
  * Interface representing an icon associated with a resource.
  */
 public interface Icon {
-
     /**
      * Retrieves the URL of the icon in the specified format.
      *
      * @param format The image format.
      * @return The URL of the icon.
      */
-    String getUrl(ImageFormat format);
+    default String getUrl(ImageFormat format) {
+        return "";
+    }
+
 
     /**
      * Downloads the icon in JPEG format with the specified name.

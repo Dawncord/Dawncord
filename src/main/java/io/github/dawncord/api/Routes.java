@@ -168,6 +168,10 @@ public class Routes {
             public static String Settings(String guildId) {
                 return "/guilds/" + guildId + "/widget";
             }
+
+            public static String Image(String guildId) {
+                return "/guilds/" + guildId + "/widget.png";
+            }
         }
 
         /**

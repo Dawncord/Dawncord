@@ -1,19 +1,20 @@
 package io.github.dawncord.api.entities.guild.widget;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.types.OnlineStatus;
-import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.LazyLoader;
 
 /**
  * Represents a member in a guild's widget.
  */
-public class GuildWidgetMember implements ISnowflake {
+public class GuildWidgetMember {
+    private final LazyLoader loader;
     private final JsonNode member;
     private String id;
     private String username;
     private Avatar avatar;
+    private String avatarUrl;
     private OnlineStatus onlineStatus;
 
     /**
@@ -23,6 +24,7 @@ public class GuildWidgetMember implements ISnowflake {
      */
     public GuildWidgetMember(JsonNode member) {
         this.member = member;
+        loader = new LazyLoader(member);
     }
 
     /**
@@ -30,22 +32,9 @@ public class GuildWidgetMember implements ISnowflake {
      *
      * @return The ID of the member.
      */
-    @Override
     public String getId() {
-        if (id == null) {
-            id = member.get("id").asText();
-        }
+        id = loader.loadString(id, "id");
         return id;
-    }
-
-    /**
-     * Retrieves the ID of the guild widget member as a long value.
-     *
-     * @return The ID of the member as a long.
-     */
-    @Override
-    public long getIdLong() {
-        return Long.parseLong(getId());
     }
 
     /**
@@ -54,9 +43,7 @@ public class GuildWidgetMember implements ISnowflake {
      * @return The username of the member.
      */
     public String getUsername() {
-        if (username == null) {
-            username = member.get("username").asText();
-        }
+        username = loader.loadString(username, "username");
         return username;
     }
 
@@ -66,11 +53,7 @@ public class GuildWidgetMember implements ISnowflake {
      * @return The avatar of the member.
      */
     public Avatar getAvatar() {
-        if (avatar == null) {
-            avatar = member.has("avatar") && member.hasNonNull("avatar")
-                    ? new Avatar(getId(), member.get("avatar").asText())
-                    : null;
-        }
+        avatar = loader.loadIfExists(avatar, "avatar_url", () -> new Avatar(member.get("avatar_url").asText()));
         return avatar;
     }
 
@@ -80,9 +63,7 @@ public class GuildWidgetMember implements ISnowflake {
      * @return The online status of the member.
      */
     public OnlineStatus getOnlineStatus() {
-        if (onlineStatus == null) {
-            onlineStatus = EnumUtils.getEnumObject(member, "status", OnlineStatus.class);
-        }
+        onlineStatus = loader.loadEnumObject(onlineStatus, "status", OnlineStatus.class);
         return onlineStatus;
     }
 }

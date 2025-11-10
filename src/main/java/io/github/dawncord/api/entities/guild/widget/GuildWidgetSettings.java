@@ -6,6 +6,7 @@ import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.function.Consumer;
 
@@ -13,6 +14,7 @@ import java.util.function.Consumer;
  * Represents the settings of a guild's widget.
  */
 public class GuildWidgetSettings {
+    private final LazyLoader loader;
     private final JsonNode settings;
     private final Guild guild;
     private Boolean isEnabled;
@@ -27,6 +29,7 @@ public class GuildWidgetSettings {
     public GuildWidgetSettings(JsonNode settings, Guild guild) {
         this.settings = settings;
         this.guild = guild;
+        loader = new LazyLoader(settings);
     }
 
     /**
@@ -35,9 +38,7 @@ public class GuildWidgetSettings {
      * @return true if the widget is enabled, false otherwise.
      */
     public boolean isEnabled() {
-        if (isEnabled == null) {
-            isEnabled = settings.get("enabled").asBoolean();
-        }
+        isEnabled = loader.loadBoolean(isEnabled, "enabled");
         return isEnabled;
     }
 
@@ -47,9 +48,8 @@ public class GuildWidgetSettings {
      * @return The channel associated with the widget.
      */
     public GuildChannel getChannel() {
-        if (channel == null) {
-            channel = guild.getChannelById(settings.get("channel_id").asText());
-        }
+        channel = loader.loadIfExists(channel, "channel_id",
+                () -> guild.getChannelById(settings.get("channel_id").asText()));
         return channel;
     }
 
