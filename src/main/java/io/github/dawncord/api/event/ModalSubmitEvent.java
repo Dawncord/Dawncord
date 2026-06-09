@@ -6,7 +6,6 @@ import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.modal.Modal;
 import io.github.dawncord.api.entities.message.modal.ModalData;
@@ -22,10 +21,10 @@ import java.util.function.Consumer;
  */
 public class ModalSubmitEvent implements ReplyEvent {
     private static ModalInteractionData data;
-    private final ModalData modalData;
     private static Guild guild;
     private static GuildChannel channel;
     private static GuildMember member;
+    private final ModalData modalData;
 
     /**
      * Constructs a ModalSubmitEvent with the specified modal interaction data and modal data.
@@ -36,9 +35,9 @@ public class ModalSubmitEvent implements ReplyEvent {
     public ModalSubmitEvent(ModalInteractionData interactionData, ModalData modalData) {
         this.modalData = modalData;
         data = interactionData;
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
     }
 
     /**
@@ -54,9 +53,9 @@ public class ModalSubmitEvent implements ReplyEvent {
      * Updates the guild, channel, and member data associated with the modal submission.
      */
     public static void UpdateData() {
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
     }
 
     /**
@@ -69,7 +68,7 @@ public class ModalSubmitEvent implements ReplyEvent {
     }
 
     @Override
-    public Guild getGuild() {
+    public Guild guild() {
         return guild;
     }
 
@@ -124,7 +123,7 @@ public class ModalSubmitEvent implements ReplyEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return getGuild().getChannelById(channelId);
+        return guild().getChannelById(channelId);
     }
 
     @Override

@@ -5,19 +5,14 @@ import java.util.List;
 /**
  * Represents data for a modal.
  */
-public class ModalData {
-    private final String customId;
-    private final List<ElementData> elements;
-
+public record ModalData(String customId, List<ElementData> elements) {
     /**
      * Constructs a ModalData object with the specified custom ID and elements.
      *
      * @param customId The custom ID of the modal.
      * @param elements The elements of the modal.
      */
-    public ModalData(String customId, List<ElementData> elements) {
-        this.customId = customId;
-        this.elements = elements;
+    public ModalData {
     }
 
     /**
@@ -25,7 +20,8 @@ public class ModalData {
      *
      * @return The custom ID.
      */
-    public String getCustomId() {
+    @Override
+    public String customId() {
         return customId;
     }
 
@@ -34,7 +30,8 @@ public class ModalData {
      *
      * @return The elements.
      */
-    public List<ElementData> getElements() {
+    @Override
+    public List<ElementData> elements() {
         return elements;
     }
 }

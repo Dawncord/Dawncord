@@ -8,7 +8,6 @@ import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.Mentionable;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.component.SelectMenuData;
@@ -27,12 +26,12 @@ import java.util.function.Consumer;
  */
 public class SelectMenuEvent implements MessageComponentEvent {
     private static MessageComponentInteractionData data;
-    private final SelectMenuData selectMenuData;
-    private final JsonNode resolved;
-    private final List<String> values;
     private static Guild guild;
     private static GuildChannel channel;
     private static GuildMember member;
+    private final SelectMenuData selectMenuData;
+    private final JsonNode resolved;
+    private final List<String> values;
 
     /**
      * Constructs a SelectMenuEvent with the specified interaction data, select menu data, resolved data, and selected values.
@@ -47,12 +46,12 @@ public class SelectMenuEvent implements MessageComponentEvent {
         this.resolved = resolved;
         this.values = values;
         data = interactionData;
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
 
         Event.getLogger().debug("Select menu event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
-                data.getCustomId(),
+                data.customId(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),
                 channel.getId(), channel.getName(),
@@ -72,9 +71,9 @@ public class SelectMenuEvent implements MessageComponentEvent {
      * Updates the guild, channel, and member data associated with the event.
      */
     public static void UpdateData() {
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
     }
 
     /**
@@ -92,17 +91,17 @@ public class SelectMenuEvent implements MessageComponentEvent {
      * @return The resolved data.
      */
     public Resolved getValues() {
-        return new Resolved(resolved, values, getGuild());
+        return new Resolved(resolved, values, guild());
     }
 
     @Override
-    public Guild getGuild() {
+    public Guild guild() {
         return guild;
     }
 
     @Override
     public CallbackEvent<MessageModifyAction> edit(Consumer<MessageModifyAction> handler) {
-        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.getId()));
+        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.id()));
         return new CallbackEvent<>(data, false, true);
     }
 
@@ -157,7 +156,7 @@ public class SelectMenuEvent implements MessageComponentEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return getGuild().getChannelById(channelId);
+        return guild().getChannelById(channelId);
     }
 
     @Override

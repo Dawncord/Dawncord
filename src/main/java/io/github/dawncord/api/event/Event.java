@@ -21,11 +21,20 @@ import java.util.function.Consumer;
 public interface Event {
 
     /**
+     * The logger for logging event info.
+     *
+     * @return The logger for logging event info.
+     */
+    static Logger getLogger() {
+        return LoggerFactory.getLogger(Event.class);
+    }
+
+    /**
      * Retrieves the guild associated with the event.
      *
      * @return The guild associated with the event.
      */
-    Guild getGuild();
+    Guild guild();
 
     /**
      * Retrieves the application associated with the event.
@@ -54,7 +63,7 @@ public interface Event {
      * @return The webhook associated with the specified ID.
      */
     default Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), getGuild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), guild());
     }
 
     /**
@@ -75,7 +84,7 @@ public interface Event {
      * @return The webhook associated with the specified ID and token.
      */
     default Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), guild());
     }
 
     /**
@@ -85,14 +94,5 @@ public interface Event {
      */
     default User getBot() {
         return new UserImpl(JsonUtils.fetch(Routes.User("@me")));
-    }
-
-    /**
-     * The logger for logging event info.
-     *
-     * @return The logger for logging event info.
-     */
-    static Logger getLogger() {
-        return LoggerFactory.getLogger(Event.class);
     }
 }

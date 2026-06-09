@@ -7,18 +7,8 @@ import java.util.List;
 /**
  * Represents an embed in a message.
  */
-public class Embed {
-    private final String title;
-    private final String description;
-    private final String url;
-    private final ZonedDateTime timestamp;
-    private final int color;
-    private final Footer footer;
-    private final EmbedImage image;
-    private final EmbedImage thumbnail;
-    private final Author author;
-    private final List<Field> fields;
-
+public record Embed(String title, String description, String url, ZonedDateTime timestamp, int color, Footer footer,
+                    EmbedImage image, EmbedImage thumbnail, Author author, List<Field> fields) {
     /**
      * Constructs an Embed object with the specified parameters.
      *
@@ -33,17 +23,7 @@ public class Embed {
      * @param author      The author of the embed.
      * @param fields      The fields of the embed.
      */
-    public Embed(String title, String description, String url, ZonedDateTime timestamp, int color, Footer footer, EmbedImage image, EmbedImage thumbnail, Author author, List<Field> fields) {
-        this.title = title;
-        this.description = description;
-        this.url = url;
-        this.timestamp = timestamp;
-        this.color = color;
-        this.footer = footer;
-        this.image = image;
-        this.thumbnail = thumbnail;
-        this.author = author;
-        this.fields = fields;
+    public Embed {
     }
 
     /**
@@ -51,7 +31,8 @@ public class Embed {
      *
      * @return The title of the embed.
      */
-    public String getTitle() {
+    @Override
+    public String title() {
         return title;
     }
 
@@ -60,7 +41,8 @@ public class Embed {
      *
      * @return The description of the embed.
      */
-    public String getDescription() {
+    @Override
+    public String description() {
         return description;
     }
 
@@ -69,7 +51,8 @@ public class Embed {
      *
      * @return The URL of the embed.
      */
-    public String getUrl() {
+    @Override
+    public String url() {
         return url;
     }
 
@@ -78,7 +61,8 @@ public class Embed {
      *
      * @return The timestamp of the embed.
      */
-    public ZonedDateTime getTimestamp() {
+    @Override
+    public ZonedDateTime timestamp() {
         return timestamp;
     }
 
@@ -87,7 +71,8 @@ public class Embed {
      *
      * @return The color of the embed.
      */
-    public int getColor() {
+    @Override
+    public int color() {
         return color;
     }
 
@@ -96,7 +81,8 @@ public class Embed {
      *
      * @return The footer of the embed.
      */
-    public Footer getFooter() {
+    @Override
+    public Footer footer() {
         return footer;
     }
 
@@ -105,7 +91,8 @@ public class Embed {
      *
      * @return The image of the embed.
      */
-    public EmbedImage getImage() {
+    @Override
+    public EmbedImage image() {
         return image;
     }
 
@@ -114,7 +101,8 @@ public class Embed {
      *
      * @return The thumbnail of the embed.
      */
-    public EmbedImage getThumbnail() {
+    @Override
+    public EmbedImage thumbnail() {
         return thumbnail;
     }
 
@@ -123,7 +111,8 @@ public class Embed {
      *
      * @return The author of the embed.
      */
-    public Author getAuthor() {
+    @Override
+    public Author author() {
         return author;
     }
 
@@ -132,7 +121,8 @@ public class Embed {
      *
      * @return The fields of the embed.
      */
-    public List<Field> getFields() {
+    @Override
+    public List<Field> fields() {
         return fields;
     }
 
@@ -314,11 +304,7 @@ public class Embed {
     /**
      * Represents a field in an embed.
      */
-    public static class Field {
-        private final String name;
-        private final String value;
-        private final boolean isInline;
-
+    public record Field(String name, String value, boolean isInline) {
         /**
          * Constructs a field with the specified name and value.
          *
@@ -326,9 +312,7 @@ public class Embed {
          * @param value The value of the field.
          */
         public Field(String name, String value) {
-            this.name = name;
-            this.value = value;
-            this.isInline = false;
+            this(name, value, false);
         }
 
         /**
@@ -338,10 +322,7 @@ public class Embed {
          * @param value    The value of the field.
          * @param isInline Whether the field should be displayed inline.
          */
-        public Field(String name, String value, boolean isInline) {
-            this.name = name;
-            this.value = value;
-            this.isInline = isInline;
+        public Field {
         }
 
         /**
@@ -349,7 +330,8 @@ public class Embed {
          *
          * @return The name of the field.
          */
-        public String getName() {
+        @Override
+        public String name() {
             return name;
         }
 
@@ -358,7 +340,8 @@ public class Embed {
          *
          * @return The value of the field.
          */
-        public String getValue() {
+        @Override
+        public String value() {
             return value;
         }
 
@@ -367,6 +350,7 @@ public class Embed {
          *
          * @return true if the field should be displayed inline, otherwise false.
          */
+        @Override
         public boolean isInline() {
             return isInline;
         }

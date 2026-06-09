@@ -9,15 +9,8 @@ import java.util.List;
 /**
  * Represents the ready event sent by the Discord gateway when the bot is ready to start receiving events.
  */
-public class ReadyEvent {
-    private final String version;
-    private final User bot;
-    private final String sessionType;
-    private final String sessionId;
-    private final String resumeUrl;
-    private final List<Guild> guilds;
-    private final Application application;
-
+public record ReadyEvent(String version, User bot, String sessionType, String sessionId, String resumeUrl,
+                         List<Guild> guilds, Application application) {
     /**
      * Constructs a new ReadyEvent object.
      *
@@ -29,14 +22,7 @@ public class ReadyEvent {
      * @param guilds      The list of guilds the bot is a member of.
      * @param application The application information for the bot.
      */
-    public ReadyEvent(String version, User bot, String sessionType, String sessionId, String resumeUrl, List<Guild> guilds, Application application) {
-        this.version = version;
-        this.bot = bot;
-        this.sessionType = sessionType;
-        this.sessionId = sessionId;
-        this.resumeUrl = resumeUrl;
-        this.guilds = guilds;
-        this.application = application;
+    public ReadyEvent {
     }
 
     /**
@@ -44,7 +30,8 @@ public class ReadyEvent {
      *
      * @return The version of the Discord gateway protocol.
      */
-    public String getVersion() {
+    @Override
+    public String version() {
         return version;
     }
 
@@ -53,7 +40,8 @@ public class ReadyEvent {
      *
      * @return The user object representing the bot itself.
      */
-    public User getBot() {
+    @Override
+    public User bot() {
         return bot;
     }
 
@@ -62,7 +50,8 @@ public class ReadyEvent {
      *
      * @return The type of session established with the Discord gateway.
      */
-    public String getSessionType() {
+    @Override
+    public String sessionType() {
         return sessionType;
     }
 
@@ -71,7 +60,8 @@ public class ReadyEvent {
      *
      * @return The unique identifier for the current session.
      */
-    public String getSessionId() {
+    @Override
+    public String sessionId() {
         return sessionId;
     }
 
@@ -80,7 +70,8 @@ public class ReadyEvent {
      *
      * @return The URL to use for resuming a session.
      */
-    public String getResumeUrl() {
+    @Override
+    public String resumeUrl() {
         return resumeUrl;
     }
 
@@ -89,7 +80,8 @@ public class ReadyEvent {
      *
      * @return The list of guilds the bot is a member of.
      */
-    public List<Guild> getGuilds() {
+    @Override
+    public List<Guild> guilds() {
         return guilds;
     }
 
@@ -98,7 +90,8 @@ public class ReadyEvent {
      *
      * @return The application information for the bot.
      */
-    public Application getApplication() {
+    @Override
+    public Application application() {
         return application;
     }
 }

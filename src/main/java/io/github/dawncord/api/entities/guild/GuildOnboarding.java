@@ -20,8 +20,8 @@ import java.util.function.Consumer;
  * Represents guild onboarding settings.
  */
 public class GuildOnboarding {
-    private final JsonNode onboarding;
     private static Guild guild;
+    private final JsonNode onboarding;
     private List<Prompt> prompts;
     private List<GuildChannel> channels;
     private Boolean isEnabled;
@@ -36,6 +36,25 @@ public class GuildOnboarding {
     public GuildOnboarding(JsonNode onboarding, Guild guild) {
         this.onboarding = onboarding;
         GuildOnboarding.guild = guild;
+    }
+
+    private static List<GuildChannel> getChannels(JsonNode jsonObject, String key) {
+        List<GuildChannel> channels = new ArrayList<>();
+        for (JsonNode id : jsonObject.get(key)) {
+            GuildChannel channel = guild.getChannelById(id.asText());
+            if (channel != null) {
+                channels.add(channel);
+            }
+        }
+        return channels;
+    }
+
+    private static List<GuildRole> getRoles(JsonNode jsonObject) {
+        List<GuildRole> roles = new ArrayList<>();
+        for (JsonNode id : jsonObject.get("role_ids")) {
+            roles.add(guild.getRoleById(id.asText()));
+        }
+        return roles;
     }
 
     /**
@@ -132,6 +151,22 @@ public class GuildOnboarding {
             this.isSingleSelect = singleSelect;
             this.isRequired = required;
             this.inOnboarding = inOnboarding;
+        }
+
+        /**
+         * Creates a new Prompt object.
+         *
+         * @param id           The ID of the prompt.
+         * @param title        The title of the prompt.
+         * @param type         The type of the prompt.
+         * @param options      The options associated with the prompt.
+         * @param singleSelect True if the prompt is single select, false otherwise.
+         * @param required     True if the prompt is required, false otherwise.
+         * @param inOnboarding True if the prompt is part of onboarding, false otherwise.
+         * @return A new Prompt object.
+         */
+        public static Prompt of(String id, String title, PromptType type, List<Option> options, boolean singleSelect, boolean required, boolean inOnboarding) {
+            return new Prompt(id, title, type, options, singleSelect, required, inOnboarding);
         }
 
         /**
@@ -235,22 +270,6 @@ public class GuildOnboarding {
         }
 
         /**
-         * Creates a new Prompt object.
-         *
-         * @param id           The ID of the prompt.
-         * @param title        The title of the prompt.
-         * @param type         The type of the prompt.
-         * @param options      The options associated with the prompt.
-         * @param singleSelect True if the prompt is single select, false otherwise.
-         * @param required     True if the prompt is required, false otherwise.
-         * @param inOnboarding True if the prompt is part of onboarding, false otherwise.
-         * @return A new Prompt object.
-         */
-        public static Prompt of(String id, String title, PromptType type, List<Option> options, boolean singleSelect, boolean required, boolean inOnboarding) {
-            return new Prompt(id, title, type, options, singleSelect, required, inOnboarding);
-        }
-
-        /**
          * Represents an option associated with a prompt in guild onboarding.
          */
         public static class Option {
@@ -283,6 +302,21 @@ public class GuildOnboarding {
                 this.channels = channels;
                 this.roles = roles;
                 this.emoji = emoji;
+            }
+
+            /**
+             * Creates a new Option object.
+             *
+             * @param id          The ID of the option.
+             * @param title       The title of the option.
+             * @param description The description of the option.
+             * @param channels    The channels associated with the option.
+             * @param roles       The roles associated with the option.
+             * @param emoji       The emoji associated with the option.
+             * @return A new Option object.
+             */
+            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRole> roles, CustomEmoji emoji) {
+                return new Option(id, title, description, channels, roles, emoji);
             }
 
             /**
@@ -376,40 +410,6 @@ public class GuildOnboarding {
                 }
                 return emoji;
             }
-
-            /**
-             * Creates a new Option object.
-             *
-             * @param id          The ID of the option.
-             * @param title       The title of the option.
-             * @param description The description of the option.
-             * @param channels    The channels associated with the option.
-             * @param roles       The roles associated with the option.
-             * @param emoji       The emoji associated with the option.
-             * @return A new Option object.
-             */
-            public static Option of(String id, String title, String description, List<GuildChannel> channels, List<GuildRole> roles, CustomEmoji emoji) {
-                return new Option(id, title, description, channels, roles, emoji);
-            }
         }
-    }
-
-    private static List<GuildChannel> getChannels(JsonNode jsonObject, String key) {
-        List<GuildChannel> channels = new ArrayList<>();
-        for (JsonNode id : jsonObject.get(key)) {
-            GuildChannel channel = guild.getChannelById(id.asText());
-            if (channel != null) {
-                channels.add(channel);
-            }
-        }
-        return channels;
-    }
-
-    private static List<GuildRole> getRoles(JsonNode jsonObject) {
-        List<GuildRole> roles = new ArrayList<>();
-        for (JsonNode id : jsonObject.get("role_ids")) {
-            roles.add(guild.getRoleById(id.asText()));
-        }
-        return roles;
     }
 }

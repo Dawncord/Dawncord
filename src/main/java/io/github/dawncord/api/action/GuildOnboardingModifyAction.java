@@ -58,7 +58,7 @@ public class GuildOnboardingModifyAction extends Action<GuildOnboardingModifyAct
                     .put("title", option.getTitle())
                     .put("description", option.getDescription())
                     .put("emoji_id", option.getEmoji().getId())
-                    .put("emoji_name", option.getEmoji().getName())
+                    .put("emoji_name", option.getEmoji().name())
                     .put("emoji_animated", option.getEmoji().isAnimated())
                     .<ObjectNode>set("channel_ids", mapper.valueToTree(option.getChannels().stream().map(GuildChannel::getId).toList()))
                     .set("role_ids", mapper.valueToTree(option.getRoles().stream().map(GuildRole::getId).toList()));

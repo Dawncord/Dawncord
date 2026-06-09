@@ -6,24 +6,14 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event related to a thread.
  */
-public class ThreadEvent implements Event {
-    private final Guild guild;
-    private final Thread thread;
-
+public record ThreadEvent(Guild guild, Thread thread) implements Event {
     /**
      * Constructs a ThreadEvent with the specified guild and thread.
      *
      * @param guild  The guild associated with the thread event.
      * @param thread The thread involved in the event.
      */
-    public ThreadEvent(Guild guild, Thread thread) {
-        this.guild = guild;
-        this.thread = thread;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public ThreadEvent {
     }
 
     /**
@@ -31,7 +21,8 @@ public class ThreadEvent implements Event {
      *
      * @return The thread involved in the event.
      */
-    public Thread getThread() {
+    @Override
+    public Thread thread() {
         return thread;
     }
 }

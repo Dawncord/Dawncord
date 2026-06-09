@@ -9,6 +9,6 @@ public interface Emoji extends ISnowflake {
      *
      * @return The name of the emoji.
      */
-    String getName();
+    String name();
 }
 

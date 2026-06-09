@@ -6,10 +6,7 @@ import io.github.dawncord.api.entities.guild.automod.AutoModRule;
 /**
  * Represents an event related to auto-moderation in a guild.
  */
-public class AutoModEvent implements Event {
-
-    private final Guild guild;
-    private final AutoModRule rule;
+public record AutoModEvent(Guild guild, AutoModRule rule) implements Event {
 
     /**
      * Constructs an AutoModEvent with the specified guild and auto-moderation rule.
@@ -17,9 +14,7 @@ public class AutoModEvent implements Event {
      * @param guild The guild associated with the event.
      * @param rule  The auto-moderation rule associated with the event.
      */
-    public AutoModEvent(Guild guild, AutoModRule rule) {
-        this.guild = guild;
-        this.rule = rule;
+    public AutoModEvent {
     }
 
     /**
@@ -27,12 +22,8 @@ public class AutoModEvent implements Event {
      *
      * @return The auto-moderation rule.
      */
-    public AutoModRule getRule() {
-        return rule;
-    }
-
     @Override
-    public Guild getGuild() {
-        return guild;
+    public AutoModRule rule() {
+        return rule;
     }
 }

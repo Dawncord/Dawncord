@@ -15,7 +15,6 @@ import io.github.dawncord.api.entities.CustomEmojiImpl;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.message.component.ButtonData;
 import io.github.dawncord.api.entities.message.component.SelectMenuData;
 import io.github.dawncord.api.entities.message.modal.ElementData;
@@ -213,7 +212,7 @@ public class InteractionListener extends WebSocketAdapter {
     }
 
     private void processSelectMenuEvent(JsonNode subComponent, MessageComponentInteractionData interactionData, JsonNode data, String guildId) {
-        Guild guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId)));
+        Guild guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(guildId)));
         SelectMenuData selectMenuData = new SelectMenuData(
                 subComponent.get("custom_id").asText(),
                 subComponent.has("placeholder") ? subComponent.get("placeholder").asText() : null,
@@ -235,7 +234,7 @@ public class InteractionListener extends WebSocketAdapter {
     }
 
     private void processButtonEvent(JsonNode subComponent, MessageComponentInteractionData interactionData, String guildId) {
-        Guild guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId)));
+        Guild guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(guildId)));
         Emoji emoji = null;
         if (subComponent.has("emoji")) {
             if (subComponent.get("emoji").get("id") != null) {

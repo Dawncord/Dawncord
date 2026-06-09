@@ -14,7 +14,6 @@ import io.github.dawncord.api.entities.channel.Invite;
 import io.github.dawncord.api.entities.channel.Stage;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.audit.AuditLog;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
@@ -105,7 +104,7 @@ public class EventListener extends WebSocketAdapter {
         String sessionId = data.path("session_id").asText();
         String resumeUrl = data.path("resume_gateway_url").asText();
         List<Guild> guilds = new ArrayList<>();
-        data.path("guilds").forEach(node -> guilds.add(new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(node.path("id").asText())))));
+        data.path("guilds").forEach(node -> guilds.add(new Guild(JsonUtils.fetch(Routes.Guild.Get(node.path("id").asText())))));
         Application application = new Application(JsonUtils.fetch(Routes.CurrentApplication()));
 
         ReadyEvent readyEvent = new ReadyEvent(version, user, sessionType, sessionId, resumeUrl, guilds, application);
@@ -378,7 +377,7 @@ public class EventListener extends WebSocketAdapter {
         if (guildId.isEmpty()) {
             return null;
         }
-        return new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId)));
+        return new Guild(JsonUtils.fetch(Routes.Guild.Get(guildId)));
     }
 
     private void invokeProcessEvent(String methodName, GatewayEvent type, Event event, Class<? extends Event> clazz) {

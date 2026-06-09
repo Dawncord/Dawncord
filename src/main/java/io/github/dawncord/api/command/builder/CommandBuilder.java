@@ -18,12 +18,12 @@ import java.util.Map;
  */
 public abstract class CommandBuilder<T, V> {
     protected static final ObjectMapper mapper = new ObjectMapper();
+    protected final List<Option> optionList = new ArrayList<>();
+    protected final List<SubCommand> subCommandList = new ArrayList<>();
     protected String name;
     protected String description;
     protected Map<Locale, String> nameLocalizations;
     protected Map<Locale, String> descriptionLocalizations;
-    protected final List<Option> optionList = new ArrayList<>();
-    protected final List<SubCommand> subCommandList = new ArrayList<>();
 
     public CommandBuilder(String name, String description) {
         this.name = name;

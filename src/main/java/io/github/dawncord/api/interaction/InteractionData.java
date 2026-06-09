@@ -9,26 +9,26 @@ public interface InteractionData {
      *
      * @return The interaction object.
      */
-    Interaction getInteraction();
+    Interaction interaction();
 
     /**
      * Retrieves the ID of the guild where the interaction occurred.
      *
      * @return The ID of the guild.
      */
-    String getGuildId();
+    String guildId();
 
     /**
      * Retrieves the ID of the channel where the interaction occurred.
      *
      * @return The ID of the channel.
      */
-    String getChannelId();
+    String channelId();
 
     /**
      * Retrieves the ID of the member who initiated the interaction.
      *
      * @return The ID of the member.
      */
-    String getMemberId();
+    String memberId();
 }

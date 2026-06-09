@@ -7,11 +7,7 @@ import io.github.dawncord.api.entities.guild.GuildMember;
 /**
  * Represents an event triggered when a user starts typing in a guild channel.
  */
-public class TypingEvent implements Event {
-    private final Guild guild;
-    private final GuildChannel channel;
-    private final GuildMember member;
-
+public record TypingEvent(Guild guild, GuildChannel channel, GuildMember member) implements Event {
     /**
      * Constructs a TypingEvent with the specified guild, channel, and member.
      *
@@ -19,15 +15,7 @@ public class TypingEvent implements Event {
      * @param channel The channel in which the typing event occurred.
      * @param member  The member who started typing.
      */
-    public TypingEvent(Guild guild, GuildChannel channel, GuildMember member) {
-        this.guild = guild;
-        this.channel = channel;
-        this.member = member;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public TypingEvent {
     }
 
     /**
@@ -35,7 +23,8 @@ public class TypingEvent implements Event {
      *
      * @return The channel in which the typing event occurred.
      */
-    public GuildChannel getChannel() {
+    @Override
+    public GuildChannel channel() {
         return channel;
     }
 
@@ -44,7 +33,8 @@ public class TypingEvent implements Event {
      *
      * @return The member who started typing.
      */
-    public GuildMember getMember() {
+    @Override
+    public GuildMember member() {
         return member;
     }
 }

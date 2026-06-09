@@ -165,9 +165,9 @@ public class MessageModifyAction extends MessageAction {
             if (interactionData != null) {
                 if (attachments != null && !attachments.isEmpty()) {
                     MultipartBody.Builder multipartBuilder = AttachmentUtils.createMultipartBuilder(jsonObject, attachments);
-                    ApiClient.patchAttachments(multipartBuilder, Routes.OriginalMessage(interactionData.getInteraction().getInteractionToken()));
+                    ApiClient.patchAttachments(multipartBuilder, Routes.OriginalMessage(interactionData.interaction().interactionToken()));
                 } else {
-                    ApiClient.patch(jsonObject, Routes.OriginalMessage(interactionData.getInteraction().getInteractionToken()));
+                    ApiClient.patch(jsonObject, Routes.OriginalMessage(interactionData.interaction().interactionToken()));
                 }
             } else {
                 if (attachments != null && !attachments.isEmpty()) {

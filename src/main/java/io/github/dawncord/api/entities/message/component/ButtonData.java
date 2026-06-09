@@ -6,14 +6,7 @@ import io.github.dawncord.api.types.ButtonStyle;
 /**
  * Represents the data of a button component.
  */
-public class ButtonData {
-    private final String customId;
-    private final String url;
-    private final ButtonStyle style;
-    private final String label;
-    private final boolean disabled;
-    private final Emoji emoji;
-
+public record ButtonData(String customId, String url, ButtonStyle style, String label, boolean disabled, Emoji emoji) {
     /**
      * Constructs a ButtonData object with the specified properties.
      *
@@ -24,13 +17,7 @@ public class ButtonData {
      * @param disabled A boolean indicating whether the button is disabled.
      * @param emoji    The emoji associated with the button.
      */
-    public ButtonData(String customId, String url, ButtonStyle style, String label, boolean disabled, Emoji emoji) {
-        this.customId = customId;
-        this.url = url;
-        this.style = style;
-        this.label = label;
-        this.disabled = disabled;
-        this.emoji = emoji;
+    public ButtonData {
     }
 
     /**
@@ -38,7 +25,8 @@ public class ButtonData {
      *
      * @return The custom ID of the button.
      */
-    public String getCustomId() {
+    @Override
+    public String customId() {
         return customId;
     }
 
@@ -47,7 +35,8 @@ public class ButtonData {
      *
      * @return The URL of the button.
      */
-    public String getUrl() {
+    @Override
+    public String url() {
         return url;
     }
 
@@ -56,7 +45,8 @@ public class ButtonData {
      *
      * @return The style of the button.
      */
-    public ButtonStyle getStyle() {
+    @Override
+    public ButtonStyle style() {
         return style;
     }
 
@@ -65,7 +55,8 @@ public class ButtonData {
      *
      * @return The label text of the button.
      */
-    public String getLabel() {
+    @Override
+    public String label() {
         return label;
     }
 
@@ -74,7 +65,8 @@ public class ButtonData {
      *
      * @return true if the button is disabled, false otherwise.
      */
-    public boolean isDisabled() {
+    @Override
+    public boolean disabled() {
         return disabled;
     }
 
@@ -83,7 +75,8 @@ public class ButtonData {
      *
      * @return The emoji associated with the button.
      */
-    public Emoji getEmoji() {
+    @Override
+    public Emoji emoji() {
         return emoji;
     }
 }

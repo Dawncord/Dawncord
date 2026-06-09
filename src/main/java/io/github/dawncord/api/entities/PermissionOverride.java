@@ -8,12 +8,8 @@ import java.util.List;
 /**
  * A class representing a permission override.
  */
-public class PermissionOverride {
-    private final String id;
-    private final PermissionOverrideType type;
-    private final List<PermissionType> denied;
-    private final List<PermissionType> allowed;
-
+public record PermissionOverride(String id, PermissionOverrideType type, List<PermissionType> denied,
+                                 List<PermissionType> allowed) {
     /**
      * Constructs a permission override with the specified parameters.
      *
@@ -22,11 +18,7 @@ public class PermissionOverride {
      * @param denied  The list of denied permissions.
      * @param allowed The list of allowed permissions.
      */
-    public PermissionOverride(String id, PermissionOverrideType type, List<PermissionType> denied, List<PermissionType> allowed) {
-        this.id = id;
-        this.type = type;
-        this.denied = denied;
-        this.allowed = allowed;
+    public PermissionOverride {
     }
 
     /**
@@ -34,7 +26,8 @@ public class PermissionOverride {
      *
      * @return The ID of the entity.
      */
-    public String getId() {
+    @Override
+    public String id() {
         return id;
     }
 
@@ -43,7 +36,8 @@ public class PermissionOverride {
      *
      * @return The type of the entity.
      */
-    public PermissionOverrideType getType() {
+    @Override
+    public PermissionOverrideType type() {
         return type;
     }
 
@@ -52,7 +46,8 @@ public class PermissionOverride {
      *
      * @return The list of denied permissions.
      */
-    public List<PermissionType> getDenied() {
+    @Override
+    public List<PermissionType> denied() {
         return denied;
     }
 
@@ -61,7 +56,8 @@ public class PermissionOverride {
      *
      * @return The list of allowed permissions.
      */
-    public List<PermissionType> getAllowed() {
+    @Override
+    public List<PermissionType> allowed() {
         return allowed;
     }
 }

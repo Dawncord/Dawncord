@@ -55,22 +55,22 @@ public class SlashCommandInteractionData implements InteractionData {
     }
 
     @Override
-    public String getGuildId() {
+    public String guildId() {
         return guildId;
     }
 
     @Override
-    public String getChannelId() {
+    public String channelId() {
         return channelId;
     }
 
     @Override
-    public String getMemberId() {
+    public String memberId() {
         return memberId;
     }
 
     @Override
-    public Interaction getInteraction() {
+    public Interaction interaction() {
         return interaction;
     }
 }

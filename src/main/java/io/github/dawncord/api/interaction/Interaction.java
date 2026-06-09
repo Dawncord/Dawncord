@@ -3,19 +3,14 @@ package io.github.dawncord.api.interaction;
 /**
  * Represents an interaction with a bot, typically initiated by a user.
  */
-public class Interaction {
-    private final String interactionId;
-    private final String interactionToken;
-
+public record Interaction(String interactionId, String interactionToken) {
     /**
      * Constructs an Interaction with the specified interaction ID and token.
      *
      * @param interactionId    The ID of the interaction.
      * @param interactionToken The token associated with the interaction.
      */
-    public Interaction(String interactionId, String interactionToken) {
-        this.interactionId = interactionId;
-        this.interactionToken = interactionToken;
+    public Interaction {
     }
 
     /**
@@ -23,7 +18,8 @@ public class Interaction {
      *
      * @return The ID of the interaction.
      */
-    public String getInteractionId() {
+    @Override
+    public String interactionId() {
         return interactionId;
     }
 
@@ -32,7 +28,8 @@ public class Interaction {
      *
      * @return The token associated with the interaction.
      */
-    public String getInteractionToken() {
+    @Override
+    public String interactionToken() {
         return interactionToken;
     }
 }

@@ -111,7 +111,7 @@ public class ReactionImpl implements Reaction {
 
     @Override
     public void delete(String userId) {
-        String emoji = (isGuildEmoji() ? getGuildEmoji().getName() : getEmoji());
+        String emoji = (isGuildEmoji() ? getGuildEmoji().name() : getEmoji());
         ApiClient.delete(Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emoji, userId));
     }
 

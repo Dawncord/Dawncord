@@ -4,10 +4,10 @@ package io.github.dawncord.api.entities;
  * Represents a forum tag.
  */
 public class ForumTag {
-    private String id;
     private final String name;
     private final boolean isModerated;
     private final String emojiIdOrName;
+    private String id;
 
     /**
      * Constructs a ForumTag object with the specified attributes.

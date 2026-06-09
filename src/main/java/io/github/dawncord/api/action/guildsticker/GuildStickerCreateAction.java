@@ -5,6 +5,7 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.sticker.Sticker;
+import io.github.dawncord.api.types.GuildFeature;
 import io.github.dawncord.api.utils.AttachmentUtils;
 import okhttp3.MultipartBody;
 
@@ -42,7 +43,8 @@ public class GuildStickerCreateAction extends GuildStickerAction {
         if (format.matches("png|jpg|jpeg")) {
             this.file = file;
         } else if (format.matches("gif|json|lottie")) {
-            if (guild.getFeatures().contains("VERIFIED") || guild.getFeatures().contains("PARTNER")) {
+            //todo check
+            if (guild.getFeatures().contains(GuildFeature.VERIFIED) || guild.getFeatures().contains(GuildFeature.PARTNERED)) {
                 this.file = file;
             }
         } else {

@@ -5,18 +5,12 @@ import java.util.List;
 /**
  * Represents a modal dialog with input elements.
  */
-public class Modal {
-    private final String title;
-    private final String customId;
-    private final List<Element> elements;
-
+public record Modal(String title, String customId, List<Element> elements) {
     /**
      * Constructs an empty modal.
      */
     public Modal() {
-        this.title = null;
-        this.customId = null;
-        this.elements = null;
+        this(null, null, null);
     }
 
     /**
@@ -26,10 +20,7 @@ public class Modal {
      * @param customId The custom ID of the modal.
      * @param elements The input elements of the modal.
      */
-    public Modal(String title, String customId, List<Element> elements) {
-        this.title = title;
-        this.customId = customId;
-        this.elements = elements;
+    public Modal {
     }
 
     /**
@@ -37,7 +28,8 @@ public class Modal {
      *
      * @return The title.
      */
-    public String getTitle() {
+    @Override
+    public String title() {
         return title;
     }
 
@@ -46,7 +38,8 @@ public class Modal {
      *
      * @return The custom ID.
      */
-    public String getCustomId() {
+    @Override
+    public String customId() {
         return customId;
     }
 
@@ -55,7 +48,8 @@ public class Modal {
      *
      * @return The input elements.
      */
-    public List<Element> getElements() {
+    @Override
+    public List<Element> elements() {
         return elements;
     }
 }

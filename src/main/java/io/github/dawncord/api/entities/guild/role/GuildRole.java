@@ -86,6 +86,15 @@ public class GuildRole implements ISnowflake, IMentionable {
         return position;
     }
 
+    public void setPosition(int position) {
+        ApiClient.patch(
+                JsonNodeFactory.instance.objectNode()
+                        .put("id", getId())
+                        .put("position", position),
+                Routes.Guild.Role.All(guild.getId())
+        );
+    }
+
     public Color getColor() {
         color = loader.loadIfExists(color, "color", () -> new Color(role.get("color").asInt()));
         return color;
@@ -118,15 +127,6 @@ public class GuildRole implements ISnowflake, IMentionable {
 
     public RoleFlags getFlags() {
         return RoleFlags.IN_PROMPT;
-    }
-
-    public void setPosition(int position) {
-        ApiClient.patch(
-                JsonNodeFactory.instance.objectNode()
-                        .put("id", getId())
-                        .put("position", position),
-                Routes.Guild.Role.All(guild.getId())
-        );
     }
 
     public ModifyEvent<GuildRole> modify(Consumer<GuildRoleModifyAction> handler) {

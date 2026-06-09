@@ -17,7 +17,6 @@ import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
 import io.github.dawncord.api.command.option.Option;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.event.*;
 import io.github.dawncord.api.event.handler.*;
 import io.github.dawncord.api.listeners.EventListener;
@@ -53,10 +52,10 @@ import static io.github.dawncord.api.utils.EventProcessor.*;
 public class Dawncord {
     private final static Logger logger = LoggerFactory.getLogger(Dawncord.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    private WebSocket webSocket;
     private final Map<Class<? extends Event>, Consumer<Event>> eventHandlers = new HashMap<>();
-    private long intentsValue = 0;
     private final Map<String, String> commandIdMap = new HashMap<>();
+    private WebSocket webSocket;
+    private long intentsValue = 0;
 
     /**
      * creates a new {@link Dawncord} instance
@@ -71,6 +70,46 @@ public class Dawncord {
         getGateway();
 
         connect();
+    }
+
+    private static void processSlashCommandEvent(SlashCommandEvent slashCommandEvent) {
+        String commandName = slashCommandEvent.getFullCommandName();
+        Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
+        if (handler != null) {
+            handler.accept(slashCommandEvent);
+        } else if (defaultSlashCommandEventHandler != null) {
+            defaultSlashCommandEventHandler.accept(slashCommandEvent);
+        }
+    }
+
+    private static void processButtonEvent(ButtonEvent buttonEvent) {
+        String customId = buttonEvent.getButton().customId();
+        Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(buttonEvent);
+        } else if (defaultButtonComponentEventHandler != null) {
+            defaultButtonComponentEventHandler.accept(buttonEvent);
+        }
+    }
+
+    private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
+        String customId = selectMenuEvent.getSelectMenu().getCustomId();
+        Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(selectMenuEvent);
+        } else if (defaultSelectMenuEventHandler != null) {
+            defaultSelectMenuEventHandler.accept(selectMenuEvent);
+        }
+    }
+
+    private static void processModalSubmitEvent(ModalSubmitEvent modalSubmitEvent) {
+        String customId = modalSubmitEvent.getModal().customId();
+        Consumer<ModalSubmitEvent> handler = modalSubmitEventHandlers.get(customId);
+        if (handler != null) {
+            handler.accept(modalSubmitEvent);
+        } else if (defaultModalSubmitEventHandler != null) {
+            defaultModalSubmitEventHandler.accept(modalSubmitEvent);
+        }
     }
 
     private void getGateway() {
@@ -134,7 +173,7 @@ public class Dawncord {
      */
     public CreateEvent<Guild> createGuild(Consumer<GuildCreateAction> handler) {
         String id = ActionExecutor.createGuild(handler);
-        return new CreateEvent<>(new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(id))));
+        return new CreateEvent<>(new Guild(JsonUtils.fetch(Routes.Guild.Get(id))));
     }
 
     /**
@@ -144,7 +183,7 @@ public class Dawncord {
      * @return the Guild object representing the guild with the given ID
      */
     public Guild getGuildById(String id) {
-        return new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(id)));
+        return new Guild(JsonUtils.fetch(Routes.Guild.Get(id)));
     }
 
     /**
@@ -163,7 +202,7 @@ public class Dawncord {
      * @return a list of Guild objects representing the guilds the bot is a member of
      */
     public List<Guild> getGuilds() {
-        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.BotAll()), GuildImpl::new);
+        return JsonUtils.getEntityList(JsonUtils.fetch(Routes.Guild.BotAll()), Guild::new);
     }
 
     /**
@@ -455,6 +494,15 @@ public class Dawncord {
         ActionExecutor.modifySlashCommand(handler, getSlashCommandId(name));
     }
 
+    /*public void recreate(String token) {
+        connect();
+
+        assignConstants(token);
+        initializeCommandIdMap();
+
+        start();
+    }*/
+
     /**
      * Deletes a slash command with the specified name.
      *
@@ -514,15 +562,6 @@ public class Dawncord {
         }
     }
 
-    /*public void recreate(String token) {
-        connect();
-
-        assignConstants(token);
-        initializeCommandIdMap();
-
-        start();
-    }*/
-
     private void assignConstants(String token) {
         Constants.BOT_TOKEN = token;
         Constants.BOT_ID = JsonUtils.fetch(Routes.User("@me")).get("id").asText();
@@ -563,46 +602,6 @@ public class Dawncord {
 
         if (handler != null) {
             handler.accept(event);
-        }
-    }
-
-    private static void processSlashCommandEvent(SlashCommandEvent slashCommandEvent) {
-        String commandName = slashCommandEvent.getFullCommandName();
-        Consumer<SlashCommandEvent> handler = slashCommandEventHandlers.get(commandName);
-        if (handler != null) {
-            handler.accept(slashCommandEvent);
-        } else if (defaultSlashCommandEventHandler != null) {
-            defaultSlashCommandEventHandler.accept(slashCommandEvent);
-        }
-    }
-
-    private static void processButtonEvent(ButtonEvent buttonEvent) {
-        String customId = buttonEvent.getButton().getCustomId();
-        Consumer<ButtonEvent> handler = buttonEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(buttonEvent);
-        } else if (defaultButtonComponentEventHandler != null) {
-            defaultButtonComponentEventHandler.accept(buttonEvent);
-        }
-    }
-
-    private static void processSelectMenuEvent(SelectMenuEvent selectMenuEvent) {
-        String customId = selectMenuEvent.getSelectMenu().getCustomId();
-        Consumer<SelectMenuEvent> handler = selectMenuEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(selectMenuEvent);
-        } else if (defaultSelectMenuEventHandler != null) {
-            defaultSelectMenuEventHandler.accept(selectMenuEvent);
-        }
-    }
-
-    private static void processModalSubmitEvent(ModalSubmitEvent modalSubmitEvent) {
-        String customId = modalSubmitEvent.getModal().getCustomId();
-        Consumer<ModalSubmitEvent> handler = modalSubmitEventHandlers.get(customId);
-        if (handler != null) {
-            handler.accept(modalSubmitEvent);
-        } else if (defaultModalSubmitEventHandler != null) {
-            defaultModalSubmitEventHandler.accept(modalSubmitEvent);
         }
     }
 
@@ -669,7 +668,7 @@ public class Dawncord {
         if (nameLocalizations != null && !nameLocalizations.isEmpty()) {
             ObjectNode nameLocalizationsJson = mapper.createObjectNode();
             for (Map.Entry<Locale, String> name : nameLocalizations.entrySet()) {
-                nameLocalizationsJson.put(name.getKey().getLocaleCode(), name.getValue());
+                nameLocalizationsJson.put(name.getKey().getValue(), name.getValue());
             }
             node.set("name_localizations", nameLocalizationsJson);
         }
@@ -677,7 +676,7 @@ public class Dawncord {
         if (descriptionLocalizations != null && !descriptionLocalizations.isEmpty()) {
             ObjectNode descriptionLocalizationsJson = mapper.createObjectNode();
             for (Map.Entry<Locale, String> name : descriptionLocalizations.entrySet()) {
-                descriptionLocalizationsJson.put(name.getKey().getLocaleCode(), name.getValue());
+                descriptionLocalizationsJson.put(name.getKey().getValue(), name.getValue());
             }
             node.set("description_localizations", descriptionLocalizationsJson);
         }
@@ -775,8 +774,8 @@ public class Dawncord {
         ArrayNode choicesJson = mapper.createArrayNode();
         for (Option.Choice choice : option.getChoices()) {
             ObjectNode choiceJson = mapper.createObjectNode();
-            choiceJson.put("name", choice.getName());
-            choiceJson.put("value", choice.getValue());
+            choiceJson.put("name", choice.name());
+            choiceJson.put("value", choice.value());
             choicesJson.add(choiceJson);
         }
         return choicesJson;

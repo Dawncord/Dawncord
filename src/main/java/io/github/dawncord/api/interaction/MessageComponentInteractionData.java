@@ -3,14 +3,8 @@ package io.github.dawncord.api.interaction;
 /**
  * Represents data associated with a message component interaction.
  */
-public class MessageComponentInteractionData implements InteractionData {
-    private final Interaction interaction;
-    private final String customId;
-    private final String id;
-    private final String guildId;
-    private final String channelId;
-    private final String memberId;
-
+public record MessageComponentInteractionData(Interaction interaction, String customId, String id, String guildId,
+                                              String channelId, String memberId) implements InteractionData {
     /**
      * Constructs a MessageComponentInteractionData object with the specified parameters.
      *
@@ -21,13 +15,7 @@ public class MessageComponentInteractionData implements InteractionData {
      * @param channelId   The ID of the channel where the interaction occurred.
      * @param memberId    The ID of the member who initiated the interaction.
      */
-    public MessageComponentInteractionData(Interaction interaction, String customId, String id, String guildId, String channelId, String memberId) {
-        this.interaction = interaction;
-        this.customId = customId;
-        this.id = id;
-        this.guildId = guildId;
-        this.channelId = channelId;
-        this.memberId = memberId;
+    public MessageComponentInteractionData {
     }
 
     /**
@@ -35,7 +23,8 @@ public class MessageComponentInteractionData implements InteractionData {
      *
      * @return The custom ID of the message component.
      */
-    public String getCustomId() {
+    @Override
+    public String customId() {
         return customId;
     }
 
@@ -44,27 +33,8 @@ public class MessageComponentInteractionData implements InteractionData {
      *
      * @return The ID of the message component.
      */
-    public String getId() {
+    @Override
+    public String id() {
         return id;
-    }
-
-    @Override
-    public Interaction getInteraction() {
-        return interaction;
-    }
-
-    @Override
-    public String getGuildId() {
-        return guildId;
-    }
-
-    @Override
-    public String getChannelId() {
-        return channelId;
-    }
-
-    @Override
-    public String getMemberId() {
-        return memberId;
     }
 }

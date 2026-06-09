@@ -16,20 +16,12 @@ import java.util.function.Consumer;
 public class EventProcessor {
     // Event handlers for SlashCommandEvents
     public static final Map<String, Consumer<SlashCommandEvent>> slashCommandEventHandlers = new HashMap<>();
-    public static Consumer<SlashCommandEvent> defaultSlashCommandEventHandler;
-
     // Event handlers for ButtonEvents
     public static final Map<String, Consumer<ButtonEvent>> buttonEventHandlers = new HashMap<>();
-    public static Consumer<ButtonEvent> defaultButtonComponentEventHandler;
-
     // Event handlers for SelectMenuEvents
     public static final Map<String, Consumer<SelectMenuEvent>> selectMenuEventHandlers = new HashMap<>();
-    public static Consumer<SelectMenuEvent> defaultSelectMenuEventHandler;
-
     // Event handlers for ModalSubmitEvents
     public static final Map<String, Consumer<ModalSubmitEvent>> modalSubmitEventHandlers = new HashMap<>();
-    public static Consumer<ModalSubmitEvent> defaultModalSubmitEventHandler;
-
     // Event handlers for various types of events
     public static final AutoModEventHandler autoModEventHandler = new AutoModEventHandler();
     public static final MessageEventHandler messageEventHandler = new MessageEventHandler();
@@ -39,7 +31,10 @@ public class EventProcessor {
     public static final IntegrationEventHandler integrationEventHandler = new IntegrationEventHandler();
     public static final InviteEventHandler inviteEventHandler = new InviteEventHandler();
     public static final StageEventHandler stageEventHandler = new StageEventHandler();
-
+    public static Consumer<SlashCommandEvent> defaultSlashCommandEventHandler;
+    public static Consumer<ButtonEvent> defaultButtonComponentEventHandler;
+    public static Consumer<SelectMenuEvent> defaultSelectMenuEventHandler;
+    public static Consumer<ModalSubmitEvent> defaultModalSubmitEventHandler;
     public static Consumer<ReadyEvent> readyEventHandler;
     public static Consumer<PresenceEvent> presenceEventHandler;
     public static Consumer<TypingEvent> typingEventHandler;

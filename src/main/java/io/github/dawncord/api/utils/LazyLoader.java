@@ -14,6 +14,8 @@ import java.util.function.Supplier;
 public class LazyLoader {
     private final JsonNode jsonNode;
 
+    //todo add set of json fields and use it
+
     /**
      * Constructs a LazyLoader with the specified JSON node.
      *
@@ -209,9 +211,37 @@ public class LazyLoader {
         return currentValue;
     }
 
+    public <T> T loadIfExists(T currentValue, JsonNode json, String fieldName, Supplier<T> supplier) {
+        if (currentValue == null && json.has(fieldName) && json.hasNonNull(fieldName)) {
+            return supplier.get();
+        }
+        return currentValue;
+    }
+
     public <T> List<T> loadEntityList(List<T> currentValue, String fieldName, Function<JsonNode, T> constructor) {
         if (checkNull(currentValue, fieldName)) {
             return JsonUtils.getEntityList(jsonNode.get(fieldName), constructor);
+        }
+        return currentValue;
+    }
+
+    public <T> List<T> loadEntityList(List<T> currentValue, JsonNode array, Function<JsonNode, T> constructor) {
+        if (currentValue == null) {
+            return JsonUtils.getEntityList(array, constructor);
+        }
+        return currentValue;
+    }
+
+    public <T> List<T> loadEntityList(List<T> currentValue, String fieldName, JsonNode array, Function<JsonNode, T> constructor) {
+        if (checkNull(currentValue, fieldName)) {
+            return JsonUtils.getEntityList(array, constructor);
+        }
+        return currentValue;
+    }
+
+    public <T extends Enum<T>> List<T> loadEnumValues(List<T> currentValue, String fieldName, Class<T> enumClass) {
+        if (checkNull(currentValue, fieldName)) {
+            return EnumUtils.getEnumValues(jsonNode.get(fieldName), enumClass);
         }
         return currentValue;
     }

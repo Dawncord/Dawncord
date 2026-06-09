@@ -4,7 +4,7 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
-import io.github.dawncord.api.entities.guild.GuildImpl;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.interaction.InteractionData;
@@ -43,8 +43,8 @@ public class CallbackAfterEvent<T> {
      */
     public Message get() {
         return new MessageImpl(
-                JsonUtils.fetch(Routes.OriginalMessage(data.getInteraction().getInteractionToken())),
-                new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())))
+                JsonUtils.fetch(Routes.OriginalMessage(data.interaction().interactionToken())),
+                new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())))
         );
     }
 
@@ -68,6 +68,6 @@ public class CallbackAfterEvent<T> {
         if (defer) {
             edit(null);
         }
-        ApiClient.delete(Routes.OriginalMessage(data.getInteraction().getInteractionToken()));
+        ApiClient.delete(Routes.OriginalMessage(data.interaction().interactionToken()));
     }
 }

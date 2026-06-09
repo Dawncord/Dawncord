@@ -12,13 +12,8 @@ import java.util.List;
 /**
  * Represents an event related to a member's presence update in a guild.
  */
-public class PresenceEvent implements Event {
-    private final Guild guild;
-    private final GuildMember member;
-    private final OnlineStatus status;
-    private final ClientStatus clientStatus;
-    private final List<Activity> activities;
-
+public record PresenceEvent(Guild guild, GuildMember member, OnlineStatus status, ClientStatus clientStatus,
+                            List<Activity> activities) implements Event {
     /**
      * Constructs a PresenceEvent with the specified guild, member, status, client status, and activities.
      *
@@ -28,17 +23,7 @@ public class PresenceEvent implements Event {
      * @param clientStatus The client status of the member.
      * @param activities   The list of activities associated with the member's presence.
      */
-    public PresenceEvent(Guild guild, GuildMember member, OnlineStatus status, ClientStatus clientStatus, List<Activity> activities) {
-        this.guild = guild;
-        this.member = member;
-        this.status = status;
-        this.clientStatus = clientStatus;
-        this.activities = activities;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public PresenceEvent {
     }
 
     /**
@@ -46,7 +31,8 @@ public class PresenceEvent implements Event {
      *
      * @return The guild member.
      */
-    public GuildMember getMember() {
+    @Override
+    public GuildMember member() {
         return member;
     }
 
@@ -55,7 +41,8 @@ public class PresenceEvent implements Event {
      *
      * @return The online status.
      */
-    public OnlineStatus getStatus() {
+    @Override
+    public OnlineStatus status() {
         return status;
     }
 
@@ -64,7 +51,8 @@ public class PresenceEvent implements Event {
      *
      * @return The client status.
      */
-    public ClientStatus getClientStatus() {
+    @Override
+    public ClientStatus clientStatus() {
         return clientStatus;
     }
 
@@ -73,7 +61,8 @@ public class PresenceEvent implements Event {
      *
      * @return The list of activities.
      */
-    public List<Activity> getActivities() {
+    @Override
+    public List<Activity> activities() {
         return activities;
     }
 

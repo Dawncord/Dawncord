@@ -25,17 +25,6 @@ public class SelectOption {
     }
 
     /**
-     * Sets the description of the option.
-     *
-     * @param description The description of the option.
-     * @return The SelectOption object.
-     */
-    public SelectOption setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    /**
      * Sets the emoji of the option.
      *
      * @param emoji The emoji of the option.
@@ -55,15 +44,6 @@ public class SelectOption {
     public SelectOption withEmoji(String name) {
         this.emoji = new DefaultEmoji(name);
         return this;
-    }
-
-    /**
-     * Sets whether the option is default.
-     *
-     * @param isDefault Whether the option is default.
-     */
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
     }
 
     /**
@@ -94,6 +74,17 @@ public class SelectOption {
     }
 
     /**
+     * Sets the description of the option.
+     *
+     * @param description The description of the option.
+     * @return The SelectOption object.
+     */
+    public SelectOption setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    /**
      * Retrieves the emoji of the option.
      *
      * @return The emoji of the option.
@@ -109,5 +100,14 @@ public class SelectOption {
      */
     public boolean isDefault() {
         return isDefault;
+    }
+
+    /**
+     * Sets whether the option is default.
+     *
+     * @param isDefault Whether the option is default.
+     */
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 }

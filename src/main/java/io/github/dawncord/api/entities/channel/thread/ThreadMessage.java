@@ -54,42 +54,6 @@ public class ThreadMessage {
     }
 
     /**
-     * Retrieves the components attached to the message.
-     *
-     * @return The list of components.
-     */
-    public List<ComponentBuilder> getComponents() {
-        return components;
-    }
-
-    /**
-     * Retrieves the stickers attached to the message.
-     *
-     * @return The list of stickers.
-     */
-    public List<Sticker> getStickers() {
-        return stickers;
-    }
-
-    /**
-     * Retrieves the attachments attached to the message.
-     *
-     * @return The map of attachments (filename to URL).
-     */
-    public Map<String, String> getAttachments() {
-        return attachments;
-    }
-
-    /**
-     * Checks if embeds are suppressed in the message.
-     *
-     * @return True if embeds are suppressed, false otherwise.
-     */
-    public boolean isSuppressEmbeds() {
-        return suppressEmbeds;
-    }
-
-    /**
      * Sets the embeds attached to the message.
      *
      * @param embeds The list of embeds.
@@ -101,47 +65,12 @@ public class ThreadMessage {
     }
 
     /**
-     * Sets the stickers attached to the message.
+     * Retrieves the components attached to the message.
      *
-     * @param stickers The list of stickers.
-     * @return The updated ThreadMessage instance.
+     * @return The list of components.
      */
-    public ThreadMessage setStickers(List<Sticker> stickers) {
-        this.stickers = stickers;
-        return this;
-    }
-
-    /**
-     * Sets the attachments attached to the message.
-     *
-     * @param attachments The map of attachments (filename to URL).
-     * @return The updated ThreadMessage instance.
-     */
-    public ThreadMessage setAttachments(Map<String, String> attachments) {
-        this.attachments = attachments;
-        return this;
-    }
-
-    /**
-     * Sets whether embeds are suppressed in the message.
-     *
-     * @param suppressEmbeds True to suppress embeds, false otherwise.
-     * @return The updated ThreadMessage instance.
-     */
-    public ThreadMessage setSuppressEmbeds(boolean suppressEmbeds) {
-        this.suppressEmbeds = suppressEmbeds;
-        return this;
-    }
-
-    /**
-     * Sets the allowed mentions in the message.
-     *
-     * @param allowedMentions The allowed mentions.
-     * @return The updated ThreadMessage instance.
-     */
-    public ThreadMessage setAllowedMentions(AllowedMention... allowedMentions) {
-        this.allowedMentions = List.of(allowedMentions);
-        return this;
+    public List<ComponentBuilder> getComponents() {
+        return components;
     }
 
     /**
@@ -156,6 +85,66 @@ public class ThreadMessage {
     }
 
     /**
+     * Retrieves the stickers attached to the message.
+     *
+     * @return The list of stickers.
+     */
+    public List<Sticker> getStickers() {
+        return stickers;
+    }
+
+    /**
+     * Sets the stickers attached to the message.
+     *
+     * @param stickers The list of stickers.
+     * @return The updated ThreadMessage instance.
+     */
+    public ThreadMessage setStickers(List<Sticker> stickers) {
+        this.stickers = stickers;
+        return this;
+    }
+
+    /**
+     * Retrieves the attachments attached to the message.
+     *
+     * @return The map of attachments (filename to URL).
+     */
+    public Map<String, String> getAttachments() {
+        return attachments;
+    }
+
+    /**
+     * Sets the attachments attached to the message.
+     *
+     * @param attachments The map of attachments (filename to URL).
+     * @return The updated ThreadMessage instance.
+     */
+    public ThreadMessage setAttachments(Map<String, String> attachments) {
+        this.attachments = attachments;
+        return this;
+    }
+
+    /**
+     * Checks if embeds are suppressed in the message.
+     *
+     * @return True if embeds are suppressed, false otherwise.
+     */
+    public boolean isSuppressEmbeds() {
+        return suppressEmbeds;
+    }
+
+    /**
+     * Sets whether embeds are suppressed in the message.
+     *
+     * @param suppressEmbeds True to suppress embeds, false otherwise.
+     * @return The updated ThreadMessage instance.
+     */
+    public ThreadMessage setSuppressEmbeds(boolean suppressEmbeds) {
+        this.suppressEmbeds = suppressEmbeds;
+        return this;
+    }
+
+    /**
      * Retrieves the allowed mentions in the message.
      *
      * @return The allowed mentions, or null if not set.
@@ -164,5 +153,16 @@ public class ThreadMessage {
         return allowedMentions != null
                 ? allowedMentions.toArray(new AllowedMention[0])
                 : null;
+    }
+
+    /**
+     * Sets the allowed mentions in the message.
+     *
+     * @param allowedMentions The allowed mentions.
+     * @return The updated ThreadMessage instance.
+     */
+    public ThreadMessage setAllowedMentions(AllowedMention... allowedMentions) {
+        this.allowedMentions = List.of(allowedMentions);
+        return this;
     }
 }

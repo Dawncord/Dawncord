@@ -1,7 +1,6 @@
 package io.github.dawncord.api.entities.guild.widget;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.types.OnlineStatus;
 import io.github.dawncord.api.utils.LazyLoader;
 
@@ -13,8 +12,7 @@ public class GuildWidgetMember {
     private final JsonNode member;
     private String id;
     private String username;
-    private Avatar avatar;
-    private String avatarUrl;
+    private GuildWidgetImage avatar;
     private OnlineStatus onlineStatus;
 
     /**
@@ -52,8 +50,8 @@ public class GuildWidgetMember {
      *
      * @return The avatar of the member.
      */
-    public Avatar getAvatar() {
-        avatar = loader.loadIfExists(avatar, "avatar_url", () -> new Avatar(member.get("avatar_url").asText()));
+    public GuildWidgetImage getAvatarUrl() {
+        avatar = loader.loadIfExists(avatar, "avatar_url", () -> new GuildWidgetImage(member.get("avatar_url").asText()));
         return avatar;
     }
 

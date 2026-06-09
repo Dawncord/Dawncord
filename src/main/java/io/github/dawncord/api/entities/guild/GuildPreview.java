@@ -143,7 +143,7 @@ public class GuildPreview implements ISnowflake {
      * @return The list of emojis with the specified name.
      */
     public List<CustomEmoji> getEmojisByName(String emojiName) {
-        return getEmojis().stream().filter(emoji -> emoji.getName().equals(emojiName)).toList();
+        return getEmojis().stream().filter(emoji -> emoji.name().equals(emojiName)).toList();
     }
 
     /**

@@ -239,15 +239,6 @@ public enum PermissionType {
     }
 
     /**
-     * Gets the numeric value of the permission.
-     *
-     * @return The numeric value of the permission.
-     */
-    public long getValue() {
-        return value;
-    }
-
-    /**
      * Retrieves all permission names.
      *
      * @param permissions The list of permissions.
@@ -259,5 +250,14 @@ public enum PermissionType {
             perms.add(perm.name());
         }
         return perms;
+    }
+
+    /**
+     * Gets the numeric value of the permission.
+     *
+     * @return The numeric value of the permission.
+     */
+    public long getValue() {
+        return value;
     }
 }

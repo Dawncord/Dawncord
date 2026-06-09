@@ -291,17 +291,17 @@ public abstract class GuildChannelAction extends Action<GuildChannelAction> {
             ArrayNode jsonArray = mapper.createArrayNode();
             for (PermissionOverride permissionOverride : overrides) {
                 ObjectNode override = mapper.createObjectNode();
-                override.put("id", permissionOverride.getId());
-                override.put("type", permissionOverride.getType().getValue());
-                override.put("deny", permissionOverride.getDenied() != null && !permissionOverride.getDenied().isEmpty()
-                        ? String.valueOf(permissionOverride.getDenied().stream()
-                        .mapToLong(PermissionType::getValue)
-                        .reduce(0L, (x, y) -> x | y))
+                override.put("id", permissionOverride.id());
+                override.put("type", permissionOverride.type().getValue());
+                override.put("deny", permissionOverride.denied() != null && !permissionOverride.denied().isEmpty()
+                        ? String.valueOf(permissionOverride.denied().stream()
+                                         .mapToLong(PermissionType::getValue)
+                                         .reduce(0L, (x, y) -> x | y))
                         : "0");
-                override.put("allow", permissionOverride.getAllowed() != null && !permissionOverride.getAllowed().isEmpty()
-                        ? String.valueOf(permissionOverride.getAllowed().stream()
-                        .mapToLong(PermissionType::getValue)
-                        .reduce(0L, (x, y) -> x | y))
+                override.put("allow", permissionOverride.allowed() != null && !permissionOverride.allowed().isEmpty()
+                        ? String.valueOf(permissionOverride.allowed().stream()
+                                         .mapToLong(PermissionType::getValue)
+                                         .reduce(0L, (x, y) -> x | y))
                         : "0");
                 jsonArray.add(override);
             }

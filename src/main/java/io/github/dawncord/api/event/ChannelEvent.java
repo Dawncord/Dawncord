@@ -6,24 +6,14 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event associated with a guild channel.
  */
-public class ChannelEvent implements Event {
-    private final Guild guild;
-    private final GuildChannel channel;
-
+public record ChannelEvent(Guild guild, GuildChannel channel) implements Event {
     /**
      * Constructs a ChannelEvent with the specified guild and channel.
      *
      * @param guild   The guild associated with the event.
      * @param channel The channel associated with the event.
      */
-    public ChannelEvent(Guild guild, GuildChannel channel) {
-        this.guild = guild;
-        this.channel = channel;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public ChannelEvent {
     }
 
     /**
@@ -31,7 +21,8 @@ public class ChannelEvent implements Event {
      *
      * @return The channel associated with the event.
      */
-    public GuildChannel getChannel() {
+    @Override
+    public GuildChannel channel() {
         return channel;
     }
 }

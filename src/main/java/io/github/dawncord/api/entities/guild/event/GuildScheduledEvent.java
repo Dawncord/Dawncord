@@ -9,7 +9,6 @@ import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.guild.GuildMemberImpl;
 import io.github.dawncord.api.entities.image.GuildEventImage;
@@ -83,7 +82,7 @@ public class GuildScheduledEvent implements ISnowflake {
     }
 
     public Guild getGuild() {
-        guild = loader.load(guild, () -> new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(event.get("guild_id").asText()))));
+        guild = loader.load(guild, () -> new Guild(JsonUtils.fetch(Routes.Guild.Get(event.get("guild_id").asText()))));
         return guild;
     }
 

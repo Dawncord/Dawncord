@@ -5,18 +5,14 @@ import io.github.dawncord.api.entities.Emoji;
 /**
  * Represents the data of an answer in a poll.
  */
-public class AnswerData {
-    private final String text;
-    private final Emoji emoji;
-
+public record AnswerData(String text, Emoji emoji) {
     /**
      * Constructs an AnswerData object with text only.
      *
      * @param text The text of the answer.
      */
     public AnswerData(String text) {
-        this.text = text;
-        this.emoji = null;
+        this(text, null);
     }
 
     /**
@@ -25,9 +21,7 @@ public class AnswerData {
      * @param text  The text of the answer.
      * @param emoji The emoji of the answer.
      */
-    public AnswerData(String text, Emoji emoji) {
-        this.text = text;
-        this.emoji = emoji;
+    public AnswerData {
     }
 
     /**
@@ -35,7 +29,8 @@ public class AnswerData {
      *
      * @return The text of the answer.
      */
-    public String getText() {
+    @Override
+    public String text() {
         return text;
     }
 
@@ -44,7 +39,8 @@ public class AnswerData {
      *
      * @return The emoji of the answer.
      */
-    public Emoji getEmoji() {
+    @Override
+    public Emoji emoji() {
         return emoji;
     }
 }

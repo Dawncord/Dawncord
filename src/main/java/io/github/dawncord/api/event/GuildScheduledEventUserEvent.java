@@ -7,11 +7,8 @@ import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 /**
  * Represents an event related to a user's interaction with a scheduled event in a guild.
  */
-public class GuildScheduledEventUserEvent implements Event {
-    private final Guild guild;
-    private final GuildMember member;
-    private final GuildScheduledEvent event;
-
+public record GuildScheduledEventUserEvent(Guild guild, GuildMember member,
+                                           GuildScheduledEvent event) implements Event {
     /**
      * Constructs a GuildScheduledEventUserEvent with the specified guild, member, and scheduled event.
      *
@@ -19,15 +16,7 @@ public class GuildScheduledEventUserEvent implements Event {
      * @param member The member associated with the event.
      * @param event  The scheduled event involved in the event.
      */
-    public GuildScheduledEventUserEvent(Guild guild, GuildMember member, GuildScheduledEvent event) {
-        this.guild = guild;
-        this.member = member;
-        this.event = event;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public GuildScheduledEventUserEvent {
     }
 
     /**
@@ -35,7 +24,8 @@ public class GuildScheduledEventUserEvent implements Event {
      *
      * @return The member associated with the event.
      */
-    public GuildMember getMember() {
+    @Override
+    public GuildMember member() {
         return member;
     }
 
@@ -44,7 +34,8 @@ public class GuildScheduledEventUserEvent implements Event {
      *
      * @return The scheduled event involved in the event.
      */
-    public GuildScheduledEvent getEvent() {
+    @Override
+    public GuildScheduledEvent event() {
         return event;
     }
 }

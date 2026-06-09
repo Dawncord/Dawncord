@@ -56,24 +56,24 @@ public class EmbedUtils {
 
     private static ObjectNode createEmbedJson(Embed embed) {
         ObjectNode embedJson = mapper.createObjectNode()
-                .put("title", embed.getTitle())
-                .put("description", embed.getDescription())
-                .put("url", embed.getUrl())
-                .put("timestamp", embed.getTimestamp() != null ? embed.getTimestamp().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) : null)
-                .put("color", embed.getColor() == 536870911 ? 0 : embed.getColor());
-        if (embed.getFooter() != null) {
+                .put("title", embed.title())
+                .put("description", embed.description())
+                .put("url", embed.url())
+                .put("timestamp", embed.timestamp() != null ? embed.timestamp().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) : null)
+                .put("color", embed.color() == 536870911 ? 0 : embed.color());
+        if (embed.footer() != null) {
             setEmbedFooterToJson(embed, embedJson);
         }
-        if (embed.getImage() != null) {
+        if (embed.image() != null) {
             setEmbedImageToJson(embed, embedJson);
         }
-        if (embed.getThumbnail() != null) {
+        if (embed.thumbnail() != null) {
             setEmbedThumbnailToJson(embed, embedJson);
         }
-        if (embed.getAuthor() != null) {
+        if (embed.author() != null) {
             setEmbedAuthorToJson(embed, embedJson);
         }
-        if (embed.getFields() != null && !embed.getFields().isEmpty()) {
+        if (embed.fields() != null && !embed.fields().isEmpty()) {
             setFields(embed, embedJson);
         }
         return embedJson;
@@ -81,10 +81,10 @@ public class EmbedUtils {
 
     private static void setFields(Embed embed, ObjectNode embedJson) {
         ArrayNode fieldsArray = mapper.createArrayNode();
-        embed.getFields().forEach(field -> {
+        embed.fields().forEach(field -> {
             JsonNode fieldJson = mapper.createObjectNode()
-                    .put("name", field.getName())
-                    .put("value", field.getValue())
+                    .put("name", field.name())
+                    .put("value", field.value())
                     .put("inline", field.isInline());
             fieldsArray.add(fieldJson);
         });
@@ -94,37 +94,37 @@ public class EmbedUtils {
     private static void setEmbedAuthorToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("author", mapper.createObjectNode()
-                        .put("name", embed.getAuthor().getName())
-                        .put("url", embed.getAuthor().getUrl())
-                        .put("icon_url", embed.getAuthor().getIconUrl())
+                        .put("name", embed.author().getName())
+                        .put("url", embed.author().getUrl())
+                        .put("icon_url", embed.author().getIconUrl())
                 );
     }
 
     private static void setEmbedThumbnailToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("thumbnail", mapper.createObjectNode()
-                        .put("url", embed.getThumbnail().getUrl())
-                        .put("proxy_url", embed.getThumbnail().getProxyUrl())
-                        .put("width", embed.getThumbnail().getWidth())
-                        .put("height", embed.getThumbnail().getHeight())
+                        .put("url", embed.thumbnail().getUrl())
+                        .put("proxy_url", embed.thumbnail().getProxyUrl())
+                        .put("width", embed.thumbnail().getWidth())
+                        .put("height", embed.thumbnail().getHeight())
                 );
     }
 
     private static void setEmbedImageToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("image", mapper.createObjectNode()
-                        .put("url", embed.getImage().getUrl())
-                        .put("proxy_url", embed.getImage().getProxyUrl())
-                        .put("width", embed.getImage().getWidth())
-                        .put("height", embed.getImage().getHeight())
+                        .put("url", embed.image().getUrl())
+                        .put("proxy_url", embed.image().getProxyUrl())
+                        .put("width", embed.image().getWidth())
+                        .put("height", embed.image().getHeight())
                 );
     }
 
     private static void setEmbedFooterToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("footer", mapper.createObjectNode()
-                        .put("text", embed.getFooter().getText())
-                        .put("icon_url", embed.getFooter().getIconUrl())
+                        .put("text", embed.footer().getText())
+                        .put("icon_url", embed.footer().getIconUrl())
                 );
     }
 

@@ -2,7 +2,6 @@ package io.github.dawncord.api.action;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.types.GuildEventEntityType;
 import io.github.dawncord.api.types.GuildEventStatus;
 import io.github.dawncord.api.utils.IOUtils;

@@ -24,11 +24,11 @@ public class PollUtils {
      */
     public static JsonNode createPoll(PollData poll) {
         ObjectNode pollNode = mapper.createObjectNode();
-        pollNode.set("question", mapper.createObjectNode().put("text", poll.getQuestion()));
-        pollNode.put("allow_multiselect", poll.isAllowMultiselect());
-        pollNode.put("duration", poll.getDuration());
+        pollNode.set("question", mapper.createObjectNode().put("text", poll.question()));
+        pollNode.put("allow_multiselect", poll.allowMultiselect());
+        pollNode.put("duration", poll.duration());
         ArrayNode answersNode = mapper.createArrayNode();
-        poll.getAnswers().forEach(answer -> {
+        poll.answers().forEach(answer -> {
             ObjectNode answerNode = createAnswerJson(answer);
             answersNode.add(mapper.createObjectNode().set("poll_media", answerNode));
         });
@@ -39,12 +39,12 @@ public class PollUtils {
     @NotNull
     private static ObjectNode createAnswerJson(AnswerData answer) {
         ObjectNode answerNode = mapper.createObjectNode();
-        answerNode.put("text", answer.getText());
-        if (answer.getEmoji() != null) {
-            if (answer.getEmoji() instanceof CustomEmoji customEmoji) {
+        answerNode.put("text", answer.text());
+        if (answer.emoji() != null) {
+            if (answer.emoji() instanceof CustomEmoji customEmoji) {
                 answerNode.put("emoji", customEmoji.getId());
-            } else if (answer.getEmoji() instanceof DefaultEmoji defaultEmoji) {
-                answerNode.put("emoji", defaultEmoji.getName());
+            } else if (answer.emoji() instanceof DefaultEmoji defaultEmoji) {
+                answerNode.put("emoji", defaultEmoji.name());
             }
         }
         return answerNode;

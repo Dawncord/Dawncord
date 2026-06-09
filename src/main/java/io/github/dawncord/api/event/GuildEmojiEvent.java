@@ -8,24 +8,14 @@ import java.util.List;
 /**
  * Represents an event related to emojis in a guild.
  */
-public class GuildEmojiEvent implements Event {
-    private final Guild guild;
-    private final List<CustomEmoji> emojis;
-
+public record GuildEmojiEvent(Guild guild, List<CustomEmoji> emojis) implements Event {
     /**
      * Constructs a GuildEmojiEvent with the specified guild and list of emojis.
      *
      * @param guild  The guild associated with the event.
      * @param emojis The list of emojis involved in the event.
      */
-    public GuildEmojiEvent(Guild guild, List<CustomEmoji> emojis) {
-        this.guild = guild;
-        this.emojis = emojis;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public GuildEmojiEvent {
     }
 
     /**
@@ -33,7 +23,8 @@ public class GuildEmojiEvent implements Event {
      *
      * @return The list of emojis involved in the event.
      */
-    public List<CustomEmoji> getEmojis() {
+    @Override
+    public List<CustomEmoji> emojis() {
         return emojis;
     }
 }

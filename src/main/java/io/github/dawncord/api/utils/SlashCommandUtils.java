@@ -74,8 +74,8 @@ public class SlashCommandUtils {
                 ArrayNode choicesArray = mapper.createArrayNode();
                 choices.forEach(choice -> {
                     ObjectNode choiceJson = mapper.createObjectNode()
-                            .put("name", choice.getName())
-                            .put("value", choice.getValue());
+                            .put("name", choice.name())
+                            .put("value", choice.value());
                     choicesArray.add(choiceJson);
                 });
                 optionJson.set("choices", choicesArray);

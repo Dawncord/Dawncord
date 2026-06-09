@@ -19,8 +19,8 @@ import java.util.List;
  * @see ModalData
  */
 public class ModalCreateAction extends Action<ModalCreateAction> {
-    private List<File> attachments; //todo check
     private final InteractionData data;
+    private List<File> attachments; //todo check
 
     /**
      * Create a new {@link ModalCreateAction}
@@ -102,6 +102,6 @@ public class ModalCreateAction extends Action<ModalCreateAction> {
 
     @Override
     protected void submit() {
-        ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
+        ApiClient.post(jsonObject, Routes.Reply(data.interaction().interactionId(), data.interaction().interactionToken()));
     }
 }

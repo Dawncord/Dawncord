@@ -5,9 +5,233 @@ package io.github.dawncord.api;
  */
 public class Routes {
     /**
+     * Constructs the route to the original message of an interaction.
+     *
+     * @param interactionToken The token of the interaction.
+     * @return The route to the original message of the interaction.
+     */
+    public static String OriginalMessage(String interactionToken) {
+        return "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionToken + "/messages/@original";
+    }
+
+    public static String BotGuilds() {
+        return "/users/@me/guilds";
+    }
+
+    /**
+     * Constructs the route to the application.
+     *
+     * @return The route to the application.
+     */
+    public static String CurrentApplication() {
+        return "/applications/@me";
+    }
+
+    public static String Application(String applicationId) {
+        return "/applications/" + applicationId;
+    }
+
+    /**
+     * Constructs the route to reply to an interaction.
+     *
+     * @param interactionId    The ID of the interaction.
+     * @param interactionToken The token of the interaction.
+     * @return The route to reply to the interaction.
+     */
+    public static String Reply(String interactionId, String interactionToken) {
+        return "/interactions/" + interactionId + "/" + interactionToken + "/callback";
+    }
+
+    /**
+     * Constructs the route to retrieve stage instances.
+     *
+     * @return The route to retrieve stage instances.
+     */
+    public static String StageInstances() {
+        return "/stage-instances";
+    }
+
+    /**
+     * Constructs the route to indicate typing in a channel.
+     *
+     * @param channelId The ID of the channel.
+     * @return The route to indicate typing in the channel.
+     */
+    public static String Typing(String channelId) {
+        return "/channels/" + channelId + "/typing";
+    }
+
+    /**
+     * Constructs the route to a specific stage instance.
+     *
+     * @param channelId The ID of the channel.
+     * @return The route to the specific stage instance.
+     */
+    public static String StageInstance(String channelId) {
+        return "/stage-instances/" + channelId;
+    }
+
+    /**
+     * Constructs the route to the current member of a guild.
+     *
+     * @param guildId The ID of the guild.
+     * @return The route to the current member of the guild.
+     */
+    public static String CurrentMember(String guildId) {
+        return "/guilds/" + guildId + "/members/@me";
+    }
+
+    /**
+     * Constructs the route to a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return The route to the specific user.
+     */
+    public static String User(String userId) {
+        return "/users/" + userId;
+    }
+
+    /**
+     * Constructs the route to retrieve voice regions.
+     *
+     * @return The route to retrieve voice regions.
+     */
+    public static String VoiceRegions() {
+        return "/voice/regions";
+    }
+
+    /**
      * Routes related to guild operations.
      */
     public static class Guild {
+        /**
+         * Constructs the route to get information about a specific guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to get guild information.
+         */
+        public static String Get(String guildId) {
+            return "/guilds/" + guildId;
+        }
+
+        /**
+         * Constructs the route to get a list of all guilds.
+         *
+         * @return The route to get a list of all guilds.
+         */
+        public static String All() {
+            return "/guilds";
+        }
+
+        /**
+         * Constructs the route to retrieve all guilds that the bot is a member of.
+         *
+         * @return The route to retrieve all guilds that the bot is a member of.
+         */
+        public static String BotAll() {
+            return "/users/@me/guilds";
+        }
+
+        /**
+         * Constructs the route to access channels within a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to access guild channels.
+         */
+        public static String Channels(String guildId) {
+            return "/guilds/" + guildId + "/channels";
+        }
+
+        /**
+         * Constructs the route to enable or disable MFA requirement in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to manage MFA.
+         */
+        public static String Mfa(String guildId) {
+            return "/guilds/" + guildId + "/mfa";
+        }
+
+        /**
+         * Constructs the route to retrieve active threads in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to retrieve active threads.
+         */
+        public static String ActiveThreads(String guildId) {
+            return "/guilds/" + guildId + "/threads/active";
+        }
+
+        /**
+         * Constructs the route to retrieve voice regions available in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to retrieve voice regions.
+         */
+        public static String VoiceRegions(String guildId) {
+            return "/guilds/" + guildId + "/regions";
+        }
+
+        /**
+         * Constructs the route to manage invites in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to manage invites.
+         */
+        public static String Invites(String guildId) {
+            return "/guilds/" + guildId + "/invites";
+        }
+
+        /**
+         * Constructs the route to manage webhooks in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to manage webhooks.
+         */
+        public static String Webhooks(String guildId) {
+            return "/guilds/" + guildId + "/webhooks";
+        }
+
+        /**
+         * Constructs the route to access audit logs in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to access audit logs.
+         */
+        public static String AuditLog(String guildId) {
+            return "/guilds/" + guildId + "/audit-logs";
+        }
+
+        /**
+         * Constructs the route to preview guild changes.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to preview guild changes.
+         */
+        public static String Preview(String guildId) {
+            return "/guilds/" + guildId + "/preview";
+        }
+
+        /**
+         * Constructs the route to manage onboarding in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to manage onboarding.
+         */
+        public static String Onboarding(String guildId) {
+            return "/guilds/" + guildId + "/onboarding";
+        }
+
+        /**
+         * Constructs the route to manage the welcome screen in a guild.
+         *
+         * @param guildId The ID of the guild.
+         * @return The route to manage the welcome screen.
+         */
+        public static String WelcomeScreen(String guildId) {
+            return "/guilds/" + guildId + "/welcome-screen";
+        }
+
         /**
          * Routes related to scheduled events within a guild.
          */
@@ -277,134 +501,6 @@ public class Routes {
                 return "/guilds/" + guildId + "/auto-moderation/rules";
             }
         }
-
-        /**
-         * Constructs the route to get information about a specific guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to get guild information.
-         */
-        public static String Get(String guildId) {
-            return "/guilds/" + guildId;
-        }
-
-        /**
-         * Constructs the route to get a list of all guilds.
-         *
-         * @return The route to get a list of all guilds.
-         */
-        public static String All() {
-            return "/guilds";
-        }
-
-        /**
-         * Constructs the route to retrieve all guilds that the bot is a member of.
-         *
-         * @return The route to retrieve all guilds that the bot is a member of.
-         */
-        public static String BotAll() {
-            return "/users/@me/guilds";
-        }
-
-        /**
-         * Constructs the route to access channels within a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to access guild channels.
-         */
-        public static String Channels(String guildId) {
-            return "/guilds/" + guildId + "/channels";
-        }
-
-        /**
-         * Constructs the route to enable or disable MFA requirement in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to manage MFA.
-         */
-        public static String Mfa(String guildId) {
-            return "/guilds/" + guildId + "/mfa";
-        }
-
-        /**
-         * Constructs the route to retrieve active threads in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to retrieve active threads.
-         */
-        public static String ActiveThreads(String guildId) {
-            return "/guilds/" + guildId + "/threads/active";
-        }
-
-        /**
-         * Constructs the route to retrieve voice regions available in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to retrieve voice regions.
-         */
-        public static String VoiceRegions(String guildId) {
-            return "/guilds/" + guildId + "/regions";
-        }
-
-        /**
-         * Constructs the route to manage invites in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to manage invites.
-         */
-        public static String Invites(String guildId) {
-            return "/guilds/" + guildId + "/invites";
-        }
-
-        /**
-         * Constructs the route to manage webhooks in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to manage webhooks.
-         */
-        public static String Webhooks(String guildId) {
-            return "/guilds/" + guildId + "/webhooks";
-        }
-
-        /**
-         * Constructs the route to access audit logs in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to access audit logs.
-         */
-        public static String AuditLog(String guildId) {
-            return "/guilds/" + guildId + "/audit-logs";
-        }
-
-        /**
-         * Constructs the route to preview guild changes.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to preview guild changes.
-         */
-        public static String Preview(String guildId) {
-            return "/guilds/" + guildId + "/preview";
-        }
-
-        /**
-         * Constructs the route to manage onboarding in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to manage onboarding.
-         */
-        public static String Onboarding(String guildId) {
-            return "/guilds/" + guildId + "/onboarding";
-        }
-
-        /**
-         * Constructs the route to manage the welcome screen in a guild.
-         *
-         * @param guildId The ID of the guild.
-         * @return The route to manage the welcome screen.
-         */
-        public static String WelcomeScreen(String guildId) {
-            return "/guilds/" + guildId + "/welcome-screen";
-        }
     }
 
     /**
@@ -412,9 +508,82 @@ public class Routes {
      */
     public static class Channel {
         /**
+         * Constructs the route to retrieve a specific channel.
+         *
+         * @param channelId The ID of the channel to retrieve.
+         * @return The route to retrieve the channel.
+         */
+        public static String Get(String channelId) {
+            return "/channels/" + channelId;
+        }
+
+        /**
+         * Constructs the route to retrieve webhooks within a channel.
+         *
+         * @param channelId The ID of the channel.
+         * @return The route to retrieve webhooks within the channel.
+         */
+        public static String Webhooks(String channelId) {
+            return "/channels/" + channelId + "/webhooks";
+        }
+
+        /**
+         * Constructs the route to manage permissions within a channel.
+         *
+         * @param channelId    The ID of the channel.
+         * @param permissionId The ID of the permission.
+         * @return The route to manage permissions within the channel.
+         */
+        public static String Permission(String channelId, String permissionId) {
+            return "/channels/" + channelId + "/permissions/" + permissionId;
+        }
+
+        /**
          * Routes related to messages within channels.
          */
         public static class Message {
+            /**
+             * Constructs the route to retrieve a specific message within a channel.
+             *
+             * @param channelId The ID of the channel containing the message.
+             * @param messageId The ID of the message to retrieve.
+             * @return The route to retrieve the message.
+             */
+            public static String Get(String channelId, String messageId) {
+                return "/channels/" + channelId + "/messages/" + messageId;
+            }
+
+            /**
+             * Constructs the route to retrieve all messages within a channel.
+             *
+             * @param channelId The ID of the channel.
+             * @return The route to retrieve all messages within the channel.
+             */
+            public static String All(String channelId) {
+                return "/channels/" + channelId + "/messages";
+            }
+
+            /**
+             * Constructs the route to retrieve threads associated with a message within a channel.
+             *
+             * @param channelId The ID of the channel containing the message.
+             * @param messageId The ID of the message.
+             * @return The route to retrieve threads associated with the message.
+             */
+            public static String Threads(String channelId, String messageId) {
+                return "/channels/" + channelId + "/messages/" + messageId + "/threads";
+            }
+
+            /**
+             * Constructs the route to delete messages in bulk within a channel.
+             *
+             * @param channelId The ID of the channel.
+             * @return The route to delete messages in bulk within the channel.
+             */
+            public static String ToDelete(String channelId) {
+                return "/channels/" + channelId + "/messages/bulk-delete";
+            }
+
             /**
              * Routes related to reactions on messages.
              */
@@ -482,48 +651,6 @@ public class Routes {
                 public static String End(String channelId, String messageId) {
                     return "/channels/" + channelId + "/polls/" + messageId + "/expire";
                 }
-            }
-
-            /**
-             * Constructs the route to retrieve a specific message within a channel.
-             *
-             * @param channelId The ID of the channel containing the message.
-             * @param messageId The ID of the message to retrieve.
-             * @return The route to retrieve the message.
-             */
-            public static String Get(String channelId, String messageId) {
-                return "/channels/" + channelId + "/messages/" + messageId;
-            }
-
-            /**
-             * Constructs the route to retrieve all messages within a channel.
-             *
-             * @param channelId The ID of the channel.
-             * @return The route to retrieve all messages within the channel.
-             */
-            public static String All(String channelId) {
-                return "/channels/" + channelId + "/messages";
-            }
-
-            /**
-             * Constructs the route to retrieve threads associated with a message within a channel.
-             *
-             * @param channelId The ID of the channel containing the message.
-             * @param messageId The ID of the message.
-             * @return The route to retrieve threads associated with the message.
-             */
-            public static String Threads(String channelId, String messageId) {
-                return "/channels/" + channelId + "/messages/" + messageId + "/threads";
-            }
-
-            /**
-             * Constructs the route to delete messages in bulk within a channel.
-             *
-             * @param channelId The ID of the channel.
-             * @return The route to delete messages in bulk within the channel.
-             */
-            public static String ToDelete(String channelId) {
-                return "/channels/" + channelId + "/messages/bulk-delete";
             }
 
             /**
@@ -653,37 +780,6 @@ public class Routes {
                     return "/channels/" + channelId + "/thread-members";
                 }
             }
-        }
-
-        /**
-         * Constructs the route to retrieve a specific channel.
-         *
-         * @param channelId The ID of the channel to retrieve.
-         * @return The route to retrieve the channel.
-         */
-        public static String Get(String channelId) {
-            return "/channels/" + channelId;
-        }
-
-        /**
-         * Constructs the route to retrieve webhooks within a channel.
-         *
-         * @param channelId The ID of the channel.
-         * @return The route to retrieve webhooks within the channel.
-         */
-        public static String Webhooks(String channelId) {
-            return "/channels/" + channelId + "/webhooks";
-        }
-
-        /**
-         * Constructs the route to manage permissions within a channel.
-         *
-         * @param channelId    The ID of the channel.
-         * @param permissionId The ID of the permission.
-         * @return The route to manage permissions within the channel.
-         */
-        public static String Permission(String channelId, String permissionId) {
-            return "/channels/" + channelId + "/permissions/" + permissionId;
         }
     }
 
@@ -861,97 +957,5 @@ public class Routes {
         public static String ByToken(String webhookId, String webhookToken) {
             return "/webhooks/" + webhookId + "/" + webhookToken;
         }
-    }
-
-    /**
-     * Constructs the route to the original message of an interaction.
-     *
-     * @param interactionToken The token of the interaction.
-     * @return The route to the original message of the interaction.
-     */
-    public static String OriginalMessage(String interactionToken) {
-        return "/webhooks/" + Constants.APPLICATION_ID + "/" + interactionToken + "/messages/@original";
-    }
-
-    /**
-     * Constructs the route to the application.
-     *
-     * @return The route to the application.
-     */
-    public static String CurrentApplication() {
-        return "/applications/@me";
-    }
-
-    public static String Application(String applicationId) {
-        return "/applications/" + applicationId;
-    }
-
-    /**
-     * Constructs the route to reply to an interaction.
-     *
-     * @param interactionId    The ID of the interaction.
-     * @param interactionToken The token of the interaction.
-     * @return The route to reply to the interaction.
-     */
-    public static String Reply(String interactionId, String interactionToken) {
-        return "/interactions/" + interactionId + "/" + interactionToken + "/callback";
-    }
-
-    /**
-     * Constructs the route to retrieve stage instances.
-     *
-     * @return The route to retrieve stage instances.
-     */
-    public static String StageInstances() {
-        return "/stage-instances";
-    }
-
-    /**
-     * Constructs the route to indicate typing in a channel.
-     *
-     * @param channelId The ID of the channel.
-     * @return The route to indicate typing in the channel.
-     */
-    public static String Typing(String channelId) {
-        return "/channels/" + channelId + "/typing";
-    }
-
-    /**
-     * Constructs the route to a specific stage instance.
-     *
-     * @param channelId The ID of the channel.
-     * @return The route to the specific stage instance.
-     */
-    public static String StageInstance(String channelId) {
-        return "/stage-instances/" + channelId;
-    }
-
-    /**
-     * Constructs the route to the current member of a guild.
-     *
-     * @param guildId The ID of the guild.
-     * @return The route to the current member of the guild.
-     */
-    public static String CurrentMember(String guildId) {
-        return "/guilds/" + guildId + "/members/@me";
-    }
-
-    /**
-     * Constructs the route to a specific user.
-     *
-     * @param userId The ID of the user.
-     * @return The route to the specific user.
-     */
-    public static String User(String userId) {
-        return "/users/" + userId;
-    }
-
-    /**
-     * Constructs the route to retrieve voice regions.
-     *
-     * @return The route to retrieve voice regions.
-     */
-    public static String VoiceRegions() {
-        return "/voice/regions";
     }
 }

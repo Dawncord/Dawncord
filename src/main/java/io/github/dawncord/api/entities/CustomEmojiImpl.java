@@ -53,7 +53,7 @@ public class CustomEmojiImpl implements CustomEmoji {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         if (name == null) {
             name = emoji.get("name").asText();
         }

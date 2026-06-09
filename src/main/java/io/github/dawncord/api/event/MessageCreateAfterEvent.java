@@ -3,7 +3,7 @@ package io.github.dawncord.api.event;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.message.MessageModifyAction;
-import io.github.dawncord.api.entities.guild.GuildImpl;
+import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.utils.ActionExecutor;
@@ -40,7 +40,7 @@ public class MessageCreateAfterEvent {
     public Message get() {
         return new MessageImpl(
                 JsonUtils.fetch(Routes.Channel.Message.Get(channelId, messageId)),
-                new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(guildId)))
+                new Guild(JsonUtils.fetch(Routes.Guild.Get(guildId)))
         );
     }
 

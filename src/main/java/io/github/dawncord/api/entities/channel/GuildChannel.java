@@ -79,7 +79,7 @@ public class GuildChannel extends Channel {
     }
 
     public PermissionOverride getPermissionById(String permissionId) {
-        return getPermissions().stream().filter(permission -> permission.getId().equals(permissionId)).findAny().orElse(null);
+        return getPermissions().stream().filter(permission -> permission.id().equals(permissionId)).findAny().orElse(null);
     }
 
     public PermissionOverride getPermissionById(long permissionId) {

@@ -92,15 +92,15 @@ public class ComponentUtils {
         ObjectNode emojiJson = mapper.createObjectNode();
         if (emoji instanceof CustomEmoji customEmoji) {
             emojiJson.put("id", customEmoji.getId());
-            if (customEmoji.getName() != null) {
-                emojiJson.put("name", customEmoji.getName());
+            if (customEmoji.name() != null) {
+                emojiJson.put("name", customEmoji.name());
             }
             if (customEmoji.isAnimated()) {
                 emojiJson.put("animated", true);
             }
         } else if (emoji instanceof DefaultEmoji defaultEmoji) {
             emojiJson.set("id", JsonNodeFactory.instance.nullNode());
-            emojiJson.put("name", defaultEmoji.getName());
+            emojiJson.put("name", defaultEmoji.name());
         }
         return emojiJson;
     }
@@ -130,10 +130,10 @@ public class ComponentUtils {
 
         if (selectMenu.getDefaultValues() != null) {
             selectMenu.getDefaultValues().forEach(value -> {
-                if (value.getType() != SelectMenuType.TEXT) {
+                if (value.type() != SelectMenuType.TEXT) {
                     ObjectNode defaultValue = mapper.createObjectNode()
-                            .put("id", value.getId())
-                            .put("type", value.getType().getValue());
+                            .put("id", value.id())
+                            .put("type", value.type().getValue());
                     defaultValues.add(defaultValue);
                 }
             });

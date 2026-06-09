@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Utility class for working with enums.
@@ -115,5 +118,17 @@ public class EnumUtils {
             }
         }
         return flags;
+    }
+
+    public static <T extends Enum<T>> List<T> getEnumValues(JsonNode json, Class<T> enumClass) {
+        if (json == null || !json.isArray()) {
+            return Collections.emptyList();
+        }
+
+        return StreamSupport.stream(json.spliterator(), false)
+                .filter(JsonNode::isTextual)
+                .map(JsonNode::asText)
+                .map(value -> Enum.valueOf(enumClass, value))
+                .collect(Collectors.toList());
     }
 }

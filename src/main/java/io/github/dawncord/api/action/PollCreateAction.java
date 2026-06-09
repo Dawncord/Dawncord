@@ -56,13 +56,13 @@ public class PollCreateAction extends Action<PollCreateAction> {
         ArrayNode answersNode = mapper.createArrayNode();
         for (AnswerData answer : answers) {
             ObjectNode answerNode = mapper.createObjectNode();
-            answerNode.put("text", answer.getText());
-            if (answer.getEmoji() != null) {
+            answerNode.put("text", answer.text());
+            if (answer.emoji() != null) {
                 ObjectNode emojiNode = mapper.createObjectNode();
-                if (answer.getEmoji() instanceof CustomEmoji customEmoji) {
+                if (answer.emoji() instanceof CustomEmoji customEmoji) {
                     emojiNode.put("id", customEmoji.getId());
-                } else if (answer.getEmoji() instanceof DefaultEmoji defaultEmoji) {
-                    emojiNode.put("name", defaultEmoji.getName());
+                } else if (answer.emoji() instanceof DefaultEmoji defaultEmoji) {
+                    emojiNode.put("name", defaultEmoji.name());
                 }
                 answerNode.set("emoji", emojiNode);
             }

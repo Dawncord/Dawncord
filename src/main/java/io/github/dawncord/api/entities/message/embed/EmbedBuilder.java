@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class EmbedBuilder {
     private final String title;
+    private final List<Embed.Field> fields = new ArrayList<>();
     private String description;
     private String url;
     private ZonedDateTime timestamp;
@@ -18,7 +19,6 @@ public class EmbedBuilder {
     private Embed.EmbedImage image;
     private Embed.EmbedImage thumbnail;
     private Embed.Author author;
-    private final List<Embed.Field> fields = new ArrayList<>();
 
     /**
      * Constructs an EmbedBuilder with the specified title.

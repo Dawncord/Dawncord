@@ -3,7 +3,7 @@ package io.github.dawncord.api.types;
 /**
  * Represents notification levels for message notifications.
  */
-public enum NotificationLevel {
+public enum MessageNotificationLevel {
     /**
      * All messages notification level.
      */
@@ -16,7 +16,7 @@ public enum NotificationLevel {
 
     private final int value;
 
-    NotificationLevel(int value) {
+    MessageNotificationLevel(int value) {
         this.value = value;
     }
 

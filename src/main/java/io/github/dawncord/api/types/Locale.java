@@ -159,10 +159,10 @@ public enum Locale {
      */
     Korean("ko");
 
-    private final String localeCode;
+    private final String value;
 
-    Locale(String localeCode) {
-        this.localeCode = localeCode;
+    Locale(String value) {
+        this.value = value;
     }
 
     /**
@@ -170,8 +170,8 @@ public enum Locale {
      *
      * @return The locale code.
      */
-    public String getLocaleCode() {
-        return localeCode;
+    public String getValue() {
+        return value;
     }
 }
 

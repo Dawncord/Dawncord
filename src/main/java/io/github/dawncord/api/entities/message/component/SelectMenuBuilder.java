@@ -74,12 +74,41 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     /**
+     * Sets the types of channels the select menu is applicable to.
+     *
+     * @param channelTypes The channel types to set.
+     * @return The updated SelectMenuBuilder object.
+     */
+    public SelectMenuBuilder setChannelTypes(ChannelType... channelTypes) {
+        this.channelTypes = List.of(channelTypes);
+        return this;
+    }
+
+    /**
      * Retrieves the default values of the select menu.
      *
      * @return A list of DefaultValue objects representing the default values.
      */
     public List<DefaultValue> getDefaultValues() {
         return defaultValues;
+    }
+
+    /**
+     * Sets the default values of the select menu.
+     *
+     * @param defaultValues The default values to set.
+     * @return The updated SelectMenuBuilder object.
+     */
+    public SelectMenuBuilder setDefaultValues(List<DefaultValue> defaultValues) {
+        if (this.defaultValues == null) {
+            this.defaultValues = new ArrayList<>();
+        }
+        defaultValues.forEach(defaultValue -> {
+            if (defaultValue.type() != SelectMenuType.TEXT) {
+                this.defaultValues.add(defaultValue);
+            }
+        });
+        return this;
     }
 
     /**
@@ -92,12 +121,34 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     /**
+     * Sets the minimum number of values that can be selected in the select menu.
+     *
+     * @param minValues The minimum number of values to set.
+     * @return The updated SelectMenuBuilder object.
+     */
+    public SelectMenuBuilder setMinValues(int minValues) {
+        this.minValues = minValues;
+        return this;
+    }
+
+    /**
      * Retrieves the maximum number of values that can be selected in the select menu.
      *
      * @return The maximum number of values that can be selected.
      */
     public int getMaxValues() {
         return maxValues;
+    }
+
+    /**
+     * Sets the maximum number of values that can be selected in the select menu.
+     *
+     * @param maxValues The maximum number of values to set.
+     * @return The updated SelectMenuBuilder object.
+     */
+    public SelectMenuBuilder setMaxValues(int maxValues) {
+        this.maxValues = maxValues;
+        return this;
     }
 
     /**
@@ -143,57 +194,6 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     /**
-     * Sets the types of channels the select menu is applicable to.
-     *
-     * @param channelTypes The channel types to set.
-     * @return The updated SelectMenuBuilder object.
-     */
-    public SelectMenuBuilder setChannelTypes(ChannelType... channelTypes) {
-        this.channelTypes = List.of(channelTypes);
-        return this;
-    }
-
-    /**
-     * Sets the default values of the select menu.
-     *
-     * @param defaultValues The default values to set.
-     * @return The updated SelectMenuBuilder object.
-     */
-    public SelectMenuBuilder setDefaultValues(List<DefaultValue> defaultValues) {
-        if (this.defaultValues == null) {
-            this.defaultValues = new ArrayList<>();
-        }
-        defaultValues.forEach(defaultValue -> {
-            if (defaultValue.getType() != SelectMenuType.TEXT) {
-                this.defaultValues.add(defaultValue);
-            }
-        });
-        return this;
-    }
-
-    /**
-     * Sets the minimum number of values that can be selected in the select menu.
-     *
-     * @param minValues The minimum number of values to set.
-     * @return The updated SelectMenuBuilder object.
-     */
-    public SelectMenuBuilder setMinValues(int minValues) {
-        this.minValues = minValues;
-        return this;
-    }
-
-    /**
-     * Sets the maximum number of values that can be selected in the select menu.
-     *
-     * @param maxValues The maximum number of values to set.
-     * @return The updated SelectMenuBuilder object.
-     */
-    public SelectMenuBuilder setMaxValues(int maxValues) {
-        this.maxValues = maxValues;
-        return this;
-    }
-
-    /**
      * Adds options to the select menu.
      *
      * @param options The options to add.
@@ -208,39 +208,36 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     /**
-     * Represents a default value for a select menu.
-     */
-    public static class DefaultValue {
-        private final String id;
-        private final SelectMenuType type;
-
+         * Represents a default value for a select menu.
+         */
+        public record DefaultValue(String id, SelectMenuType type) {
         /**
          * Constructs a DefaultValue object with the specified ID and type.
          *
          * @param id   The ID of the default value.
          * @param type The type of the default value.
          */
-        public DefaultValue(String id, SelectMenuType type) {
-            this.id = id;
-            this.type = type;
+        public DefaultValue {
         }
-
-        /**
-         * Retrieves the ID of the default value.
-         *
-         * @return The ID of the default value.
-         */
-        public String getId() {
-            return id;
+    
+            /**
+             * Retrieves the ID of the default value.
+             *
+             * @return The ID of the default value.
+             */
+            @Override
+            public String id() {
+                return id;
+            }
+    
+            /**
+             * Retrieves the type of the default value.
+             *
+             * @return The type of the default value.
+             */
+            @Override
+            public SelectMenuType type() {
+                return type;
+            }
         }
-
-        /**
-         * Retrieves the type of the default value.
-         *
-         * @return The type of the default value.
-         */
-        public SelectMenuType getType() {
-            return type;
-        }
-    }
 }

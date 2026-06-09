@@ -6,24 +6,14 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event where a user is banned from a guild.
  */
-public class GuildBanEvent implements Event {
-    private final Guild guild;
-    private final User user;
-
+public record GuildBanEvent(Guild guild, User user) implements Event {
     /**
      * Constructs a GuildBanEvent with the specified guild and banned user.
      *
      * @param guild The guild from which the user was banned.
      * @param user  The user who was banned from the guild.
      */
-    public GuildBanEvent(Guild guild, User user) {
-        this.guild = guild;
-        this.user = user;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public GuildBanEvent {
     }
 
     /**
@@ -31,7 +21,8 @@ public class GuildBanEvent implements Event {
      *
      * @return The user who was banned from the guild.
      */
-    public User getUser() {
+    @Override
+    public User user() {
         return user;
     }
 }

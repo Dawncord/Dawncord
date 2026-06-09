@@ -316,7 +316,7 @@ public class MessageCreateAction extends MessageAction {
     protected void submit() {
         if (hasChanges) {
             if (interactionData != null) {
-                postMessage(jsonObject, Routes.Reply(interactionData.getInteraction().getInteractionId(), interactionData.getInteraction().getInteractionToken()));
+                postMessage(jsonObject, Routes.Reply(interactionData.interaction().interactionId(), interactionData.interaction().interactionToken()));
             } else {
                 postMessage(jsonObject, Routes.Channel.Message.All(channelId));
             }
@@ -328,7 +328,7 @@ public class MessageCreateAction extends MessageAction {
     private void submitDefer() {
         if (hasChanges) {
             if (interactionData != null) {
-                patchMessage(jsonObject, Routes.OriginalMessage(interactionData.getInteraction().getInteractionToken()));
+                patchMessage(jsonObject, Routes.OriginalMessage(interactionData.interaction().interactionToken()));
             }
             hasChanges = false;
         }

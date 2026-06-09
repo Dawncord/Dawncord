@@ -8,24 +8,14 @@ import java.util.List;
 /**
  * Represents an event related to stickers in a guild.
  */
-public class GuildStickerEvent implements Event {
-    private final Guild guild;
-    private final List<Sticker> stickers;
-
+public record GuildStickerEvent(Guild guild, List<Sticker> stickers) implements Event {
     /**
      * Constructs a GuildStickerEvent with the specified guild and list of stickers.
      *
      * @param guild    The guild associated with the event.
      * @param stickers The list of stickers involved in the event.
      */
-    public GuildStickerEvent(Guild guild, List<Sticker> stickers) {
-        this.guild = guild;
-        this.stickers = stickers;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public GuildStickerEvent {
     }
 
     /**
@@ -33,7 +23,8 @@ public class GuildStickerEvent implements Event {
      *
      * @return The list of stickers involved in the event.
      */
-    public List<Sticker> getStickers() {
+    @Override
+    public List<Sticker> stickers() {
         return stickers;
     }
 }

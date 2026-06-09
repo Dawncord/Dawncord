@@ -13,9 +13,9 @@ public class Option {
     private final OptionType type;
     private final String name;
     private final String description;
+    private final List<Choice> choices = new ArrayList<>();
     private boolean isRequired;
     private boolean isAutocomplete;
-    private final List<Choice> choices = new ArrayList<>();
 
     /**
      * Creates a new Option object with the given type, name, and description.
@@ -94,24 +94,6 @@ public class Option {
     }
 
     /**
-     * Retrieves whether the option supports autocomplete or not.
-     *
-     * @return whether the option supports autocomplete or not
-     */
-    public boolean isAutocomplete() {
-        return isAutocomplete;
-    }
-
-    /**
-     * A list of choices for the option.
-     *
-     * @return a list of choices for the option
-     */
-    public List<Choice> getChoices() {
-        return choices;
-    }
-
-    /**
      * Sets whether the option is required or not.
      *
      * @param isRequired whether the option is required or not
@@ -121,12 +103,30 @@ public class Option {
     }
 
     /**
+     * Retrieves whether the option supports autocomplete or not.
+     *
+     * @return whether the option supports autocomplete or not
+     */
+    public boolean isAutocomplete() {
+        return isAutocomplete;
+    }
+
+    /**
      * Sets whether the option supports autocomplete or not.
      *
      * @param isAutocomplete whether the option supports autocomplete or not
      */
     public void setAutocomplete(boolean isAutocomplete) {
         this.isAutocomplete = isAutocomplete;
+    }
+
+    /**
+     * A list of choices for the option.
+     *
+     * @return a list of choices for the option
+     */
+    public List<Choice> getChoices() {
+        return choices;
     }
 
     /**
@@ -164,40 +164,37 @@ public class Option {
     }
 
     /**
-     * A choice of an option.
-     */
-    public static class Choice {
-        private final String name;
-        private final String value;
-
+         * A choice of an option.
+         */
+        public record Choice(String name, String value) {
         /**
          * Creates a new Choice object with the given name and value.
          *
          * @param name  the name of the choice
          * @param value the value of the choice
          */
-        public Choice(String name, String value) {
-            this.name = name;
-            this.value = value;
+        public Choice {
         }
-
-        /**
-         * Retrieves the name of the object.
-         *
-         * @return the name of the object as a string
-         */
-        public String getName() {
-            return name;
+    
+            /**
+             * Retrieves the name of the object.
+             *
+             * @return the name of the object as a string
+             */
+            @Override
+            public String name() {
+                return name;
+            }
+    
+            /**
+             * Retrieves the name of the object.
+             *
+             * @return the name of the object as a string
+             */
+            @Override
+            public String value() {
+                return value;
+            }
         }
-
-        /**
-         * Retrieves the name of the object.
-         *
-         * @return the name of the object as a string
-         */
-        public String getValue() {
-            return value;
-        }
-    }
 }
 

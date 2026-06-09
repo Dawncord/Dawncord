@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class SlashCommandBuilder extends CommandBuilder<SlashCommandBuilder, SlashCommand>
         implements IOptionCommandBuilder<SlashCommandBuilder>, ISubCommandBuilder<SlashCommandBuilder>, ISubCommandGroupBuilder<SlashCommandBuilder> {
-    private boolean nsfw;
     private final List<SubCommandGroup> subCommandGroupList = new ArrayList<>();
+    private boolean nsfw;
 
     /**
      * Constructs a new SlashCommandBuilder instance with the specified name and description.

@@ -6,24 +6,14 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event triggered when the voice state of a member in a guild is updated.
  */
-public class VoiceStateUpdateEvent implements Event {
-    private final Guild guild;
-    private final VoiceState voiceState;
-
+public record VoiceStateUpdateEvent(Guild guild, VoiceState voiceState) implements Event {
     /**
      * Constructs a VoiceStateUpdateEvent with the specified guild and voice state.
      *
      * @param guild      The guild associated with the voice state update event.
      * @param voiceState The updated voice state of a member.
      */
-    public VoiceStateUpdateEvent(Guild guild, VoiceState voiceState) {
-        this.guild = guild;
-        this.voiceState = voiceState;
-    }
-
-    @Override
-    public Guild getGuild() {
-        return guild;
+    public VoiceStateUpdateEvent {
     }
 
     /**
@@ -31,7 +21,8 @@ public class VoiceStateUpdateEvent implements Event {
      *
      * @return The updated voice state of a member.
      */
-    public VoiceState getVoiceState() {
+    @Override
+    public VoiceState voiceState() {
         return voiceState;
     }
 }

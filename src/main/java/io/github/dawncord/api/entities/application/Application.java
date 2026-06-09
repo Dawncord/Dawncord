@@ -8,7 +8,6 @@ import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.team.Team;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
 import io.github.dawncord.api.types.ApplicationFlag;
 import io.github.dawncord.api.types.EventWebhookStatus;
@@ -64,7 +63,7 @@ public class Application extends AbstractApplication implements IApplication {
 
     public Guild getGuild() {
         guild = loader.loadIfExists(guild, "guild_id",
-                () -> new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(getGuildId()))));
+                () -> new Guild(JsonUtils.fetch(Routes.Guild.Get(getGuildId()))));
         return guild;
     }
 

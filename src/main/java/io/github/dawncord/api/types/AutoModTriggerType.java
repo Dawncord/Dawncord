@@ -30,15 +30,6 @@ public enum AutoModTriggerType {
         this.value = value;
     }
 
-    /**
-     * Gets the value associated with the trigger type.
-     *
-     * @return The value associated with the trigger type.
-     */
-    public int getValue() {
-        return value;
-    }
-
     public static AutoModTriggerType fromValue(int value) {
         for (AutoModTriggerType type : values()) {
             if (type.value == value) {
@@ -46,5 +37,14 @@ public enum AutoModTriggerType {
             }
         }
         throw new IllegalArgumentException("Unknown trigger type: " + value);
+    }
+
+    /**
+     * Gets the value associated with the trigger type.
+     *
+     * @return The value associated with the trigger type.
+     */
+    public int getValue() {
+        return value;
     }
 }

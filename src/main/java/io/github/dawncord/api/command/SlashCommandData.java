@@ -3,11 +3,7 @@ package io.github.dawncord.api.command;
 /**
  * Represents the data associated with a slash command, including its name, subcommand, and subcommand group.
  */
-public class SlashCommandData {
-    private final String name;
-    private final String subCommand;
-    private final String subCommandGroup;
-
+public record SlashCommandData(String name, String subCommand, String subCommandGroup) {
     /**
      * Constructs a new SlashCommandData object with the specified parameters.
      *
@@ -15,10 +11,7 @@ public class SlashCommandData {
      * @param subCommand      The subcommand of the slash command.
      * @param subCommandGroup The subcommand group of the slash command.
      */
-    public SlashCommandData(String name, String subCommand, String subCommandGroup) {
-        this.name = name;
-        this.subCommand = subCommand;
-        this.subCommandGroup = subCommandGroup;
+    public SlashCommandData {
     }
 
     /**
@@ -26,7 +19,8 @@ public class SlashCommandData {
      *
      * @return The name of the slash command.
      */
-    public String getName() {
+    @Override
+    public String name() {
         return name;
     }
 
@@ -35,7 +29,8 @@ public class SlashCommandData {
      *
      * @return The subcommand of the slash command.
      */
-    public String getSubCommand() {
+    @Override
+    public String subCommand() {
         return subCommand;
     }
 
@@ -44,7 +39,8 @@ public class SlashCommandData {
      *
      * @return The subcommand group of the slash command.
      */
-    public String getSubCommandGroup() {
+    @Override
+    public String subCommandGroup() {
         return subCommandGroup;
     }
 }

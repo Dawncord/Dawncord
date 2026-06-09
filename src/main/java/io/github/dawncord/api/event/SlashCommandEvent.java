@@ -7,7 +7,6 @@ import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.command.option.OptionData;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.modal.Modal;
 import io.github.dawncord.api.interaction.InteractionData;
@@ -37,12 +36,12 @@ public class SlashCommandEvent implements ReplyEvent {
      */
     public SlashCommandEvent(SlashCommandInteractionData interactionData) {
         data = interactionData;
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
 
         Event.getLogger().debug("Slash command event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
-                data.getSlashCommand().getName(),
+                data.getSlashCommand().name(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),
                 channel.getId(), channel.getName(),
@@ -62,9 +61,9 @@ public class SlashCommandEvent implements ReplyEvent {
      * Updates the guild, channel, and member associated with this event.
      */
     public static void UpdateData() {
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
     }
 
     /**
@@ -73,7 +72,7 @@ public class SlashCommandEvent implements ReplyEvent {
      * @return The name of the slash command.
      */
     public String getCommandName() {
-        return data.getSlashCommand().getName();
+        return data.getSlashCommand().name();
     }
 
     /**
@@ -99,7 +98,7 @@ public class SlashCommandEvent implements ReplyEvent {
      */
     @Nullable
     public String getSubCommand() {
-        return data.getSlashCommand().getSubCommand();
+        return data.getSlashCommand().subCommand();
     }
 
     /**
@@ -109,7 +108,7 @@ public class SlashCommandEvent implements ReplyEvent {
      */
     @Nullable
     public String getSubCommandGroup() {
-        return data.getSlashCommand().getSubCommandGroup();
+        return data.getSlashCommand().subCommandGroup();
     }
 
     /**
@@ -120,7 +119,7 @@ public class SlashCommandEvent implements ReplyEvent {
     public List<OptionData> getOptions() {
         List<OptionData> optionDataList = new ArrayList<>();
         for (Map<String, Object> map : data.getOptions()) {
-            OptionData optionData = new OptionData(map, getGuild());
+            OptionData optionData = new OptionData(map, guild());
             optionDataList.add(optionData);
         }
 
@@ -139,7 +138,7 @@ public class SlashCommandEvent implements ReplyEvent {
     }
 
     @Override
-    public Guild getGuild() {
+    public Guild guild() {
         return guild;
     }
 
@@ -194,7 +193,7 @@ public class SlashCommandEvent implements ReplyEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return getGuild().getChannelById(channelId);
+        return guild().getChannelById(channelId);
     }
 
     @Override

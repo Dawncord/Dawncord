@@ -5,12 +5,7 @@ import java.util.List;
 /**
  * Represents the data of a poll.
  */
-public class PollData {
-    private final String question;
-    private final List<AnswerData> answers;
-    private final int duration;
-    private final boolean allowMultiselect;
-
+public record PollData(String question, List<AnswerData> answers, int duration, boolean allowMultiselect) {
     /**
      * Constructs a PollData object with the specified parameters.
      *
@@ -19,11 +14,7 @@ public class PollData {
      * @param duration         The duration of the poll.
      * @param allowMultiselect Whether multiselect is allowed in the poll.
      */
-    public PollData(String question, List<AnswerData> answers, int duration, boolean allowMultiselect) {
-        this.question = question;
-        this.answers = answers;
-        this.duration = duration;
-        this.allowMultiselect = allowMultiselect;
+    public PollData {
     }
 
     /**
@@ -31,7 +22,8 @@ public class PollData {
      *
      * @return The question of the poll.
      */
-    public String getQuestion() {
+    @Override
+    public String question() {
         return question;
     }
 
@@ -40,7 +32,8 @@ public class PollData {
      *
      * @return The list of answer data.
      */
-    public List<AnswerData> getAnswers() {
+    @Override
+    public List<AnswerData> answers() {
         return answers;
     }
 
@@ -49,7 +42,8 @@ public class PollData {
      *
      * @return The duration of the poll.
      */
-    public int getDuration() {
+    @Override
+    public int duration() {
         return duration;
     }
 
@@ -58,7 +52,8 @@ public class PollData {
      *
      * @return True if multiselect is allowed, false otherwise.
      */
-    public boolean isAllowMultiselect() {
+    @Override
+    public boolean allowMultiselect() {
         return allowMultiselect;
     }
 }

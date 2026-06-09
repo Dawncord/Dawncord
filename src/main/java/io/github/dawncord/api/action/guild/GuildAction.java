@@ -2,7 +2,7 @@ package io.github.dawncord.api.action.guild;
 
 import io.github.dawncord.api.action.Action;
 import io.github.dawncord.api.types.ContentFilterLevel;
-import io.github.dawncord.api.types.NotificationLevel;
+import io.github.dawncord.api.types.MessageNotificationLevel;
 import io.github.dawncord.api.types.SystemChannelFlag;
 import io.github.dawncord.api.types.VerificationLevel;
 import io.github.dawncord.api.utils.IOUtils;
@@ -57,7 +57,7 @@ public abstract class GuildAction extends Action<GuildAction> {
      * @param level the notification level to be set
      * @return the modified GuildAction object
      */
-    public GuildAction setNotificationLevel(NotificationLevel level) {
+    public GuildAction setNotificationLevel(MessageNotificationLevel level) {
         return setProperty("default_message_notifications", level.getValue());
     }
 

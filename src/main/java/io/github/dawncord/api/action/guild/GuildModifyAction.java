@@ -4,7 +4,6 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.channel.GuildChannel;
-import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class GuildModifyAction extends GuildAction {
     private final String guildId;
-    private final List<String> guildFeatures;
+    private final List<GuildFeature> guildFeatures;
 
     /**
      * Create a new {@link GuildModifyAction}
@@ -29,7 +28,7 @@ public class GuildModifyAction extends GuildAction {
      * @param guildId       The ID of the guild to be modified.
      * @param guildFeatures The list of features to modify for the guild.
      */
-    public GuildModifyAction(String guildId, List<String> guildFeatures) {
+    public GuildModifyAction(String guildId, List<GuildFeature> guildFeatures) {
         super();
         this.guildId = guildId;
         this.guildFeatures = guildFeatures;
@@ -108,7 +107,7 @@ public class GuildModifyAction extends GuildAction {
      * @return the modified GuildModifyAction object
      */
     public GuildModifyAction setLocale(Locale locale) {
-        setProperty("preferred_locale", locale.getLocaleCode());
+        setProperty("preferred_locale", locale.getValue());
         return this;
     }
 
@@ -132,7 +131,7 @@ public class GuildModifyAction extends GuildAction {
     @Override
     public GuildModifyAction setIcon(String path) {
         if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
-            if (guildFeatures.contains(GuildFeature.ANIMATED_ICON.name())) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_ICON)) {
                 setProperty("icon", IOUtils.setImageData(path));
             }
         } else {
@@ -148,7 +147,7 @@ public class GuildModifyAction extends GuildAction {
      * @return the modified GuildModifyAction object
      */
     public GuildModifyAction setSplash(String path) {
-        if (guildFeatures.contains(GuildFeature.INVITE_SPLASH.name())) {
+        if (guildFeatures.contains(GuildFeature.INVITE_SPLASH)) {
             setProperty("splash", IOUtils.setImageData(path));
         }
         return this;
@@ -161,7 +160,7 @@ public class GuildModifyAction extends GuildAction {
      * @return the modified GuildModifyAction object
      */
     public GuildModifyAction setDiscoverySplash(String path) {
-        if (guildFeatures.contains(GuildFeature.DISCOVERABLE.name())) {
+        if (guildFeatures.contains(GuildFeature.DISCOVERABLE)) {
             setProperty("discovery_splash", IOUtils.setImageData(path));
         }
         return this;
@@ -175,7 +174,7 @@ public class GuildModifyAction extends GuildAction {
      */
     public GuildModifyAction setBanner(String path) {
         if (path.substring(path.lastIndexOf(".") + 1).equals("gif")) {
-            if (guildFeatures.contains(GuildFeature.ANIMATED_BANNER.name())) {
+            if (guildFeatures.contains(GuildFeature.ANIMATED_BANNER)) {
                 setProperty("banner", IOUtils.setImageData(path));
             }
         } else {

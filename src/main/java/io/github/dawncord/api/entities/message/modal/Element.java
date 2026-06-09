@@ -28,50 +28,6 @@ public class Element {
     }
 
     /**
-     * Sets the placeholder text for the element.
-     *
-     * @param placeholder The placeholder text.
-     * @return The Element instance.
-     */
-    public Element setPlaceholder(String placeholder) {
-        this.placeholder = placeholder;
-        return this;
-    }
-
-    /**
-     * Sets whether the element is required.
-     *
-     * @param required Whether the element is required.
-     * @return The Element instance.
-     */
-    public Element setRequired(Boolean required) {
-        this.required = required;
-        return this;
-    }
-
-    /**
-     * Sets the minimum length of input allowed for the element.
-     *
-     * @param minLength The minimum length.
-     * @return The Element instance.
-     */
-    public Element setMinLength(Integer minLength) {
-        this.minLength = minLength;
-        return this;
-    }
-
-    /**
-     * Sets the maximum length of input allowed for the element.
-     *
-     * @param maxLength The maximum length.
-     * @return The Element instance.
-     */
-    public Element setMaxLength(Integer maxLength) {
-        this.maxLength = maxLength;
-        return this;
-    }
-
-    /**
      * Gets the label of the element.
      *
      * @return The label.
@@ -99,6 +55,17 @@ public class Element {
     }
 
     /**
+     * Sets the placeholder text for the element.
+     *
+     * @param placeholder The placeholder text.
+     * @return The Element instance.
+     */
+    public Element setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+        return this;
+    }
+
+    /**
      * Gets the input style of the element.
      *
      * @return The input style.
@@ -117,6 +84,17 @@ public class Element {
     }
 
     /**
+     * Sets whether the element is required.
+     *
+     * @param required Whether the element is required.
+     * @return The Element instance.
+     */
+    public Element setRequired(Boolean required) {
+        this.required = required;
+        return this;
+    }
+
+    /**
      * Gets the minimum length of input allowed for the element.
      *
      * @return The minimum length.
@@ -126,11 +104,33 @@ public class Element {
     }
 
     /**
+     * Sets the minimum length of input allowed for the element.
+     *
+     * @param minLength The minimum length.
+     * @return The Element instance.
+     */
+    public Element setMinLength(Integer minLength) {
+        this.minLength = minLength;
+        return this;
+    }
+
+    /**
      * Gets the maximum length of input allowed for the element.
      *
      * @return The maximum length.
      */
     public Integer getMaxLength() {
         return maxLength;
+    }
+
+    /**
+     * Sets the maximum length of input allowed for the element.
+     *
+     * @param maxLength The maximum length.
+     * @return The Element instance.
+     */
+    public Element setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
+        return this;
     }
 }

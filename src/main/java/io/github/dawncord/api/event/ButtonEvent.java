@@ -6,7 +6,6 @@ import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.guild.GuildImpl;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.component.ButtonData;
 import io.github.dawncord.api.entities.message.modal.Modal;
@@ -22,10 +21,10 @@ import java.util.function.Consumer;
  */
 public class ButtonEvent implements MessageComponentEvent {
     private static MessageComponentInteractionData data;
-    private final ButtonData buttonData;
     private static Guild guild;
     private static GuildChannel channel;
     private static GuildMember member;
+    private final ButtonData buttonData;
 
     /**
      * Constructs a ButtonEvent with the specified interaction data and button data.
@@ -36,12 +35,12 @@ public class ButtonEvent implements MessageComponentEvent {
     public ButtonEvent(MessageComponentInteractionData interactionData, ButtonData buttonData) {
         this.buttonData = buttonData;
         data = interactionData;
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
 
         Event.getLogger().debug("Button event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
-                data.getCustomId(),
+                data.customId(),
                 Routes.Reply("{id}", "{token}"),
                 guild.getId(), guild.getName(),
                 channel.getId(), channel.getName(),
@@ -61,9 +60,9 @@ public class ButtonEvent implements MessageComponentEvent {
      * Updates the guild, channel, and member data associated with the button event.
      */
     public static void UpdateData() {
-        guild = new GuildImpl(JsonUtils.fetch(Routes.Guild.Get(data.getGuildId())));
-        channel = guild.getChannelById(data.getChannelId());
-        member = guild.getMemberById(data.getMemberId());
+        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
+        channel = guild.getChannelById(data.channelId());
+        member = guild.getMemberById(data.memberId());
     }
 
     /**
@@ -77,12 +76,12 @@ public class ButtonEvent implements MessageComponentEvent {
 
     @Override
     public CallbackEvent<MessageModifyAction> edit(Consumer<MessageModifyAction> handler) {
-        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.getId()));
+        ActionExecutor.deferEdit(handler, data, getChannel().asText().getMessageById(data.id()));
         return new CallbackEvent<>(data, false, true);
     }
 
     @Override
-    public Guild getGuild() {
+    public Guild guild() {
         return guild;
     }
 
@@ -137,7 +136,7 @@ public class ButtonEvent implements MessageComponentEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return getGuild().getChannelById(channelId);
+        return guild().getChannelById(channelId);
     }
 
     @Override

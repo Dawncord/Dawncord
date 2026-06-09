@@ -35,10 +35,7 @@ import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.modal.Element;
 import io.github.dawncord.api.entities.message.modal.Modal;
 import io.github.dawncord.api.interaction.InteractionData;
-import io.github.dawncord.api.types.AutoModTriggerType;
-import io.github.dawncord.api.types.ChannelType;
-import io.github.dawncord.api.types.InteractionCallbackType;
-import io.github.dawncord.api.types.MessageFlag;
+import io.github.dawncord.api.types.*;
 import jakarta.annotation.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -98,7 +95,7 @@ public class ActionExecutor {
      * @param guildId       The ID of the guild.
      * @param guildFeatures The features of the guild.
      */
-    public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<String> guildFeatures) {
+    public static void modifyGuild(Consumer<GuildModifyAction> handler, String guildId, List<GuildFeature> guildFeatures) {
         GuildModifyAction action = new GuildModifyAction(guildId, guildFeatures);
         execute(action, handler, false);
     }
@@ -323,7 +320,7 @@ public class ActionExecutor {
 
         ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
         jsonObject.put("type", InteractionCallbackType.UPDATE_MESSAGE.getValue());
-        ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
+        ApiClient.post(jsonObject, Routes.Reply(data.interaction().interactionId(), data.interaction().interactionToken()));
     }
 
     /**
@@ -340,7 +337,7 @@ public class ActionExecutor {
             if (ephemeral) {
                 jsonObject.put("flags", MessageFlag.EPHEMERAL.getValue());
             }
-            ApiClient.post(jsonObject, Routes.Reply(data.getInteraction().getInteractionId(), data.getInteraction().getInteractionToken()));
+            ApiClient.post(jsonObject, Routes.Reply(data.interaction().interactionId(), data.interaction().interactionToken()));
         } else {
             MessageCreateAction action = new MessageCreateAction(data);
             handler.accept(action);
@@ -373,14 +370,14 @@ public class ActionExecutor {
      */
     public static void replyModal(Modal modal, InteractionData data) {
         Consumer<ModalCreateAction> handler = action -> {
-            if (modal.getTitle() != null) {
-                action.setTitle(modal.getTitle());
+            if (modal.title() != null) {
+                action.setTitle(modal.title());
             }
-            if (modal.getCustomId() != null) {
-                action.setCustomId(modal.getCustomId());
+            if (modal.customId() != null) {
+                action.setCustomId(modal.customId());
             }
-            if (modal.getElements() != null) {
-                action.setElements(modal.getElements().toArray(new Element[0]));
+            if (modal.elements() != null) {
+                action.setElements(modal.elements().toArray(new Element[0]));
             }
         };
         replyModal(handler, data);
