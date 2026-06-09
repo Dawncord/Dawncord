@@ -16,7 +16,6 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.component.ActionRow;
 import io.github.dawncord.api.entities.message.embed.Embed;
 import io.github.dawncord.api.entities.message.poll.Poll;
-import io.github.dawncord.api.entities.message.poll.PollImpl;
 import io.github.dawncord.api.entities.message.sticker.Sticker;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
@@ -241,7 +240,7 @@ public class MessageImpl implements Message {
     public Poll getPoll() {
         if (poll == null) {
             if (message.has("poll") && message.get("poll") != null) {
-                poll = new PollImpl(message.get("poll"), guild);
+                poll = new Poll(message.get("poll"), guild);
             }
         }
         return poll;

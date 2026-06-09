@@ -8,7 +8,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.message.poll.AnswerData;
-import io.github.dawncord.api.entities.message.poll.Poll;
 
 /**
  * Represents an action for creating a poll.
