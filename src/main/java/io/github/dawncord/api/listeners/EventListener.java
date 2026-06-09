@@ -22,7 +22,7 @@ import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.MessageImpl;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.event.*;
 import io.github.dawncord.api.types.GatewayEvent;
 import io.github.dawncord.api.types.OnlineStatus;

@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.channel.thread.ThreadMessage;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
-import io.github.dawncord.api.entities.message.sticker.StickerImpl;
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.types.AllowedMention;
 import io.github.dawncord.api.types.MessageFlag;
 
@@ -125,7 +124,7 @@ public class MessageUtils {
             for (int i = 0; i < stickerItems.size(); i++) {
                 JsonNode stickerJson = stickerItems.get(i);
                 if (guildStickerIds.contains(stickerJson.get("id").asText())) {
-                    stickers.add(new StickerImpl(stickerJson, guild));
+                    stickers.add(new Sticker(stickerJson, guild));
                 }
             }
         }

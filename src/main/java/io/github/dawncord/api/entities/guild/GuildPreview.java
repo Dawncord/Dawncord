@@ -7,8 +7,7 @@ import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.image.DiscoverySplash;
 import io.github.dawncord.api.entities.image.Splash;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
-import io.github.dawncord.api.entities.message.sticker.StickerImpl;
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -188,7 +187,7 @@ public class GuildPreview implements ISnowflake {
      */
     public List<Sticker> getStickers() {
         if (stickers == null) {
-            stickers = JsonUtils.getEntityList(preview.get("stickers"), sticker -> new StickerImpl(sticker, guild));
+            stickers = JsonUtils.getEntityList(preview.get("stickers"), sticker -> new Sticker(sticker, guild));
         }
         return stickers;
     }

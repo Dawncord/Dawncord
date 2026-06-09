@@ -32,8 +32,7 @@ import io.github.dawncord.api.entities.guild.widget.GuildWidgetSettings;
 import io.github.dawncord.api.entities.image.DiscoverySplash;
 import io.github.dawncord.api.entities.image.GuildIcon;
 import io.github.dawncord.api.entities.image.Splash;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
-import io.github.dawncord.api.entities.message.sticker.StickerImpl;
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.*;
@@ -232,7 +231,7 @@ public class Guild implements ISnowflake {
     public List<Sticker> getStickers() {
         stickers = loader.loadEntityList(stickers, "stickers",
                 JsonUtils.fetch(Routes.Guild.Sticker.All(getId())),
-                sticker -> new StickerImpl(sticker, this)
+                sticker -> new Sticker(sticker, this)
         );
         return stickers;
     }
@@ -249,7 +248,7 @@ public class Guild implements ISnowflake {
     }
 
     public Sticker getStickerById(String stickerId) {
-        return new StickerImpl(JsonUtils.fetch(Routes.Guild.Sticker.Get(getId(), stickerId)), this);
+        return new Sticker(JsonUtils.fetch(Routes.Guild.Sticker.Get(getId(), stickerId)), this);
     }
 
     public Sticker getStickerById(long stickerId) {

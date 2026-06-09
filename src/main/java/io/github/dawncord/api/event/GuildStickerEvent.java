@@ -1,7 +1,7 @@
 package io.github.dawncord.api.event;
 
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
+import io.github.dawncord.api.entities.message.Sticker;
 
 import java.util.List;
 

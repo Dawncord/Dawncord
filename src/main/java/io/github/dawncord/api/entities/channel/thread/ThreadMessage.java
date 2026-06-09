@@ -1,8 +1,8 @@
 package io.github.dawncord.api.entities.channel.thread;
 
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.entities.message.component.ComponentBuilder;
 import io.github.dawncord.api.entities.message.embed.Embed;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
 import io.github.dawncord.api.types.AllowedMention;
 
 import java.util.List;

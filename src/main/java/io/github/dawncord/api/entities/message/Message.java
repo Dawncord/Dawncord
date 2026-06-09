@@ -13,7 +13,6 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.component.ActionRow;
 import io.github.dawncord.api.entities.message.embed.Embed;
 import io.github.dawncord.api.entities.message.poll.Poll;
-import io.github.dawncord.api.entities.message.sticker.Sticker;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.MessageFlag;
