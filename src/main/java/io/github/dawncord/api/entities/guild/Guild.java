@@ -360,13 +360,13 @@ public class Guild implements ISnowflake {
                         Routes.Guild.Member.All(getId()),
                         Map.of("limit", "100")
                 ),
-                member -> new GuildMemberImpl(member, this)
+                member -> new GuildMember(member, this)
         );
         return members;
     }
 
     public GuildMember getMemberById(String memberId) {
-        return new GuildMemberImpl(JsonUtils.fetch(Routes.Guild.Member.Get(getId(), memberId)), this);
+        return new GuildMember(JsonUtils.fetch(Routes.Guild.Member.Get(getId(), memberId)), this);
     }
 
     public GuildMember getMemberById(long memberId) {
@@ -382,7 +382,7 @@ public class Guild implements ISnowflake {
                                 "limit", String.valueOf(limit)
                         )
                 ),
-                guildMember -> new GuildMemberImpl(guildMember, this)
+                guildMember -> new GuildMember(guildMember, this)
         );
     }
 

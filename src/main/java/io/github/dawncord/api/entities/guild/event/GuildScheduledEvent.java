@@ -10,7 +10,6 @@ import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
-import io.github.dawncord.api.entities.guild.GuildMemberImpl;
 import io.github.dawncord.api.entities.image.GuildEventImage;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildEventEntityType;
@@ -165,7 +164,7 @@ public class GuildScheduledEvent implements ISnowflake {
         );
         List<GuildMember> members = new ArrayList<>();
         for (JsonNode member : eventMembers) {
-            members.add(new GuildMemberImpl(member.get("member"), getGuild()));
+            members.add(new GuildMember(member.get("member"), getGuild()));
         }
         return members;
     }

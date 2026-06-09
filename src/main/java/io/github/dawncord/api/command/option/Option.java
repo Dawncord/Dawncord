@@ -164,9 +164,9 @@ public class Option {
     }
 
     /**
-         * A choice of an option.
-         */
-        public record Choice(String name, String value) {
+     * A choice of an option.
+     */
+    public record Choice(String name, String value) {
         /**
          * Creates a new Choice object with the given name and value.
          *
@@ -175,26 +175,26 @@ public class Option {
          */
         public Choice {
         }
-    
-            /**
-             * Retrieves the name of the object.
-             *
-             * @return the name of the object as a string
-             */
-            @Override
-            public String name() {
-                return name;
-            }
-    
-            /**
-             * Retrieves the name of the object.
-             *
-             * @return the name of the object as a string
-             */
-            @Override
-            public String value() {
-                return value;
-            }
+
+        /**
+         * Retrieves the name of the object.
+         *
+         * @return the name of the object as a string
+         */
+        @Override
+        public String name() {
+            return name;
         }
+
+        /**
+         * Retrieves the name of the object.
+         *
+         * @return the name of the object as a string
+         */
+        @Override
+        public String value() {
+            return value;
+        }
+    }
 }
 

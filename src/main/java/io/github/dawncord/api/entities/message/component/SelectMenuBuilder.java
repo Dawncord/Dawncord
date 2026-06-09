@@ -208,9 +208,9 @@ public class SelectMenuBuilder implements ComponentBuilder {
     }
 
     /**
-         * Represents a default value for a select menu.
-         */
-        public record DefaultValue(String id, SelectMenuType type) {
+     * Represents a default value for a select menu.
+     */
+    public record DefaultValue(String id, SelectMenuType type) {
         /**
          * Constructs a DefaultValue object with the specified ID and type.
          *
@@ -219,25 +219,25 @@ public class SelectMenuBuilder implements ComponentBuilder {
          */
         public DefaultValue {
         }
-    
-            /**
-             * Retrieves the ID of the default value.
-             *
-             * @return The ID of the default value.
-             */
-            @Override
-            public String id() {
-                return id;
-            }
-    
-            /**
-             * Retrieves the type of the default value.
-             *
-             * @return The type of the default value.
-             */
-            @Override
-            public SelectMenuType type() {
-                return type;
-            }
+
+        /**
+         * Retrieves the ID of the default value.
+         *
+         * @return The ID of the default value.
+         */
+        @Override
+        public String id() {
+            return id;
         }
+
+        /**
+         * Retrieves the type of the default value.
+         *
+         * @return The type of the default value.
+         */
+        @Override
+        public SelectMenuType type() {
+            return type;
+        }
+    }
 }

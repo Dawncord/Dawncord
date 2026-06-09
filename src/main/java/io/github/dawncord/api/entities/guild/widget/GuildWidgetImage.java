@@ -7,11 +7,16 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 
-public record GuildWidgetImage(String url) {
+public class GuildWidgetImage {
+    private final String url;
+
+    public GuildWidgetImage(String url) {
+        this.url = url;
+    }
 
     public void downloadImage(String name) {
         try {
-            URL url = URI.create(url()).toURL();
+            URL url = URI.create(this.url).toURL();
             InputStream is = url.openStream();
             OutputStream os = new FileOutputStream(name + ".png");
 

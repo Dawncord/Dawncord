@@ -1,204 +1,196 @@
 package io.github.dawncord.api.entities.guild;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildMemberModifyAction;
-import io.github.dawncord.api.entities.IMentionable;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
 import io.github.dawncord.api.types.PermissionType;
-import jakarta.annotation.Nullable;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.EnumUtils;
+import io.github.dawncord.api.utils.TimeUtils;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Represents a member of a guild.
+ * Represents an implementation of a guild member.
  */
-public interface GuildMember extends IMentionable {
+public class GuildMember {
+    private final JsonNode member;
+    private final Guild guild;
+    private Boolean isPending;
+    private Boolean isBoosting;
+    private Boolean isMuted;
+    private Boolean isDeafened;
 
     /**
-     * Gets the nickname of the guild member.
+     * Constructs a new GuildMemberImpl with the provided member data and guild.
      *
-     * @return The nickname of the guild member.
+     * @param member The JSON data representing the guild member.
+     * @param guild  The guild to which the member belongs.
      */
-    String getNickname();
+    public GuildMember(JsonNode member, Guild guild) {
+        this.member = member;
+        this.guild = guild;
+    }
 
-    /**
-     * Gets the avatar of the guild member.
-     *
-     * @return The avatar of the guild member.
-     */
-    @Nullable
-    Avatar getAvatar();
+    public User getUser() {
+        return new UserImpl(member.get("user"));
+    }
 
-    /**
-     * Gets the flags associated with the guild member.
-     *
-     * @return The flags associated with the guild member.
-     */
-    List<GuildMemberFlag> getFlags();
+    public String getNickname() {
+        return member.has("nick") && member.hasNonNull("nick")
+                ? member.get("nick").asText()
+                : null;
+    }
 
-    /**
-     * Gets the date and time when the guild member joined the guild.
-     *
-     * @return The date and time when the guild member joined the guild.
-     */
-    ZonedDateTime getTimeJoined();
+    public Avatar getAvatar() {
+        return member.has("avatar") && member.hasNonNull("avatar")
+                ? new Avatar(guild.getId(), getUser().getId(), member.get("avatar").asText())
+                : new Avatar(getUser().getId(), member.get("user").get("avatar").asText());
+    }
 
-    /**
-     * Gets the permissions of the guild member.
-     *
-     * @return The permissions of the guild member.
-     */
-    Set<PermissionType> getPermissions();
+    public List<GuildMemberFlag> getFlags() {
+        return EnumUtils.getEnumListFromLong(member, "flags", GuildMemberFlag.class);
+    }
 
-    /**
-     * Checks if the guild member has the specified permission.
-     *
-     * @param permission the permission to check for
-     * @return true if the guild member has the permission, false otherwise
-     */
-    boolean hasPermission(PermissionType permission);
+    public ZonedDateTime getTimeJoined() {
+        return TimeUtils.getZonedDateTime(member, "joined_at");
+    }
 
-    /**
-     * Gets the roles assigned to the guild member.
-     *
-     * @return The roles assigned to the guild member.
-     */
-    List<GuildRole> getRoles();
+    public Set<PermissionType> getPermissions() {
+        Set<PermissionType> permissions = new HashSet<>();
+        if (isOwner()) {
+            permissions.addAll(List.of(PermissionType.values()));
+        } else {
+            permissions.addAll(guild.getPublicRole().getPermissions());
+            getRoles().forEach(role -> permissions.addAll(role.getPermissions()));
+        }
+        return permissions;
+    }
 
-    /**
-     * Gets the roles assigned to the guild member by name.
-     *
-     * @param roleName The name of the role.
-     * @return The roles assigned to the guild member with the specified name.
-     */
-    List<GuildRole> getRolesByName(String roleName);
+    public boolean hasPermission(PermissionType permission) {
+        return getPermissions().contains(permission);
+    }
 
-    /**
-     * Removes a role from the guild member by its ID.
-     *
-     * @param roleId The ID of the role to remove.
-     */
-    void deleteRoleById(String roleId);
+    public List<GuildRole> getRoles() {
+        List<GuildRole> roles = new ArrayList<>();
+        if (!member.get("roles").isEmpty()) {
+            for (String guildRole : guild.getRoles().stream().map(GuildRole::getId).toList()) {
+                for (JsonNode memberRole : member.get("roles")) {
+                    if (memberRole.asText().equals(guildRole)) {
+                        roles.add(guild.getRoleById(guildRole));
+                    }
+                }
+            }
+        }
+        return roles;
+    }
 
-    /**
-     * Removes a role from the guild member by its ID.
-     *
-     * @param roleId The ID of the role to remove.
-     */
-    void deleteRoleById(long roleId);
+    public List<GuildRole> getRolesByName(String roleName) {
+        return getRoles().stream().filter(role -> role.getName().equals(roleName)).toList();
+    }
 
-    /**
-     * Checks if the guild member is pending.
-     *
-     * @return true if the guild member is pending, false otherwise.
-     */
-    boolean isPending();
+    public void deleteRoleById(String roleId) {
+        ApiClient.delete(Routes.Guild.Member.Role(guild.getId(), getUser().getId(), roleId));
+    }
 
-    /**
-     * Checks if the guild member is the owner of the guild.
-     *
-     * @return true if the guild member is the owner, false otherwise.
-     */
-    boolean isOwner();
+    public void deleteRoleById(long roleId) {
+        deleteRoleById(String.valueOf(roleId));
+    }
 
-    /**
-     * Checks if the guild member is boosting the guild.
-     *
-     * @return true if the guild member is boosting, false otherwise.
-     */
-    boolean isBoosting();
+    public boolean isPending() {
+        if (member.has("pending")) {
+            isPending = member.get("pending").asBoolean();
+        }
+        return isPending != null && isPending;
+    }
 
-    /**
-     * Checks if the guild member is muted.
-     *
-     * @return true if the guild member is muted, false otherwise.
-     */
-    boolean isMuted();
+    public boolean isOwner() {
+        return getUser().getId().equals(guild.getOwner().getId());
+    }
 
-    /**
-     * Checks if the guild member is deafened.
-     *
-     * @return true if the guild member is deafened, false otherwise.
-     */
-    boolean isDeafened();
+    public boolean isBoosting() {
+        if (member.has("premium_since")) {
+            isBoosting = !member.hasNonNull("premium_since");
+        }
+        return isBoosting != null && isBoosting;
+    }
 
-    /**
-     * Gets the guild to which the guild member belongs.
-     *
-     * @return The guild to which the guild member belongs.
-     */
-    Guild getGuild();
+    public boolean isMuted() {
+        if (member.has("mute")) {
+            isMuted = member.get("mute").asBoolean();
+        }
+        return isMuted != null && isMuted;
+    }
 
-    /**
-     * Adds the guild member to the specified guild.
-     *
-     * @param guildId The ID of the guild.
-     */
-    void addToGuild(String guildId);
+    public boolean isDeafened() {
+        if (member.has("deaf")) {
+            isDeafened = member.get("deaf").asBoolean();
+        }
+        return isDeafened != null && isDeafened;
+    }
 
-    /**
-     * Adds the guild member to the specified guild.
-     *
-     * @param guildId The ID of the guild.
-     */
-    void addToGuild(long guildId);
+    public Guild getGuild() {
+        return guild;
+    }
 
-    /**
-     * Gets the user associated with the guild member.
-     *
-     * @return The user associated with the guild member.
-     */
-    User getUser();
+    public void addToGuild(String guildId) {
+        ApiClient.put(null, Routes.Guild.Member.Get(guildId, getUser().getId()));
+    }
 
-    /**
-     * Adds a role to the guild member by its ID.
-     *
-     * @param roleId The ID of the role to add.
-     */
-    void addRole(String roleId);
+    public void addToGuild(long guildId) {
+        addToGuild(String.valueOf(guildId));
+    }
 
-    /**
-     * Adds a role to the guild member by its ID.
-     *
-     * @param roleId The ID of the role to add.
-     */
-    void addRole(long roleId);
+    public void addRole(String roleId) {
+        ApiClient.put(null, Routes.Guild.Member.Role(getGuild().getId(), getUser().getId(), roleId));
+    }
 
-    /**
-     * Removes a role from the guild member by its ID.
-     *
-     * @param roleId The ID of the role to remove.
-     */
-    void removeRole(String roleId);
+    public void addRole(long roleId) {
+        addRole(String.valueOf(roleId));
+    }
 
-    /**
-     * Removes a role from the guild member by its ID.
-     *
-     * @param roleId The ID of the role to remove.
-     */
-    void removeRole(long roleId);
+    public void removeRole(String roleId) {
+        ApiClient.delete(Routes.Guild.Member.Role(getGuild().getId(), getUser().getId(), roleId));
+    }
 
-    /**
-     * Modifies the guild member.
-     *
-     * @param handler The consumer to handle the modification action.
-     * @return The modification event for the guild member.
-     */
-    ModifyEvent<GuildMember> modify(Consumer<GuildMemberModifyAction> handler);
+    public void removeRole(long roleId) {
+        removeRole(String.valueOf(roleId));
+    }
 
-    /**
-     * Sets the timeout for the guild member.
-     */
-    void setTimeout(ZonedDateTime timeout);
+    public ModifyEvent<GuildMember> modify(Consumer<GuildMemberModifyAction> handler) {
+        ActionExecutor.modifyGuildMember(handler, getGuild().getId(), getUser().getId());
+        return new ModifyEvent<>(guild.getMemberById(getUser().getId()));
+    }
 
-    /**
-     * Removes the timeout for the guild member.
-     */
-    void removeTimeout();
+    public void setTimeout(ZonedDateTime timeout) {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.put("communication_disabled_until", timeout.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
+    }
+
+    public void removeTimeout() {
+        ObjectNode jsonObject = JsonNodeFactory.instance.objectNode();
+        jsonObject.set("communication_disabled_until", NullNode.instance);
+        ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guild.getId(), getUser().getId()));
+    }
+
+    public String getAsMention() {
+        return "<@" + getUser().getId() + ">";
+    }
 }

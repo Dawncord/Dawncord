@@ -295,13 +295,13 @@ public abstract class GuildChannelAction extends Action<GuildChannelAction> {
                 override.put("type", permissionOverride.type().getValue());
                 override.put("deny", permissionOverride.denied() != null && !permissionOverride.denied().isEmpty()
                         ? String.valueOf(permissionOverride.denied().stream()
-                                         .mapToLong(PermissionType::getValue)
-                                         .reduce(0L, (x, y) -> x | y))
+                        .mapToLong(PermissionType::getValue)
+                        .reduce(0L, (x, y) -> x | y))
                         : "0");
                 override.put("allow", permissionOverride.allowed() != null && !permissionOverride.allowed().isEmpty()
                         ? String.valueOf(permissionOverride.allowed().stream()
-                                         .mapToLong(PermissionType::getValue)
-                                         .reduce(0L, (x, y) -> x | y))
+                        .mapToLong(PermissionType::getValue)
+                        .reduce(0L, (x, y) -> x | y))
                         : "0");
                 jsonArray.add(override);
             }
