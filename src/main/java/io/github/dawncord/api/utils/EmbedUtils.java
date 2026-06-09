@@ -46,8 +46,8 @@ public class EmbedUtils {
         ZonedDateTime timestamp = embed.has("timestamp") ? TimeUtils.getZonedDateTime(embed, "timestamp") : null;
         int color = embed.has("color") ? embed.get("color").asInt() : 0;
         Embed.Footer footer = embed.has("footer") ? getEmbedFooterFromJson(embed.get("footer")) : null;
-        Embed.EmbedImage image = embed.has("image") ? getEmbedImageFromJson(embed.get("image")) : null;
-        Embed.EmbedImage thumbnail = embed.has("thumbnail") ? getEmbedImageFromJson(embed.get("thumbnail")) : null;
+        Embed.Image image = embed.has("image") ? getEmbedImageFromJson(embed.get("image")) : null;
+        Embed.Image thumbnail = embed.has("thumbnail") ? getEmbedImageFromJson(embed.get("thumbnail")) : null;
         Embed.Author author = embed.has("author") ? getEmbedAuthorFromJson(embed.get("author")) : null;
         List<Embed.Field> fields = embed.has("fields") ? getEmbedFieldsFromJson(embed.get("fields")) : null;
 
@@ -94,37 +94,37 @@ public class EmbedUtils {
     private static void setEmbedAuthorToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("author", mapper.createObjectNode()
-                        .put("name", embed.author().getName())
-                        .put("url", embed.author().getUrl())
-                        .put("icon_url", embed.author().getIconUrl())
+                        .put("name", embed.author().name())
+                        .put("url", embed.author().url())
+                        .put("icon_url", embed.author().iconUrl())
                 );
     }
 
     private static void setEmbedThumbnailToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("thumbnail", mapper.createObjectNode()
-                        .put("url", embed.thumbnail().getUrl())
-                        .put("proxy_url", embed.thumbnail().getProxyUrl())
-                        .put("width", embed.thumbnail().getWidth())
-                        .put("height", embed.thumbnail().getHeight())
+                        .put("url", embed.thumbnail().url())
+                        .put("proxy_url", embed.thumbnail().proxyUrl())
+                        .put("width", embed.thumbnail().width())
+                        .put("height", embed.thumbnail().height())
                 );
     }
 
     private static void setEmbedImageToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("image", mapper.createObjectNode()
-                        .put("url", embed.image().getUrl())
-                        .put("proxy_url", embed.image().getProxyUrl())
-                        .put("width", embed.image().getWidth())
-                        .put("height", embed.image().getHeight())
+                        .put("url", embed.image().url())
+                        .put("proxy_url", embed.image().proxyUrl())
+                        .put("width", embed.image().width())
+                        .put("height", embed.image().height())
                 );
     }
 
     private static void setEmbedFooterToJson(Embed embed, ObjectNode embedJson) {
         embedJson
                 .set("footer", mapper.createObjectNode()
-                        .put("text", embed.footer().getText())
-                        .put("icon_url", embed.footer().getIconUrl())
+                        .put("text", embed.footer().text())
+                        .put("icon_url", embed.footer().iconUrl())
                 );
     }
 
@@ -134,12 +134,12 @@ public class EmbedUtils {
         return new Embed.Footer(text, iconUrl);
     }
 
-    private static Embed.EmbedImage getEmbedImageFromJson(JsonNode imageJson) {
+    private static Embed.Image getEmbedImageFromJson(JsonNode imageJson) {
         String url = imageJson.get("url").asText();
         String proxyUrl = imageJson.has("proxy_url") && imageJson.hasNonNull("proxy_url") ? imageJson.get("proxy_url").asText() : null;
         int width = imageJson.has("width") && imageJson.hasNonNull("width") ? imageJson.get("width").asInt() : 0;
         int height = imageJson.has("height") && imageJson.hasNonNull("height") ? imageJson.get("height").asInt() : 0;
-        return new Embed.EmbedImage(url, proxyUrl, width, height);
+        return new Embed.Image(url, proxyUrl, width, height);
     }
 
     private static Embed.Author getEmbedAuthorFromJson(JsonNode authorJson) {

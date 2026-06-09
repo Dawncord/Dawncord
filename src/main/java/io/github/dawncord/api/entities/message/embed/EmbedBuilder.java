@@ -16,8 +16,8 @@ public class EmbedBuilder {
     private ZonedDateTime timestamp;
     private int color = 536870911;
     private Embed.Footer footer;
-    private Embed.EmbedImage image;
-    private Embed.EmbedImage thumbnail;
+    private Embed.Image image;
+    private Embed.Image thumbnail;
     private Embed.Author author;
 
     /**
@@ -114,7 +114,7 @@ public class EmbedBuilder {
      * @return The EmbedBuilder instance.
      */
     public EmbedBuilder setImage(String url) {
-        this.image = new Embed.EmbedImage(url, null, 0, 0);
+        this.image = new Embed.Image(url, null, 0, 0);
         return this;
     }
 
@@ -125,7 +125,7 @@ public class EmbedBuilder {
      * @return The EmbedBuilder instance.
      */
     public EmbedBuilder setThumbnail(String url) {
-        this.thumbnail = new Embed.EmbedImage(url, null, 0, 0);
+        this.thumbnail = new Embed.Image(url, null, 0, 0);
         return this;
     }
 
