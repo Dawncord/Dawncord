@@ -1,6 +1,7 @@
 package io.github.dawncord.api.entities.guild.widget;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.entities.image.GuildWidgetImage;
 import io.github.dawncord.api.types.OnlineStatus;
 import io.github.dawncord.api.utils.LazyLoader;
 

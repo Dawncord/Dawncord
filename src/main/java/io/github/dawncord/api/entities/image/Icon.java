@@ -23,7 +23,6 @@ public interface Icon {
         return "";
     }
 
-
     /**
      * Downloads the icon in JPEG format with the specified name.
      *
