@@ -34,7 +34,7 @@ public interface Event {
      *
      * @return The guild associated with the event.
      */
-    Guild guild();
+    Guild getGuild();
 
     /**
      * Retrieves the application associated with the event.
@@ -63,7 +63,7 @@ public interface Event {
      * @return The webhook associated with the specified ID.
      */
     default Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), guild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), getGuild());
     }
 
     /**
@@ -84,7 +84,7 @@ public interface Event {
      * @return The webhook associated with the specified ID and token.
      */
     default Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), guild());
+        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
     }
 
     /**

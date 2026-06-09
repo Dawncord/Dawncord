@@ -119,7 +119,7 @@ public class SlashCommandEvent implements ReplyEvent {
     public List<OptionData> getOptions() {
         List<OptionData> optionDataList = new ArrayList<>();
         for (Map<String, Object> map : data.getOptions()) {
-            OptionData optionData = new OptionData(map, guild());
+            OptionData optionData = new OptionData(map, getGuild());
             optionDataList.add(optionData);
         }
 
@@ -138,7 +138,7 @@ public class SlashCommandEvent implements ReplyEvent {
     }
 
     @Override
-    public Guild guild() {
+    public Guild getGuild() {
         return guild;
     }
 
@@ -193,7 +193,7 @@ public class SlashCommandEvent implements ReplyEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return guild().getChannelById(channelId);
+        return getGuild().getChannelById(channelId);
     }
 
     @Override

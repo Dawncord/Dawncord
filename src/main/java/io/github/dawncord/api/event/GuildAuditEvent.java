@@ -7,13 +7,13 @@ import io.github.dawncord.api.entities.guild.audit.AuditLog;
 /**
  * Represents an audit event in a guild.
  */
-public record GuildAuditEvent(Guild guild, GuildMember member, AuditLog.Entry entry) implements Event {
+public record GuildAuditEvent(Guild getGuild, GuildMember member, AuditLog.Entry entry) implements Event {
     /**
      * Constructs a GuildAuditEvent with the specified guild, member, and audit log entry.
      *
-     * @param guild  The guild associated with the audit event.
-     * @param member The guild member associated with the audit event.
-     * @param entry  The audit log entry associated with the audit event.
+     * @param getGuild The guild associated with the audit event.
+     * @param member   The guild member associated with the audit event.
+     * @param entry    The audit log entry associated with the audit event.
      */
     public GuildAuditEvent {
     }

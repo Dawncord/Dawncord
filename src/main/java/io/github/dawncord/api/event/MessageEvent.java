@@ -64,7 +64,7 @@ public class MessageEvent implements Event {
     }
 
     @Override
-    public Guild guild() {
+    public Guild getGuild() {
         return guild;
     }
 }

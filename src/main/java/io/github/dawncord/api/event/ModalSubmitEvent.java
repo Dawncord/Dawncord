@@ -68,7 +68,7 @@ public class ModalSubmitEvent implements ReplyEvent {
     }
 
     @Override
-    public Guild guild() {
+    public Guild getGuild() {
         return guild;
     }
 
@@ -123,7 +123,7 @@ public class ModalSubmitEvent implements ReplyEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return guild().getChannelById(channelId);
+        return getGuild().getChannelById(channelId);
     }
 
     @Override

@@ -6,12 +6,12 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event triggered when a webhook is updated in a guild.
  */
-public record WebhookUpdateEvent(Guild guild, Webhook webhook) implements Event {
+public record WebhookUpdateEvent(Guild getGuild, Webhook webhook) implements Event {
     /**
      * Constructs a WebhookUpdateEvent with the specified guild and webhook.
      *
-     * @param guild   The guild associated with the webhook update event.
-     * @param webhook The updated webhook.
+     * @param getGuild The guild associated with the webhook update event.
+     * @param webhook  The updated webhook.
      */
     public WebhookUpdateEvent {
     }

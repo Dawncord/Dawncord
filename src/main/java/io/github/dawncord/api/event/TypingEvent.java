@@ -7,13 +7,13 @@ import io.github.dawncord.api.entities.guild.GuildMember;
 /**
  * Represents an event triggered when a user starts typing in a guild channel.
  */
-public record TypingEvent(Guild guild, GuildChannel channel, GuildMember member) implements Event {
+public record TypingEvent(Guild getGuild, GuildChannel channel, GuildMember member) implements Event {
     /**
      * Constructs a TypingEvent with the specified guild, channel, and member.
      *
-     * @param guild   The guild associated with the typing event.
-     * @param channel The channel in which the typing event occurred.
-     * @param member  The member who started typing.
+     * @param getGuild The guild associated with the typing event.
+     * @param channel  The channel in which the typing event occurred.
+     * @param member   The member who started typing.
      */
     public TypingEvent {
     }

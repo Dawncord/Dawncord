@@ -7,14 +7,14 @@ import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 /**
  * Represents an event related to a user's interaction with a scheduled event in a guild.
  */
-public record GuildScheduledEventUserEvent(Guild guild, GuildMember member,
+public record GuildScheduledEventUserEvent(Guild getGuild, GuildMember member,
                                            GuildScheduledEvent event) implements Event {
     /**
      * Constructs a GuildScheduledEventUserEvent with the specified guild, member, and scheduled event.
      *
-     * @param guild  The guild associated with the event.
-     * @param member The member associated with the event.
-     * @param event  The scheduled event involved in the event.
+     * @param getGuild The guild associated with the event.
+     * @param member   The member associated with the event.
+     * @param event    The scheduled event involved in the event.
      */
     public GuildScheduledEventUserEvent {
     }

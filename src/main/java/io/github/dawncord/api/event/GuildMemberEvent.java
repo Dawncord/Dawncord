@@ -6,12 +6,12 @@ import io.github.dawncord.api.entities.guild.GuildMember;
 /**
  * Represents an event related to a member in a guild.
  */
-public record GuildMemberEvent(Guild guild, GuildMember member) implements Event {
+public record GuildMemberEvent(Guild getGuild, GuildMember member) implements Event {
     /**
      * Constructs a GuildMemberEvent with the specified guild and member.
      *
-     * @param guild  The guild associated with the event.
-     * @param member The member involved in the event.
+     * @param getGuild The guild associated with the event.
+     * @param member   The member involved in the event.
      */
     public GuildMemberEvent {
     }

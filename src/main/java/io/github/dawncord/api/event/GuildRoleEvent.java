@@ -6,12 +6,12 @@ import io.github.dawncord.api.entities.guild.role.GuildRole;
 /**
  * Represents an event related to a role in a guild.
  */
-public record GuildRoleEvent(Guild guild, GuildRole role) implements Event {
+public record GuildRoleEvent(Guild getGuild, GuildRole role) implements Event {
     /**
      * Constructs a GuildRoleEvent with the specified guild and role.
      *
-     * @param guild The guild associated with the event.
-     * @param role  The role involved in the event.
+     * @param getGuild The guild associated with the event.
+     * @param role     The role involved in the event.
      */
     public GuildRoleEvent {
     }

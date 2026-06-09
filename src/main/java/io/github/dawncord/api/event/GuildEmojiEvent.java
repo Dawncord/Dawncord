@@ -8,12 +8,12 @@ import java.util.List;
 /**
  * Represents an event related to emojis in a guild.
  */
-public record GuildEmojiEvent(Guild guild, List<CustomEmoji> emojis) implements Event {
+public record GuildEmojiEvent(Guild getGuild, List<CustomEmoji> emojis) implements Event {
     /**
      * Constructs a GuildEmojiEvent with the specified guild and list of emojis.
      *
-     * @param guild  The guild associated with the event.
-     * @param emojis The list of emojis involved in the event.
+     * @param getGuild The guild associated with the event.
+     * @param emojis   The list of emojis involved in the event.
      */
     public GuildEmojiEvent {
     }

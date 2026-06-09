@@ -12,12 +12,12 @@ import java.util.List;
 /**
  * Represents an event related to a member's presence update in a guild.
  */
-public record PresenceEvent(Guild guild, GuildMember member, OnlineStatus status, ClientStatus clientStatus,
+public record PresenceEvent(Guild getGuild, GuildMember member, OnlineStatus status, ClientStatus clientStatus,
                             List<Activity> activities) implements Event {
     /**
      * Constructs a PresenceEvent with the specified guild, member, status, client status, and activities.
      *
-     * @param guild        The guild where the presence update occurred.
+     * @param getGuild     The guild where the presence update occurred.
      * @param member       The member whose presence was updated.
      * @param status       The online status of the member.
      * @param clientStatus The client status of the member.

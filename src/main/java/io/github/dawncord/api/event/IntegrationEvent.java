@@ -6,11 +6,11 @@ import io.github.dawncord.api.entities.guild.integration.Integration;
 /**
  * Represents an event related to integrations in a guild.
  */
-public record IntegrationEvent(Guild guild, Integration integration) implements Event {
+public record IntegrationEvent(Guild getGuild, Integration integration) implements Event {
     /**
      * Constructs an IntegrationEvent with the specified guild and integration.
      *
-     * @param guild       The guild associated with the event.
+     * @param getGuild    The guild associated with the event.
      * @param integration The integration involved in the event.
      */
     public IntegrationEvent {

@@ -81,7 +81,7 @@ public class ButtonEvent implements MessageComponentEvent {
     }
 
     @Override
-    public Guild guild() {
+    public Guild getGuild() {
         return guild;
     }
 
@@ -136,7 +136,7 @@ public class ButtonEvent implements MessageComponentEvent {
 
     @Override
     public GuildChannel getChannelById(String channelId) {
-        return guild().getChannelById(channelId);
+        return getGuild().getChannelById(channelId);
     }
 
     @Override

@@ -6,12 +6,12 @@ import io.github.dawncord.api.entities.guild.Guild;
 /**
  * Represents an event related to a thread.
  */
-public record ThreadEvent(Guild guild, Thread thread) implements Event {
+public record ThreadEvent(Guild getGuild, Thread thread) implements Event {
     /**
      * Constructs a ThreadEvent with the specified guild and thread.
      *
-     * @param guild  The guild associated with the thread event.
-     * @param thread The thread involved in the event.
+     * @param getGuild The guild associated with the thread event.
+     * @param thread   The thread involved in the event.
      */
     public ThreadEvent {
     }
