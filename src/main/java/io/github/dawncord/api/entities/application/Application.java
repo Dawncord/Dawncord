@@ -2,8 +2,6 @@ package io.github.dawncord.api.entities.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.AbstractApplication;
-import io.github.dawncord.api.entities.IApplication;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.team.Team;
@@ -20,7 +18,7 @@ import java.util.List;
  * Represents an implementation of an application.
  * ApplicationImpl is a class providing methods to access properties of an application.
  */
-public class Application extends AbstractApplication implements IApplication {
+public class Application extends AbstractApplication {
     private final LazyLoader loader;
     private final JsonNode application;
     private List<String> rpcOrigins;

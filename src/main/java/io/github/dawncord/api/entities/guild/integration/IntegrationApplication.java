@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.guild.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.AbstractApplication;
+import io.github.dawncord.api.entities.application.AbstractApplication;
 
 /**
  * Represents an application integrated into a platform.

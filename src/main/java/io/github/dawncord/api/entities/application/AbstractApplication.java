@@ -1,12 +1,15 @@
-package io.github.dawncord.api.entities;
+package io.github.dawncord.api.entities.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.ISnowflake;
+import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
-public class AbstractApplication implements IApplication {
+public abstract class AbstractApplication implements ISnowflake {
     private final LazyLoader loader;
     private final JsonNode application;
     private String id;
@@ -31,13 +34,11 @@ public class AbstractApplication implements IApplication {
         return Long.parseLong(getId());
     }
 
-    @Override
     public String getName() {
         name = loader.loadString(name, "name");
         return name;
     }
 
-    @Override
     public String getDescription() {
         description = loader.loadString(description, "description");
         return description;
@@ -49,7 +50,6 @@ public class AbstractApplication implements IApplication {
         return icon;
     }
 
-    @Override
     public User getBot() {
         bot = loader.loadIfExists(bot, "bot",
                 () -> new UserImpl(JsonUtils.fetch(Routes.User(getBotId()))));
