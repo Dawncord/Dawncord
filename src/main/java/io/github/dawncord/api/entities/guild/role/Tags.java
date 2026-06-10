@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.guild.role;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.utils.JsonUtils;
@@ -38,7 +37,7 @@ public class Tags {
      */
     public User getBot() {
         bot = loader.loadIfExists(bot, "bot_id",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(tags.get("bot_id").asText()))));
+                () -> new User(JsonUtils.fetch(Routes.User(tags.get("bot_id").asText()))));
         return bot;
     }
 

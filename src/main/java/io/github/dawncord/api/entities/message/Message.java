@@ -7,7 +7,6 @@ import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.thread.Thread;
@@ -119,7 +118,7 @@ public class Message implements ISnowflake {
 
     public User getFrom() {
         if (author == null) {
-            author = new UserImpl(message.get("author"));
+            author = new User(message.get("author"));
         }
         return author;
     }
@@ -147,7 +146,7 @@ public class Message implements ISnowflake {
 
     public List<User> getMentions() {
         if (mentions == null) {
-            mentions = JsonUtils.getEntityList(message.get("mentions"), UserImpl::new);
+            mentions = JsonUtils.getEntityList(message.get("mentions"), User::new);
         }
         return mentions;
     }

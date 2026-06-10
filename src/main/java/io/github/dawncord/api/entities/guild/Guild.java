@@ -157,7 +157,7 @@ public class Guild implements ISnowflake {
 
     public User getOwner() {
         owner = loader.loadIfExists(owner, "owner_id",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(guild.get("owner_id").asText()))));
+                () -> new User(JsonUtils.fetch(Routes.User(guild.get("owner_id").asText()))));
         return owner;
     }
 

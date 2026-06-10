@@ -6,7 +6,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.StickerFormatType;
@@ -104,7 +103,7 @@ public class Sticker implements ISnowflake {
     public User getAuthor() {
         if (author == null) {
             author = sticker.has("user")
-                    ? new UserImpl(sticker.get("user"))
+                    ? new User(sticker.get("user"))
                     : null;
         }
         return author;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
@@ -70,7 +69,7 @@ public class Invite {
     }
 
     public User getInviter() {
-        inviter = loader.loadIfExists(inviter, "inviter", () -> new UserImpl(invite.get("inviter")));
+        inviter = loader.loadIfExists(inviter, "inviter", () -> new User(invite.get("inviter")));
         return inviter;
     }
 
@@ -81,7 +80,7 @@ public class Invite {
 
     public User getTargetUser() {
         targetUser = loader.loadIfExists(targetUser, "target_user",
-                () -> new UserImpl(invite.get("target_user")));
+                () -> new User(invite.get("target_user")));
         return targetUser;
     }
 

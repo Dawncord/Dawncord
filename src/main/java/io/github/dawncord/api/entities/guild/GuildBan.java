@@ -2,7 +2,6 @@ package io.github.dawncord.api.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 
 /**
  * Represents a ban on a guild member.
@@ -28,7 +27,7 @@ public class GuildBan {
      */
     public User getUser() {
         if (user == null) {
-            user = new UserImpl(ban.get("user"));
+            user = new User(ban.get("user"));
         }
         return user;
     }

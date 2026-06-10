@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.image.TeamIcon;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
@@ -57,7 +56,7 @@ public class Team implements ISnowflake {
 
     public User getOwner() {
         owner = loader.loadIfExists(owner, "owner_user_id",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(team.get("owner_user_id").asText()))));
+                () -> new User(JsonUtils.fetch(Routes.User(team.get("owner_user_id").asText()))));
         return owner;
     }
 

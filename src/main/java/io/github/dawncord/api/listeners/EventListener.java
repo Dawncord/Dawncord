@@ -98,7 +98,7 @@ public class EventListener extends WebSocketAdapter {
 
     private void processReadyEvent(JsonNode data) {
         String version = data.path("v").asText();
-        User user = new UserImpl(JsonUtils.fetch(Routes.User(data.path("user").path("id").asText())));
+        User user = new User(JsonUtils.fetch(Routes.User(data.path("user").path("id").asText())));
         String sessionType = data.path("session_type").asText();
         String sessionId = data.path("session_id").asText();
         String resumeUrl = data.path("resume_gateway_url").asText();
@@ -161,7 +161,7 @@ public class EventListener extends WebSocketAdapter {
         String guildId = data.path("guild_id").asText();
         Guild guild = getGuildById(guildId);
         if (guild != null) {
-            User user = new UserImpl(JsonUtils.fetch(Routes.User(data.path("user").path("id").asText())));
+            User user = new User(JsonUtils.fetch(Routes.User(data.path("user").path("id").asText())));
 
             GuildBanEvent guildEvent = new GuildBanEvent(guild, user);
             invokeProcessEvent("processGuildBanEvent", type, guildEvent, GuildBanEvent.class);
@@ -335,7 +335,7 @@ public class EventListener extends WebSocketAdapter {
 
     private void processBotUpdateEvent(JsonNode data) {
         String userId = data.path("id").asText();
-        User user = new UserImpl(JsonUtils.fetch(Routes.User(userId)));
+        User user = new User(JsonUtils.fetch(Routes.User(userId)));
         BotUpdateEvent botUpdateEvent = new BotUpdateEvent(user);
         try {
             Method method = EventProcessor.class.getDeclaredMethod("processBotUpdateEvent", BotUpdateEvent.class);

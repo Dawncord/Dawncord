@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.application.team;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.types.MembershipState;
 import io.github.dawncord.api.types.TeamMemberRole;
 import io.github.dawncord.api.utils.EnumUtils;
@@ -35,7 +34,7 @@ public class TeamMember {
     }
 
     public User getUser() {
-        user = loader.load(user, () -> new UserImpl(JsonUtils.fetch(Routes.User(getUserId()))));
+        user = loader.load(user, () -> new User(JsonUtils.fetch(Routes.User(getUserId()))));
         return user;
     }
 

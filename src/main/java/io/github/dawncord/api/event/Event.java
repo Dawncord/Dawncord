@@ -3,7 +3,6 @@ package io.github.dawncord.api.event;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.ApplicationModifyAction;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.Webhook;
 import io.github.dawncord.api.entities.WebhookImpl;
 import io.github.dawncord.api.entities.application.Application;
@@ -93,6 +92,6 @@ public interface Event {
      * @return The bot user associated with the event.
      */
     default User getBot() {
-        return new UserImpl(JsonUtils.fetch(Routes.User("@me")));
+        return new User(JsonUtils.fetch(Routes.User("@me")));
     }
 }

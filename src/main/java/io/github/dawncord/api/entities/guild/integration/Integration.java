@@ -5,7 +5,6 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.types.IntegrationExpireBehavior;
@@ -100,7 +99,7 @@ public class Integration implements ISnowflake {
     }
 
     public User getUser() {
-        user = loader.loadIfExists(user, "user", () -> new UserImpl(integration.get("user")));
+        user = loader.loadIfExists(user, "user", () -> new User(integration.get("user")));
         return user;
     }
 

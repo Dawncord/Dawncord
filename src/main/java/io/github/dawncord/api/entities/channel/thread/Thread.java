@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.MessageChannel;
 import io.github.dawncord.api.entities.guild.Guild;
@@ -50,7 +49,7 @@ public class Thread extends MessageChannel {
 
     public User getCreator() {
         creator = loader.load(creator,
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(thread.get("owner_id").asText()))));
+                () -> new User(JsonUtils.fetch(Routes.User(thread.get("owner_id").asText()))));
         return creator;
     }
 

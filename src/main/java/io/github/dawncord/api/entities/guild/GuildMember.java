@@ -8,7 +8,6 @@ import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.GuildMemberModifyAction;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
@@ -49,7 +48,7 @@ public class GuildMember {
     }
 
     public User getUser() {
-        return new UserImpl(member.get("user"));
+        return new User(member.get("user"));
     }
 
     public String getNickname() {

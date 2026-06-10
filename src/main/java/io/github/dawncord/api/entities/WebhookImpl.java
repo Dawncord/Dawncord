@@ -77,7 +77,7 @@ public class WebhookImpl implements Webhook {
     @Override
     public User getUser() {
         if (user == null) {
-            user = new UserImpl(webhook.get("user"));
+            user = new User(webhook.get("user"));
         }
         return user;
     }

@@ -3,7 +3,6 @@ package io.github.dawncord.api.entities.application;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.team.Team;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
@@ -125,7 +124,7 @@ public class Application extends AbstractApplication {
 
     public User getOwner() {
         owner = loader.loadIfExists(owner, "owner",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(getOwnerId()))));
+                () -> new User(JsonUtils.fetch(Routes.User(getOwnerId()))));
         return owner;
     }
 

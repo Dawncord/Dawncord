@@ -129,7 +129,7 @@ public class AuditLog {
      * @return The list of auditors.
      */
     public List<User> getAuditors() {
-        auditors = loader.loadEntityList(auditors, "users", UserImpl::new);
+        auditors = loader.loadEntityList(auditors, "users", User::new);
         return auditors;
     }
 
@@ -354,7 +354,7 @@ public class AuditLog {
          */
         public User getUser() {
             user = loader.loadIfExists(user, "user_id",
-                    () -> new UserImpl(JsonUtils.fetch(Routes.User(entry.get("user_id").asText()))));
+                    () -> new User(JsonUtils.fetch(Routes.User(entry.get("user_id").asText()))));
             return user;
         }
 

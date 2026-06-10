@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.Mentionable;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
@@ -74,7 +73,7 @@ public class OptionData {
      * @return the User object representing the user associated with the option value
      */
     public User getAsUser() {
-        return new UserImpl(JsonUtils.fetch(Routes.User(getAsString())));
+        return new User(JsonUtils.fetch(Routes.User(getAsString())));
     }
 
     /**

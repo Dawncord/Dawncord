@@ -76,7 +76,7 @@ public class CustomEmoji implements Emoji {
     public User getCreator() {
         if (creator == null) {
             if (emoji.has("user") && emoji.hasNonNull("user")) {
-                creator = new UserImpl(emoji.get("user"));
+                creator = new User(emoji.get("user"));
             }
         }
         return creator;

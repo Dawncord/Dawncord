@@ -6,7 +6,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.automoderule.AutoModRuleModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.AutoModEventType;
@@ -63,7 +62,7 @@ public class AutoModRule implements ISnowflake {
 
     public User getCreator() {
         creator = loader.loadIfExists(creator, "user_id",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(rule.get("creator_id").asText()))));
+                () -> new User(JsonUtils.fetch(Routes.User(rule.get("creator_id").asText()))));
         return creator;
     }
 

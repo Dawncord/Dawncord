@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
-import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.image.ApplicationIcon;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
@@ -52,7 +51,7 @@ public abstract class AbstractApplication implements ISnowflake {
 
     public User getBot() {
         bot = loader.loadIfExists(bot, "bot",
-                () -> new UserImpl(JsonUtils.fetch(Routes.User(getBotId()))));
+                () -> new User(JsonUtils.fetch(Routes.User(getBotId()))));
         return bot;
     }
 
