@@ -37,15 +37,17 @@ public class PollUtils {
     }
 
     @NotNull
-    private static ObjectNode createAnswerJson(AnswerData answer) {
+    public static ObjectNode createAnswerJson(AnswerData answer) {
         ObjectNode answerNode = mapper.createObjectNode();
         answerNode.put("text", answer.text());
         if (answer.emoji() != null) {
-            if (answer.emoji() instanceof CustomEmoji customEmoji) {
-                answerNode.put("emoji", customEmoji.getId());
-            } else if (answer.emoji() instanceof DefaultEmoji(String name)) {
-                answerNode.put("emoji", name);
+            ObjectNode emojiNode = mapper.createObjectNode();
+            switch (answer.emoji()) {
+                case CustomEmoji ce -> emojiNode.put("id", ce.getId());
+                case DefaultEmoji de -> emojiNode.put("name", de.name());
+                default -> throw new IllegalStateException("Unexpected value: " + answer.emoji());
             }
+            answerNode.set("emoji", emojiNode);
         }
         return answerNode;
     }

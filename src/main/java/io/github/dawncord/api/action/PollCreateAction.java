@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.CustomEmoji;
-import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.message.poll.AnswerData;
+import io.github.dawncord.api.utils.PollUtils;
 
 /**
  * Represents an action for creating a poll.
@@ -54,17 +53,7 @@ public class PollCreateAction extends Action<PollCreateAction> {
     public PollCreateAction setAnswers(AnswerData... answers) {
         ArrayNode answersNode = mapper.createArrayNode();
         for (AnswerData answer : answers) {
-            ObjectNode answerNode = mapper.createObjectNode();
-            answerNode.put("text", answer.text());
-            if (answer.emoji() != null) {
-                ObjectNode emojiNode = mapper.createObjectNode();
-                if (answer.emoji() instanceof CustomEmoji customEmoji) {
-                    emojiNode.put("id", customEmoji.getId());
-                } else if (answer.emoji() instanceof DefaultEmoji(String name)) {
-                    emojiNode.put("name", name);
-                }
-                answerNode.set("emoji", emojiNode);
-            }
+            ObjectNode answerNode = PollUtils.createAnswerJson(answer);
             answersNode.add(mapper.createObjectNode().set("poll_media", answerNode));
         }
         return setProperty("answers", answersNode);

@@ -2,7 +2,6 @@ package io.github.dawncord.api.entities.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.CustomEmoji;
-import io.github.dawncord.api.entities.CustomEmojiImpl;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.image.DiscoverySplash;
@@ -110,7 +109,7 @@ public class GuildPreview implements ISnowflake {
      */
     public List<CustomEmoji> getEmojis() {
         if (emojis == null) {
-            emojis = JsonUtils.getEntityList(preview.get("emojis"), emoji -> new CustomEmojiImpl(emoji, guild));
+            emojis = JsonUtils.getEntityList(preview.get("emojis"), emoji -> new CustomEmoji(emoji, guild));
         }
         return emojis;
     }

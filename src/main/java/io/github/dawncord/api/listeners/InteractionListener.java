@@ -11,7 +11,7 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.command.SlashCommandData;
 import io.github.dawncord.api.command.SubCommand;
 import io.github.dawncord.api.command.SubCommandGroup;
-import io.github.dawncord.api.entities.CustomEmojiImpl;
+import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.guild.Guild;
@@ -238,7 +238,7 @@ public class InteractionListener extends WebSocketAdapter {
         Emoji emoji = null;
         if (subComponent.has("emoji")) {
             if (subComponent.get("emoji").get("id") != null) {
-                emoji = new CustomEmojiImpl(subComponent, guild);
+                emoji = new CustomEmoji(subComponent, guild);
             } else {
                 emoji = new DefaultEmoji(subComponent.get("emoji").get("name").asText());
             }

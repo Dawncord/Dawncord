@@ -3,7 +3,7 @@ package io.github.dawncord.api.entities.message;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
-import io.github.dawncord.api.entities.CustomEmojiImpl;
+import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.guild.Guild;
 
@@ -76,7 +76,7 @@ public class Reaction {
 
     public Emoji getGuildEmoji() {
         if (guildEmoji == null) {
-            guildEmoji = new CustomEmojiImpl(reaction.get("emoji"), guild);
+            guildEmoji = new CustomEmoji(reaction.get("emoji"), guild);
         }
         return guildEmoji;
     }

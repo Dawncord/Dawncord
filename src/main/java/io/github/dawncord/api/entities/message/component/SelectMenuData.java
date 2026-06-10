@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.message.component;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.CustomEmojiImpl;
+import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.guild.Guild;
@@ -99,7 +99,7 @@ public class SelectMenuData {
             if (option.has("emoji")) {
                 Emoji emoji;
                 if (option.get("emoji").has("id") && option.get("emoji").get("id") != null) {
-                    emoji = new CustomEmojiImpl(option.get("emoji"), guild);
+                    emoji = new CustomEmoji(option.get("emoji"), guild);
                 } else {
                     emoji = new DefaultEmoji(option.get("emoji").get("name").asText());
                 }

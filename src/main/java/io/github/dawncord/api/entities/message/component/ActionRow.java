@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities.message.component;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.entities.CustomEmojiImpl;
+import io.github.dawncord.api.entities.CustomEmoji;
 import io.github.dawncord.api.entities.DefaultEmoji;
 import io.github.dawncord.api.entities.Emoji;
 import io.github.dawncord.api.entities.guild.Guild;
@@ -37,7 +37,7 @@ public class ActionRow {
                 Emoji emoji = null;
                 if (component.has("emoji")) {
                     if (component.get("emoji").has("id") && component.get("emoji").get("id") != null) {
-                        emoji = new CustomEmojiImpl(component, guild);
+                        emoji = new CustomEmoji(component, guild);
                     } else if (!component.get("emoji").has("id") || component.get("emoji").get("id") == null) {
                         emoji = new DefaultEmoji(component.get("name").asText());
                     }

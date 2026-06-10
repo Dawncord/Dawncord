@@ -629,13 +629,13 @@ public class Guild implements ISnowflake {
         emojis = loader.loadEntityList(
                 emojis,
                 JsonUtils.fetch(Routes.Guild.Emoji.All(getId())),
-                emoji -> new CustomEmojiImpl(emoji, this)
+                emoji -> new CustomEmoji(emoji, this)
         );
         return emojis;
     }
 
     public CustomEmoji getEmojiById(String emojiId) {
-        return new CustomEmojiImpl(JsonUtils.fetch(Routes.Guild.Emoji.Get(getId(), emojiId)), this);
+        return new CustomEmoji(JsonUtils.fetch(Routes.Guild.Emoji.Get(getId(), emojiId)), this);
     }
 
     public CustomEmoji getEmojiById(long emojiId) {
