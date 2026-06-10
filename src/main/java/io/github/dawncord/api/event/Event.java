@@ -4,7 +4,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.ApplicationModifyAction;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.Webhook;
-import io.github.dawncord.api.entities.WebhookImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.utils.ActionExecutor;
@@ -62,7 +61,7 @@ public interface Event {
      * @return The webhook associated with the specified ID.
      */
     default Webhook getWebhookById(String webhookId) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), getGuild());
+        return new Webhook(JsonUtils.fetch(Routes.Webhook.ById(webhookId)), getGuild());
     }
 
     /**
@@ -83,7 +82,7 @@ public interface Event {
      * @return The webhook associated with the specified ID and token.
      */
     default Webhook getWebhookByToken(String webhookId, String webhookToken) {
-        return new WebhookImpl(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
+        return new Webhook(JsonUtils.fetch(Routes.Webhook.ByToken(webhookId, webhookToken)), getGuild());
     }
 
     /**

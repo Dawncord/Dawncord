@@ -17,7 +17,10 @@ import io.github.dawncord.api.action.guildrole.GuildRoleCreateAction;
 import io.github.dawncord.api.action.guildrole.GuildRoleModifyAction;
 import io.github.dawncord.api.action.guildsticker.GuildStickerCreateAction;
 import io.github.dawncord.api.action.guildsticker.GuildStickerModifyAction;
-import io.github.dawncord.api.entities.*;
+import io.github.dawncord.api.entities.CustomEmoji;
+import io.github.dawncord.api.entities.ISnowflake;
+import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.Webhook;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.channel.*;
 import io.github.dawncord.api.entities.channel.thread.Thread;
@@ -920,7 +923,7 @@ public class Guild implements ISnowflake {
         webhooks = loader.loadEntityList(
                 webhooks,
                 JsonUtils.fetch(Routes.Guild.Webhooks(getId())),
-                webhook -> new WebhookImpl(webhook, this)
+                webhook -> new Webhook(webhook, this)
         );
         return webhooks;
     }

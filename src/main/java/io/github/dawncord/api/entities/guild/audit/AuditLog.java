@@ -191,7 +191,7 @@ public class AuditLog {
      * @return The list of webhooks.
      */
     public List<Webhook> getWebhooks() {
-        webhooks = loader.loadEntityList(webhooks, "webhooks", webhook -> new WebhookImpl(webhook, guild));
+        webhooks = loader.loadEntityList(webhooks, "webhooks", webhook -> new Webhook(webhook, guild));
         return webhooks;
     }
 

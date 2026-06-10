@@ -11,7 +11,6 @@ import io.github.dawncord.api.action.guildchannel.GuildChannelModifyAction;
 import io.github.dawncord.api.action.webhook.WebhookCreateAction;
 import io.github.dawncord.api.entities.PermissionOverride;
 import io.github.dawncord.api.entities.Webhook;
-import io.github.dawncord.api.entities.WebhookImpl;
 import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.CreateEvent;
@@ -159,7 +158,7 @@ public class GuildChannel extends Channel {
 
     public List<Webhook> getWebhooks() {
         return getType() != ChannelType.PUBLIC_THREAD || getType() != ChannelType.PRIVATE_THREAD || getType() != ChannelType.ANNOUNCEMENT_THREAD
-                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new WebhookImpl(webhook, guild))
+                ? JsonUtils.getEntityList(JsonUtils.fetch(Routes.Channel.Webhooks(getId())).get("webhooks"), webhook -> new Webhook(webhook, guild))
                 : null;
     }
 

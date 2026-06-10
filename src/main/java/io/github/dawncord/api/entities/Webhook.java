@@ -1,85 +1,119 @@
 package io.github.dawncord.api.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.webhook.WebhookModifyAction;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.image.Avatar;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.WebhookType;
+import io.github.dawncord.api.utils.ActionExecutor;
+import io.github.dawncord.api.utils.EnumUtils;
 
 import java.util.function.Consumer;
 
 /**
- * Interface representing a webhook entity.
+ * Implementation class for the Webhook interface.
  */
-public interface Webhook extends ISnowflake {
+public class Webhook implements ISnowflake {
+    private final JsonNode webhook;
+    private final Guild guild;
+    private String id;
+    private String name;
+    private GuildChannel channel;
+    private User user;
+    private Avatar avatar;
+    private String token;
+    private String applicationId;
+    private WebhookType type;
 
     /**
-     * Retrieves the name of the webhook.
+     * Constructs a new WebhookImpl with the provided JSON node and guild.
      *
-     * @return The name of the webhook.
+     * @param webhook The JSON node representing the webhook.
+     * @param guild   The guild associated with the webhook.
      */
-    String getName();
+    public Webhook(JsonNode webhook, Guild guild) {
+        this.webhook = webhook;
+        this.guild = guild;
+    }
 
-    /**
-     * Retrieves the guild associated with the webhook.
-     *
-     * @return The guild associated with the webhook.
-     */
-    Guild getGuild();
+    @Override
+    public String getId() {
+        if (id == null) {
+            id = webhook.get("id").asText();
+        }
+        return id;
+    }
 
-    /**
-     * Retrieves the channel associated with the webhook.
-     *
-     * @return The channel associated with the webhook.
-     */
-    GuildChannel getChannel();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Retrieves the user associated with the webhook.
-     *
-     * @return The user associated with the webhook.
-     */
-    User getUser();
+    public String getName() {
+        if (name == null) {
+            name = webhook.get("name").asText();
+        }
+        return name;
+    }
 
-    /**
-     * Retrieves the avatar of the webhook.
-     *
-     * @return The avatar of the webhook.
-     */
-    Avatar getAvatar();
+    public Guild getGuild() {
+        return guild;
+    }
 
-    /**
-     * Retrieves the token of the webhook.
-     *
-     * @return The token of the webhook.
-     */
-    String getToken();
+    public GuildChannel getChannel() {
+        if (channel == null) {
+            channel = guild.getChannelById(webhook.get("channel_id").asText());
+        }
+        return channel;
+    }
 
-    /**
-     * Retrieves the application ID of the webhook.
-     *
-     * @return The application ID of the webhook.
-     */
-    String getApplicationId();
+    public User getUser() {
+        if (user == null) {
+            user = new User(webhook.get("user"));
+        }
+        return user;
+    }
 
-    /**
-     * Retrieves the type of the webhook.
-     *
-     * @return The type of the webhook.
-     */
-    WebhookType getType();
+    public Avatar getAvatar() {
+        if (avatar == null) {
+            avatar = webhook.has("avatar") && webhook.hasNonNull("avatar")
+                    ? new Avatar(getId(), webhook.get("avatar").asText())
+                    : null;
+        }
+        return avatar;
+    }
 
-    /**
-     * Modifies the webhook using the provided consumer.
-     *
-     * @param handler The consumer to handle the modification of the webhook.
-     * @return The modify event of the webhook.
-     */
-    ModifyEvent<Webhook> modify(Consumer<WebhookModifyAction> handler);
+    public String getToken() {
+        if (token == null) {
+            token = webhook.has("token") ? webhook.get("token").asText() : null;
+        }
+        return token;
+    }
 
-    /**
-     * Deletes the webhook.
-     */
-    void delete();
+    public String getApplicationId() {
+        if (applicationId == null) {
+            applicationId = webhook.has("application_id") ? webhook.get("application_id").asText() : null;
+        }
+        return applicationId;
+    }
+
+    public WebhookType getType() {
+        if (type == null) {
+            type = EnumUtils.getEnumObject(webhook, "type", WebhookType.class);
+        }
+        return type;
+    }
+
+    public ModifyEvent<Webhook> modify(Consumer<WebhookModifyAction> handler) {
+        ActionExecutor.modifyWebhook(handler, getId());
+        return new ModifyEvent<>(guild.getWebhookById(getId()));
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Webhook.ById(getId()));
+    }
 }
