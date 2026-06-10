@@ -164,7 +164,7 @@ public class Message implements ISnowflake {
 
     public List<Reaction> getReactions() {
         if (reactions == null) {
-            reactions = JsonUtils.getEntityList(message.get("reactions"), reaction -> new ReactionImpl(reaction, guild, this));
+            reactions = JsonUtils.getEntityList(message.get("reactions"), reaction -> new Reaction(reaction, guild, this));
         }
         return reactions;
     }

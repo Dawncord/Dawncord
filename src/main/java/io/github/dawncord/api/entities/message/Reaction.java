@@ -1,87 +1,113 @@
 package io.github.dawncord.api.entities.message;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.CustomEmojiImpl;
 import io.github.dawncord.api.entities.Emoji;
+import io.github.dawncord.api.entities.guild.Guild;
 
 import java.util.List;
 
 /**
- * Represents a reaction to a message.
+ * Represents an implementation of the Reaction interface.
  */
-public interface Reaction {
-    /**
-     * Gets the total count of reactions.
-     *
-     * @return The total count of reactions.
-     */
-    int getTotal();
+public class Reaction {
+    private final JsonNode reaction;
+    private final Guild guild;
+    private final Message message;
+    private Integer total;
+    private Integer normalCount;
+    private Integer burstCount;
+    private Boolean isMe;
+    private Boolean isMeBurst;
+    private Emoji guildEmoji;
+    private String emoji;
+    private Boolean isGuildEmoji;
+    private List<String> burstColors;
 
     /**
-     * Gets the count of normal reactions.
+     * Constructs a ReactionImpl object with the given parameters.
      *
-     * @return The count of normal reactions.
+     * @param reaction The JSON node representing the reaction.
+     * @param guild    The guild associated with the reaction.
+     * @param message  The message associated with the reaction.
      */
-    int getNormalCount();
+    public Reaction(JsonNode reaction, Guild guild, Message message) {
+        this.reaction = reaction;
+        this.guild = guild;
+        this.message = message;
+    }
 
-    /**
-     * Gets the count of burst reactions.
-     *
-     * @return The count of burst reactions.
-     */
-    int getBurstCount();
+    public int getTotal() {
+        if (total == null) {
+            total = reaction.get("count").asInt();
+        }
+        return total;
+    }
 
-    /**
-     * Checks if the current user has reacted with this emoji.
-     *
-     * @return true if the current user has reacted, false otherwise.
-     */
-    boolean isMe();
+    public int getNormalCount() {
+        if (normalCount == null) {
+            normalCount = reaction.get("count_details").get("normal").asInt();
+        }
+        return normalCount;
+    }
 
-    /**
-     * Checks if the current user has reacted with this emoji in burst mode.
-     *
-     * @return true if the current user has reacted in burst mode, false otherwise.
-     */
-    boolean isMeBurst();
+    public int getBurstCount() {
+        if (burstCount == null) {
+            burstCount = reaction.get("count_details").get("burst").asInt();
+        }
+        return burstCount;
+    }
 
-    /**
-     * Gets the guild emoji associated with this reaction.
-     *
-     * @return The guild emoji associated with this reaction
-     */
-    Emoji getGuildEmoji();
+    public boolean isMe() {
+        if (isMe == null) {
+            isMe = reaction.get("me").asBoolean();
+        }
+        return isMe;
+    }
 
-    /**
-     * Checks if this reaction is a guild emoji.
-     *
-     * @return true if the reaction is a guild emoji, false otherwise.
-     */
-    boolean isGuildEmoji();
+    public boolean isMeBurst() {
+        if (isMeBurst == null) {
+            isMeBurst = reaction.get("me_burst").asBoolean();
+        }
+        return isMeBurst;
+    }
 
-    /**
-     * Gets the emoji string associated with this reaction.
-     *
-     * @return The emoji string associated with this reaction.
-     */
-    String getEmoji();
+    public Emoji getGuildEmoji() {
+        if (guildEmoji == null) {
+            guildEmoji = new CustomEmojiImpl(reaction.get("emoji"), guild);
+        }
+        return guildEmoji;
+    }
 
-    /**
-     * Gets the list of burst colors associated with this reaction.
-     *
-     * @return The list of burst colors associated with this reaction.
-     */
-    List<String> getBurstColors();
+    public String getEmoji() {
+        if (emoji == null) {
+            emoji = reaction.get("emoji").get("name").asText();
+        }
+        return emoji;
+    }
 
-    /**
-     * Deletes the user's reaction.
-     *
-     * @param userId The ID of the user whose reaction is to be deleted.
-     */
-    void delete(String userId);
+    public boolean isGuildEmoji() {
+        if (isGuildEmoji == null) {
+            isGuildEmoji = reaction.get("emoji").has("id") && reaction.get("emoji").hasNonNull("id");
+        }
+        return isGuildEmoji;
+    }
 
-    /**
-     * Deletes the user's reaction.
-     *
-     * @param userId The ID of the user whose reaction is to be deleted.
-     */
-    void delete(long userId);
+    public List<String> getBurstColors() {
+        if (burstColors == null) {
+            //todo
+        }
+        return burstColors;
+    }
+
+    public void delete(String userId) {
+        String emoji = (isGuildEmoji() ? getGuildEmoji().name() : getEmoji());
+        ApiClient.delete(Routes.Channel.Message.Reaction.ByUser(message.getChannel().getId(), message.getId(), emoji, userId));
+    }
+
+    public void delete(long userId) {
+        delete(String.valueOf(userId));
+    }
 }
