@@ -5,7 +5,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.Message;
-import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
 
@@ -38,7 +37,7 @@ public class MessageCreateAfterEvent {
      * @return The created message.
      */
     public Message get() {
-        return new MessageImpl(
+        return new Message(
                 JsonUtils.fetch(Routes.Channel.Message.Get(channelId, messageId)),
                 new Guild(JsonUtils.fetch(Routes.Guild.Get(guildId)))
         );

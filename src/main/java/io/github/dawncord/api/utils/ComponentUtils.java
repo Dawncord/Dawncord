@@ -98,9 +98,9 @@ public class ComponentUtils {
             if (customEmoji.isAnimated()) {
                 emojiJson.put("animated", true);
             }
-        } else if (emoji instanceof DefaultEmoji defaultEmoji) {
+        } else if (emoji instanceof DefaultEmoji(String name)) {
             emojiJson.set("id", JsonNodeFactory.instance.nullNode());
-            emojiJson.put("name", defaultEmoji.name());
+            emojiJson.put("name", name);
         }
         return emojiJson;
     }

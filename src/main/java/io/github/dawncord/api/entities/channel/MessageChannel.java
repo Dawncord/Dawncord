@@ -12,7 +12,6 @@ import io.github.dawncord.api.entities.channel.thread.Thread;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.entities.message.Message;
-import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.entities.message.poll.Poll;
 import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
@@ -52,7 +51,7 @@ public class MessageChannel extends Channel {
         messages = loader.load(messages, () -> {
             messages = JsonUtils.getEntityList(
                     JsonUtils.fetch(Routes.Channel.Message.All(getId())),
-                    message -> new MessageImpl(message, getGuild())
+                    message -> new Message(message, getGuild())
             );
             return messages;
         });
@@ -61,7 +60,7 @@ public class MessageChannel extends Channel {
 
     public Message getLastMessage() {
         lastMessage = loader.loadIfExists(lastMessage, "last_message_id",
-                () -> new MessageImpl(
+                () -> new Message(
                         JsonUtils.fetch(Routes.Channel.Message.Get(getId(), channel.get("last_message_id").asText())),
                         getGuild()
                 )
@@ -70,7 +69,7 @@ public class MessageChannel extends Channel {
     }
 
     public Message getMessageById(String messageId) {
-        return new MessageImpl(JsonUtils.fetch(Routes.Channel.Message.Get(getId(), messageId)), getGuild());
+        return new Message(JsonUtils.fetch(Routes.Channel.Message.Get(getId(), messageId)), getGuild());
     }
 
     public Message getMessageById(long messageId) {
@@ -106,7 +105,7 @@ public class MessageChannel extends Channel {
         pinnedMessages = loader.load(pinnedMessages, () ->
                 JsonUtils.getEntityList(
                         JsonUtils.fetch(Routes.Channel.Message.Pin.All(getId())),
-                        message -> new MessageImpl(message, getGuild())
+                        message -> new Message(message, getGuild())
                 )
         );
         return pinnedMessages;

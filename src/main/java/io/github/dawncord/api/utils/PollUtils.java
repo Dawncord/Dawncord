@@ -43,8 +43,8 @@ public class PollUtils {
         if (answer.emoji() != null) {
             if (answer.emoji() instanceof CustomEmoji customEmoji) {
                 answerNode.put("emoji", customEmoji.getId());
-            } else if (answer.emoji() instanceof DefaultEmoji defaultEmoji) {
-                answerNode.put("emoji", defaultEmoji.name());
+            } else if (answer.emoji() instanceof DefaultEmoji(String name)) {
+                answerNode.put("emoji", name);
             }
         }
         return answerNode;

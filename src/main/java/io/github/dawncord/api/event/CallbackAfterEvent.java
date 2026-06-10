@@ -6,7 +6,6 @@ import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.Message;
-import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.interaction.InteractionData;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
@@ -42,7 +41,7 @@ public class CallbackAfterEvent<T> {
      * @return The original message associated with the interaction.
      */
     public Message get() {
-        return new MessageImpl(
+        return new Message(
                 JsonUtils.fetch(Routes.OriginalMessage(data.interaction().interactionToken())),
                 new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())))
         );

@@ -21,7 +21,6 @@ import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.entities.guild.integration.Integration;
 import io.github.dawncord.api.entities.guild.role.GuildRole;
 import io.github.dawncord.api.entities.message.Message;
-import io.github.dawncord.api.entities.message.MessageImpl;
 import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.event.*;
 import io.github.dawncord.api.types.GatewayEvent;
@@ -243,7 +242,7 @@ public class EventListener extends WebSocketAdapter {
         Guild guild = getGuildById(guildId);
         if (guild != null) {
             GuildChannel channel = guild.getChannelById(channelId);
-            Message message = new MessageImpl(JsonUtils.fetch(Routes.Channel.Message.Get(channelId, messageId)), guild);
+            Message message = new Message(JsonUtils.fetch(Routes.Channel.Message.Get(channelId, messageId)), guild);
 
             MessageEvent messageEvent = new MessageEvent(message, channel, guild);
             invokeProcessEvent("processMessageEvent", type, messageEvent, MessageEvent.class);

@@ -1,9 +1,13 @@
 package io.github.dawncord.api.entities.message;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.github.dawncord.api.ApiClient;
+import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.ThreadCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
 import io.github.dawncord.api.entities.ISnowflake;
 import io.github.dawncord.api.entities.User;
+import io.github.dawncord.api.entities.UserImpl;
 import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.channel.thread.Thread;
@@ -17,225 +21,264 @@ import io.github.dawncord.api.event.CreateEvent;
 import io.github.dawncord.api.event.ModifyEvent;
 import io.github.dawncord.api.types.MessageFlag;
 import io.github.dawncord.api.types.MessageType;
+import io.github.dawncord.api.utils.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * Represents a message in a guild channel.
  */
-public interface Message extends ISnowflake {
+public class Message implements ISnowflake {
+    private final JsonNode message;
+    private final Guild guild;
+    private String id;
+    private MessageType type;
+    private GuildChannel channel;
+    private String content;
+    private User author;
+    private List<MessageFlag> flags;
+    private List<Attachment> attachments;
+    private List<Embed> embeds;
+    private List<User> mentions;
+    private List<GuildRole> mentionRoles;
+    private List<Reaction> reactions;
+    private Application application;
+    private Message referencedMessage;
+    private Thread thread;
+    private List<Sticker> stickers;
+    private Poll poll;
+    private List<ActionRow> actionRows;
+    private Boolean isPinned;
+    private Boolean isMentionEveryone;
+    private Boolean isTTS;
+    private ZonedDateTime timestamp;
+    private ZonedDateTime editedTimestamp;
 
     /**
-     * Retrieves the type of the message.
+     * Initializes a MessageImpl object with the provided JSON node and guild.
      *
-     * @return The type of the message.
+     * @param message The JSON node representing the message.
+     * @param guild   The guild where the message belongs.
      */
-    MessageType getType();
+    public Message(JsonNode message, Guild guild) {
+        this.message = message;
+        this.guild = guild;
+    }
 
-    /**
-     * Retrieves the channel where the message was sent.
-     *
-     * @return The channel where the message was sent.
-     */
-    GuildChannel getChannel();
+    @Override
+    public String getId() {
+        if (id == null) {
+            id = message.get("id").asText();
+        }
+        return id;
+    }
 
-    /**
-     * Retrieves the guild where the message was sent.
-     *
-     * @return The guild where the message was sent.
-     */
-    Guild getGuild();
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(getId());
+    }
 
-    /**
-     * Starts a new thread from this message with the given name.
-     *
-     * @param name    The name of the thread.
-     * @param handler The action to be performed on the created thread.
-     * @return The created thread.
-     */
-    CreateEvent<Thread> startThread(String name, Consumer<ThreadCreateAction> handler);
+    public MessageType getType() {
+        if (type == null) {
+            type = EnumUtils.getEnumObject(message, "type", MessageType.class);
+        }
+        return type;
+    }
 
-    /**
-     * Starts a new thread from this message with the given name.
-     *
-     * @param name The name of the thread.
-     */
-    void startThread(String name);
+    public GuildChannel getChannel() {
+        if (channel == null) {
+            channel = guild.getChannelById(message.get("channel_id").asText());
+        }
+        return channel;
+    }
 
-    /**
-     * Retrieves the content of the message.
-     *
-     * @return The content of the message.
-     */
-    String getContent();
+    public Guild getGuild() {
+        return guild;
+    }
 
-    /**
-     * Retrieves the user who sent the message.
-     *
-     * @return The user who sent the message.
-     */
-    User getFrom();
+    public CreateEvent<Thread> startThread(String name, Consumer<ThreadCreateAction> handler) {
+        String id = ActionExecutor.startThreadFromMessage(handler, this, name);
+        return new CreateEvent<>(guild.getThreadById(id));
+    }
 
-    /**
-     * Retrieves the flags attached to the message.
-     *
-     * @return The flags attached to the message.
-     */
-    List<MessageFlag> getFlags();
+    public void startThread(String name) {
+        startThread(name, null);
+    }
 
-    /**
-     * Retrieves the attachments in the message.
-     *
-     * @return The attachments in the message.
-     */
-    List<Attachment> getAttachments();
+    public String getContent() {
+        if (content == null) {
+            content = message.has("content")
+                    ? message.get("content").asText()
+                    : null;
+        }
+        return content;
+    }
 
-    /**
-     * Retrieves the embeds in the message.
-     *
-     * @return The embeds in the message.
-     */
-    List<Embed> getEmbeds();
+    public User getFrom() {
+        if (author == null) {
+            author = new UserImpl(message.get("author"));
+        }
+        return author;
+    }
 
-    /**
-     * Retrieves the action rows (components) in the message.
-     *
-     * @return The action rows (components) in the message.
-     */
-    List<ActionRow> getComponents();
+    public List<MessageFlag> getFlags() {
+        if (flags == null) {
+            flags = EnumUtils.getEnumListFromLong(message, "flags", MessageFlag.class);
+        }
+        return flags;
+    }
 
-    /**
-     * Retrieves the users mentioned in the message.
-     *
-     * @return The users mentioned in the message.
-     */
-    List<User> getMentions();
+    public List<Attachment> getAttachments() {
+        if (attachments == null) {
+            attachments = JsonUtils.getEntityList(message.get("attachments"), Attachment::new);
+        }
+        return attachments;
+    }
 
-    /**
-     * Retrieves the roles mentioned in the message.
-     *
-     * @return The roles mentioned in the message.
-     */
-    List<GuildRole> getMentionRoles();
+    public List<Embed> getEmbeds() {
+        if (embeds == null) {
+            embeds = JsonUtils.getEntityList(message.get("embeds"), EmbedUtils::getEmbedFromJson);
+        }
+        return embeds;
+    }
 
-    /**
-     * Retrieves the reactions on the message.
-     *
-     * @return The reactions on the message.
-     */
-    List<Reaction> getReactions();
+    public List<User> getMentions() {
+        if (mentions == null) {
+            mentions = JsonUtils.getEntityList(message.get("mentions"), UserImpl::new);
+        }
+        return mentions;
+    }
 
-    /**
-     * Retrieves the reaction for the given emoji ID or name.
-     *
-     * @param emojiIdOrName The ID or name of the emoji.
-     * @return The reaction for the given emoji.
-     */
-    Reaction getReaction(String emojiIdOrName);
+    public List<GuildRole> getMentionRoles() {
+        if (mentionRoles == null) {
+            mentionRoles = new ArrayList<>();
+            for (JsonNode roleNode : message.get("mention_roles")) {
+                mentionRoles.add(guild.getRoleById(roleNode.asText()));
+            }
+        }
+        return mentionRoles;
+    }
 
-    /**
-     * Deletes reactions for the given emoji ID or name on the message.
-     *
-     * @param emojiIdOrName The ID or name of the emoji.
-     */
-    void deleteReactions(String emojiIdOrName);
+    public List<Reaction> getReactions() {
+        if (reactions == null) {
+            reactions = JsonUtils.getEntityList(message.get("reactions"), reaction -> new ReactionImpl(reaction, guild, this));
+        }
+        return reactions;
+    }
 
-    /**
-     * Deletes all reactions on the message.
-     */
-    void deleteReactions();
+    public Reaction getReaction(String emojiIdOrName) {
+        if (MessageUtils.isEmojiLong(emojiIdOrName)) {
+            return getReactions().stream().filter(reaction -> reaction.getGuildEmoji().getId().equals(emojiIdOrName)).findFirst().orElse(null);
+        }
+        return getReactions().stream().filter(reaction -> reaction.getEmoji().equals(emojiIdOrName)).findFirst().orElse(null);
+    }
 
-    /**
-     * Retrieves the application that created the message.
-     *
-     * @return The application that created the message.
-     */
-    Application getApplication();
+    public void deleteReactions(String emojiIdOrName) {
+        ApiClient.delete(Routes.Channel.Message.Reaction.Get(channel.getId(), getId(), emojiIdOrName));
+    }
 
-    /**
-     * Retrieves the referenced message if this is a reply.
-     *
-     * @return The referenced message, if any.
-     */
-    Message getReferencedMessage();
+    public void deleteReactions() {
+        ApiClient.delete(Routes.Channel.Message.Reaction.All(channel.getId(), getId()));
+    }
 
-    /**
-     * Retrieves the thread associated with this message.
-     *
-     * @return The thread associated with this message.
-     */
-    Thread getThread();
+    public Application getApplication() {
+        if (application == null) {
+            application = message.has("application") ? new Application(message.get("application")) : null;
+        }
+        return application;
+    }
 
-    /**
-     * Retrieves the stickers attached to the message.
-     *
-     * @return The stickers attached to the message.
-     */
-    List<Sticker> getStickers();
+    public Message getReferencedMessage() {
+        if (referencedMessage == null) {
+            referencedMessage = message.has("referenced_message") && message.hasNonNull("referenced_message")
+                    ? new Message(message.get("referenced_message"), guild)
+                    : null;
+        }
+        return referencedMessage;
+    }
 
-    /**
-     * Retrieves the poll attached to the message.
-     *
-     * @return The poll attached to the message.
-     */
-    Poll getPoll();
+    public Thread getThread() {
+        if (thread == null) {
+            thread = message.has("thread")
+                    ? new Thread(message.get("thread"), guild)
+                    : null;
+        }
+        return thread;
+    }
 
-    /**
-     * Retrieves the voters in the poll for the specified answer ID.
-     *
-     * @param answerId The ID of the answer.
-     * @return The voters in the poll for the specified answer ID.
-     */
-    List<GuildMember> getPollVoters(String answerId);
+    public List<Sticker> getStickers() {
+        if (stickers == null) {
+            stickers = MessageUtils.retrieveStickersFromMessage(message, guild);
+        }
+        return stickers;
+    }
 
-    /**
-     * Retrieves the voters in the poll for the specified answer ID.
-     *
-     * @param answerId The ID of the answer.
-     * @return The voters in the poll for the specified answer ID.
-     */
-    List<GuildMember> getPollVoters(long answerId);
+    public Poll getPoll() {
+        if (poll == null) {
+            if (message.has("poll") && message.get("poll") != null) {
+                poll = new Poll(message.get("poll"), guild);
+            }
+        }
+        return poll;
+    }
 
-    /**
-     * Checks if the message is pinned.
-     *
-     * @return True if the message is pinned, false otherwise.
-     */
-    boolean isPinned();
+    public List<GuildMember> getPollVoters(String answerId) {
+        return JsonUtils.getEntityList(
+                JsonUtils.fetch(Routes.Channel.Message.Poll.GetAnswerVoters(getChannel().getId(), getId(), answerId)).get("users"),
+                guildMember -> guild.getMemberById(guildMember.get("id").asText())
+        );
+    }
 
-    /**
-     * Checks if the message mentions everyone.
-     *
-     * @return True if the message mentions everyone, false otherwise.
-     */
-    boolean isMentionEveryone();
+    public List<GuildMember> getPollVoters(long answerId) {
+        return getPollVoters(String.valueOf(answerId));
+    }
 
-    /**
-     * Checks if the message is a text-to-speech message.
-     *
-     * @return True if the message is a text-to-speech message, false otherwise.
-     */
-    boolean isTTS();
+    public List<ActionRow> getComponents() {
+        if (actionRows == null) {
+            actionRows = !message.get("components").isEmpty() ? JsonUtils.getEntityList(message.get("components"), actionRow -> new ActionRow(actionRow, getGuild())) : null;
+        }
+        return actionRows;
+    }
 
-    /**
-     * Retrieves the timestamp when the message was last edited.
-     *
-     * @return The timestamp when the message was last edited.
-     */
-    ZonedDateTime getTimeEdited();
+    public boolean isPinned() {
+        if (isPinned == null) {
+            isPinned = message.get("pinned").asBoolean();
+        }
+        return isPinned;
+    }
 
-    /**
-     * Modifies the message using the provided handler.
-     *
-     * @param handler The action to be performed to modify the message.
-     * @return The modify event for the message.
-     */
-    ModifyEvent<Message> modify(Consumer<MessageModifyAction> handler);
+    public boolean isMentionEveryone() {
+        if (isMentionEveryone == null) {
+            isMentionEveryone = message.get("mention_everyone").asBoolean();
+        }
+        return isMentionEveryone;
+    }
 
-    /**
-     * Deletes the message.
-     */
-    void delete();
+    public boolean isTTS() {
+        if (isTTS == null) {
+            isTTS = message.get("tts").asBoolean();
+        }
+        return isTTS;
+    }
+
+    public ZonedDateTime getTimeEdited() {
+        if (editedTimestamp == null) {
+            editedTimestamp = message.hasNonNull("edited_timestamp")
+                    ? TimeUtils.getZonedDateTime(message, "edited_timestamp")
+                    : null;
+        }
+        return editedTimestamp;
+    }
+
+    public ModifyEvent<Message> modify(Consumer<MessageModifyAction> handler) {
+        ActionExecutor.modifyMessage(handler, this);
+        return new ModifyEvent<>(new Message(JsonUtils.fetch(Routes.Channel.Message.Get(channel.getId(), getId())), guild));
+    }
+
+    public void delete() {
+        ApiClient.delete(Routes.Channel.Message.Get(channel.getId(), getId()));
+    }
 }

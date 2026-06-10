@@ -60,8 +60,8 @@ public class PollCreateAction extends Action<PollCreateAction> {
                 ObjectNode emojiNode = mapper.createObjectNode();
                 if (answer.emoji() instanceof CustomEmoji customEmoji) {
                     emojiNode.put("id", customEmoji.getId());
-                } else if (answer.emoji() instanceof DefaultEmoji defaultEmoji) {
-                    emojiNode.put("name", defaultEmoji.name());
+                } else if (answer.emoji() instanceof DefaultEmoji(String name)) {
+                    emojiNode.put("name", name);
                 }
                 answerNode.set("emoji", emojiNode);
             }
