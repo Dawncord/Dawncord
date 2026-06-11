@@ -10,6 +10,9 @@ import io.github.dawncord.api.utils.LazyLoader;
 
 import java.util.List;
 
+/**
+ * Represents a Discord SKU.
+ */
 public class Sku implements ISnowflake {
     private final LazyLoader loader;
     private final JsonNode sku;

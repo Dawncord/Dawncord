@@ -8,6 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Defines actions that can contain sub-commands.
+ *
+ * @param <T> The concrete action type returned by fluent setters.
+ */
 public interface SubCommandable<T> {
     List<SubCommand> getSubCommandList();
 

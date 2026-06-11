@@ -19,6 +19,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Represents a role in a guild.
+ */
 public class GuildRole implements ISnowflake, IMentionable {
     private final LazyLoader loader;
     private final JsonNode role;
@@ -37,7 +40,7 @@ public class GuildRole implements ISnowflake, IMentionable {
     private Tags tags;
 
     /**
-     * Constructs a new GuildRoleImpl object with the provided JSON node and guild.
+     * Constructs a new GuildRole object with the provided JSON node and guild.
      *
      * @param role  The JSON node representing the role.
      * @param guild The guild to which the role belongs.

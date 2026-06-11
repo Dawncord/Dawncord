@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents the available Discord SKU types.
+ */
 public enum SkuType {
     DURABLE(2, "Durable one-time purchase"),
     CONSUMABLE(3, "Consumable one-time purchase"),

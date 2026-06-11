@@ -7,6 +7,9 @@ import io.github.dawncord.api.utils.IOUtils;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Provides common settings for guild role create and modify actions.
+ */
 public abstract class GuildRoleAction extends Action<GuildRoleAction> {
     protected final String guildId;
     protected final boolean hasRoleIcons;

@@ -1,7 +1,7 @@
 package io.github.dawncord.api.entities;
 
 /**
- * Implementation of the {@link Emoji} interface representing a default emoji.
+ * Represents a default emoji.
  */
 public record DefaultEmoji(String name) implements Emoji {
     @Override

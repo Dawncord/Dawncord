@@ -3,6 +3,7 @@ package io.github.dawncord.api.action.webhook;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.Webhook;
 
 /**
  * Represents an action for creating a webhook.

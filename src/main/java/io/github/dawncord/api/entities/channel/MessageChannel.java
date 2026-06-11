@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of a message channel.
+ * Represents a channel that can contain messages.
  */
 public class MessageChannel extends Channel {
     private final LazyLoader loader;
@@ -36,7 +36,7 @@ public class MessageChannel extends Channel {
     private List<Message> pinnedMessages;
 
     /**
-     * Constructs a new MessageChannelImpl object.
+     * Constructs a new MessageChannel object.
      *
      * @param channel The JSON representation of the channel.
      * @param guild   The guild to which this channel belongs.

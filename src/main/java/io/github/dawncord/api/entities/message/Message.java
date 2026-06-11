@@ -57,7 +57,7 @@ public class Message implements ISnowflake {
     private ZonedDateTime editedTimestamp;
 
     /**
-     * Initializes a MessageImpl object with the provided JSON node and guild.
+     * Initializes a Message object with the provided JSON node and guild.
      *
      * @param message The JSON node representing the message.
      * @param guild   The guild where the message belongs.

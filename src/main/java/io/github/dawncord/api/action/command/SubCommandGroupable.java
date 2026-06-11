@@ -8,6 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Defines actions that can contain sub-command groups.
+ *
+ * @param <T> The concrete action type returned by fluent setters.
+ */
 public interface SubCommandGroupable<T> {
     List<SubCommandGroup> getSubCommandGroupList();
 

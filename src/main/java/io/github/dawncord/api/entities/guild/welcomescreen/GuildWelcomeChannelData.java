@@ -1,5 +1,8 @@
 package io.github.dawncord.api.entities.guild.welcomescreen;
 
+/**
+ * Represents data used to configure a guild welcome screen channel.
+ */
 public class GuildWelcomeChannelData {
     private String channelId;
     private String description;

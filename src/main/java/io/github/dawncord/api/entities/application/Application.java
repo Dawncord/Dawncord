@@ -14,8 +14,7 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.List;
 
 /**
- * Represents an implementation of an application.
- * ApplicationImpl is a class providing methods to access properties of an application.
+ * Represents a Discord application and provides access to its properties.
  */
 public class Application extends AbstractApplication {
     private final LazyLoader loader;
@@ -48,7 +47,7 @@ public class Application extends AbstractApplication {
     private String customInstallUrl;
 
     /**
-     * Constructs an ApplicationImpl object with the provided JSON node and guild.
+     * Constructs an Application object with the provided JSON node.
      *
      * @param application The JSON node representing the application.
      */

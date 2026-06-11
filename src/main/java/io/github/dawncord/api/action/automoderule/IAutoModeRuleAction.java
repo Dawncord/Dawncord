@@ -4,6 +4,9 @@ import io.github.dawncord.api.types.KeywordPreset;
 
 import java.util.List;
 
+/**
+ * Defines configuration options for auto moderation rule actions.
+ */
 public interface IAutoModeRuleAction {
     IAutoModeRuleAction setKeywordTrigger(List<String> keywordFilter, List<String> allows);
 

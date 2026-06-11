@@ -1,5 +1,8 @@
 package io.github.dawncord.api.utils;
 
+/**
+ * Represents the supported invite target types.
+ */
 public enum InviteType {
     GUILD(0),
     GROUP_DM(1),

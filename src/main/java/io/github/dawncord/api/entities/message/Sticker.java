@@ -31,7 +31,7 @@ public class Sticker implements ISnowflake {
     private User author;
 
     /**
-     * Constructs a new StickerImpl instance.
+     * Constructs a new Sticker instance.
      *
      * @param sticker The JSON node representing the sticker.
      * @param guild   The guild to which the sticker belongs.

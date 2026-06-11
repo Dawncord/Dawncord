@@ -2,6 +2,9 @@ package io.github.dawncord.api.action.emoji;
 
 import io.github.dawncord.api.action.Action;
 
+/**
+ * Provides common settings for emoji create and modify actions.
+ */
 public abstract class EmojiAction extends Action<EmojiAction> {
     protected final String guildId;
 

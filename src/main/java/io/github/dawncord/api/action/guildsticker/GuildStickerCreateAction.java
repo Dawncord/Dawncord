@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.Guild;
+import io.github.dawncord.api.entities.message.Sticker;
 import io.github.dawncord.api.types.GuildFeature;
 import io.github.dawncord.api.utils.AttachmentUtils;
 import okhttp3.MultipartBody;

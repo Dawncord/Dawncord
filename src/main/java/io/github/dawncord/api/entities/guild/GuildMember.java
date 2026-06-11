@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Represents an implementation of a guild member.
+ * Represents a member of a guild.
  */
 public class GuildMember {
     private final JsonNode member;
@@ -37,7 +37,7 @@ public class GuildMember {
     private Boolean isDeafened;
 
     /**
-     * Constructs a new GuildMemberImpl with the provided member data and guild.
+     * Constructs a new GuildMember with the provided member data and guild.
      *
      * @param member The JSON data representing the guild member.
      * @param guild  The guild to which the member belongs.

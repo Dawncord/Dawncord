@@ -6,6 +6,11 @@ import io.github.dawncord.api.types.OptionType;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Defines actions that can contain command options.
+ *
+ * @param <T> The concrete action type returned by fluent setters.
+ */
 public interface Optionable<T> {
     List<Option> getOptionList();
 

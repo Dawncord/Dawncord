@@ -7,6 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Defines builder operations for command options.
+ *
+ * @param <T> The concrete builder type returned by fluent setters.
+ */
 public interface IOptionCommandBuilder<T> {
     List<Option> getOptionList();
 

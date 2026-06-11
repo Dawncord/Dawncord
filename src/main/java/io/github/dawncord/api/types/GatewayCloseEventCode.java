@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents Discord Gateway close event codes.
+ */
 public enum GatewayCloseEventCode {
     UNKNOWN_ERROR(4000, "We're not sure what went wrong. Try reconnecting?", true),
     UNKNOWN_OPCODE(4001, "You sent an invalid Gateway opcode or an invalid payload for an opcode. Don't do that!", true),

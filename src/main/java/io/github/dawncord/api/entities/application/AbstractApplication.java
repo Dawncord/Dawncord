@@ -8,6 +8,9 @@ import io.github.dawncord.api.entities.image.ApplicationIcon;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
+/**
+ * Provides common application properties shared by application representations.
+ */
 public abstract class AbstractApplication implements ISnowflake {
     private final LazyLoader loader;
     private final JsonNode application;

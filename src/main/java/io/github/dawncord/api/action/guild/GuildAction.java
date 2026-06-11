@@ -7,6 +7,9 @@ import io.github.dawncord.api.types.SystemChannelFlag;
 import io.github.dawncord.api.types.VerificationLevel;
 import io.github.dawncord.api.utils.IOUtils;
 
+/**
+ * Provides common settings for guild create and modify actions.
+ */
 public abstract class GuildAction extends Action<GuildAction> {
     /**
      * Sets the name property for the guild.

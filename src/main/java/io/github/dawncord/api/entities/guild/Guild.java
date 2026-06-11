@@ -117,7 +117,7 @@ public class Guild implements ISnowflake {
     //private IncidentsData incidentsData;
 
     /**
-     * Constructs a new GuildImpl object with the specified JSON node representing the guild.
+     * Constructs a new Guild object with the specified JSON node representing the guild.
      *
      * @param guild The JSON node representing the guild.
      */

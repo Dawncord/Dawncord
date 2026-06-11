@@ -11,8 +11,7 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.List;
 
 /**
- * Represents an implementation of the Team interface.
- * TeamImpl is a class implementing the Team interface and providing methods to access team properties.
+ * Represents an application team and provides access to team properties.
  */
 public class Team implements ISnowflake {
     private final LazyLoader loader;
@@ -24,7 +23,7 @@ public class Team implements ISnowflake {
     private List<TeamMember> members;
 
     /**
-     * Constructs a TeamImpl object with the provided JSON node containing team information.
+     * Constructs a Team object with the provided JSON node containing team information.
      *
      * @param team The JSON node containing team information.
      */

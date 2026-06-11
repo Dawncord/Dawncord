@@ -10,8 +10,7 @@ import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 
 /**
- * Represents an implementation of the TeamMember interface.
- * TeamMemberImpl is a class implementing the TeamMember interface and providing methods to access team member properties.
+ * Represents a member of an application team and provides access to member properties.
  */
 public class TeamMember {
     private final LazyLoader loader;
@@ -22,7 +21,7 @@ public class TeamMember {
     private MembershipState membershipState;
 
     /**
-     * Constructs a TeamMemberImpl object with the provided JSON node containing member information and the associated team.
+     * Constructs a TeamMember object with the provided JSON node containing member information and the associated team.
      *
      * @param member  The JSON node containing member information.
      * @param ownerId The id of the associated team owner.

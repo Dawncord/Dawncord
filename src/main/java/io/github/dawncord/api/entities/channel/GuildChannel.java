@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Represents an implementation of a guild channel.
+ * Represents a channel within a guild.
  */
 public class GuildChannel extends Channel {
     private final JsonNode channel;
     private final Guild guild;
 
     /**
-     * Constructs a new GuildChannelImpl instance.
+     * Constructs a new GuildChannel instance.
      *
      * @param channel The JSON node representing the guild channel.
      * @param guild   The guild to which this channel belongs.

@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.entities.guild.Guild;
 
 /**
- * Implementation of the GuildCategory interface representing a category channel within a guild.
- * Extends the ChannelImpl class.
+ * Represents a category channel within a guild.
  */
 public class GuildCategory extends Channel {
     /**
-     * Constructs a GuildCategoryImpl object with the given JSON node representing the category channel
+     * Constructs a GuildCategory object with the given JSON node representing the category channel
      * and the guild to which it belongs.
      *
      * @param category The JSON node representing the category channel.

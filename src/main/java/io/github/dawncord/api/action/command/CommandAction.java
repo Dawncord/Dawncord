@@ -10,6 +10,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Provides common settings for application command create and modify actions.
+ */
 public abstract class CommandAction extends Action<CommandAction> {
     protected final List<Option> optionList = new ArrayList<>();
     protected final Map<Locale, String> localizedNameList = new EnumMap<>(Locale.class);

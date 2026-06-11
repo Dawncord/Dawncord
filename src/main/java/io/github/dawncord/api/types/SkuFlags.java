@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents flags that can be applied to a Discord SKU.
+ */
 public enum SkuFlags {
     AVAILABLE(1 << 2, "SKU is available for purchase"),
     GUILD_SUBSCRIPTION(1 << 7, "Recurring SKU that can be purchased by a user and applied to a single server. Grants access to every user in that server"),

@@ -5,6 +5,9 @@ import io.github.dawncord.api.utils.LazyLoader;
 
 import java.awt.*;
 
+/**
+ * Represents the color values assigned to a guild role.
+ */
 public class RoleColors {
     private final LazyLoader loader;
     private final JsonNode colors;

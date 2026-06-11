@@ -5,6 +5,11 @@ import io.github.dawncord.api.command.SubCommandGroup;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Defines builder operations for sub-command groups.
+ *
+ * @param <T> The concrete builder type returned by fluent setters.
+ */
 public interface ISubCommandGroupBuilder<T> {
     List<SubCommandGroup> getSubCommandGroupList();
 

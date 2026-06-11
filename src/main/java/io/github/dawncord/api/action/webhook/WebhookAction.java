@@ -3,6 +3,9 @@ package io.github.dawncord.api.action.webhook;
 import io.github.dawncord.api.action.Action;
 import io.github.dawncord.api.utils.IOUtils;
 
+/**
+ * Provides common settings for webhook create and modify actions.
+ */
 public abstract class WebhookAction extends Action<WebhookAction> {
     /**
      * Sets the name for the webhook.

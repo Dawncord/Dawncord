@@ -17,6 +17,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Listens for Discord Gateway events and handles heartbeat scheduling.
+ */
 public class MainListener extends WebSocketAdapter {
     private static final Logger logger = LoggerFactory.getLogger(MainListener.class);
     private final ObjectMapper mapper = new ObjectMapper();

@@ -10,7 +10,7 @@ import io.github.dawncord.api.entities.guild.Guild;
 import java.util.List;
 
 /**
- * Represents an implementation of the Reaction interface.
+ * Represents a message reaction.
  */
 public class Reaction {
     private final JsonNode reaction;
@@ -27,7 +27,7 @@ public class Reaction {
     private List<String> burstColors;
 
     /**
-     * Constructs a ReactionImpl object with the given parameters.
+     * Constructs a Reaction object with the given parameters.
      *
      * @param reaction The JSON node representing the reaction.
      * @param guild    The guild associated with the reaction.

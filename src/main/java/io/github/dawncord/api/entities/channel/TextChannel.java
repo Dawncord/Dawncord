@@ -10,7 +10,7 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.function.Consumer;
 
 /**
- * Implementation of a text channel for sending and receiving text-based messages.
+ * Represents a text channel for sending and receiving text-based messages.
  */
 public class TextChannel extends MessageChannel {
     private final LazyLoader loader;
@@ -19,7 +19,7 @@ public class TextChannel extends MessageChannel {
     private GuildCategory category;
 
     /**
-     * Constructs a new TextChannelImpl object.
+     * Constructs a new TextChannel object.
      *
      * @param channel The JSON representation of the channel.
      * @param guild   The guild to which this channel belongs.

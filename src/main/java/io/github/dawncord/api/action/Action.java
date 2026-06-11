@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
+/**
+ * Represents a configurable API action that can be submitted.
+ *
+ * @param <T> The concrete action type returned by fluent setters.
+ */
 public abstract class Action<T> {
     protected static final ObjectMapper mapper = new ObjectMapper();
     protected final ObjectNode jsonObject;

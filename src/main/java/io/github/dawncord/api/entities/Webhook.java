@@ -15,7 +15,7 @@ import io.github.dawncord.api.utils.EnumUtils;
 import java.util.function.Consumer;
 
 /**
- * Implementation class for the Webhook interface.
+ * Represents a Discord webhook.
  */
 public class Webhook implements ISnowflake {
     private final JsonNode webhook;
@@ -30,7 +30,7 @@ public class Webhook implements ISnowflake {
     private WebhookType type;
 
     /**
-     * Constructs a new WebhookImpl with the provided JSON node and guild.
+     * Constructs a new Webhook with the provided JSON node and guild.
      *
      * @param webhook The JSON node representing the webhook.
      * @param guild   The guild associated with the webhook.

@@ -14,6 +14,9 @@ import io.github.dawncord.api.utils.MessageUtils;
 
 import java.util.List;
 
+/**
+ * Provides common settings for guild channel create and modify actions.
+ */
 public abstract class GuildChannelAction extends Action<GuildChannelAction> {
     protected final ChannelType channelType;
     protected final String guildId;

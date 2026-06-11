@@ -10,8 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Represents an implementation of the Activity interface.
- * ActivityImpl is a class implementing the Activity interface and providing methods to access activity properties.
+ * Represents a Discord activity and provides access to its properties.
  */
 public class Activity {
     private final JsonNode activity;
@@ -35,7 +34,7 @@ public class Activity {
     private ActivityButton buttons;
 
     /**
-     * Constructs an ActivityImpl object with the provided JSON node containing activity information.
+     * Constructs an Activity object with the provided JSON node containing activity information.
      *
      * @param activity The JSON node containing activity information.
      */

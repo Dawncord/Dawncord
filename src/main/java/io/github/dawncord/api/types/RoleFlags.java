@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents flags that can be applied to a guild role.
+ */
 public enum RoleFlags {
     IN_PROMPT(1 << 0);
 

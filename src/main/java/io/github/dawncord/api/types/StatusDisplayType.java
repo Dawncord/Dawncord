@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents how an activity status is displayed.
+ */
 public enum StatusDisplayType {
     NAME(0),
     STATE(1),

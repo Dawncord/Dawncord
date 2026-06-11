@@ -2,6 +2,9 @@ package io.github.dawncord.api.entities.image;
 
 import io.github.dawncord.api.types.ImageFormat;
 
+/**
+ * Represents the generated widget image for a guild.
+ */
 public class GuildWidgetImage implements Icon {
     private final String url;
 

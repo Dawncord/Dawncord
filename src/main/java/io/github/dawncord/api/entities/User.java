@@ -10,7 +10,7 @@ import io.github.dawncord.api.utils.EnumUtils;
 import java.util.List;
 
 /**
- * Represents an implementation of the User interface.
+ * Represents a Discord user.
  */
 public class User implements ISnowflake {
     private final JsonNode user;
@@ -25,7 +25,7 @@ public class User implements ISnowflake {
     private Boolean isBot;
 
     /**
-     * Constructs a new UserImpl instance with the given JSON node representing a user.
+     * Constructs a new User instance with the given JSON node representing a user.
      *
      * @param user The JSON node representing a user.
      */

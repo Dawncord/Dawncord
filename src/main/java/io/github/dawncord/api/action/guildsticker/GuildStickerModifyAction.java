@@ -2,6 +2,7 @@ package io.github.dawncord.api.action.guildsticker;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.message.Sticker;
 
 /**
  * Represents an action for updating a guild sticker.

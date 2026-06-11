@@ -3,6 +3,9 @@ package io.github.dawncord.api.entities.application;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.dawncord.api.utils.LazyLoader;
 
+/**
+ * Represents installation configuration by integration type.
+ */
 public class IntegrationTypesConfig {
     private final LazyLoader loader;
     private final JsonNode config;

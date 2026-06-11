@@ -13,7 +13,7 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.List;
 
 /**
- * Represents an implementation of the Channel interface.
+ * Represents a Discord channel.
  */
 public class Channel implements ISnowflake, IMentionable {
     private final LazyLoader loader;
@@ -24,7 +24,7 @@ public class Channel implements ISnowflake, IMentionable {
     private List<ChannelFlag> flags;
 
     /**
-     * Constructs a ChannelImpl object.
+     * Constructs a Channel object.
      *
      * @param channel The JSON representation of the channel.
      * @param guild   The guild to which this channel belongs.

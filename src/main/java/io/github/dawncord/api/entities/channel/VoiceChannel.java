@@ -5,7 +5,7 @@ import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.utils.LazyLoader;
 
 /**
- * Implementation of a voice channel for voice communication.
+ * Represents a voice channel for voice communication.
  */
 public class VoiceChannel extends MessageChannel {
     private final LazyLoader loader;
@@ -16,7 +16,7 @@ public class VoiceChannel extends MessageChannel {
     private GuildCategory category;
 
     /**
-     * Constructs a new VoiceChannelImpl object.
+     * Constructs a new VoiceChannel object.
      *
      * @param channel The JSON representation of the channel.
      * @param guild   The guild to which this channel belongs.

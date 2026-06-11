@@ -14,7 +14,7 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.Map;
 
 /**
- * Implementation of a stage in a guild.
+ * Represents a stage channel in a guild.
  */
 public class Stage implements ISnowflake {
     private final LazyLoader loader;
@@ -26,7 +26,7 @@ public class Stage implements ISnowflake {
     private GuildScheduledEvent guildEvent;
 
     /**
-     * Constructs a new StageImpl object.
+     * Constructs a new Stage object.
      *
      * @param stage The JSON representation of the stage.
      * @param guild The guild to which this stage belongs.

@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Represents an implementation of the Poll interface.
+ * Represents a poll attached to a message.
  */
 public class Poll {
     private final JsonNode poll;
@@ -21,7 +21,7 @@ public class Poll {
     private List<Result> results;
 
     /**
-     * Constructs a new PollImpl instance.
+     * Constructs a new Poll instance.
      *
      * @param poll  The JSON representation of the poll.
      * @param guild The guild associated with the poll.

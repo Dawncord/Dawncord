@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an implementation of an integration within a guild.
+ * Represents an integration within a guild.
  */
 public class Integration implements ISnowflake {
     private final LazyLoader loader;
@@ -41,7 +41,7 @@ public class Integration implements ISnowflake {
     private List<Scope> scopes = new ArrayList<>();
 
     /**
-     * Constructs a new IntegrationImpl with the given JSON integration data and guild.
+     * Constructs a new Integration with the given JSON integration data and guild.
      *
      * @param integration The JSON data representing the integration.
      * @param guild       The guild to which the integration belongs.

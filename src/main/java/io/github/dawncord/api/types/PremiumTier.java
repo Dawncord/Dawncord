@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents the premium tier of a guild.
+ */
 public enum PremiumTier {
     NONE(0),
     TIER_1(1),

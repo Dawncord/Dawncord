@@ -1,5 +1,8 @@
 package io.github.dawncord.api.types;
 
+/**
+ * Represents the status of application event webhooks.
+ */
 public enum EventWebhookStatus {
     DISABLED(1, "Webhook events are disabled by developer"),
     ENABLED(2, "Webhook events are enabled by developer"),

@@ -6,6 +6,9 @@ import io.github.dawncord.api.utils.SlashCommandUtils;
 
 import java.util.Map;
 
+/**
+ * Represents a base Discord application command.
+ */
 public abstract class Command implements ICommand {
     private final JsonNode command;
     private String name;

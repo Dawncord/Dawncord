@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an implementation of a thread, a distinct conversation within a guild channel.
+ * Represents a thread, a distinct conversation within a guild channel.
  * Threads can be either public or private, and they are a form of message channel.
  */
 public class Thread extends MessageChannel {
@@ -30,7 +30,7 @@ public class Thread extends MessageChannel {
     private Integer memberCount;
 
     /**
-     * Constructs a new ThreadImpl instance.
+     * Constructs a new Thread instance.
      *
      * @param thread The JSON node representing the thread.
      * @param guild  The guild to which the thread belongs.

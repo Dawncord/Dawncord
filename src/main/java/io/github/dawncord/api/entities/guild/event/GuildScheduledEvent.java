@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 
+/**
+ * Represents a scheduled event in a guild.
+ */
 public class GuildScheduledEvent implements ISnowflake {
     private final LazyLoader loader;
     private final JsonNode event;
@@ -44,7 +47,7 @@ public class GuildScheduledEvent implements ISnowflake {
     private GuildEventImage image;
 
     /**
-     * Constructs a new instance of GuildScheduledEventImpl with the given JSON node representing the event
+     * Constructs a new instance of GuildScheduledEvent with the given JSON node representing the event
      * and the guild to which the event belongs.
      *
      * @param event The JSON node representing the event.

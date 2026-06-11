@@ -7,6 +7,9 @@ import io.github.dawncord.api.utils.LazyLoader;
 import java.util.List;
 
 
+/**
+ * Represents metadata for an auto moderation rule trigger.
+ */
 public class AutoModTriggerMetadata {
     private final LazyLoader loader;
     private List<String> keywordFilters;
@@ -16,7 +19,7 @@ public class AutoModTriggerMetadata {
     private Boolean isRaidProtected;
 
     /**
-     * Constructs a new AutoModTriggerMetadataImpl with the specified JSON node.
+     * Constructs a new AutoModTriggerMetadata with the specified JSON node.
      *
      * @param metadata The JSON node containing metadata.
      */

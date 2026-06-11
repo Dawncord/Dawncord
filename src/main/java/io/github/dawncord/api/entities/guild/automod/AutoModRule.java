@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 
+/**
+ * Represents an auto moderation rule in a guild.
+ */
 public class AutoModRule implements ISnowflake {
     private final LazyLoader loader;
     private final JsonNode rule;
@@ -33,7 +36,7 @@ public class AutoModRule implements ISnowflake {
     private List<String> exemptChannels;
 
     /**
-     * Constructs an AutoModRuleImpl object.
+     * Constructs an AutoModRule object.
      *
      * @param rule  The JSON node representing the auto-mod rule.
      * @param guild The guild to which the auto-mod rule belongs.

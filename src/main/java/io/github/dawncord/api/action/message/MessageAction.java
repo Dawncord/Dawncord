@@ -13,6 +13,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides common settings for message create and modify actions.
+ */
 public abstract class MessageAction extends Action<MessageAction> {
     protected final InteractionData interactionData;
     protected List<File> attachments;

@@ -2,6 +2,9 @@ package io.github.dawncord.api.action.guildsticker;
 
 import io.github.dawncord.api.action.Action;
 
+/**
+ * Provides common settings for guild sticker create and modify actions.
+ */
 public abstract class GuildStickerAction extends Action<GuildStickerAction> {
     protected final String guildId;
 

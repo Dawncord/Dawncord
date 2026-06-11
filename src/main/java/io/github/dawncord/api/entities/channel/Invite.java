@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
- * Represents an implementation of an invite to a guild or channel.
+ * Represents an invite to a guild or channel.
  */
 public class Invite {
     private final LazyLoader loader;
@@ -35,7 +35,7 @@ public class Invite {
     private ZonedDateTime expirationTimestamp;
 
     /**
-     * Constructs a new InviteImpl with the provided JSON invite and guild.
+     * Constructs a new Invite with the provided JSON invite and guild.
      *
      * @param invite The JSON node representing the invite.
      * @param guild  The guild associated with this invite.

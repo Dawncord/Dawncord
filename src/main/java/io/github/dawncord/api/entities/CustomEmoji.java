@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Implementation of the {@link Emoji} interface representing a custom emoji.
+ * Represents a custom emoji.
  */
 public class CustomEmoji implements Emoji {
     private final JsonNode emoji;
@@ -29,7 +29,7 @@ public class CustomEmoji implements Emoji {
     private Boolean isAvailable;
 
     /**
-     * Constructs a CustomEmojiImpl object with the provided JSON node and guild.
+     * Constructs a CustomEmoji object with the provided JSON node and guild.
      *
      * @param emoji The JSON node representing the custom emoji.
      * @param guild The guild to which the emoji belongs.

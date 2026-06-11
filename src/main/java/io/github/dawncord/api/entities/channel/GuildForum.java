@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Represents an implementation of a guild forum channel.
+ * Represents a guild forum channel.
  */
 public class GuildForum extends Channel {
     private final LazyLoader loader;
@@ -32,7 +32,7 @@ public class GuildForum extends Channel {
     private GuildCategory category;
 
     /**
-     * Constructs a GuildForumImpl object with the specified JSON representation of the forum and its guild.
+     * Constructs a GuildForum object with the specified JSON representation of the forum and its guild.
      *
      * @param forum The JSON representation of the guild forum.
      * @param guild The guild to which the forum belongs.

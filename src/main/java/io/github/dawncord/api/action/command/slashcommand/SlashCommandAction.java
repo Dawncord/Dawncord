@@ -10,6 +10,9 @@ import io.github.dawncord.api.utils.SlashCommandUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides common settings for slash command create and modify actions.
+ */
 public abstract class SlashCommandAction extends CommandAction
         implements Optionable<SlashCommandAction>, SubCommandable<SlashCommandAction>, SubCommandGroupable<SlashCommandAction> {
     protected final List<SubCommandGroup> subCommandGroupList = new ArrayList<>();

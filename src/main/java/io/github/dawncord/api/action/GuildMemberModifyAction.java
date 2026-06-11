@@ -2,6 +2,7 @@ package io.github.dawncord.api.action;
 
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
+import io.github.dawncord.api.entities.guild.GuildMember;
 import io.github.dawncord.api.event.ButtonEvent;
 import io.github.dawncord.api.event.SelectMenuEvent;
 import io.github.dawncord.api.event.SlashCommandEvent;
