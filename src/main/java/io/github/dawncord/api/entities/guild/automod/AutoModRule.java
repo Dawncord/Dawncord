@@ -27,6 +27,7 @@ public class AutoModRule implements ISnowflake {
     private final Guild guild;
     private String id;
     private String name;
+    private AutoModEventType eventType;
     private User creator;
     private AutoModTriggerType triggerType;
     private AutoModTriggerMetadata triggerMetadata;
@@ -70,7 +71,8 @@ public class AutoModRule implements ISnowflake {
     }
 
     public AutoModEventType getEventType() {
-        return AutoModEventType.MESSAGE_SEND;
+        eventType = loader.loadEnumObject(eventType, "event_type", AutoModEventType.class);
+        return eventType;
     }
 
     public AutoModTriggerType getTriggerType() {

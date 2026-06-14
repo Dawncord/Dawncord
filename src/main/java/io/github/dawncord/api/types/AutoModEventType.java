@@ -7,7 +7,12 @@ public enum AutoModEventType {
     /**
      * Member sends or edits a message in the guild.
      */
-    MESSAGE_SEND(1);
+    MESSAGE_SEND(1),
+
+    /**
+     * Member updates their profile (username, avatar, etc.) in the guild.
+     */
+    MEMBER_UPDATE(2);
 
     private final int value;
 

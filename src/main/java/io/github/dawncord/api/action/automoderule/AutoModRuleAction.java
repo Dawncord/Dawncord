@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.action.Action;
 import io.github.dawncord.api.types.AutoModActionType;
+import io.github.dawncord.api.types.AutoModEventType;
 
 /**
  * Abstract base class for AutoMod rule actions.
@@ -25,6 +26,16 @@ public abstract class AutoModRuleAction extends Action<AutoModRuleAction> implem
      */
     public AutoModRuleAction setName(String name) {
         return setProperty("name", name);
+    }
+
+    /**
+     * Sets the event type for the rule.
+     *
+     * @param eventType the event type to set
+     * @return the action object
+     */
+    public AutoModRuleAction setEventType(AutoModEventType eventType) {
+        return setProperty("event_type", eventType.getValue());
     }
 
     /**
