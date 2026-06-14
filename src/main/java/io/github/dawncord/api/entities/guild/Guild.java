@@ -765,7 +765,7 @@ public class Guild implements ISnowflake {
     }
 
     public ModifyEvent<AutoModRule> modifyAutoModRule(String ruleId, Consumer<AutoModRuleModifyAction> handler) {
-        ActionExecutor.modifyAutoModRule(handler, getId(), getAutoModRuleById(ruleId).getTriggerType());
+        ActionExecutor.modifyAutoModRule(handler, getId(), ruleId, getAutoModRuleById(ruleId).getTriggerType());
         return new ModifyEvent<>(getAutoModRuleById(ruleId));
     }
 

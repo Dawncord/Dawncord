@@ -15,15 +15,18 @@ import java.util.List;
  * @see AutoModRule
  */
 public class AutoModRuleModifyAction extends AutoModRuleAction {
+    private final String ruleId;
     private final AutoModTriggerType triggerType;
 
     /**
      * Create a new {@link AutoModRuleModifyAction}
      *
      * @param guildId     The ID of the guild where the auto-moderation rule is located.
+     * @param ruleId      The ID of the auto-moderation rule to be modified.
      * @param triggerType The trigger type of the auto-moderation rule to be modified.
      */
-    public AutoModRuleModifyAction(String guildId, AutoModTriggerType triggerType) {
+    public AutoModRuleModifyAction(String guildId, String ruleId, AutoModTriggerType triggerType) {
+        this.ruleId = ruleId;
         this.triggerType = triggerType;
         super(guildId);
     }
@@ -101,7 +104,7 @@ public class AutoModRuleModifyAction extends AutoModRuleAction {
     @Override
     protected void submit() {
         if (hasChanges) {
-            ApiClient.patch(jsonObject, Routes.Guild.AutoMod.All(guildId));
+            ApiClient.patch(jsonObject, Routes.Guild.AutoMod.Get(guildId, ruleId));
             hasChanges = false;
         }
     }

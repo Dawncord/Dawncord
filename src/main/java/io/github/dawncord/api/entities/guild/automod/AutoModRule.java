@@ -106,7 +106,7 @@ public class AutoModRule implements ISnowflake {
     }
 
     public ModifyEvent<AutoModRule> modify(Consumer<AutoModRuleModifyAction> handler) {
-        ActionExecutor.modifyAutoModRule(handler, guild.getId(), getTriggerType());
+        ActionExecutor.modifyAutoModRule(handler, guild.getId(), getId(), getTriggerType());
         return new ModifyEvent<>(guild.getAutoModRuleById(getId()));
     }
 

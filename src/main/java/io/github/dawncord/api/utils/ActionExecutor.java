@@ -117,10 +117,11 @@ public class ActionExecutor {
      *
      * @param handler     The auto-mod rule modification handler.
      * @param guildId     The ID of the guild.
+     * @param ruleId      The ID of the auto-mod rule to modify.
      * @param triggerType The trigger type of the auto-mod rule.
      */
-    public static void modifyAutoModRule(Consumer<AutoModRuleModifyAction> handler, String guildId, AutoModTriggerType triggerType) {
-        AutoModRuleModifyAction action = new AutoModRuleModifyAction(guildId, triggerType);
+    public static void modifyAutoModRule(Consumer<AutoModRuleModifyAction> handler, String guildId, String ruleId, AutoModTriggerType triggerType) {
+        AutoModRuleModifyAction action = new AutoModRuleModifyAction(guildId, ruleId, triggerType);
         execute(action, handler, false);
     }
 
