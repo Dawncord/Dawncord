@@ -30,13 +30,20 @@ public enum AutoModTriggerType {
         this.value = value;
     }
 
+    /**
+     * Returns the {@link AutoModTriggerType} corresponding to the given integer value,
+     * or {@code null} if no match is found.
+     *
+     * @param value The integer value of the trigger type.
+     * @return The matching {@link AutoModTriggerType}, or {@code null}.
+     */
     public static AutoModTriggerType fromValue(int value) {
         for (AutoModTriggerType type : values()) {
             if (type.value == value) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown trigger type: " + value);
+        return null;
     }
 
     /**
