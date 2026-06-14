@@ -25,8 +25,15 @@ public class EnumUtils {
      */
     public static <T extends Enum<T>> T getEnumObjectFromInt(int value, Class<T> enumClass) {
         for (T enumConstant : enumClass.getEnumConstants()) {
-            if (value == enumConstant.ordinal()) {
-                return enumConstant;
+            try {
+                Method m = enumClass.getMethod("getValue");
+                if (value == (int) m.invoke(enumConstant)) {
+                    return enumConstant;
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                if (value == enumConstant.ordinal()) {
+                    return enumConstant;
+                }
             }
         }
         return null;
@@ -112,9 +119,19 @@ public class EnumUtils {
     public static <T extends Enum<T>> List<T> getEnumListFromLong(JsonNode json, String key, Class<T> enumClass) {
         long flagsFromJson = json.get(key).asLong(0);
         List<T> flags = new ArrayList<>();
-        for (T flag : enumClass.getEnumConstants()) {
-            if ((flagsFromJson & (1L << flag.ordinal())) != 0) {
-                flags.add(flag);
+        try {
+            Method getValue = enumClass.getMethod("getValue");
+            for (T flag : enumClass.getEnumConstants()) {
+                long value = ((Number) getValue.invoke(flag)).longValue();
+                if ((flagsFromJson & value) != 0) {
+                    flags.add(flag);
+                }
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            for (T flag : enumClass.getEnumConstants()) {
+                if ((flagsFromJson & (1L << flag.ordinal())) != 0) {
+                    flags.add(flag);
+                }
             }
         }
         return flags;
