@@ -65,7 +65,7 @@ public class AutoModRule implements ISnowflake {
     }
 
     public User getCreator() {
-        creator = loader.loadIfExists(creator, "user_id",
+        creator = loader.loadIfExists(creator, "creator_id",
                 () -> new User(JsonUtils.fetch(Routes.User(rule.get("creator_id").asText()))));
         return creator;
     }
