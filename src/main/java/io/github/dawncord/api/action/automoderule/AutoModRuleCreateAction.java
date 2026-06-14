@@ -28,11 +28,10 @@ public class AutoModRuleCreateAction extends AutoModRuleAction {
      */
     public AutoModRuleCreateAction(String guildId) {
         super(guildId);
-        this.jsonObject.put("event_type", 1);
     }
 
     /**
-     * Sets the event type for the rule. Defaults to {@link AutoModEventType#MESSAGE_SEND}.
+     * Sets the event type for the rule.
      *
      * @param eventType the event type to set
      * @return the modified AutoModRuleCreateAction object

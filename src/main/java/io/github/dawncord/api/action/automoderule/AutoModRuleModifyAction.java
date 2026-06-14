@@ -51,7 +51,7 @@ public class AutoModRuleModifyAction extends AutoModRuleAction {
     }
 
     /**
-     * Sets the spam trigger v
+     * Sets the spam trigger for the rule.
      *
      * @return the modified AutoModRuleModifyAction object
      */
