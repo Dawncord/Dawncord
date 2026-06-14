@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.automod.AutoModRule;
+import io.github.dawncord.api.types.AutoModEventType;
 import io.github.dawncord.api.types.AutoModTriggerType;
 import io.github.dawncord.api.types.KeywordPreset;
 import io.github.dawncord.api.utils.EnumUtils;
@@ -28,6 +29,18 @@ public class AutoModRuleCreateAction extends AutoModRuleAction {
     public AutoModRuleCreateAction(String guildId) {
         super(guildId);
         this.jsonObject.put("event_type", 1);
+    }
+
+    /**
+     * Sets the event type for the rule. Defaults to {@link AutoModEventType#MESSAGE_SEND}.
+     *
+     * @param eventType the event type to set
+     * @return the modified AutoModRuleCreateAction object
+     */
+    @Override
+    public AutoModRuleCreateAction setEventType(AutoModEventType eventType) {
+        setProperty("event_type", eventType.getValue());
+        return this;
     }
 
     /**
