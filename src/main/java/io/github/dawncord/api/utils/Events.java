@@ -94,7 +94,7 @@ public class Events {
      * @return True if the event is an ENTITLEMENT event, false otherwise.
      */
     public static boolean isEntitlementEvent(GatewayEvent type) {
-        return type.toString().matches("^ENTITLMENT_.*");
+        return type.toString().matches("^ENTITLEMENT_.*");
     }
 
     /**
