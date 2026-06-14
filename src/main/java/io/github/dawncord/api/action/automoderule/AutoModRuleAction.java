@@ -70,6 +70,15 @@ public abstract class AutoModRuleAction extends Action<AutoModRuleAction> implem
     }
 
     /**
+     * Sets the block member interaction action for the rule.
+     *
+     * @return the action object
+     */
+    public AutoModRuleAction setBlockMemberInteractionAction() {
+        return addAction(AutoModActionType.BLOCK_MEMBER_INTERACTION, mapper.createObjectNode());
+    }
+
+    /**
      * Sets the enabled state for the rule.
      *
      * @param enabled the enabled state

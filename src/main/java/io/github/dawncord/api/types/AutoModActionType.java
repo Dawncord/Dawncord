@@ -17,7 +17,13 @@ public enum AutoModActionType {
     /**
      * Applies a timeout.
      */
-    TIMEOUT(3);
+    TIMEOUT(3),
+
+    /**
+     * Blocks a member from interacting (sending messages, adding reactions, joining voice channels, etc.)
+     * until the offending content is reviewed.
+     */
+    BLOCK_MEMBER_INTERACTION(4);
 
     private final int value;
 
