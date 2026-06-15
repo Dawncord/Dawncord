@@ -130,6 +130,7 @@ public class AutoModRuleCreateAction extends AutoModRuleAction {
             case SPAM -> ruleCounts.getOrDefault(AutoModTriggerType.SPAM, 0) >= 1;
             case MENTION_SPAM -> ruleCounts.getOrDefault(AutoModTriggerType.MENTION_SPAM, 0) >= 1;
             case KEYWORD_PRESET -> ruleCounts.getOrDefault(AutoModTriggerType.KEYWORD_PRESET, 0) >= 1;
+            case MEMBER_PROFILE -> ruleCounts.getOrDefault(AutoModTriggerType.MEMBER_PROFILE, 0) >= 1;
         };
     }
 

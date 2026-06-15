@@ -1,176 +1,222 @@
 package io.github.dawncord.api.types;
 
 /**
- * Represents message types.
+ * Represents message types in Discord.
+ * Each constant carries the integer value used in the API and a flag indicating
+ * whether the message can be deleted by users (subject to channel permissions).
  */
 public enum MessageType {
     /**
      * Default message type.
      */
-    DEFAULT(0),
+    DEFAULT(0, true),
 
     /**
-     * Recipient add.
+     * Recipient was added to a group DM.
      */
-    RECIPIENT_ADD(1),
+    RECIPIENT_ADD(1, false),
 
     /**
-     * Recipient remove.
+     * Recipient was removed from a group DM.
      */
-    RECIPIENT_REMOVE(2),
+    RECIPIENT_REMOVE(2, false),
 
     /**
-     * Call.
+     * A call was started.
      */
-    CALL(3),
+    CALL(3, false),
 
     /**
-     * Channel name change.
+     * Channel name was changed.
      */
-    CHANNEL_NAME_CHANGE(4),
+    CHANNEL_NAME_CHANGE(4, false),
 
     /**
-     * Channel icon change.
+     * Channel icon was changed.
      */
-    CHANNEL_ICON_CHANGE(5),
+    CHANNEL_ICON_CHANGE(5, false),
 
     /**
-     * Channel pinned.
+     * A message was pinned in the channel.
      */
-    CHANNEL_PINNED_MESSAGE(6),
+    CHANNEL_PINNED_MESSAGE(6, true),
 
     /**
-     * User join.
+     * A user joined the guild.
      */
-    USER_JOIN(7),
+    USER_JOIN(7, true),
 
     /**
-     * Guild boost.
+     * A user boosted the guild.
      */
-    GUILD_BOOST(8),
+    GUILD_BOOST(8, true),
 
     /**
-     * Guild boost tier 1.
+     * The guild reached boost tier 1.
      */
-    GUILD_BOOST_TIER_1(9),
+    GUILD_BOOST_TIER_1(9, true),
 
     /**
-     * Guild boost tier 2.
+     * The guild reached boost tier 2.
      */
-    GUILD_BOOST_TIER_2(10),
+    GUILD_BOOST_TIER_2(10, true),
 
     /**
-     * Guild boost tier 3.
+     * The guild reached boost tier 3.
      */
-    GUILD_BOOST_TIER_3(11),
+    GUILD_BOOST_TIER_3(11, true),
 
     /**
-     * Channel follow add.
+     * A channel was followed.
      */
-    CHANNEL_FOLLOW_ADD(12),
+    CHANNEL_FOLLOW_ADD(12, true),
 
     /**
-     * Guild discovery disqualified.
+     * The guild was disqualified from discovery.
      */
-    GUILD_DISCOVERY_DISQUALIFIED(14),
+    GUILD_DISCOVERY_DISQUALIFIED(14, true),
 
     /**
-     * Guild discovery requalified.
+     * The guild was requalified for discovery.
      */
-    GUILD_DISCOVERY_REQUALIFIED(15),
+    GUILD_DISCOVERY_REQUALIFIED(15, true),
 
     /**
-     * Guild discovery grace period initial warning.
+     * Initial grace period warning for discovery disqualification.
      */
-    GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING(16),
+    GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING(16, true),
 
     /**
-     * Guild discovery grace period final warning.
+     * Final grace period warning for discovery disqualification.
      */
-    GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING(17),
+    GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING(17, true),
 
     /**
-     * Thread created.
+     * A thread was created in the channel.
      */
-    THREAD_CREATED(18),
+    THREAD_CREATED(18, true),
 
     /**
-     * Reply.
+     * A reply to another message.
      */
-    REPLY(19),
+    REPLY(19, true),
 
     /**
-     * Chat input command.
+     * A slash command was invoked.
      */
-    CHAT_INPUT_COMMAND(20),
+    CHAT_INPUT_COMMAND(20, true),
 
     /**
-     * Thread starter message.
+     * The first message in a thread, pinned from the parent channel.
      */
-    THREAD_STARTER_MESSAGE(21),
+    THREAD_STARTER_MESSAGE(21, false),
 
     /**
-     * Guild invite reminder.
+     * A guild invite reminder.
      */
-    GUILD_INVITE_REMINDER(22),
+    GUILD_INVITE_REMINDER(22, true),
 
     /**
-     * Context menu command.
+     * A context menu command was invoked.
      */
-    CONTEXT_MENU_COMMAND(23),
+    CONTEXT_MENU_COMMAND(23, true),
 
     /**
-     * Auto moderation action.
+     * An Auto Moderation rule was triggered and an action was executed.
+     * Can only be deleted by members with the {@code MANAGE_MESSAGES} permission.
      */
-    AUTO_MODERATION_ACTION(24),
+    AUTO_MODERATION_ACTION(24, true),
 
     /**
-     * Role subscription purchase.
+     * A role subscription was purchased.
      */
-    ROLE_SUBSCRIPTION_PURCHASE(25),
+    ROLE_SUBSCRIPTION_PURCHASE(25, true),
 
     /**
-     * Interaction premium upsell.
+     * An interaction premium upsell prompt.
      */
-    INTERACTION_PREMIUM_UPSELL(26),
+    INTERACTION_PREMIUM_UPSELL(26, true),
 
     /**
-     * Stage start.
+     * A stage channel became live.
      */
-    STAGE_START(27),
+    STAGE_START(27, true),
 
     /**
-     * Stage end.
+     * A stage channel ended.
      */
-    STAGE_END(28),
+    STAGE_END(28, true),
 
     /**
-     * Stage speaker.
+     * A user became a speaker in a stage channel.
      */
-    STAGE_SPEAKER(29),
+    STAGE_SPEAKER(29, true),
 
     /**
-     * Stage topic.
+     * The topic of a stage channel was changed.
      */
-    STAGE_TOPIC(31),
+    STAGE_TOPIC(31, true),
 
     /**
-     * Guild application premium subscription.
+     * A user subscribed to a premium app.
      */
-    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION(32);
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION(32, true),
+
+    /**
+     * Guild incident alert mode was enabled.
+     */
+    GUILD_INCIDENT_ALERT_MODE_ENABLED(36, true),
+
+    /**
+     * Guild incident alert mode was disabled.
+     */
+    GUILD_INCIDENT_ALERT_MODE_DISABLED(37, true),
+
+    /**
+     * A raid was reported in the guild.
+     */
+    GUILD_INCIDENT_REPORT_RAID(38, true),
+
+    /**
+     * A false alarm raid report was submitted.
+     */
+    GUILD_INCIDENT_REPORT_FALSE_ALARM(39, true),
+
+    /**
+     * A purchase notification message.
+     */
+    PURCHASE_NOTIFICATION(44, true),
+
+    /**
+     * A poll result message.
+     */
+    POLL_RESULT(46, true);
 
     private final int value;
+    private final boolean deletable;
 
-    MessageType(int value) {
+    MessageType(int value, boolean deletable) {
         this.value = value;
+        this.deletable = deletable;
     }
 
     /**
-     * Gets the value of the message type.
+     * Gets the integer value of this message type as used in the Discord API.
      *
-     * @return The value of the message type.
+     * @return The integer value of the message type.
      */
     public int getValue() {
         return value;
+    }
+
+    /**
+     * Returns whether messages of this type can be deleted by users.
+     * Note: some types (e.g. {@link #AUTO_MODERATION_ACTION}) require special
+     * permissions ({@code MANAGE_MESSAGES}) even though this returns {@code true}.
+     *
+     * @return {@code true} if the message type is deletable, {@code false} otherwise.
+     */
+    public boolean isDeletable() {
+        return deletable;
     }
 }

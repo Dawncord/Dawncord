@@ -22,7 +22,12 @@ public enum AutoModTriggerType {
     /**
      * Checks if content contains more unique mentions than allowed. Maximum allowed per guild is 1.
      */
-    MENTION_SPAM(5);
+    MENTION_SPAM(5),
+
+    /**
+     * Checks if a member profile contains words from a user-defined list of keywords. Maximum allowed per guild is 1.
+     */
+    MEMBER_PROFILE(6);
 
     private final int value;
 

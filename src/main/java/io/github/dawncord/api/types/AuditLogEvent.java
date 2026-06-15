@@ -282,7 +282,72 @@ public enum AuditLogEvent {
     /**
      * Creator monetization terms were accepted.
      */
-    CREATOR_MONETIZATION_TERMS_ACCEPTED(151);
+    CREATOR_MONETIZATION_TERMS_ACCEPTED(151),
+
+    /**
+     * A soundboard sound was created.
+     */
+    SOUNDBOARD_SOUND_CREATE(130),
+
+    /**
+     * A soundboard sound was updated.
+     */
+    SOUNDBOARD_SOUND_UPDATE(131),
+
+    /**
+     * A soundboard sound was deleted.
+     */
+    SOUNDBOARD_SOUND_DELETE(132),
+
+    /**
+     * A member was quarantined by Auto Moderation.
+     */
+    AUTO_MODERATION_QUARANTINE_USER(146),
+
+    /**
+     * A Guild Onboarding question was created.
+     */
+    ONBOARDING_PROMPT_CREATE(163),
+
+    /**
+     * A Guild Onboarding question was updated.
+     */
+    ONBOARDING_PROMPT_UPDATE(164),
+
+    /**
+     * A Guild Onboarding question was deleted.
+     */
+    ONBOARDING_PROMPT_DELETE(165),
+
+    /**
+     * Guild Onboarding was created.
+     */
+    ONBOARDING_CREATE(166),
+
+    /**
+     * Guild Onboarding was updated.
+     */
+    ONBOARDING_UPDATE(167),
+
+    /**
+     * A Guild Server Guide was created.
+     */
+    HOME_SETTINGS_CREATE(190),
+
+    /**
+     * A Guild Server Guide was updated.
+     */
+    HOME_SETTINGS_UPDATE(191),
+
+    /**
+     * A voice channel status was updated by a user.
+     */
+    VOICE_CHANNEL_STATUS_UPDATE(192),
+
+    /**
+     * A voice channel status was deleted by a user.
+     */
+    VOICE_CHANNEL_STATUS_DELETE(193);
 
     private final int value;
 

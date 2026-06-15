@@ -41,8 +41,17 @@ public enum InteractionCallbackType {
 
     /**
      * Respond to an interaction with an upgrade button, only available for apps with monetization enabled.
+     *
+     * @deprecated Use {@link #LAUNCH_ACTIVITY} instead. This callback type is no longer recommended
+     *             by Discord for new implementations.
      */
-    PREMIUM_REQUIRED(10);
+    @Deprecated
+    PREMIUM_REQUIRED(10),
+
+    /**
+     * Launch the Activity associated with the app. Only available for apps with Activities enabled.
+     */
+    LAUNCH_ACTIVITY(12);
 
     private final int value;
 
