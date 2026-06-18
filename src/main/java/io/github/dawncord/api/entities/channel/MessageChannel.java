@@ -102,12 +102,14 @@ public class MessageChannel extends Channel {
     }
 
     public List<Message> getPinnedMessages() {
-        pinnedMessages = loader.load(pinnedMessages, () ->
-                JsonUtils.getEntityList(
-                        JsonUtils.fetch(Routes.Channel.Message.Pin.All(getId())),
-                        message -> new Message(message, getGuild())
-                )
-        );
+        pinnedMessages = loader.load(pinnedMessages, () -> {
+            JsonNode response = JsonUtils.fetch(Routes.Channel.Message.Pin.All(getId()));
+            JsonNode items = response != null ? response.get("items") : null;
+            return JsonUtils.getEntityList(
+                    items,
+                    item -> new Message(item.get("message"), getGuild())
+            );
+        });
         return pinnedMessages;
     }
 

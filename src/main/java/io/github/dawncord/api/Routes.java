@@ -658,24 +658,26 @@ public class Routes {
              */
             public static class Pin {
                 /**
-                 * Constructs the route to retrieve a pinned message within a channel.
+                 * Constructs the route to pin or unpin a message within a channel.
                  *
-                 * @param channelId The ID of the channel containing the pinned message.
-                 * @param messageId The ID of the pinned message.
-                 * @return The route to retrieve the pinned message.
+                 * @param channelId The ID of the channel containing the message.
+                 * @param messageId The ID of the message to pin or unpin.
+                 * @return The route used to pin (PUT) or unpin (DELETE) the message.
                  */
                 public static String Get(String channelId, String messageId) {
-                    return "/channels/" + channelId + "/pins/" + messageId;
+                    return "/channels/" + channelId + "/messages/pins/" + messageId;
                 }
 
                 /**
-                 * Constructs the route to retrieve all pinned messages within a channel.
+                 * Constructs the route to retrieve the pinned messages within a channel.
+                 * The endpoint is paginated and returns an object containing an
+                 * {@code items} array of message pin entries.
                  *
                  * @param channelId The ID of the channel.
-                 * @return The route to retrieve all pinned messages within the channel.
+                 * @return The route to retrieve the channel's pinned messages.
                  */
                 public static String All(String channelId) {
-                    return "/channels/" + channelId + "/pins";
+                    return "/channels/" + channelId + "/messages/pins";
                 }
             }
         }
