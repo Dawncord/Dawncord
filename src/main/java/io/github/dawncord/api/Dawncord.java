@@ -170,7 +170,10 @@ public class Dawncord {
      *
      * @param handler the handler that will be used to create the guild
      * @return a CreateEvent containing the created Guild
+     * @deprecated Discord removed {@code POST /guilds} for apps (bots) in July 2025; bots can no
+     * longer create guilds through the API. There is no replacement available for bot accounts.
      */
+    @Deprecated(since = "1.3.3")
     public CreateEvent<Guild> createGuild(Consumer<GuildCreateAction> handler) {
         String id = ActionExecutor.createGuild(handler);
         return new CreateEvent<>(new Guild(JsonUtils.fetch(Routes.Guild.Get(id))));

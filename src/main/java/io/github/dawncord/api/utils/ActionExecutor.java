@@ -82,7 +82,10 @@ public class ActionExecutor {
      *
      * @param handler the handler that modifies the GuildCreateAction object
      * @return the ID of the created guild
+     * @deprecated Discord removed {@code POST /guilds} for apps (bots) in July 2025; bots can no
+     * longer create guilds through the API. There is no replacement available for bot accounts.
      */
+    @Deprecated(since = "1.3.3")
     public static String createGuild(Consumer<GuildCreateAction> handler) {
         GuildCreateAction action = new GuildCreateAction();
         return execute(action, handler, true);

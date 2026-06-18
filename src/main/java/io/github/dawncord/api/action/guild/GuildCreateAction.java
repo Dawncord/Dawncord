@@ -16,7 +16,11 @@ import java.util.function.Consumer;
  * Represents an action for creating a guild.
  *
  * @see Guild
+ * @deprecated Discord removed {@code POST /guilds} for apps (bots) in July 2025; bots can no
+ * longer create guilds through the API. There is no replacement available for bot accounts,
+ * so this action no longer has any effect for bots and is kept only for source compatibility.
  */
+@Deprecated(since = "1.3.3")
 public class GuildCreateAction extends GuildAction {
     private int roleId = 1;
     private int channelId = 1;
