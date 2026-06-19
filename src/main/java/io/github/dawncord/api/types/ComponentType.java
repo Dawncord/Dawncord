@@ -15,9 +15,9 @@ public enum ComponentType {
     BUTTON(2),
 
     /**
-     * A text component.
+     * A string select menu component.
      */
-    TEXT(3),
+    STRING_SELECT(3),
 
     /**
      * A text input component.

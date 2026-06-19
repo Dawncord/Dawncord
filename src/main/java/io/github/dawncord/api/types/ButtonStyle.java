@@ -27,7 +27,12 @@ public enum ButtonStyle {
     /**
      * Link button style.
      */
-    Link(5);
+    Link(5),
+
+    /**
+     * Premium button style.
+     */
+    Premium(6);
 
     private final int value;
 

@@ -7,7 +7,7 @@ public enum MessageFlag {
     /**
      * Message has been published to subscribed channels (via Channel Following).
      */
-    ROSSPOSTED(1 << 0),
+    CROSSPOSTED(1 << 0),
 
     /**
      * Message originated from a message in another channel (via Channel Following).
@@ -57,7 +57,17 @@ public enum MessageFlag {
     /**
      * Message is a voice message.
      */
-    IS_VOICE_MESSAGE(1 << 13);
+    IS_VOICE_MESSAGE(1 << 13),
+
+    /**
+     * Message has a snapshot (via Message Forwarding).
+     */
+    HAS_SNAPSHOT(1 << 14),
+
+    /**
+     * Message allows you to create fully component-driven messages.
+     */
+    IS_COMPONENTS_V2(1 << 15);
 
     private final int value;
 
