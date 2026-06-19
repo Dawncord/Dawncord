@@ -20,3 +20,6 @@
 
 ### VS Code ###
 .vscode/
+
+# changelog archives (local only, read at major releases for the rollup summary)
+/docs/changelog/
