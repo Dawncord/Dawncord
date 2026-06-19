@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a new feature or Discord API capability for Dawncord
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Preliminary checks
+      options:
+        - label: I searched existing issues and didn't find a duplicate
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What problem does this solve, or what are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the API or behavior you'd like. A sketch of how it'd be called is welcome.
+      render: java
+    validations:
+      required: true
+  - type: input
+    id: discord-docs
+    attributes:
+      label: Discord API reference
+      description: If this maps to a Discord API endpoint or object, link the relevant docs.
+      placeholder: "https://discord.com/developers/docs/..."
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you're using today, or other approaches you weighed.
