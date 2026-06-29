@@ -8,7 +8,7 @@ import io.github.dawncord.api.entities.application.Application;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.guild.event.GuildScheduledEvent;
 import io.github.dawncord.api.types.TargetType;
-import io.github.dawncord.api.utils.InviteType;
+import io.github.dawncord.api.types.InviteType;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.LazyLoader;
 

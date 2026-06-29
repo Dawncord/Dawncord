@@ -1,4 +1,4 @@
-package io.github.dawncord.api.utils;
+package io.github.dawncord.api.types;
 
 /**
  * Represents the supported invite target types.
