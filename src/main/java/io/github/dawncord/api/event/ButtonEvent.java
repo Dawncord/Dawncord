@@ -1,6 +1,5 @@
 package io.github.dawncord.api.event;
 
-import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.ModalCreateAction;
 import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
@@ -12,7 +11,6 @@ import io.github.dawncord.api.entities.message.modal.Modal;
 import io.github.dawncord.api.interaction.InteractionData;
 import io.github.dawncord.api.interaction.MessageComponentInteractionData;
 import io.github.dawncord.api.utils.ActionExecutor;
-import io.github.dawncord.api.utils.JsonUtils;
 
 import java.util.function.Consumer;
 
@@ -31,20 +29,16 @@ public class ButtonEvent implements MessageComponentEvent {
      *
      * @param interactionData The interaction data associated with the button event.
      * @param buttonData      The data of the button that triggered the event.
+     * @param guild           The guild the interaction occurred in.
      */
-    public ButtonEvent(MessageComponentInteractionData interactionData, ButtonData buttonData) {
+    public ButtonEvent(MessageComponentInteractionData interactionData, ButtonData buttonData, Guild guild) {
         this.buttonData = buttonData;
-        data = interactionData;
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
+        this.data = interactionData;
+        this.guild = guild;
+        this.channel = guild.getChannelById(data.channelId());
+        this.member = guild.getMemberById(data.memberId());
 
-        Event.getLogger().debug("Button event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
-                data.customId(),
-                Routes.Reply("{id}", "{token}"),
-                guild.getId(), guild.getName(),
-                channel.getId(), channel.getName(),
-                member.getUser().getId(), member.getUser().getUsername());
+        InteractionLogger.log("Button", data.customId(), guild, channel, member);
     }
 
     /**

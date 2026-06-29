@@ -1,7 +1,6 @@
 package io.github.dawncord.api.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.action.ModalCreateAction;
 import io.github.dawncord.api.action.message.MessageCreateAction;
 import io.github.dawncord.api.action.message.MessageModifyAction;
@@ -15,7 +14,6 @@ import io.github.dawncord.api.entities.message.modal.Modal;
 import io.github.dawncord.api.interaction.InteractionData;
 import io.github.dawncord.api.interaction.MessageComponentInteractionData;
 import io.github.dawncord.api.utils.ActionExecutor;
-import io.github.dawncord.api.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,22 +38,18 @@ public class SelectMenuEvent implements MessageComponentEvent {
      * @param selectMenuData  The data associated with the select menu component.
      * @param resolved        The resolved data of the interaction.
      * @param values          The selected values of the select menu.
+     * @param guild           The guild the interaction occurred in.
      */
-    public SelectMenuEvent(MessageComponentInteractionData interactionData, SelectMenuData selectMenuData, JsonNode resolved, List<String> values) {
+    public SelectMenuEvent(MessageComponentInteractionData interactionData, SelectMenuData selectMenuData, JsonNode resolved, List<String> values, Guild guild) {
         this.selectMenuData = selectMenuData;
         this.resolved = resolved;
         this.values = values;
-        data = interactionData;
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
+        this.data = interactionData;
+        this.guild = guild;
+        this.channel = guild.getChannelById(data.channelId());
+        this.member = guild.getMemberById(data.memberId());
 
-        Event.getLogger().debug("Select menu event [{}] -> {} in [{}:{}]:[{}:{}] from [{}:{}}",
-                data.customId(),
-                Routes.Reply("{id}", "{token}"),
-                guild.getId(), guild.getName(),
-                channel.getId(), channel.getName(),
-                member.getUser().getId(), member.getUser().getUsername());
+        InteractionLogger.log("Select menu", data.customId(), guild, channel, member);
     }
 
     /**

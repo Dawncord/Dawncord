@@ -38,6 +38,8 @@ public class ModalSubmitEvent implements ReplyEvent {
         guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
         channel = guild.getChannelById(data.channelId());
         member = guild.getMemberById(data.memberId());
+
+        InteractionLogger.log("Modal submit", modalData.customId(), guild, channel, member);
     }
 
     /**

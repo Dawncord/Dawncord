@@ -227,7 +227,7 @@ public class InteractionListener extends WebSocketAdapter {
         List<String> values = new ArrayList<>();
         data.get("values").forEach(value -> values.add(value.asText()));
         SelectMenuEvent selectMenuEvent = new SelectMenuEvent(
-                interactionData, selectMenuData, resolved, values
+                interactionData, selectMenuData, resolved, values, guild
         );
 
         invokeEvent("processSelectMenuEvent", SelectMenuEvent.class, selectMenuEvent);
@@ -252,7 +252,7 @@ public class InteractionListener extends WebSocketAdapter {
                 emoji
         );
         ButtonEvent buttonEvent = new ButtonEvent(
-                interactionData, buttonData
+                interactionData, buttonData, guild
         );
 
         invokeEvent("processButtonEvent", ButtonEvent.class, buttonEvent);
