@@ -197,7 +197,7 @@ public class ApiClient {
                 if (response.isSuccessful()) {
                     return mapper.readTree(body.string());
                 } else {
-                    logError(request, body);
+                    logError(request, response.code(), body);
                 }
             }
         } catch (IOException e) {
@@ -210,7 +210,7 @@ public class ApiClient {
         try (Response response = CLIENT.newCall(request).execute(); ResponseBody body = response.body()) {
             if (body != null) {
                 if (!response.isSuccessful()) {
-                    logError(request, body);
+                    logError(request, response.code(), body);
                 }
                 if (response.isSuccessful()) {
                     logInfo(request);
@@ -224,14 +224,63 @@ public class ApiClient {
         return null;
     }
 
-    private static void logError(Request request, ResponseBody body) throws IOException {
-        JsonNode errorJson = mapper.readTree(body.string());
-        String code = errorJson.get("code").asText();
-        String message = errorJson.get("message").asText();
-        String url = request.url().url().toString().substring(Constants.API_URL.length());
-        String method = request.method();
-        JsonError error = new JsonError(code, message, url, method);
-        error.log();
+    private static void logError(Request request, int statusCode, ResponseBody body) {
+        try {
+            String raw = body.string();
+            String url = request.url().url().toString().substring(Constants.API_URL.length());
+            String method = request.method();
+
+            JsonNode errorJson;
+            try {
+                errorJson = mapper.readTree(raw);
+            } catch (JsonProcessingException _) {
+                // Non-JSON body (e.g. Cloudflare HTML, empty response) — fall back to the raw body.
+                String snippet = raw.strip();
+                if (snippet.length() > 500) {
+                    snippet = snippet.substring(0, 500) + "…";
+                }
+                new JsonError(statusCode, "", snippet, "", url, method).log();
+                return;
+            }
+
+            String code = errorJson.path("code").asText("");
+            String message = errorJson.path("message").asText("");
+            String details = errorJson.has("errors") ? flattenErrors(errorJson.get("errors")) : "";
+            new JsonError(statusCode, code, message, details, url, method).log();
+        } catch (Exception e) {
+            // Deliberately broad: logging an error must never break the calling request path,
+            // so any failure here (I/O reading the body, parsing, flattening) is swallowed to warn.
+            logger.warn("Failed to log API error response", e);
+        }
+    }
+
+    /**
+     * Flattens Discord's nested {@code errors} object ({@code field._errors[].message}) into a
+     * single readable string such as {@code field: message; other.field: message}.
+     */
+    private static String flattenErrors(JsonNode errors) {
+        StringBuilder sb = new StringBuilder();
+        collectErrors("", errors, sb);
+        return sb.toString();
+    }
+
+    private static void collectErrors(String path, JsonNode node, StringBuilder sb) {
+        if (node == null || node.isNull()) return;
+
+        JsonNode fieldErrors = node.get("_errors");
+        if (fieldErrors != null && fieldErrors.isArray()) {
+            for (JsonNode err : fieldErrors) {
+                if (sb.length() > 0) sb.append("; ");
+                if (!path.isEmpty()) sb.append(path).append(": ");
+                sb.append(err.path("message").asText(""));
+            }
+            return;
+        }
+
+        node.properties().forEach(entry -> {
+            String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
+            collectErrors(childPath, entry.getValue(), sb);
+        });
     }
 
     private static void logInfo(Request request) {
