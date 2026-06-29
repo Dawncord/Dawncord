@@ -20,10 +20,10 @@ import java.util.function.Consumer;
  * Represents an event triggered by interaction with a button component in a message.
  */
 public class ButtonEvent implements MessageComponentEvent {
-    private static MessageComponentInteractionData data;
-    private static Guild guild;
-    private static GuildChannel channel;
-    private static GuildMember member;
+    private final MessageComponentInteractionData data;
+    private final Guild guild;
+    private final GuildChannel channel;
+    private final GuildMember member;
     private final ButtonData buttonData;
 
     /**
@@ -52,17 +52,8 @@ public class ButtonEvent implements MessageComponentEvent {
      *
      * @return The interaction data associated with the button event.
      */
-    public static InteractionData getData() {
+    public InteractionData getData() {
         return data;
-    }
-
-    /**
-     * Updates the guild, channel, and member data associated with the button event.
-     */
-    public static void UpdateData() {
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
     }
 
     /**

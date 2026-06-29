@@ -24,10 +24,10 @@ import java.util.function.Consumer;
  * Represents an event triggered by a slash command interaction.
  */
 public class SlashCommandEvent implements ReplyEvent {
-    private static SlashCommandInteractionData data;
-    private static Guild guild;
-    private static GuildChannel channel;
-    private static GuildMember member;
+    private final SlashCommandInteractionData data;
+    private final Guild guild;
+    private final GuildChannel channel;
+    private final GuildMember member;
 
     /**
      * Constructs a SlashCommandEvent with the specified interaction data.
@@ -53,17 +53,8 @@ public class SlashCommandEvent implements ReplyEvent {
      *
      * @return The interaction data.
      */
-    public static InteractionData getData() {
+    public InteractionData getData() {
         return data;
-    }
-
-    /**
-     * Updates the guild, channel, and member associated with this event.
-     */
-    public static void UpdateData() {
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
     }
 
     /**

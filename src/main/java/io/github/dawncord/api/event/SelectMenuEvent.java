@@ -25,10 +25,10 @@ import java.util.function.Consumer;
  * Represents an event related to a select menu interaction in a message.
  */
 public class SelectMenuEvent implements MessageComponentEvent {
-    private static MessageComponentInteractionData data;
-    private static Guild guild;
-    private static GuildChannel channel;
-    private static GuildMember member;
+    private final MessageComponentInteractionData data;
+    private final Guild guild;
+    private final GuildChannel channel;
+    private final GuildMember member;
     private final SelectMenuData selectMenuData;
     private final JsonNode resolved;
     private final List<String> values;
@@ -63,17 +63,8 @@ public class SelectMenuEvent implements MessageComponentEvent {
      *
      * @return The interaction data.
      */
-    public static InteractionData getData() {
+    public InteractionData getData() {
         return data;
-    }
-
-    /**
-     * Updates the guild, channel, and member data associated with the event.
-     */
-    public static void UpdateData() {
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
     }
 
     /**

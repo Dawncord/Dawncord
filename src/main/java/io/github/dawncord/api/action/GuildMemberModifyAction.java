@@ -3,9 +3,6 @@ package io.github.dawncord.api.action;
 import io.github.dawncord.api.ApiClient;
 import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.guild.GuildMember;
-import io.github.dawncord.api.event.ButtonEvent;
-import io.github.dawncord.api.event.SelectMenuEvent;
-import io.github.dawncord.api.event.SlashCommandEvent;
 import io.github.dawncord.api.types.GuildMemberFlag;
 
 import java.util.List;
@@ -110,16 +107,6 @@ public class GuildMemberModifyAction extends Action<GuildMemberModifyAction> {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.Member.Get(guildId, userId));
             hasChanges = false;
-        }
-
-        if (SlashCommandEvent.getData() != null) {
-            SlashCommandEvent.UpdateData();
-        }
-        if (ButtonEvent.getData() != null) {
-            ButtonEvent.UpdateData();
-        }
-        if (SelectMenuEvent.getData() != null) {
-            SelectMenuEvent.UpdateData();
         }
     }
 }

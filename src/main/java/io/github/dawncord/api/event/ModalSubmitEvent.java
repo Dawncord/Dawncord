@@ -20,10 +20,10 @@ import java.util.function.Consumer;
  * Represents an event triggered when a modal is submitted.
  */
 public class ModalSubmitEvent implements ReplyEvent {
-    private static ModalInteractionData data;
-    private static Guild guild;
-    private static GuildChannel channel;
-    private static GuildMember member;
+    private final ModalInteractionData data;
+    private final Guild guild;
+    private final GuildChannel channel;
+    private final GuildMember member;
     private final ModalData modalData;
 
     /**
@@ -45,17 +45,8 @@ public class ModalSubmitEvent implements ReplyEvent {
      *
      * @return The interaction data.
      */
-    public static InteractionData getData() {
+    public InteractionData getData() {
         return data;
-    }
-
-    /**
-     * Updates the guild, channel, and member data associated with the modal submission.
-     */
-    public static void UpdateData() {
-        guild = new Guild(JsonUtils.fetch(Routes.Guild.Get(data.guildId())));
-        channel = guild.getChannelById(data.channelId());
-        member = guild.getMemberById(data.memberId());
     }
 
     /**

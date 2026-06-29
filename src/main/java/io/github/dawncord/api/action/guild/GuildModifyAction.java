@@ -5,9 +5,6 @@ import io.github.dawncord.api.Routes;
 import io.github.dawncord.api.entities.User;
 import io.github.dawncord.api.entities.channel.GuildChannel;
 import io.github.dawncord.api.entities.guild.Guild;
-import io.github.dawncord.api.event.ButtonEvent;
-import io.github.dawncord.api.event.SelectMenuEvent;
-import io.github.dawncord.api.event.SlashCommandEvent;
 import io.github.dawncord.api.types.GuildFeature;
 import io.github.dawncord.api.types.Locale;
 import io.github.dawncord.api.utils.IOUtils;
@@ -189,16 +186,6 @@ public class GuildModifyAction extends GuildAction {
         if (hasChanges) {
             ApiClient.patch(jsonObject, Routes.Guild.Get(guildId));
             hasChanges = false;
-        }
-
-        if (SlashCommandEvent.getData() != null) {
-            SlashCommandEvent.UpdateData();
-        }
-        if (ButtonEvent.getData() != null) {
-            ButtonEvent.UpdateData();
-        }
-        if (SelectMenuEvent.getData() != null) {
-            SelectMenuEvent.UpdateData();
         }
     }
 }
