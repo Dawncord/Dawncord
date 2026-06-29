@@ -23,6 +23,11 @@ public class ApiClient {
     private static final OkHttpClient CLIENT = new OkHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private static final int MAX_RETRIES = 5;          // cap on the number of 429 retries per request
+    private static final long MAX_WAIT_MS = 60_000;    // cap on the total time spent sleeping per request
+    private static final long DEFAULT_RETRY_MS = 1_000; // fallback when no usable rate-limit header is present
+    private static final long MIN_RETRY_MS = 100;       // floor so a "Retry-After: 0" can't spin the retry loop
+
     /**
      * Sends a POST request to the specified URL with the provided JSON object as the request body.
      *
@@ -114,6 +119,9 @@ public class ApiClient {
 
     /**
      * Sends a POST request with multipart form data to the specified URL.
+     * <p>
+     * The request may be retried on HTTP 429, so the parts must be re-readable (e.g. file- or
+     * byte-backed); one-shot {@code InputStream}-backed parts are not safe here.
      *
      * @param multipartBuilder The builder for constructing the multipart request body.
      * @param url              The URL to which the request is sent.
@@ -133,6 +141,9 @@ public class ApiClient {
 
     /**
      * Sends a PATCH request with multipart form data to the specified URL.
+     * <p>
+     * The request may be retried on HTTP 429, so the parts must be re-readable (e.g. file- or
+     * byte-backed); one-shot {@code InputStream}-backed parts are not safe here.
      *
      * @param multipartBuilder The builder for constructing the multipart request body.
      * @param url              The URL to which the request is sent.
@@ -192,7 +203,7 @@ public class ApiClient {
 
     @Nullable
     private static JsonNode performRequestAndGetJson(Request request) {
-        try (Response response = CLIENT.newCall(request).execute(); ResponseBody body = response.body()) {
+        try (Response response = executeWithRetry(request); ResponseBody body = response.body()) {
             if (body != null) {
                 if (response.isSuccessful()) {
                     return mapper.readTree(body.string());
@@ -207,21 +218,82 @@ public class ApiClient {
     }
 
     private static JsonNode performRequest(Request request) {
-        try (Response response = CLIENT.newCall(request).execute(); ResponseBody body = response.body()) {
+        try (Response response = executeWithRetry(request); ResponseBody body = response.body()) {
             if (body != null) {
-                if (!response.isSuccessful()) {
-                    logError(request, response.code(), body);
-                }
                 if (response.isSuccessful()) {
                     logInfo(request);
-                    String responseData = body.string();
-                    return mapper.readTree(responseData);
+                    return mapper.readTree(body.string());
+                } else {
+                    logError(request, response.code(), body);
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    /**
+     * Executes the request, reactively retrying on HTTP 429 (Too Many Requests). On a 429 the
+     * wait is taken from the {@code Retry-After} / {@code X-RateLimit-Reset-After} header; the
+     * retry stops once {@link #MAX_RETRIES} or the {@link #MAX_WAIT_MS} ceiling is reached, in
+     * which case the last 429 response is returned for the caller to log. This is the single
+     * place that calls {@code CLIENT.newCall(...).execute()}.
+     *
+     * @param request The request to execute.
+     * @return The response (success, a non-429 error, or a 429 that exhausted the retry budget).
+     * @throws IOException If the underlying call fails.
+     */
+    private static Response executeWithRetry(Request request) throws IOException {
+        int attempts = 0;
+        long totalWaited = 0;
+        while (true) {
+            Response response = CLIENT.newCall(request).execute();
+            if (response.code() != 429) {
+                return response;
+            }
+
+            long waitMs = Math.max(retryAfterMillis(response), MIN_RETRY_MS);
+            if (attempts >= MAX_RETRIES || totalWaited + waitMs > MAX_WAIT_MS) {
+                return response;
+            }
+
+            boolean global = "true".equalsIgnoreCase(response.header("X-RateLimit-Global"));
+            response.close();
+            attempts++;
+            logger.warn("Rate limited (429{}), retrying in {} ms (attempt {}/{})",
+                    global ? ", global" : "", waitMs, attempts, MAX_RETRIES);
+            try {
+                Thread.sleep(waitMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Interrupted during rate-limit backoff", e);
+            }
+            totalWaited += waitMs;
+        }
+    }
+
+    /**
+     * Reads the retry delay from a 429 response's {@code Retry-After} header, falling back to
+     * {@code X-RateLimit-Reset-After}. Both are fractional seconds; the result is in milliseconds,
+     * defaulting to {@link #DEFAULT_RETRY_MS} when no header is usable.
+     *
+     * @param response The 429 response.
+     * @return The number of milliseconds to wait before retrying.
+     */
+    private static long retryAfterMillis(Response response) {
+        String value = response.header("Retry-After");
+        if (value == null) {
+            value = response.header("X-RateLimit-Reset-After");
+        }
+        if (value != null) {
+            try {
+                return Math.max(0, (long) (Double.parseDouble(value.trim()) * 1000));
+            } catch (NumberFormatException _) {
+                // fall through to the default
+            }
+        }
+        return DEFAULT_RETRY_MS;
     }
 
     private static void logError(Request request, int statusCode, ResponseBody body) {
