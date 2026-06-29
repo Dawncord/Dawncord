@@ -34,6 +34,7 @@ import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.entities.message.Message;
 import io.github.dawncord.api.entities.message.modal.Element;
 import io.github.dawncord.api.entities.message.modal.Modal;
+import io.github.dawncord.api.exceptions.DawncordException;
 import io.github.dawncord.api.interaction.InteractionData;
 import io.github.dawncord.api.types.*;
 import jakarta.annotation.Nullable;
@@ -57,13 +58,13 @@ public class ActionExecutor {
      * @param guildId     The ID of the guild.
      */
     public static <T> void execute(Consumer<T> handler, Class<T> actionClass, String guildId) {
-        T action = null;
+        T action;
         try {
             action = actionClass.getDeclaredConstructor(String.class).newInstance(guildId);
-            handler.accept(action);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+            throw new DawncordException("Failed to create " + actionClass.getSimpleName(), e);
         }
+        handler.accept(action);
         invokeSubmit(action, actionClass);
     }
 
@@ -73,7 +74,7 @@ public class ActionExecutor {
         try {
             return returnId ? invokeGetId(action, action.getClass()) : null;
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new DawncordException("Failed to read created id for " + action.getClass().getSimpleName(), e);
         }
     }
 
@@ -308,7 +309,7 @@ public class ActionExecutor {
         try {
             return invokeGetId(action, MessageCreateAction.class);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new DawncordException("Failed to read the created id", e);
         }
     }
 
@@ -349,8 +350,10 @@ public class ActionExecutor {
                 Method executeMethod = MessageCreateAction.class.getDeclaredMethod("submitDefer");
                 executeMethod.setAccessible(true);
                 executeMethod.invoke(action);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                throw new DawncordException("Failed to submit deferred reply", unwrap(e));
+            } catch (ReflectiveOperationException | IllegalArgumentException e) {
+                throw new DawncordException("Failed to invoke submitDefer()", e);
             }
         }
     }
@@ -432,7 +435,7 @@ public class ActionExecutor {
         try {
             return invokeGetId(action, ThreadCreateAction.class);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new DawncordException("Failed to read the created id", e);
         }
     }
 
@@ -466,7 +469,7 @@ public class ActionExecutor {
         try {
             return invokeGetId(action, ThreadCreateAction.class);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new DawncordException("Failed to read the created id", e);
         }
     }
 
@@ -572,7 +575,7 @@ public class ActionExecutor {
             } catch (NoSuchMethodException e) {
                 clazz = clazz.getSuperclass();
             } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new DawncordException("Failed to read created id", e);
             }
         }
         throw new NoSuchMethodException("Method getCreatedId was not found");
@@ -583,8 +586,18 @@ public class ActionExecutor {
             Method method = clazz.getDeclaredMethod("submit");
             method.setAccessible(true);
             method.invoke(action);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            throw new DawncordException("Failed to submit " + action.getClass().getSimpleName(), unwrap(e));
+        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+            throw new DawncordException("Failed to invoke submit() on " + clazz.getSimpleName(), e);
         }
+    }
+
+    /**
+     * Unwraps the real cause of a reflective {@link InvocationTargetException}, falling back to the
+     * wrapper itself when no cause is present.
+     */
+    private static Throwable unwrap(InvocationTargetException e) {
+        return e.getCause() != null ? e.getCause() : e;
     }
 }

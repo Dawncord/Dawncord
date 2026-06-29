@@ -19,6 +19,7 @@ import io.github.dawncord.api.command.option.Option;
 import io.github.dawncord.api.entities.guild.Guild;
 import io.github.dawncord.api.event.*;
 import io.github.dawncord.api.event.handler.*;
+import io.github.dawncord.api.exceptions.DawncordException;
 import io.github.dawncord.api.listeners.EventListener;
 import io.github.dawncord.api.listeners.InteractionListener;
 import io.github.dawncord.api.listeners.MainListener;
@@ -440,8 +441,12 @@ public class Dawncord {
 
     /**
      * Registers multiple slash commands.
+     * <p>
+     * Registration is fail-fast: if building any command fails, a {@link DawncordException} is
+     * thrown and the remaining commands in the call are not registered.
      *
      * @param slashCommands the slash commands to register
+     * @throws DawncordException if a slash command cannot be built
      */
     public void registerSlashCommands(SlashCommand... slashCommands) {
         for (SlashCommand slashCommand : slashCommands) {
@@ -455,7 +460,7 @@ public class Dawncord {
                 setSubCommands(slashCommand, node);
                 setSubCommandGroups(slashCommand, node);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                throw new DawncordException("Failed to build slash command '" + slashCommand.getName() + "'", e);
             }
 
             setLocalizations(slashCommand, node);
