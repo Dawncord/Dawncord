@@ -76,9 +76,7 @@ public class ApiClient {
      * @return A JSON object containing the response data from the specified URL.
      */
     public static JsonNode getJson(String url) {
-        Request request = new Request.Builder()
-                .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+        Request request = withHeaders(new Request.Builder().url(Constants.API_URL + url))
                 .get()
                 .build();
 
@@ -104,9 +102,7 @@ public class ApiClient {
             }
         }
 
-        Request request = new Request.Builder()
-                .url(httpBuilder.build().toString())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+        Request request = withHeaders(new Request.Builder().url(httpBuilder.build().toString()))
                 .get()
                 .build();
 
@@ -128,10 +124,9 @@ public class ApiClient {
      * @return The JSON response from the server.
      */
     public static JsonNode postAttachments(MultipartBody.Builder multipartBuilder, String url) {
-        Request request = new Request.Builder()
+        Request request = withHeaders(new Request.Builder()
                 .url(Constants.API_URL + url)
-                .post(multipartBuilder.build())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .post(multipartBuilder.build()))
                 .build();
 
         logger.debug("[POST] -> {}", url);
@@ -150,10 +145,9 @@ public class ApiClient {
      * @return The JSON response from the server.
      */
     public static JsonNode patchAttachments(MultipartBody.Builder multipartBuilder, String url) {
-        Request request = new Request.Builder()
+        Request request = withHeaders(new Request.Builder()
                 .url(Constants.API_URL + url)
-                .patch(multipartBuilder.build())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .patch(multipartBuilder.build()))
                 .build();
 
         logger.debug("[PATCH] -> {}", url);
@@ -196,9 +190,21 @@ public class ApiClient {
 
     @NotNull
     private static Request.Builder createRequestBuilder(String url) {
-        return new Request.Builder()
-                .url(Constants.API_URL + url)
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN);
+        return withHeaders(new Request.Builder().url(Constants.API_URL + url));
+    }
+
+    /**
+     * Adds the {@code Authorization} and Discord-required {@code User-Agent} headers shared by
+     * every request.
+     *
+     * @param builder The request builder to decorate.
+     * @return The same builder with both headers applied.
+     */
+    @NotNull
+    private static Request.Builder withHeaders(Request.Builder builder) {
+        return builder
+                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
+                .addHeader("User-Agent", Constants.USER_AGENT);
     }
 
     @Nullable

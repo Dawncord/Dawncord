@@ -23,6 +23,20 @@ public class Constants {
      * The media type for JSON data.
      */
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+    /**
+     * The project URL embedded in the {@code User-Agent} header.
+     */
+    public static final String LIBRARY_URL = "https://github.com/dawncord/Dawncord";
+    /**
+     * The {@code User-Agent} header value Discord requires, in the form
+     * {@code DiscordBot ($url, $version)}. The version is resolved from the JAR manifest
+     * ({@code Implementation-Version}), falling back to {@code "dev"} when run outside a packaged JAR.
+     */
+    public static final String USER_AGENT = "DiscordBot (" + LIBRARY_URL + ", " + resolveVersion() + ")";
+
+    /**
+     * The WebSocket Gateway URL currently in use, initialised to {@link #DEFAULT_GATEWAY}.
+     */
     public static String GATEWAY = DEFAULT_GATEWAY;
     /**
      * The application ID used for authentication.
@@ -59,4 +73,10 @@ public class Constants {
     public static int LAST_SEQUENCE = 0;
 
     public static boolean DEV_LOGGING = false;
+
+    private static String resolveVersion() {
+        Package pkg = Constants.class.getPackage();
+        String version = pkg != null ? pkg.getImplementationVersion() : null;
+        return version != null ? version : "dev";
+    }
 }

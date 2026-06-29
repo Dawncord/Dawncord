@@ -28,10 +28,6 @@ import io.github.dawncord.api.types.OptionType;
 import io.github.dawncord.api.utils.ActionExecutor;
 import io.github.dawncord.api.utils.JsonUtils;
 import io.github.dawncord.api.utils.SlashCommandUtils;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -569,23 +565,12 @@ public class Dawncord {
         Constants.BOT_TOKEN = token;
         Constants.BOT_ID = JsonUtils.fetch(Routes.User("@me")).get("id").asText();
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(Constants.API_URL + Routes.CurrentApplication())
-                .addHeader("Authorization", "Bot " + Constants.BOT_TOKEN)
-                .build();
+        JsonNode node = ApiClient.getJson(Routes.CurrentApplication());
+        if (node != null) {
+            Constants.APPLICATION_ID = node.get("id").asText();
+            Constants.CLIENT_KEY = node.get("verify_key").asText();
 
-        try (Response response = client.newCall(request).execute();
-             ResponseBody body = response.body()) {
-            if (response.isSuccessful() && body != null) {
-                JsonNode node = mapper.readTree(body.string());
-                Constants.APPLICATION_ID = node.get("id").asText();
-                Constants.CLIENT_KEY = node.get("verify_key").asText();
-
-                logger.debug("Assigning constants");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.debug("Assigning constants");
         }
     }
 
