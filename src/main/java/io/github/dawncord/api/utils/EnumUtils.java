@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -137,6 +138,16 @@ public class EnumUtils {
         return flags;
     }
 
+    /**
+     * Maps a JSON array of strings to a list of name-only enum constants.
+     * Values with no matching constant are skipped rather than throwing, so unknown
+     * values newly introduced by Discord do not break deserialization.
+     *
+     * @param json      The JSON array node of enum-name strings.
+     * @param enumClass The name-only enum class to resolve against.
+     * @param <T>       The enum type.
+     * @return The resolved constants; an empty list if {@code json} is null or not an array.
+     */
     public static <T extends Enum<T>> List<T> getEnumValues(JsonNode json, Class<T> enumClass) {
         if (json == null || !json.isArray()) {
             return Collections.emptyList();
@@ -145,7 +156,14 @@ public class EnumUtils {
         return StreamSupport.stream(json.spliterator(), false)
                 .filter(JsonNode::isTextual)
                 .map(JsonNode::asText)
-                .map(value -> Enum.valueOf(enumClass, value))
+                .map(value -> {
+                    try {
+                        return Enum.valueOf(enumClass, value);
+                    } catch (IllegalArgumentException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }
