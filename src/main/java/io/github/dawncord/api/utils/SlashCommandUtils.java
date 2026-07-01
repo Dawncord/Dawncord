@@ -154,7 +154,12 @@ public class SlashCommandUtils {
     public static Map<Locale, String> getLocaleStringMap(JsonNode command, String localizations) {
         if (command.has(localizations) && command.hasNonNull(localizations)) {
             Map<Locale, String> map = new EnumMap<>(Locale.class);
-            command.get(localizations).fields().forEachRemaining(entry -> map.put(Locale.valueOf(entry.getKey()), entry.getValue().asText()));
+            command.get(localizations).fields().forEachRemaining(entry -> {
+                Locale locale = Locale.fromValue(entry.getKey());
+                if (locale != null) {
+                    map.put(locale, entry.getValue().asText());
+                }
+            });
             return map;
         }
         return Collections.emptyMap();

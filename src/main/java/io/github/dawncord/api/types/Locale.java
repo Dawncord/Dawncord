@@ -173,5 +173,20 @@ public enum Locale {
     public String getValue() {
         return value;
     }
+
+    /**
+     * Resolves a {@link Locale} from its Discord locale code (e.g. {@code "en-US"}).
+     *
+     * @param value The locale code as sent by Discord.
+     * @return The matching {@link Locale}, or {@code null} if the code is unknown.
+     */
+    public static Locale fromValue(String value) {
+        for (Locale locale : values()) {
+            if (locale.value.equals(value)) {
+                return locale;
+            }
+        }
+        return null;
+    }
 }
 
