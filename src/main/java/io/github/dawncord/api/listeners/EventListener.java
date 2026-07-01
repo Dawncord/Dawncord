@@ -58,7 +58,14 @@ public class EventListener extends WebSocketAdapter {
 
         if (op == 0) {
             JsonNode data = json.get("d");
-            GatewayEvent type = GatewayEvent.valueOf(json.get("t").asText());
+            String eventName = json.get("t").asText();
+            GatewayEvent type;
+            try {
+                type = GatewayEvent.valueOf(eventName);
+            } catch (IllegalArgumentException e) {
+                logger.debug("Ignoring unknown gateway event: {}", eventName);
+                return;
+            }
 
             processEvent(data, type);
         }
