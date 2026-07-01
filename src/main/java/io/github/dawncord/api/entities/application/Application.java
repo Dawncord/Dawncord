@@ -168,7 +168,8 @@ public class Application extends AbstractApplication {
     }
 
     public List<ApplicationFlag> getFlags() {
-        flags = loader.loadEnumListFromLong(flags, "flags", ApplicationFlag.class);
+        String field = application.hasNonNull("flags_new") ? "flags_new" : "flags";
+        flags = loader.loadEnumListFromLong(flags, field, ApplicationFlag.class);
         return flags;
     }
 
